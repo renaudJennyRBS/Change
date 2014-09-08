@@ -32,6 +32,7 @@ class Facets extends Block
 		$parameters->addParameterMeta('showUnavailable', true);
 		$parameters->addParameterMeta('facets');
 		$parameters->addParameterMeta('sortBy');
+		$parameters->addParameterMeta('requiredSearchText', false);
 		$parameters->setNoCache();
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -39,6 +40,7 @@ class Facets extends Block
 		$parameters->addParameterMeta('formAction', null);
 		$parameters->addParameterMeta('indexId', null);
 		$parameters->addParameterMeta('commerceContext', []);
+		$parameters->addParameterMeta('searchText', null);
 
 		$commerceServices = $this->getCommerceServices($event);
 		$genericServices = $this->getGenericServices($event);
@@ -59,6 +61,15 @@ class Facets extends Block
 			return $parameters;
 		}
 		$parameters->setParameterValue('indexId', $storeIndex->getId());
+
+		if ($parameters->getParameter('requiredSearchText'))
+		{
+			$searchText = $event->getHttpRequest()->getQuery('searchText');
+			if (!\Change\Stdlib\String::isEmpty($searchText))
+			{
+				$parameters->setParameterValue('searchText', trim($searchText));
+			}
+		}
 
 		$ctx = $commerceServices->getContext();
 		$commerceContext = [];
@@ -243,6 +254,12 @@ class Facets extends Block
 			return null;
 		}
 
+		$searchText = null;
+		if ($parameters->getParameter('requiredSearchText'))
+		{
+			$searchText = $parameters->getParameter('searchText');
+		}
+
 		$applicationServices = $event->getApplicationServices();
 		$documentManager = $applicationServices->getDocumentManager();
 
@@ -316,7 +333,7 @@ class Facets extends Block
 
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 
-		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId);
+		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId, $searchText);
 		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $context);
 
 		$result = $index->getType($storeIndex->getDefaultTypeName())->search($query);

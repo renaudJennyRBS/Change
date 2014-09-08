@@ -26,6 +26,9 @@ class FacetsInformation extends Information
 
 		$this->addInformationMetaForDetailBlock('Rbs_Catalog_ProductList', $i18nManager);
 
+		$this->addInformationMeta('requiredSearchText', Property::TYPE_BOOLEAN, false, false)
+			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.required_search_text', $ucf));
+
 		$this->addInformationMeta('useCurrentSectionProductList', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_use_current', $ucf));
 

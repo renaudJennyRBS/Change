@@ -38,6 +38,14 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 		}
 		$applicationServices = $event->getApplicationServices();
 		$documentManager = $applicationServices->getDocumentManager();
+		$searchText = $request->getPost('searchText');
+		if (\Change\Stdlib\String::isEmpty($searchText))
+		{
+			$searchText = null;
+		}
+		else {
+			$searchText = strval($searchText);
+		}
 
 		/** @var $storeIndex \Rbs\Elasticsearch\Documents\StoreIndex */
 		$storeIndex = $documentManager->getDocumentInstance($request->getPost('indexId'), 'Rbs_Elasticsearch_StoreIndex');
@@ -103,7 +111,7 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 
-		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId);
+		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId, $searchText);
 		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $commerceContext);
 
 		$searchResult = $index->getType($storeIndex->getDefaultTypeName())->search($query);

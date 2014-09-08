@@ -232,6 +232,8 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 			$publicationData = new \Rbs\Elasticsearch\Index\PublicationData();
 			$publicationData->setDocumentManager($applicationServices->getDocumentManager());
 			$documentData = $publicationData->addPublishableMetas($product, $documentData);
+			$documentData = $publicationData->addPublishableContent($product, $index->getWebsite(), $documentData,
+				$index, $event->getParam('indexManager'));
 
 			$creationDate = $productLocalization->getCreationDate();
 			if ($creationDate)

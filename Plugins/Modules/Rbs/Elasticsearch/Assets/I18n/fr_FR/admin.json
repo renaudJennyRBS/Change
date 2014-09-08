@@ -26,6 +26,9 @@
 	"storeresult_function":{
 		"message":"Résultat de recherche magasin"
 	},
+	"required_search_text":{
+		"message":"Nécessite un texte à rechercher"
+	},
 	"facets_picker_title":{
 		"message":"sélectionner les facettes"
 	},
