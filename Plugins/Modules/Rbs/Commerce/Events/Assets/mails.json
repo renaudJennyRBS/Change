@@ -58,6 +58,43 @@
 					"subject": "Votre commande est confirmée"
 				}
 			}
+		},
+		{
+			"_id": "rbs_commerce_order_canceled",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_commerce_order_canceled",
+			"substitutions": ["website", "fullname", "total", "orderCode", "orderId"],
+			"label": "Annulation de commande",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 1, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Cher{fullname},\n\nNous vous confirmons que votre commande n°{orderCode} d’un montant de {total} a bien été annulée.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+										},
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Votre commande est annulée"
+				}
+			}
 		}
 	],
 	"contextId": "Rbs Mail Install"
