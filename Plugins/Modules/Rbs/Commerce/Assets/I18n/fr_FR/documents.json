@@ -17,6 +17,12 @@
 	"process_sendmailordercanceled":{
 		"message":"mail d'annulation de commande"
 	},
+	"process_sendmailshipmentpreparation":{
+		"message":"mail d'expédition en préparation"
+	},
+	"process_sendmailshipmentfinalized":{
+		"message":"mail d'expédition finalisée"
+	},
 	"fee":{
 		"message":"frais"
 	},

@@ -95,6 +95,80 @@
 					"subject": "Votre commande est annulée"
 				}
 			}
+		},
+		{
+			"_id": "rbs_commerce_order_shipment_under_preparation",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_commerce_order_shipment_under_preparation",
+			"substitutions": ["website", "fullname", "orderCode", "orderId", "shipmentCode", "shipmentId"],
+			"label": "Préparation d'expédition",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 1, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Cher{fullname},\n\nNous vous informons qu'une expédition pour votre commande n°{orderCode} est en préparation.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+										},
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Une expédition pour votre commande {orderCode} est en préparation"
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_order_shipment_sent",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_commerce_order_shipment_sent",
+			"substitutions": ["website", "fullname", "orderCode", "orderId", "shipmentCode", "shipmentId"],
+			"label": "Expédition finalisée",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 1, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Cher{fullname},\n\nNous vous informons que l'expédition {shipmentCode} pour votre commande n°{orderCode} a été expédiée.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+										},
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Une expédition pour votre commande {orderCode} a été expédiée"
+				}
+			}
 		}
 	],
 	"contextId": "Rbs Mail Install"

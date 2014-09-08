@@ -8,5 +8,7 @@
 		<property name="modifiersOrderData" type="JSON" />
 		<property name="sendMailOrderConfirm" type="Boolean" default-value="true"/>
 		<property name="sendMailOrderCanceled" type="Boolean" default-value="true"/>
+		<property name="sendMailShipmentPreparation" type="Boolean" default-value="true"/>
+		<property name="sendMailShipmentFinalized" type="Boolean" default-value="true"/>
 	</properties>
 </document>
