@@ -22,8 +22,10 @@
 			<div class="add-elements-bar">
 				<a href rbs-start-navigation="" data-navigation-node="(= currentWebsite.id =)" target-url="(= 'Rbs_Website_Topic' | rbsURL:'new':{website:currentWebsite.id,tn: currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.topic_create', ['ucf']) }}</a>
 				<a href rbs-start-navigation="" data-navigation-node="(= currentWebsite.id =)" target-url="(= 'Rbs_Website_StaticPage' | rbsURL:'new':{website:currentWebsite.id,tn: currentWebsite.id} =)">{{ i18n('m.rbs.website.admin.staticpage_create', ['ucf']) }}</a>
-				<a ng-if="browseCollection.length" class="btn-flat" title="{{ i18nAttr('m.rbs.website.admin.ordering_title', ['ucf']) }}"
-						ng-click="ordering(currentWebsite)" href> <i class="icon-sort-by-attributes icon-large"></i></a>
+				<button data-ng-show="browseCollection.length" data-ng-click="ordering(currentWebsite)"
+					title="{{ i18nAttr('m.rbs.website.admin.ordering_title', ['ucf']) }}">
+					<i class="icon-sort-by-attributes icon-large"></i>
+				</button>
 			</div>
 			<div id="ordering_topic_modal_topic">
 			</div>
