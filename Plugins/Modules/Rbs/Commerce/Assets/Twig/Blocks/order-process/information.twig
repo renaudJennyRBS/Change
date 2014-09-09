@@ -166,12 +166,14 @@
 								data-valid="information.isAddressValid">
 						</div>
 
-						<div>
-							<button type="button" class="btn btn-sm btn-primary"
-								data-ng-if="information.address.__id"
-								data-ng-click="clearAddress()">
-								{{ i18n('m.rbs.commerce.front.button_use_new_address', ['ucf']) }}
-							</button>
+						<div class="row">
+							<div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3">
+								<button type="button" class="btn btn-sm btn-default"
+									data-ng-if="information.address.__id"
+									data-ng-click="clearAddress()">
+									{{ i18n('m.rbs.commerce.front.button_use_new_address', ['ucf']) }}
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -192,7 +194,7 @@
 							<div class="col-md-6">
 								<address class="no-bottom-margin">
 									<strong>(= cart.address.__lines[0] =)</strong>
-									<div data-ng-repeat="line in cart.address.__lines" data-ng-show="!$first">(= line =)</div>
+									<div data-ng-repeat="line in cart.address.__lines track by $index" data-ng-show="!$first">(= line =)</div>
 								</address>
 							</div>
 						</div>
