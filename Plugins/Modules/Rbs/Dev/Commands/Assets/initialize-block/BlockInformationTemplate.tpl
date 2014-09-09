@@ -25,7 +25,7 @@ class #className#Information extends \Change\Presentation\Blocks\Information
 		$this->setLabel($i18nManager->trans('m.#lowerVendor#.#lowerModule#.admin.#localeName#_label', $ucf));
 
 		// Declare your parameters here.
-		//$this->addInformationMeta('myParameterName', Property::TYPE_INTEGER)
+		//$this->addInformationMeta('myParameterName', \Change\Documents\Property::TYPE_INTEGER)
 		//	->setLabel($i18nManager->trans('m.#lowerVendor#.#lowerModule#.admin.#localeName#_my_parameter_name', $ucf));
 	}
 }
