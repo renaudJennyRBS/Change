@@ -15,6 +15,18 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Application $application
+	 * @param \Change\Configuration\EditableConfiguration $configuration
+	 * @throws \RuntimeException
+	 */
+	public function executeApplication($plugin, $application, $configuration)
+	{
+		$configuration->addPersistentEntry('Rbs/Stock/disableReservation', false);
+		$configuration->addPersistentEntry('Rbs/Stock/disableMovement', false);
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
 	 * @throws \RuntimeException
 	 */

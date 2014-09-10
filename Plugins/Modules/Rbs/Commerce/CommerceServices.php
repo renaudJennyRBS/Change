@@ -77,19 +77,12 @@ class CommerceServices extends Di
 				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//StockManager : Context, DbProvider, TransactionManager, DocumentManager, CollectionManager
+		//StockManager : Application, Context, DbProvider, TransactionManager, DocumentManager, CollectionManager
 		$stockManagerClassName = $this->getInjectedClassName('StockManager', 'Rbs\Stock\StockManager');
 		$classDefinition = $this->getClassDefinition($stockManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setContext', true)
-			->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
-			->addMethod('setDbProvider', true)
-			->addMethodParameter('setDbProvider', 'dbProvider', array('required' => true))
-			->addMethod('setTransactionManager', true)
-			->addMethodParameter('setTransactionManager', 'transactionManager', array('required' => true))
-			->addMethod('setDocumentManager', true)
-			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
-			->addMethod('setCollectionManager', true)
-			->addMethodParameter('setCollectionManager', 'collectionManager', array('required' => true));
+			->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		//CatalogManager : Application, DbProvider, TransactionManager, DocumentManager, PriceManager, StockManager, AttributeManager
@@ -205,8 +198,7 @@ class CommerceServices extends Di
 			array('application' => $application));
 
 		$im->addAlias('StockManager', $stockManagerClassName,
-			array('dbProvider' => $dbProvider, 'transactionManager' => $transactionManager,
-				'documentManager' => $documentManager, 'collectionManager' => $collectionManager));
+			array('application' => $application));
 
 		$im->addAlias('CartManager', $cartManagerClassName,
 			array('application' => $application, 'documentManager' => $documentManager));

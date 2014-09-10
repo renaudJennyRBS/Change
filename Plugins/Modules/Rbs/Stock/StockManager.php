@@ -11,8 +11,12 @@ namespace Rbs\Stock;
 /**
  * @name \Rbs\Stock\StockManager
  */
-class StockManager
+class StockManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
+	const EVENT_MANAGER_IDENTIFIER = 'StockManager';
+
 	const INVENTORY_UNIT_PIECE = 0;
 
 	const UNLIMITED_LEVEL = 1000000;
@@ -47,6 +51,116 @@ class StockManager
 	protected $collectionManager;
 
 	/**
+	 * @var boolean|null
+	 */
+	protected $disableReservation = null;
+
+	/**
+	 * @var boolean|null
+	 */
+	protected $disableMovement = null;
+
+	/**
+	 * @return string
+	 */
+	protected function getEventManagerIdentifier()
+	{
+		return static::EVENT_MANAGER_IDENTIFIER;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getListenerAggregateClassNames()
+	{
+		return $this->getApplication()->getConfiguredListenerClassNames('Rbs/Commerce/Events/StockManager');
+	}
+
+	/**
+	 * @param \Change\Events\EventManager $eventManager
+	 */
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
+	{
+		$eventManager->attach('getInventoryEntry', [$this, 'onDefaultGetInventoryEntry'], 5);
+		$eventManager->attach('getInventoryEntries', [$this, 'onDefaultGetInventoryEntries'], 5);
+		$eventManager->attach('setInventory', [$this, 'onDefaultSetInventory'], 5);
+		$eventManager->attach('getInventoryMovementsByTarget', [$this, 'onDefaultGetInventoryMovementsByTarget'], 5);
+		$eventManager->attach('getInventoryMovementsBySku', [$this, 'onDefaultGetInventoryMovementsBySku'], 5);
+		$eventManager->attach('countInventoryMovementsBySku', [$this, 'onDefaultCountInventoryMovementsBySku'], 5);
+		$eventManager->attach('getInventoryMovementsInfosBySkuGroupByWarehouse',
+			[$this, 'onDefaultGetInventoryMovementsInfosBySkuGroupByWarehouse'], 5);
+
+		$eventManager->attach('getValueOfMovementsBySku', [$this, 'onDefaultGetValueOfMovementsBySku'], 5);
+		$eventManager->attach('consolidateInventoryEntry', [$this, 'onDefaultConsolidateInventoryEntry'], 5);
+		$eventManager->attach('addInventoryMovement', [$this, 'onDefaultAddInventoryMovement'], 5);
+		$eventManager->attach('deleteInventoryMovementById', [$this, 'onDefaultDeleteInventoryMovementById'], 5);
+		$eventManager->attach('getInventoryLevel', [$this, 'onDefaultGetInventoryLevel'], 5);
+		$eventManager->attach('getInventoryLevelForManySku', [$this, 'onDefaultGetInventoryLevelForManySku'], 5);
+
+		$eventManager->attach('getInventoryThresholdTitle', [$this, 'onDefaultGetInventoryThresholdTitle'], 5);
+
+		$eventManager->attach('setReservations', [$this, 'onDefaultSetReservations'], 5);
+		$eventManager->attach('getReservationsInfosBySkuGroupByStoreAndStatus',
+			[$this, 'onDefaultGetReservationsInfosBySkuGroupByStoreAndStatus'], 5);
+		$eventManager->attach('getReservationsByTarget', [$this, 'onDefaultGetReservationsByTarget'], 5);
+		$eventManager->attach('cleanupReservations', [$this, 'onDefaultCleanupReservations'], 5);
+		$eventManager->attach('unsetReservations', [$this, 'onDefaultUnsetReservations'], 5);
+		$eventManager->attach('confirmReservations', [$this, 'onDefaultConfirmReservations'], 5);
+		$eventManager->attach('transferReservations', [$this, 'onDefaultTransferReservations'], 5);
+		$eventManager->attach('decrementReservation', [$this, 'onDefaultDecrementReservation'], 5);
+		$eventManager->attach('getReservationsBySku', [$this, 'onDefaultGetReservationsBySku'], 5);
+		$eventManager->attach('countReservationsBySku', [$this, 'onDefaultCountReservationsBySku'], 5);
+
+		$eventManager->attach('getSkuByCode', [$this, 'onDefaultGetSkuByCode'], 5);
+
+		$eventManager->attach('getProductAvailability', [$this, 'onDefaultGetProductAvailability'], 5);
+	}
+
+	/**
+	 * @param boolean $disableMovement
+	 * @return $this
+	 */
+	public function setDisableMovement($disableMovement)
+	{
+		$this->disableMovement = ($disableMovement == true);
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getDisableMovement()
+	{
+		if ($this->disableMovement === null)
+		{
+			$this->setDisableMovement($this->getApplication()->getConfiguration()->getEntry('Rbs/Stock/disableMovement'));
+		}
+		return $this->disableMovement;
+	}
+
+	/**
+	 * @param boolean $disableReservation
+	 * @return $this
+	 */
+	public function setDisableReservation($disableReservation)
+	{
+		$this->disableReservation = ($disableReservation == true);
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getDisableReservation()
+	{
+		if ($this->disableReservation === null)
+		{
+			$this->setDisableReservation($this->getApplication()->getConfiguration()->getEntry('Rbs/Stock/disableReservation'));
+		}
+		return $this->disableReservation;
+	}
+
+	/**
 	 * @param \Rbs\Commerce\Std\Context $context
 	 * @return $this
 	 */
@@ -62,78 +176,6 @@ class StockManager
 	protected function getContext()
 	{
 		return $this->context;
-	}
-
-	/**
-	 * @param \Change\Transaction\TransactionManager $transactionManager
-	 * @return $this
-	 */
-	public function setTransactionManager($transactionManager)
-	{
-		$this->transactionManager = $transactionManager;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Transaction\TransactionManager
-	 */
-	protected function getTransactionManager()
-	{
-		return $this->transactionManager;
-	}
-
-	/**
-	 * @param \Change\Db\DbProvider $dbProvider
-	 * @return $this
-	 */
-	public function setDbProvider($dbProvider)
-	{
-		$this->dbProvider = $dbProvider;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Db\DbProvider
-	 */
-	protected function getDbProvider()
-	{
-		return $this->dbProvider;
-	}
-
-	/**
-	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @return $this
-	 */
-	public function setDocumentManager($documentManager)
-	{
-		$this->documentManager = $documentManager;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Documents\DocumentManager
-	 */
-	protected function getDocumentManager()
-	{
-		return $this->documentManager;
-	}
-
-	/**
-	 * @param \Change\Collection\CollectionManager $collectionManager
-	 * @return $this
-	 */
-	public function setCollectionManager($collectionManager)
-	{
-		$this->collectionManager = $collectionManager;
-		return $this;
-	}
-
-	/**
-	 * @return \Change\Collection\CollectionManager
-	 */
-	protected function getCollectionManager()
-	{
-		return $this->collectionManager;
 	}
 
 	/**
@@ -153,26 +195,56 @@ class StockManager
 	 */
 	public function getInventoryEntry($sku, $warehouse = null)
 	{
-		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['sku' => $sku, 'warehouse' => $warehouse, 'inventoryEntry' => null]);
+		$em->trigger('getInventoryEntry', $this, $args);
+		if ($args['inventoryEntry'] instanceof \Rbs\Stock\Documents\InventoryEntry)
+		{
+			return $args['inventoryEntry'];
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetInventoryEntry(\Change\Events\Event $event)
+	{
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query->andPredicates(
-			$query->eq('sku', $sku),
-			$query->eq('warehouse', $warehouse)
+			$query->eq('sku', $event->getParam('sku')),
+			$query->eq('warehouse', $event->getParam('warehouse'))
 		);
-		return $query->getFirstDocument();
+		$event->setParam('inventoryEntry', $query->getFirstDocument());
 	}
 
 	/**
 	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @return \Rbs\Stock\Documents\InventoryEntry[]|null
+	 * @return \Rbs\Stock\Documents\InventoryEntry[]
 	 */
 	public function getInventoryEntries($sku)
 	{
-		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['sku' => $sku, 'inventoryEntries' => null]);
+		$em->trigger('getInventoryEntries', $this, $args);
+		if (is_array($args['inventoryEntries']))
+		{
+			return $args['inventoryEntries'];
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetInventoryEntries(\Change\Events\Event $event)
+	{
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$query->andPredicates(
-			$query->eq('sku', $sku)
+			$query->eq('sku', $event->getParam('sku'))
 		);
-		return $query->getDocuments();
+		$event->setParam('inventoryEntries', $query->getDocuments()->toArray());
 	}
 
 	/**
@@ -185,17 +257,32 @@ class StockManager
 	 */
 	public function setInventory($level, $sku, $warehouse = null)
 	{
-		$entry = $this->getInventoryEntry($sku, $warehouse);
-		if ($entry === null)
-		{
-			/* @var $entry \Rbs\Stock\Documents\InventoryEntry */
-			$entry = $this->getDocumentManager()
-				->getNewDocumentInstanceByModelName('Rbs_Stock_InventoryEntry');
-		}
-		$tm = $this->getTransactionManager();
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['level' => $level, 'sku' => $sku, 'warehouse' => $warehouse, 'inventoryEntry' => null]);
+		$em->trigger('setInventory', $this, $args);
+		return $args['inventoryEntry'];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultSetInventory(\Change\Events\Event $event)
+	{
+		$sku = $event->getParam('sku');
+		$warehouse = $event->getParam('warehouse');
+		$level = $event->getParam('level');
+		$appSrv = $event->getApplicationServices();
+		$tm = $appSrv->getTransactionManager();
 		try
 		{
 			$tm->begin();
+			$entry = $this->getInventoryEntry($sku, $warehouse);
+			if ($entry === null)
+			{
+				/* @var $entry \Rbs\Stock\Documents\InventoryEntry */
+				$entry = $appSrv->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Stock_InventoryEntry');
+			}
 			$entry->setLevel($level);
 			$entry->setSku($sku);
 			$entry->setWarehouse($warehouse);
@@ -206,7 +293,7 @@ class StockManager
 		{
 			throw $tm->rollBack($e);
 		}
-		return $entry;
+		$event->setParam('inventoryEntry', $entry);
 	}
 
 	/**
@@ -217,7 +304,27 @@ class StockManager
 	 */
 	public function getInventoryMovementsByTarget($target, $warehouse = null)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getInventoryMovements');
+		if (!$this->getDisableMovement())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['target' => $target, 'warehouse' => $warehouse, 'inventoryMovements' => null]);
+			$em->trigger('getInventoryMovementsByTarget', $this, $args);
+			if (is_array($args['inventoryMovements']))
+			{
+				return $args['inventoryMovements'];
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetInventoryMovementsByTarget(\Change\Events\Event $event)
+	{
+		$target = $event->getParam('target');
+		$warehouse = $event->getParam('warehouse');
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder('stock::getInventoryMovements');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -236,7 +343,8 @@ class StockManager
 		{
 			$query->bindParameter('warehouseId', $warehouse->getId());
 		}
-		return $query->getResults($query->getRowsConverter()->addIntCol('sku_id', 'movement', 'warehouse_id')->addDtCol('date'));
+		$event->setParam('inventoryMovements',
+			$query->getResults($query->getRowsConverter()->addIntCol('sku_id', 'movement', 'warehouse_id')->addDtCol('date')));
 	}
 
 	/**
@@ -251,7 +359,34 @@ class StockManager
 	 */
 	public function getInventoryMovementsBySku($sku, $warehouse = null, $limit= null, $offset = null, $orderCol = null, $orderSort = null)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		if (!$this->getDisableMovement())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['sku' => $sku, 'warehouse' => $warehouse,
+				'limit'=> $limit, 'offset'=> $offset, 'orderCol'=> $orderCol, 'orderSort'=> $orderSort,
+				'inventoryMovements' => null]);
+			$em->trigger('getInventoryMovementsBySku', $this, $args);
+			if (is_array($args['inventoryMovements']))
+			{
+				return $args['inventoryMovements'];
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetInventoryMovementsBySku(\Change\Events\Event $event)
+	{
+		$sku = $event->getParam('sku');
+		$warehouse = $event->getParam('warehouse');
+		$limit = $event->getParam('limit');
+		$offset = $event->getParam('offset');
+		$orderCol = $event->getParam('orderCol');
+		$orderSort = $event->getParam('orderSort');
+
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('id'), $fb->column('target'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'));
 		$qb->from($fb->table('rbs_stock_dat_mvt'));
@@ -293,9 +428,9 @@ class StockManager
 			$query->setStartIndex($offset);
 		}
 
-		return $query->getResults(
+		$event->setParam('inventoryMovements',  $query->getResults(
 			$query->getRowsConverter()->addStrCol('target')->addIntCol('id', 'movement', 'warehouse_id')->addDtCol('date')
-		);
+		));
 	}
 
 	/**
@@ -306,13 +441,32 @@ class StockManager
 	 */
 	public function countInventoryMovementsBySku($sku, $warehouse = null)
 	{
+		if (!$this->getDisableMovement())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['sku' => $sku, 'warehouse' => $warehouse,
+				'count' => 0]);
+			$em->trigger('countInventoryMovementsBySku', $this, $args);
+			return $args['count'];
+		}
+		return 0;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultCountInventoryMovementsBySku(\Change\Events\Event $event)
+	{
+		$sku = $event->getParam('sku');
+		$warehouse = $event->getParam('warehouse');
+
 		$key = 'stock::countInventoryMovementsBySku';
 		if ($warehouse !== null)
 		{
 			$key = 'stock::countInventoryMovementsBySkuAndWarehouse';
 		}
 
-		$qb = $this->getDbProvider()->getNewQueryBuilder($key);
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder($key);
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -338,21 +492,39 @@ class StockManager
 			$query->bindParameter('warehouseId', $warehouseId);
 		}
 
-		return $query->getFirstResult($query->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount'));
+		$event->setParam('count',
+			$query->getFirstResult($query->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount')));
 	}
 
 	/**
 	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @return array|mixed|null
+	 * @return array|null
 	 */
 	public function getInventoryMovementsInfosBySkuGroupByWarehouse($sku)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getInventoryMovementsInfosBySkuGroupByWarehouse');
+		if (!$this->getDisableMovement())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['sku' => $sku, 'inventoryMovements' => []]);
+			$em->trigger('getInventoryMovementsInfosBySkuGroupByWarehouse', $this, $args);
+			return $args['inventoryMovements'];
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetInventoryMovementsInfosBySkuGroupByWarehouse(\Change\Events\Event $event)
+	{
+		$sku = $event->getParam('sku');
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder('stock::getInventoryMovementsInfosBySkuGroupByWarehouse');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->alias($fb->column('warehouse_id'), 'warehouse'), $fb->alias($fb->func('count', '*'), 'count'), $fb->alias($fb->sum($fb->column('movement')), 'movement'));
+			$qb->select($fb->alias($fb->column('warehouse_id'), 'warehouse'),
+				$fb->alias($fb->func('count', '*'), 'count'), $fb->alias($fb->sum($fb->column('movement')), 'movement'));
 			$qb->from($fb->table('rbs_stock_dat_mvt'));
 			$logicAnd = $fb->logicAnd(
 				$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
@@ -365,7 +537,7 @@ class StockManager
 		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
 		$query->bindParameter('skuId', $skuId);
 
-		return $query->getResults($query->getRowsConverter()->addIntCol('count', 'movement', 'warehouse'));
+		$event->setParam('inventoryMovements', $query->getResults($query->getRowsConverter()->addIntCol('count', 'movement', 'warehouse')));
 	}
 
 	/**
@@ -376,7 +548,25 @@ class StockManager
 	 */
 	public function getValueOfMovementsBySku($sku, $warehouse = null)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		if (!$this->getDisableMovement())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['sku' => $sku, 'warehouse' => $warehouse, 'value' => 0]);
+			$em->trigger('getValueOfMovementsBySku', $this, $args);
+			return $args['value'];
+		}
+		return 0;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetValueOfMovementsBySku(\Change\Events\Event $event)
+	{
+		$sku = $event->getParam('sku');
+		$warehouse = $event->getParam('warehouse');
+
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->alias($fb->sum($fb->column('movement')), 'movement'));
 		$qb->from($fb->table('rbs_stock_dat_mvt'));
@@ -393,7 +583,7 @@ class StockManager
 		$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
 		$query->bindParameter('warehouseId', $warehouseId);
 
-		return $query->getFirstResult($query->getRowsConverter()->addIntCol('movement')->singleColumn('movement'));
+		$event->setParam('value', $query->getFirstResult($query->getRowsConverter()->addIntCol('movement')->singleColumn('movement')));
 	}
 
 	/**
@@ -403,40 +593,56 @@ class StockManager
 	 */
 	public function consolidateInventoryEntry(\Rbs\Stock\Documents\InventoryEntry $inventoryEntry)
 	{
-		$warehouseId = $inventoryEntry->getWarehouseId();
-		$skuId = $inventoryEntry->getSkuId();
-
-		$valueOfMovementsBySku = $this->getValueOfMovementsBySku($skuId, $warehouseId);
-		if ($valueOfMovementsBySku !== 0)
+		if (!$this->getDisableMovement())
 		{
-			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::consolidateInventoryEntry');
-			if (!$qb->isCached())
-			{
-				$fb = $qb->getFragmentBuilder();
-				$qb->delete($fb->table('rbs_stock_dat_mvt'));
-				$qb->where(
-					$fb->logicAnd(
-						$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId')),
-						$fb->eq($fb->column('warehouse_id'), $fb->integerParameter('warehouseId'))
-					)
-				);
-			}
-			$statement = $qb->deleteQuery();
-			$statement->bindParameter('skuId', $skuId);
-			$statement->bindParameter('warehouseId', $warehouseId);
-			$statement->execute();
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['inventoryEntry' => $inventoryEntry]);
+			$em->trigger('consolidateInventoryEntry', $this, $args);
+		}
+	}
 
-			if ($inventoryEntry->getSku() && $inventoryEntry->getSku()->getUnlimitedInventory())
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultConsolidateInventoryEntry(\Change\Events\Event $event)
+	{
+		/** @var $inventoryEntry \Rbs\Stock\Documents\InventoryEntry */
+		$inventoryEntry = $event->getParam('inventoryEntry');
+		if ($inventoryEntry instanceof \Rbs\Stock\Documents\InventoryEntry)
+		{
+			$warehouseId = $inventoryEntry->getWarehouseId();
+			$skuId = $inventoryEntry->getSkuId();
+			$valueOfMovementsBySku = $this->getValueOfMovementsBySku($skuId, $warehouseId);
+			if ($valueOfMovementsBySku !== 0)
 			{
-				$inventoryEntry->setLevel(static::UNLIMITED_LEVEL);
-			}
-			else
-			{
-				$inventoryEntry->setLevel($inventoryEntry->getLevel() + $valueOfMovementsBySku);
+				$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::consolidateInventoryEntry');
+				if (!$qb->isCached())
+				{
+					$fb = $qb->getFragmentBuilder();
+					$qb->delete($fb->table('rbs_stock_dat_mvt'));
+					$qb->where(
+						$fb->logicAnd(
+							$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId')),
+							$fb->eq($fb->column('warehouse_id'), $fb->integerParameter('warehouseId'))
+						)
+					);
+				}
+				$statement = $qb->deleteQuery();
+				$statement->bindParameter('skuId', $skuId);
+				$statement->bindParameter('warehouseId', $warehouseId);
+				$statement->execute();
 
+				if ($inventoryEntry->getSku() && $inventoryEntry->getSku()->getUnlimitedInventory())
+				{
+					$inventoryEntry->setLevel(static::UNLIMITED_LEVEL);
+				}
+				else
+				{
+					$inventoryEntry->setLevel($inventoryEntry->getLevel() + $valueOfMovementsBySku);
+				}
+				$inventoryEntry->setValueOfMovements(0);
+				$inventoryEntry->save();
 			}
-			$inventoryEntry->setValueOfMovements(0);
-			$inventoryEntry->save();
 		}
 	}
 
@@ -454,7 +660,29 @@ class StockManager
 	 */
 	public function addInventoryMovement($amount, $sku, $warehouse = null, $date = null, $target = null)
 	{
-		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::addInventoryMovement');
+		if (!$this->getDisableMovement())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['amount' => $amount, 'sku' => $sku, 'warehouse' => $warehouse,
+				'date' => $date, 'target' => $target, 'movementId' => 0]);
+			$em->trigger('addInventoryMovement', $this, $args);
+			return $args['movementId'];
+		}
+		return 0;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultAddInventoryMovement(\Change\Events\Event $event)
+	{
+		$amount = $event->getParam('amount');
+		$sku = $event->getParam('sku');
+		$warehouse = $event->getParam('warehouse');
+		$date = $event->getParam('date');
+		$target = $event->getParam('target');
+
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::addInventoryMovement');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -485,7 +713,7 @@ class StockManager
 			$entry->updateValueOfMovements($valueOfMovements);
 		}
 
-		return $movementId;
+		$event->setParam('movementId', $movementId);
 	}
 
 	/**
@@ -495,10 +723,25 @@ class StockManager
 	 */
 	public function deleteInventoryMovementById($movementId)
 	{
-		$movementInfo = $this->getInfoByMovementId($movementId);
+		if (!$this->getDisableMovement())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['movementId' => $movementId]);
+			$em->trigger('deleteInventoryMovementById', $this, $args);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultDeleteInventoryMovementById(\Change\Events\Event $event)
+	{
+		$movementId = $event->getParam('movementId');
+		$dbProvider = $event->getApplicationServices()->getDbProvider();
+		$movementInfo = $this->getInfoByMovementId($movementId, $dbProvider);
 		if (is_array($movementInfo))
 		{
-			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::deleteInventoryMovementById');
+			$qb = $dbProvider->getNewStatementBuilder('stock::deleteInventoryMovementById');
 			if (!$qb->isCached())
 			{
 				$fb = $qb->getFragmentBuilder();
@@ -522,11 +765,12 @@ class StockManager
 	/**
 	 * If return value is array index 0 is skuId and index 1 is warehouseId
 	 * @param integer $movementId
+	 * @param \Change\Db\DbProvider $dbProvider
 	 * @return array|null
 	 */
-	protected function getInfoByMovementId($movementId)
+	protected function getInfoByMovementId($movementId, $dbProvider)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getInfoByMovementId');
+		$qb = $dbProvider->getNewQueryBuilder('stock::getInfoByMovementId');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -557,90 +801,153 @@ class StockManager
 			return static::UNLIMITED_LEVEL;
 		}
 
-		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
-		$query->andPredicates($query->eq('sku', $sku), $query->eq('warehouse', 0));
-		$dbQueryBuilder = $query->dbQueryBuilder();
-		$fb = $dbQueryBuilder->getFragmentBuilder();
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['sku' => $sku, 'store' => $store, 'level' => 0]);
+		$em->trigger('getInventoryLevel', $this, $args);
+		return $args['level'];
+	}
 
-		$docTable = $query->getTableAliasName();
-		$mvtTable = $fb->table('rbs_stock_dat_mvt');
-
-		$dbQueryBuilder->leftJoin($mvtTable, $fb->logicAnd(
-			$fb->eq($fb->getDocumentColumn('sku', $docTable), $fb->column('sku_id', $mvtTable)),
-			$fb->eq($fb->getDocumentColumn('warehouse', $docTable), $fb->column('warehouse_id', $mvtTable))
-		));
-		$sum = $fb->alias($fb->sum($fb->column('movement', $mvtTable)), 'movement');
-		$level = $fb->alias($fb->getDocumentColumn('level', $docTable), 'level');
-
-		$dbQueryBuilder->addColumn($level);
-		$dbQueryBuilder->addColumn($sum);
-
-		$result = $dbQueryBuilder->query()->getFirstResult();
-		$level = intval($result['level']);
-		$movement = intval($result['movement']);
-
-		if ($store === null)
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetInventoryLevel(\Change\Events\Event $event)
+	{
+		/** @var $sku \Rbs\Stock\Documents\Sku */
+		$sku = $event->getParam('sku');
+		$store = $event->getParam('store');
+		$warehouseId = 0;
+		if ($this->getDisableMovement())
 		{
-			$store = $this->getContext()->getWebStore();
+			$movement = 0;
+			$entry = $this->getInventoryEntry($sku, $warehouseId);
+			$level = $entry ? $entry->getLevel() : 0;
+		}
+		else
+		{
+			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+			$query->andPredicates($query->eq('sku', $sku), $query->eq('warehouse', $warehouseId));
+			$dbQueryBuilder = $query->dbQueryBuilder();
+			$fb = $dbQueryBuilder->getFragmentBuilder();
+
+			$docTable = $query->getTableAliasName();
+			$mvtTable = $fb->table('rbs_stock_dat_mvt');
+
+			$dbQueryBuilder->leftJoin($mvtTable, $fb->logicAnd(
+				$fb->eq($fb->getDocumentColumn('sku', $docTable), $fb->column('sku_id', $mvtTable)),
+				$fb->eq($fb->getDocumentColumn('warehouse', $docTable), $fb->column('warehouse_id', $mvtTable))
+			));
+			$sum = $fb->alias($fb->sum($fb->column('movement', $mvtTable)), 'movement');
+			$level = $fb->alias($fb->getDocumentColumn('level', $docTable), 'level');
+
+			$dbQueryBuilder->addColumn($level);
+			$dbQueryBuilder->addColumn($sum);
+
+			$result = $dbQueryBuilder->query()->getFirstResult();
+			$level = intval($result['level']);
+			$movement = intval($result['movement']);
 		}
 
-		if ($store)
+		if (!$this->getDisableReservation())
 		{
-			$skuId = $sku->getId();
-			$storeId = ($store instanceof \Change\Documents\AbstractDocument) ? $store->getId() : intval($store);
-			return $level + $movement - $this->getReservedQuantity($skuId, $storeId);
+			if ($store === null)
+			{
+				$store = $this->getContext()->getWebStore();
+			}
+
+			if ($store)
+			{
+				$skuId = $sku->getId();
+				$storeId = ($store instanceof \Change\Documents\AbstractDocument) ? $store->getId() : intval($store);
+				$event->setParam('level', $level + $movement -
+					$this->getReservedQuantity($skuId, $storeId, $event->getApplicationServices()->getDbProvider()));
+				return;
+			}
 		}
-		return $level + $movement;
+		$event->setParam('level', $level + $movement);
 	}
 
 	/**
 	 * @api
-	 * @param \Rbs\Stock\Documents\Sku[] $skus
+	 * @param \Rbs\Stock\Documents\Sku[] $skuArray
 	 * @param integer|\Rbs\Store\Documents\WebStore|null $store
 	 * @return integer
 	 */
-	public function getInventoryLevelForManySku($skus, $store = null)
+	public function getInventoryLevelForManySku($skuArray, $store = null)
 	{
-		$skusId = array();
-		foreach ($skus as $sku)
+		$skuIds = array();
+		foreach ($skuArray as $sku)
 		{
 			if ($sku->getUnlimitedInventory())
 			{
 				return static::UNLIMITED_LEVEL;
 			}
-			$skusId[] = $sku->getId();
+			$skuIds[] = $sku->getId();
 		}
 
-		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
-		$query->andPredicates($query->in('sku', $skusId), $query->eq('warehouse', 0));
-		$dbQueryBuilder = $query->dbQueryBuilder();
-		$fb = $dbQueryBuilder->getFragmentBuilder();
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['skuIds' => $skuIds, 'store' => $store, 'level' => 0]);
+		$em->trigger('getInventoryLevelForManySku', $this, $args);
+		return $args['level'];
+	}
 
-		$docTable = $query->getTableAliasName();
-		$mvtTable = $fb->table('rbs_stock_dat_mvt');
-
-		$dbQueryBuilder->leftJoin($mvtTable, $fb->logicAnd(
-			$fb->eq($fb->getDocumentColumn('sku', $docTable), $fb->column('sku_id', $mvtTable)),
-			$fb->eq($fb->getDocumentColumn('warehouse', $docTable), $fb->column('warehouse_id', $mvtTable))
-		));
-		$sum = $fb->alias($fb->sum($fb->column('movement', $mvtTable)), 'movement');
-		$level = $fb->alias($fb->getDocumentColumn('level', $docTable), 'level');
-		$dbQueryBuilder->addColumn($level);
-		$dbQueryBuilder->addColumn($sum);
-		$result = $dbQueryBuilder->query()->getFirstResult();
-		$level = intval($result['level']);
-		$movement = intval($result['movement']);
-		if ($store === null)
+	public function onDefaultGetInventoryLevelForManySku(\Change\Events\Event $event)
+	{
+		$skuIds = $event->getParam('skuIds');
+		$store = $event->getParam('store');
+		$warehouseId = 0;
+		if ($this->getDisableMovement())
 		{
-			$store = $this->getContext()->getWebStore();
+			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+			$query->andPredicates($query->in('sku', $skuIds), $query->eq('warehouse', $warehouseId));
+			$dbQueryBuilder = $query->dbQueryBuilder();
+			$fb = $dbQueryBuilder->getFragmentBuilder();
+			$docTable = $query->getTableAliasName();
+			$level = $fb->alias($fb->getDocumentColumn('level', $docTable), 'level');
+			$dbQueryBuilder->addColumn($level);
+			$result = $dbQueryBuilder->query()->getFirstResult();
+			$level = intval($result['level']);
+			$movement = 0;
+		}
+		else
+		{
+			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+			$query->andPredicates($query->in('sku', $skuIds), $query->eq('warehouse', $warehouseId));
+			$dbQueryBuilder = $query->dbQueryBuilder();
+			$fb = $dbQueryBuilder->getFragmentBuilder();
+
+			$docTable = $query->getTableAliasName();
+			$mvtTable = $fb->table('rbs_stock_dat_mvt');
+
+			$dbQueryBuilder->leftJoin($mvtTable, $fb->logicAnd(
+				$fb->eq($fb->getDocumentColumn('sku', $docTable), $fb->column('sku_id', $mvtTable)),
+				$fb->eq($fb->getDocumentColumn('warehouse', $docTable), $fb->column('warehouse_id', $mvtTable))
+			));
+			$sum = $fb->alias($fb->sum($fb->column('movement', $mvtTable)), 'movement');
+			$level = $fb->alias($fb->getDocumentColumn('level', $docTable), 'level');
+			$dbQueryBuilder->addColumn($level);
+			$dbQueryBuilder->addColumn($sum);
+			$result = $dbQueryBuilder->query()->getFirstResult();
+			$level = intval($result['level']);
+			$movement = intval($result['movement']);
 		}
 
-		if ($store)
+
+		if (!$this->getDisableReservation())
 		{
-			$storeId = ($store instanceof \Change\Documents\AbstractDocument) ? $store->getId() : intval($store);
-			return $level + $movement - $this->getReservedQuantity($skusId, $storeId);
+			if ($store === null)
+			{
+				$store = $this->getContext()->getWebStore();
+			}
+
+			if ($store)
+			{
+				$storeId = ($store instanceof \Change\Documents\AbstractDocument) ? $store->getId() : intval($store);
+				$event->setParam('level',  $level + $movement
+					- $this->getReservedQuantity($skuIds, $storeId, $event->getApplicationServices()->getDbProvider()));
+				return;
+			}
 		}
-		return $level + $movement;
+		$event->setParam('level',$level + $movement);
 	}
 
 	/**
@@ -674,18 +981,17 @@ class StockManager
 
 	/**
 	 * @api
-	 * @param \Rbs\Stock\Documents\Sku[] $skus
+	 * @param \Rbs\Stock\Documents\Sku[] $skuArray
 	 * @param integer|\Rbs\Store\Documents\WebStore $store
 	 * @param integer $level
 	 * @return string
 	 */
-	public function getInventoryThresholdForManySku($skus, $store = null, $level = null)
+	public function getInventoryThresholdForManySku($skuArray, $store = null, $level = null)
 	{
 		if ($level === null)
 		{
-			$level = $this->getInventoryLevelForManySku($skus, $store);
+			$level = $this->getInventoryLevelForManySku($skuArray, $store);
 		}
-
 		return $level > 0 ? static::THRESHOLD_AVAILABLE : static::THRESHOLD_UNAVAILABLE;
 	}
 
@@ -699,18 +1005,30 @@ class StockManager
 	{
 		if ($threshold)
 		{
-			$cm = $this->getCollectionManager();
-			$collection = $cm->getCollection('Rbs_Stock_Collection_Threshold');
-			if ($collection)
-			{
-				$item = $collection->getItemByValue($threshold);
-				if ($item)
-				{
-					return $item->getTitle();
-				}
-			}
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['threshold' => $threshold, 'title' => null]);
+			$em->trigger('getInventoryThresholdTitle', $this, $args);
+			return $args['title'];
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetInventoryThresholdTitle(\Change\Events\Event $event)
+	{
+		$threshold = $event->getParam('threshold');
+		$cm = $event->getApplicationServices()->getCollectionManager();
+		$collection = $cm->getCollection('Rbs_Stock_Collection_Threshold');
+		if ($collection)
+		{
+			$item = $collection->getItemByValue($threshold);
+			if ($item)
+			{
+				$event->setParam('title', $item->getTitle()) ;
+			}
+		}
 	}
 
 	/**
@@ -723,9 +1041,32 @@ class StockManager
 	 */
 	public function setReservations($targetIdentifier, array $reservations)
 	{
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['targetIdentifier' => $targetIdentifier, 'reservations' => $reservations, 'unReservable' => []]);
+			$em->trigger('setReservations', $this, $args);
+			if (is_array( $args['unReservable']))
+			{
+				return $args['unReservable'];
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultSetReservations(\Change\Events\Event $event)
+	{
+		$targetIdentifier = $event->getParam('targetIdentifier');
+		/** @var $reservations \Rbs\Stock\Interfaces\Reservation[] */
+		$reservations = $event->getParam('reservations');
 		$date = new \DateTime();
-		$transactionManager = $this->getTransactionManager();
-		$result = array();
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
+		$dbProvider = $event->getApplicationServices()->getDbProvider();
+		$unReservable = [];
 		try
 		{
 			$transactionManager->begin();
@@ -738,7 +1079,7 @@ class StockManager
 				$sku = $this->getSkuByCode($reservation->getCodeSku());
 				if (!$sku)
 				{
-					$result[] = $reservation;
+					$unReservable[] = $reservation;
 					continue;
 				}
 
@@ -757,7 +1098,7 @@ class StockManager
 					}
 					if ($level < $reservation->getQuantity())
 					{
-						$result[] = $reservation;
+						$unReservable[] = $reservation;
 						if ($reservation instanceof \Rbs\Commerce\Cart\CartReservation)
 						{
 							$reservation->setQuantityNotReserved($reservation->getQuantity() - $level);
@@ -769,13 +1110,13 @@ class StockManager
 				if ($currentReservation instanceof \Rbs\Stock\Std\Reservation)
 				{
 					$currentReservation->setQuantity($reservation->getQuantity());
-					$this->updateReservation($currentReservation, $date);
+					$this->updateReservation($currentReservation, $date, $dbProvider);
 				}
 				else
 				{
 					$currentReservation = (new \Rbs\Stock\Std\Reservation())->fromReservation($reservation);
 					$currentReservation->setSkuId($sku->getId());
-					$this->insertReservation($targetIdentifier, $currentReservation, $date);
+					$this->insertReservation($targetIdentifier, $currentReservation, $date, $dbProvider);
 				}
 			}
 
@@ -788,7 +1129,7 @@ class StockManager
 
 				if ($res instanceof \Rbs\Stock\Std\Reservation)
 				{
-					$this->deleteReservationById($res->getId());
+					$this->deleteReservationById($res->getId(), $dbProvider);
 				}
 			}
 			$transactionManager->commit();
@@ -797,28 +1138,27 @@ class StockManager
 		{
 			throw $transactionManager->rollBack($e);
 		}
-		return $result;
+		$event->setParam('unReservable', $unReservable);
 	}
 
 	/**
 	 * @param integer | integer[] $skuId
 	 * @param integer $storeId
+	 * @param \Change\Db\DbProvider $dbProvider
 	 * @return integer
 	 */
-	protected function getReservedQuantity($skuId, $storeId)
+	protected function getReservedQuantity($skuId, $storeId, $dbProvider)
 	{
-
 		if (is_array($skuId))
 		{
 			if (count($skuId) > 1)
 			{
-				return $this->getReservedQuantityByArray($skuId, $storeId);
+				return $this->getReservedQuantityByArray($skuId, $storeId, $dbProvider);
 			}
 			$skuId = $skuId[0];
 		}
 
-		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservedQuantity');
-
+		$qb = $dbProvider->getNewQueryBuilder('stock::getReservedQuantity');
 		if (!$qb->isCached())
 		{
 
@@ -843,11 +1183,12 @@ class StockManager
 	/**
 	 * @param integer[] $skuIds
 	 * @param integer $storeId
+	 * @param \Change\Db\DbProvider $dbProvider
 	 * @return integer
 	 */
-	protected function getReservedQuantityByArray($skuIds, $storeId)
+	protected function getReservedQuantityByArray($skuIds, $storeId, $dbProvider)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservedQuantityByArray');
+		$qb = $dbProvider->getNewQueryBuilder('stock::getReservedQuantityByArray');
 
 		$fb = $qb->getFragmentBuilder();
 		$resTable = $fb->table('rbs_stock_dat_res');
@@ -873,7 +1214,27 @@ class StockManager
 	 */
 	public function getReservationsInfosBySkuGroupByStoreAndStatus($sku)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservationsInfosBySkuGroupByStore');
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['sku' => $sku, 'reservations' => []]);
+			$em->trigger('getReservationsInfosBySkuGroupByStoreAndStatus', $this, $args);
+			if (is_array($args['reservations']))
+			{
+				return $args['reservations'];
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultGetReservationsInfosBySkuGroupByStoreAndStatus(\Change\Events\Event $event)
+	{
+		$sku = $event->getParam('sku');
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder('stock::getReservationsInfosBySkuGroupByStore');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -894,17 +1255,19 @@ class StockManager
 		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
 		$query->bindParameter('skuId', $skuId);
 
-		return $query->getResults($query->getRowsConverter()->addIntCol('store_id', 'count', 'reservation')->addBoolCol('confirmed'));
+		$reservations = $query->getResults($query->getRowsConverter()->addIntCol('store_id', 'count', 'reservation')->addBoolCol('confirmed'));
+		$event->setParam('reservations', $reservations);
 	}
 
 	/**
 	 * @param string $targetIdentifier
 	 * @param \Rbs\Stock\Std\Reservation $reservation
 	 * @param \DateTime $date
+	 * @param \Change\Db\DbProvider $dbProvider
 	 */
-	protected function insertReservation($targetIdentifier, \Rbs\Stock\Std\Reservation $reservation, \DateTime $date)
+	protected function insertReservation($targetIdentifier, \Rbs\Stock\Std\Reservation $reservation, \DateTime $date, $dbProvider)
 	{
-		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::insertReservation');
+		$qb = $dbProvider->getNewStatementBuilder('stock::insertReservation');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -928,10 +1291,11 @@ class StockManager
 	/**
 	 * @param \Rbs\Stock\Std\Reservation $reservation
 	 * @param \DateTime $date
+	 * @param \Change\Db\DbProvider $dbProvider
 	 */
-	protected function updateReservation(\Rbs\Stock\Std\Reservation $reservation, \DateTime $date)
+	protected function updateReservation(\Rbs\Stock\Std\Reservation $reservation, \DateTime $date, $dbProvider)
 	{
-		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::updateReservation');
+		$qb = $dbProvider->getNewStatementBuilder('stock::updateReservation');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -949,10 +1313,11 @@ class StockManager
 
 	/**
 	 * @param integer $reservationId
+	 * @param \Change\Db\DbProvider $dbProvider
 	 */
-	protected function deleteReservationById($reservationId)
+	protected function deleteReservationById($reservationId, $dbProvider)
 	{
-		$qb = $this->getDbProvider()->getNewStatementBuilder('stock::deleteReservationById');
+		$qb = $dbProvider->getNewStatementBuilder('stock::deleteReservationById');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -971,7 +1336,27 @@ class StockManager
 	 */
 	public function getReservationsByTarget($targetIdentifier)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder('stock::getReservations');
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['targetIdentifier' => $targetIdentifier, 'reservations' => []]);
+			$em->trigger('getReservationsByTarget', $this, $args);
+			if (is_array($args['reservations']))
+			{
+				return $args['reservations'];
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetReservationsByTarget(\Change\Events\Event $event)
+	{
+		$targetIdentifier = $event->getParam('targetIdentifier');
+
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder('stock::getReservations');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -988,9 +1373,10 @@ class StockManager
 		$query->bindParameter('targetIdentifier', $targetIdentifier);
 		$rows = $query->getResults($query->getRowsConverter()->addIntCol('id', 'store_id', 'sku_id')
 			->addNumCol('reservation')->addStrCol('sku_code'));
+
 		if (count($rows))
 		{
-			return array_map(function (array $row)
+			$reservations = array_map(function (array $row)
 			{
 				return (new \Rbs\Stock\Std\Reservation($row['id']))
 					->setCodeSku($row['sku_code'])
@@ -998,8 +1384,8 @@ class StockManager
 					->setSkuId($row['sku_id'])
 					->setWebStoreId($row['store_id']);
 			}, $rows);
+			$event->setParam('reservations', $reservations);
 		}
-		return array();
 	}
 
 	/**
@@ -1010,11 +1396,26 @@ class StockManager
 	 */
 	public function cleanupReservations($targetIdentifier)
 	{
-		$transactionManager = $this->getTransactionManager();
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['targetIdentifier' => $targetIdentifier]);
+			$em->trigger('cleanupReservations', $this, $args);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultCleanupReservations(\Change\Events\Event $event)
+	{
+		$targetIdentifier = $event->getParam('targetIdentifier');
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
-			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::cleanupReservations');
+			$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::cleanupReservations');
 			if (!$qb->isCached())
 			{
 				$fb = $qb->getFragmentBuilder();
@@ -1047,11 +1448,26 @@ class StockManager
 	 */
 	public function unsetReservations($targetIdentifier)
 	{
-		$transactionManager = $this->getTransactionManager();
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['targetIdentifier' => $targetIdentifier]);
+			$em->trigger('unsetReservations', $this, $args);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultUnsetReservations(\Change\Events\Event $event)
+	{
+		$targetIdentifier = $event->getParam('targetIdentifier');
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
-			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::unsetReservations');
+			$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::unsetReservations');
 			if (!$qb->isCached())
 			{
 				$fb = $qb->getFragmentBuilder();
@@ -1078,11 +1494,28 @@ class StockManager
 	 */
 	public function confirmReservations($targetIdentifier, $confirmedTargetIdentifier = null)
 	{
-		$transactionManager = $this->getTransactionManager();
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['targetIdentifier' => $targetIdentifier,
+				'confirmedTargetIdentifier' => $confirmedTargetIdentifier]);
+			$em->trigger('confirmReservations', $this, $args);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultConfirmReservations(\Change\Events\Event $event)
+	{
+		$targetIdentifier = $event->getParam('targetIdentifier');
+		$confirmedTargetIdentifier = $event->getParam('confirmedTargetIdentifier');
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
-			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::confirmReservations');
+			$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::confirmReservations');
 			if (!$qb->isCached())
 			{
 				$fb = $qb->getFragmentBuilder();
@@ -1112,11 +1545,28 @@ class StockManager
 	 */
 	public function transferReservations($fromTargetIdentifier, $toTargetIdentifier)
 	{
-		$transactionManager = $this->getTransactionManager();
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['fromTargetIdentifier' => $fromTargetIdentifier,
+				'toTargetIdentifier' => $toTargetIdentifier]);
+			$em->trigger('transferReservations', $this, $args);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultTransferReservations(\Change\Events\Event $event)
+	{
+		$fromTargetIdentifier = $event->getParam('fromTargetIdentifier');
+		$toTargetIdentifier = $event->getParam('toTargetIdentifier');
+		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
-			$qb = $this->getDbProvider()->getNewStatementBuilder('stock::transferReservations');
+			$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::transferReservations');
 			if (!$qb->isCached())
 			{
 				$fb = $qb->getFragmentBuilder();
@@ -1145,14 +1595,34 @@ class StockManager
 	 */
 	public function decrementReservation($targetIdentifier, $sku, $quantity)
 	{
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['targetIdentifier' => $targetIdentifier,
+				'sku' => $sku, 'quantity' => $quantity]);
+			$em->trigger('decrementReservation', $this, $args);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultDecrementReservation(\Change\Events\Event $event)
+	{
+		$targetIdentifier = $event->getParam('targetIdentifier');
+		$sku = $event->getParam('sku');
+		$quantity = $event->getParam('quantity');
+		$appSrv = $event->getApplicationServices();
+		$transactionManager = $appSrv->getTransactionManager();
+		$dbProvider = $appSrv->getDbProvider();
 		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : $sku;
-		$transactionManager = $this->getTransactionManager();
 		try
 		{
 			$transactionManager->begin();
 
 			//get the current reservation
-			$qb = $this->getDbProvider()->getNewQueryBuilder('stock::decrementReservationSelect');
+			$qb = $dbProvider->getNewQueryBuilder('stock::decrementReservationSelect');
 			if (!$qb->isCached())
 			{
 				$fb = $qb->getFragmentBuilder();
@@ -1181,7 +1651,7 @@ class StockManager
 					$newReservation = 0;
 				}
 
-				$qb = $this->getDbProvider()->getNewStatementBuilder('stock::decrementReservationUpdate');
+				$qb = $dbProvider->getNewStatementBuilder('stock::decrementReservationUpdate');
 				if (!$qb->isCached())
 				{
 					$fb = $qb->getFragmentBuilder();
@@ -1217,7 +1687,37 @@ class StockManager
 	 */
 	public function getReservationsBySku($sku, $store = null, $limit= null, $offset = null, $orderCol = null, $orderSort = null)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['sku' => $sku, 'store' => $store,
+				'limit' => $limit, 'offset' => $offset, 'orderCol' => $orderCol, 'orderSort' => $orderSort,
+				'reservations' => []]);
+			$em->trigger('getReservationsBySku', $this, $args);
+			if (is_array($args['reservations']))
+			{
+				return $args['reservations'];
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetReservationsBySku(\Change\Events\Event $event)
+	{
+		$sku = $event->getParam('sku');
+		$store = $event->getParam('store');
+		$limit = $event->getParam('limit');
+		$offset = $event->getParam('offset');
+		$orderCol = $event->getParam('orderCol');
+		$orderSort = $event->getParam('orderSort');
+
+		$appSrv = $event->getApplicationServices();
+		$dbProvider = $appSrv->getDbProvider();
+
+		$qb = $dbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$qb->select($fb->column('reservation'), $fb->column('store_id'), $fb->column('date'), $fb->column('target'),
 			$fb->column('confirmed')); //
@@ -1260,7 +1760,8 @@ class StockManager
 			$query->setStartIndex($offset);
 		}
 
-		return $queryResult = $query->getResults();
+		$queryResult = $query->getResults();
+		$event->setParam('reservations', $queryResult);
 	}
 
 	/**
@@ -1271,13 +1772,32 @@ class StockManager
 	 */
 	public function countReservationsBySku($sku, $store = null)
 	{
+		if (!$this->getDisableReservation())
+		{
+			$em = $this->getEventManager();
+			$args = $em->prepareArgs(['sku' => $sku, 'store' => $store,
+				'count' => 0]);
+			$em->trigger('countReservationsBySku', $this, $args);
+			return $args['count'];
+		}
+		return 0;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultCountReservationsBySku(\Change\Events\Event $event)
+	{
+		$sku = $event->getParam('sku');
+		$store = $event->getParam('store');
+
 		$key = 'stock::countReservationsBySku';
 		if ($store !== null)
 		{
 			$key = 'stock::countReservationsBySkuAndStore';
 		}
 
-		$qb = $this->getDbProvider()->getNewQueryBuilder($key);
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder($key);
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -1304,11 +1824,8 @@ class StockManager
 		}
 
 		$count = $query->getFirstResult($query->getRowsConverter()->addIntCol('rowCount')->singleColumn('rowCount'));
-
-		return $count;
+		$event->setParam('count', $count);
 	}
-
-	protected $skuIds = array();
 
 	/**
 	 * @api
@@ -1321,24 +1838,41 @@ class StockManager
 		{
 			return null;
 		}
+
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['code' => $code, 'sku' => null]);
+		$em->trigger('getSkuByCode', $this, $args);
+		return $args['sku'];
+	}
+
+	protected $skuIds = [];
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetSkuByCode(\Change\Events\Event $event)
+	{
+		$code = $event->getParam('code');
+
 		if (array_key_exists($code, $this->skuIds))
 		{
 			$skuId = $this->skuIds[$code];
 			if (is_int($skuId))
 			{
-				return $this->getDocumentManager()->getDocumentInstance($skuId);
+				$sku = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($skuId);
+				$event->setParam('sku', $sku);
 			}
-			return null;
+			return;
 		}
 
-		$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
 		$query->andPredicates($query->eq('code', $code));
 		$sku = $query->getFirstDocument();
 		if ($sku)
 		{
 			$this->skuIds[$code] =  $sku->getId();
+			$event->setParam('sku', $sku);
 		}
-		return $sku;
 	}
 
 	/**
@@ -1365,7 +1899,22 @@ class StockManager
 	 */
 	public function getProductAvailability($product, $warehouse = null)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder('getProductAvailability');
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['product' => $product, 'warehouse' => $warehouse,
+			'availability' => false]);
+		$em->trigger('getProductAvailability', $this, $args);
+		return ($args['availability'] == true);
+
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetProductAvailability(\Change\Events\Event $event)
+	{
+		$product = $event->getParam('product');
+		$warehouse = $event->getParam('warehouse');
+		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder('getProductAvailability');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -1387,18 +1936,20 @@ class StockManager
 		$sq->bindParameter('warehouseId', $warehouseId);
 
 		$availability = $sq->getFirstResult($sq->getRowsConverter()->addIntCol('availability')->singleColumn('availability'));
-		return $availability ? true : false;
+
+		$event->setParam('availability', $availability ? true : false);
 	}
 
 	/**
 	 * @api
+	 * @param \Change\Db\DbProvider $dDbProvider
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $productSQLFragment
 	 * @param \Change\Db\Query\Expressions\AbstractExpression|null $warehouseSQLFragment
 	 * @return \Change\Db\Query\Predicates\Exists
 	 */
-	public function getProductAvailabilityRestriction($productSQLFragment, $warehouseSQLFragment = null)
+	public function getProductAvailabilityRestriction($dDbProvider, $productSQLFragment, $warehouseSQLFragment = null)
 	{
-		$qb = $this->getDbProvider()->getNewQueryBuilder();
+		$qb = $dDbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
 		$tableIdt = $fb->identifier('rbs_stock_dat_availability');
 		$qb->select($fb->allColumns())
