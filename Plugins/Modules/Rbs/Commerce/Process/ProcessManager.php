@@ -682,83 +682,9 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		$order = $event->getParam('order', null);
 		if ($order != null)
 		{
-			// Send mail to confirm the order creation
-			$webstore = $order->getWebStoreIdInstance();
-			if ($webstore)
-			{
-				$orderProcess = $webstore->getOrderProcess();
-				if ($orderProcess)
-				{
-					if ($orderProcess->getSendMailOrderConfirm())
-					{
-						$context = $order->getContext();
-						$transactionId = $context->get('transactionId');
-
-						$documentManager = $event->getApplicationServices()->getDocumentManager();
-
-						/** @var \Rbs\Payment\Documents\Transaction $transaction */
-						$transaction = $documentManager->getDocumentInstance($transactionId);
-						if ($transaction)
-						{
-							$contextData = $transaction->getContextData();
-							if (isset($contextData['websiteId']) && isset($contextData['LCID']))
-							{
-								/** @var $website \Rbs\Website\Documents\Website */
-								$website = $documentManager->getDocumentInstance($contextData['websiteId']);
-
-								if ($website)
-								{
-									$owner = $order->getOwnerIdInstance();
-									$fullName = '';
-									if ($owner instanceof \Rbs\User\Documents\User)
-									{
-										// Get Fullname
-										$profileManager = $event->getApplicationServices()->getProfileManager();
-										$u = new \Rbs\User\Events\AuthenticatedUser($owner);
-										$profile = $profileManager->loadProfile($u, 'Rbs_User');
-										$fullName = $profile->getPropertyValue('fullName');
-										if ($fullName)
-										{
-											$fullName = ' ' . $fullName;
-										}
-									}
-
-									// Send email to confirm creation
-									$LCID = $contextData['LCID'];
-
-									$documentManager->pushLCID($LCID);
-
-									/* @var \Rbs\Generic\GenericServices $genericServices */
-									$genericServices = $event->getServices('genericServices');
-									$mailManager = $genericServices->getMailManager();
-									try
-									{
-										$commerceServices = $event->getServices('commerceServices');
-										if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
-										{
-											$pm = $commerceServices->getPriceManager();
-											$currency = $order->getCurrencyCode();
-											$total = $pm->formatValue($order->getPaymentAmountWithTaxes(), $currency);
-										}
-										else
-										{
-											$total = $order->getPaymentAmountWithTaxes();
-										}
-
-										$mailManager->send('rbs_commerce_order_confirmation', $website, $LCID, $order->getEmail(),
-											["website" => $website->getTitle(), "fullname" => $fullName, "total" => $total, "orderCode" => $order->getCode(), "orderId" => $order->getId()]);
-									}
-									catch (\RuntimeException $e)
-									{
-										$event->getApplicationServices()->getLogging()->info($e);
-									}
-									$documentManager->popLCID();
-								}
-							}
-						}
-					}
-				}
-			}
+			$jobManager = $event->getApplicationServices()->getJobManager();
+			$argument = ['notificationName' => 'rbs_commerce_order_confirmation', 'targetId' => $order->getId()];
+			$jobManager->createNewJob('Rbs_Notification_ProcessTransactionalNotification', $argument);
 		}
 	}
 

@@ -146,79 +146,9 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	 */
 	public function sendNotificationMailShipmentUnderPreparation(DocumentEvent $event)
 	{
-		/** @var \Rbs\Order\Documents\Order $order */
-		$order = $this->getOrderIdInstance();
-		if ($order != null)
-		{
-			// Send mail to confirm the order creation
-			$webstore = $order->getWebStoreIdInstance();
-			if ($webstore)
-			{
-				$orderProcess = $webstore->getOrderProcess();
-				if ($orderProcess)
-				{
-					if ($orderProcess->getSendMailShipmentPreparation())
-					{
-						$context = $order->getContext();
-						$transactionId = $context->get('transactionId');
-
-						$documentManager = $event->getApplicationServices()->getDocumentManager();
-
-						/** @var \Rbs\Payment\Documents\Transaction $transaction */
-						$transaction = $documentManager->getDocumentInstance($transactionId);
-						if ($transaction)
-						{
-							$contextData = $transaction->getContextData();
-							if (isset($contextData['websiteId']) && isset($contextData['LCID']))
-							{
-								/** @var $website \Rbs\Website\Documents\Website */
-								$website = $documentManager->getDocumentInstance($contextData['websiteId']);
-
-								if ($website)
-								{
-									$owner = $order->getOwnerIdInstance();
-									$userEmail = $order->getEmail();
-									$fullName = '';
-									if ($owner instanceof \Rbs\User\Documents\User)
-									{
-										// Get Fullname
-										$profileManager = $event->getApplicationServices()->getProfileManager();
-										$u = new \Rbs\User\Events\AuthenticatedUser($owner);
-										$profile = $profileManager->loadProfile($u, 'Rbs_User');
-										$fullName = $profile->getPropertyValue('fullName');
-										if ($fullName)
-										{
-											$fullName = ' ' . $fullName;
-										}
-
-										$userEmail = $owner->getEmail();
-									}
-
-									// Send email to confirm creation
-									$LCID = $contextData['LCID'];
-
-									$documentManager->pushLCID($LCID);
-
-									/* @var \Rbs\Generic\GenericServices $genericServices */
-									$genericServices = $event->getServices('genericServices');
-									$mailManager = $genericServices->getMailManager();
-									try
-									{
-										$mailManager->send('rbs_commerce_order_shipment_under_preparation', $website, $LCID, $userEmail,
-											["website" => $website->getTitle(), "fullname" => $fullName, "orderCode" => $order->getCode(), "orderId" => $order->getId(), "shipmentCode" => $this->getCode(), "shipmentId" => $this->getId()]);
-									}
-									catch (\RuntimeException $e)
-									{
-										$event->getApplicationServices()->getLogging()->info($e);
-									}
-									$documentManager->popLCID();
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		$jobManager = $event->getApplicationServices()->getJobManager();
+		$argument = ['notificationName' => 'rbs_commerce_order_shipment_under_preparation', 'targetId' => $this->getId()];
+		$jobManager->createNewJob('Rbs_Notification_ProcessTransactionalNotification', $argument);
 	}
 
 	/**
@@ -226,81 +156,8 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	 */
 	public function sendNotificationMailShipmentFinalized(DocumentEvent $event)
 	{
-		if ($this->getPrepared() && $this->isPropertyModified('prepared'))
-		{
-			/** @var \Rbs\Order\Documents\Order $order */
-			$order = $this->getOrderIdInstance();
-			if ($order != null)
-			{
-				// Send mail to confirm the order creation
-				$webstore = $order->getWebStoreIdInstance();
-				if ($webstore)
-				{
-					$orderProcess = $webstore->getOrderProcess();
-					if ($orderProcess)
-					{
-						if ($orderProcess->getSendMailShipmentFinalized())
-						{
-							$context = $order->getContext();
-							$transactionId = $context->get('transactionId');
-
-							$documentManager = $event->getApplicationServices()->getDocumentManager();
-
-							/** @var \Rbs\Payment\Documents\Transaction $transaction */
-							$transaction = $documentManager->getDocumentInstance($transactionId);
-							if ($transaction)
-							{
-								$contextData = $transaction->getContextData();
-								if (isset($contextData['websiteId']) && isset($contextData['LCID']))
-								{
-									/** @var $website \Rbs\Website\Documents\Website */
-									$website = $documentManager->getDocumentInstance($contextData['websiteId']);
-
-									if ($website)
-									{
-										$owner = $order->getOwnerIdInstance();
-										$userEmail = $order->getEmail();
-										$fullName = '';
-										if ($owner instanceof \Rbs\User\Documents\User)
-										{
-											// Get Fullname
-											$profileManager = $event->getApplicationServices()->getProfileManager();
-											$u = new \Rbs\User\Events\AuthenticatedUser($owner);
-											$profile = $profileManager->loadProfile($u, 'Rbs_User');
-											$fullName = $profile->getPropertyValue('fullName');
-											if ($fullName)
-											{
-												$fullName = ' ' . $fullName;
-											}
-
-											$userEmail = $owner->getEmail();
-										}
-
-										// Send email to confirm creation
-										$LCID = $contextData['LCID'];
-
-										$documentManager->pushLCID($LCID);
-
-										/* @var \Rbs\Generic\GenericServices $genericServices */
-										$genericServices = $event->getServices('genericServices');
-										$mailManager = $genericServices->getMailManager();
-										try
-										{
-											$mailManager->send('rbs_commerce_order_shipment_sent', $website, $LCID, $userEmail,
-												["website" => $website->getTitle(), "fullname" => $fullName, "orderCode" => $order->getCode(), "orderId" => $order->getId(), "shipmentCode" => $this->getCode(), "shipmentId" => $this->getId()]);
-										}
-										catch (\RuntimeException $e)
-										{
-											$event->getApplicationServices()->getLogging()->info($e);
-										}
-										$documentManager->popLCID();
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		$jobManager = $event->getApplicationServices()->getJobManager();
+		$argument = ['notificationName' => 'rbs_commerce_order_shipment_sent', 'targetId' => $this->getId()];
+		$jobManager->createNewJob('Rbs_Notification_ProcessTransactionalNotification', $argument);
 	}
 }
