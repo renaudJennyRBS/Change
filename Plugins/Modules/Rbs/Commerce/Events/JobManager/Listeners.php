@@ -119,6 +119,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Stock\Job\UpdateProductAvailability())->execute($event);
 		};
 		$events->attach('process_Rbs_Stock_UpdateProductAvailability', $callBack, 5);
+
+		$callBack = function ($event)
+		{
+			(new \Rbs\Commerce\Job\ProcessTransactionalNotification())->execute($event);
+		};
+		$events->attach('process_Rbs_Notification_ProcessTransactionalNotification', $callBack, 5);
 	}
 
 	/**
