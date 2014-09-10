@@ -1,8 +1,8 @@
 <script type="text/javascript">
-	window.__change.RbsElasticsearchFacet = {
-		"parameters" : {{ parameters.toArray() | json_encode | raw }},
-		"facetValues" : [{% for facetValue in facetValues %}{{ facetValue.toArray | json_encode | raw }}{% if loop.last == false %},{% endif %}{% endfor %}]
-	};
+window.__change.RbsElasticsearchFacet = {
+	"parameters" : {{ parameters.toArray() | json_encode | raw }},
+	"facetValues" : [{% for facetValue in facetValues %}{{ facetValue.toArray | json_encode | raw }}{% if loop.last == false %},{% endif %}{% endfor %}]
+};
 </script>
 
 <script type="text/ng-template" id="/rbsElasticsearchFacetValues.tpl">
@@ -10,9 +10,9 @@
 	<h5 data-ng-show="facet.parent" style="margin: 0">(= facet.title =)</h5>
 	<ol class="list-unstyled" style="margin-bottom: 10px;margin-left: 5px">
 		<li data-ng-repeat="value in facet.values"><div class="checkbox"><label>
-			<input type="checkbox" data-ng-model="value.selected" />
-			(= value.title =) <span class="badge" data-ng-show="value.value">(= value.value =)</span>
-		</label></div>
+			<input type="checkbox" data-ng-model="value.selected" data-ng-change="selectionChange(value)" />
+				(= value.title =) <span class="badge" data-ng-show="value.value">(= value.value =)</span>
+			</label></div>
 			<div data-ng-if="value.aggregationValues" style="padding-left: 10px">
 				<div data-ng-repeat="aggregationValues in value.aggregationValues">
 					<div data-ng-show="aggregationValues.values" data-rbs-elasticsearch-facet="" data-facet="aggregationValues"></div>

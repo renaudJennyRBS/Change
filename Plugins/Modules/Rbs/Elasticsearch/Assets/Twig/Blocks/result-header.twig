@@ -1,0 +1,37 @@
+<div data-ng-controller="RbsElasticsearchResultController">
+	{% if parameters.searchText %}
+		{% if resultCounts.total == 0 %}
+			<p>{{ i18n('m.rbs.elasticsearch.front.no_result_for_search', ['ucf'], {TEXT: parameters.searchText })|raw }}</p>
+		{% elseif resultCounts.total == 1 %}
+			<p>{{ i18n('m.rbs.elasticsearch.front.one_result_for_search', ['ucf'], {TEXT: parameters.searchText })|raw }}</p>
+		{% else %}
+			<p>{{ i18n('m.rbs.elasticsearch.front.several_results_for_search', ['ucf'], {TOTAL: resultCounts.total, TEXT: parameters.searchText })|raw }}</p>
+		{% endif %}
+		<ul class="nav nav-tabs" role="tablist">
+			<li{% if isProductPage %} class="active"{% endif %}>
+				<a href="{{ canonicalURL(parameters.productResultsPage, {searchText: parameters.searchText}) }}">
+					{% if resultCounts.products == 0 %}
+						{{ i18n('m.rbs.elasticsearch.front.no_product')|raw }}
+					{% elseif resultCounts.products == 1 %}
+						{{ i18n('m.rbs.elasticsearch.front.one_product')|raw }}
+					{% else %}
+						{{ i18n('m.rbs.elasticsearch.front.several_products', [], {TOTAL: resultCounts.products})|raw }}
+					{% endif %}
+				</a>
+			</li>
+			<li{% if isOtherPage %} class="active"{% endif %}>
+				<a href="{{ canonicalURL(parameters.otherResultsPage, {searchText: parameters.searchText}) }}">
+					{% if resultCounts.others == 0 %}
+						{{ i18n('m.rbs.elasticsearch.front.no_other')|raw }}
+					{% elseif resultCounts.others == 1 %}
+						{{ i18n('m.rbs.elasticsearch.front.one_other')|raw }}
+					{% else %}
+						{{ i18n('m.rbs.elasticsearch.front.several_others', [], {TOTAL: resultCounts.others})|raw }}
+					{% endif %}
+				</a>
+			</li>
+		</ul>
+	{% else %}
+		<p>{{ i18n('m.rbs.elasticsearch.front.sepecify_search_text', ['ucf']) }}</p>
+	{% endif %}
+</div>

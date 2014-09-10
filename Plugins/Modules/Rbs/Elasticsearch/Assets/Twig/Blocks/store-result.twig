@@ -8,14 +8,35 @@
 </script>
 
 {% if parameters.showOrdering %}
-	<ul class="nav nav-pills">
-		{% set paramName = 'sortBy-facet' %}
-		<li {% if parameters.sortBy == null %}class="active"{% endif %}><a href="{{ currentURL({(paramName): null}) }}">{{ i18n('m.rbs.catalog.front.sort_default', ['ucf']) }}</a></li>
-		<li {% if parameters.sortBy == 'price.asc' %}class="active"{% endif %}><a href="{{ currentURL({(paramName):'price.asc'}) }}">{{ i18n('m.rbs.catalog.front.sort_price_asc', ['ucf']) }}</a></li>
-		<li {% if parameters.sortBy == 'price.desc' %}class="active"{% endif %}><a href="{{ currentURL({(paramName):'price.desc'}) }}">{{ i18n('m.rbs.catalog.front.sort_price_desc', ['ucf']) }}</a></li>
-		<li {% if parameters.sortBy == 'dateAdded.desc' %}class="active"{% endif %}><a href="{{ currentURL({(paramName):'dateAdded.desc'}) }}">{{ i18n('m.rbs.catalog.front.sort_date_added_desc', ['ucf']) }}</a></li>
-		<li {% if parameters.sortBy == 'title.asc' %}class="active"{% endif %}><a href="{{ currentURL({(paramName):'title.asc'}) }}">{{ i18n('m.rbs.catalog.front.sort_title_asc', ['ucf']) }}</a></li>
-	</ul>
+	<div class="input-group result-sorting-method">
+		<span class="input-group-addon">
+			{{ i18n('m.rbs.catalog.front.sort', ['ucf']) }}
+		</span>
+		<div class="input-group-btn">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				{% if parameters.sortBy == null %}
+					{{ i18n('m.rbs.catalog.front.sort_default', ['ucf']) }}
+				{% elseif parameters.sortBy == 'price.asc' %}
+					{{ i18n('m.rbs.catalog.front.sort_price_asc', ['ucf']) }}
+				{% elseif parameters.sortBy == 'price.desc' %}
+					{{ i18n('m.rbs.catalog.front.sort_price_desc', ['ucf']) }}
+				{% elseif parameters.sortBy == 'dateAdded.desc' %}
+					{{ i18n('m.rbs.catalog.front.sort_date_added_desc', ['ucf']) }}
+				{% elseif parameters.sortBy == 'title.asc' %}
+					{{ i18n('m.rbs.catalog.front.sort_title_asc', ['ucf']) }}
+				{% endif %}
+				<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu" role="menu">
+				{% set paramName = 'sortBy-facet' %}
+				<li><a href="{{ currentURL({(paramName): null}) }}">{{ i18n('m.rbs.catalog.front.sort_default', ['ucf']) }}</a></li>
+				<li><a href="{{ currentURL({(paramName):'price.asc'}) }}">{{ i18n('m.rbs.catalog.front.sort_price_asc', ['ucf']) }}</a></li>
+				<li><a href="{{ currentURL({(paramName):'price.desc'}) }}">{{ i18n('m.rbs.catalog.front.sort_price_desc', ['ucf']) }}</a></li>
+				<li><a href="{{ currentURL({(paramName):'dateAdded.desc'}) }}">{{ i18n('m.rbs.catalog.front.sort_date_added_desc', ['ucf']) }}</a></li>
+				<li><a href="{{ currentURL({(paramName):'title.asc'}) }}">{{ i18n('m.rbs.catalog.front.sort_title_asc', ['ucf']) }}</a></li>
+			</ul>
+		</div>
+	</div>
 {% endif %}
 
 {% spaceless %}

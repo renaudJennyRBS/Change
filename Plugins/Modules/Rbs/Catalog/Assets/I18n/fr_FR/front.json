@@ -50,6 +50,9 @@
 	"select_variant":{
 		"message":"choisissez une variante"
 	},
+	"sort":{
+		"message":"tri"
+	},
 	"sort_default":{
 		"message":"Par défaut"
 	},

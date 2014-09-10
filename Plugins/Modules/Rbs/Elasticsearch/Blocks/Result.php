@@ -33,6 +33,7 @@ class Result extends Block
 		$parameters->addParameterMeta('itemsPerPage', 20);
 		$parameters->addParameterMeta('pageNumber', 1);
 		$parameters->addParameterMeta('facetFilters', null);
+		$parameters->addParameterMeta('excludeProducts', true);
 		$parameters->setNoCache();
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
@@ -75,7 +76,7 @@ class Result extends Block
 		$searchText = $request->getQuery('searchText');
 		if ($searchText && is_string($searchText))
 		{
-			$parameters->setParameterValue('searchText', $searchText);
+			$parameters->setParameterValue('searchText', trim($searchText));
 			$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 		}
 		return $parameters;
@@ -94,6 +95,7 @@ class Result extends Block
 		}
 		return $genericServices;
 	}
+
 	/**
 	 * @param Parameters $parameters
 	 */
@@ -101,6 +103,7 @@ class Result extends Block
 	{
 		$parameters->setParameterValue('fulltextIndex', 0);
 	}
+
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
 	 * @param Event $event
@@ -123,11 +126,11 @@ class Result extends Block
 
 		/** @var $fullTextIndex \Rbs\Elasticsearch\Documents\FullText */
 		$fullTextIndex = $documentManager->getDocumentInstance($fullTextIndexId, 'Rbs_Elasticsearch_FullText');
-		if (!$fullTextIndex)
+		$searchText = $parameters->getParameter('searchText');
+		if (!$fullTextIndex || !$searchText)
 		{
 			return null;
 		}
-		$searchText = trim($parameters->getParameter('searchText'), '');
 		$allowedSectionIds = $parameters->getParameter('allowedSectionIds');
 
 		$indexManager = $genericServices->getIndexManager();
@@ -146,6 +149,7 @@ class Result extends Block
 			return null;
 		}
 
+		$excludeProducts = $parameters->getParameterValue('excludeProducts');
 		$showModelFacet = $parameters->getParameter('showModelFacet');
 		if ($showModelFacet)
 		{
@@ -162,14 +166,33 @@ class Result extends Block
 		if ($showModelFacet)
 		{
 			$facets = $fullTextIndex->getFacetsDefinition();
+			$filter = null;
 			if (is_array($facetFilters) && count($facetFilters))
 			{
 				$filter = $queryHelper->getFacetsFilter($facets, $facetFilters, []);
-				if ($filter)
-				{
-					$query->setFilter($filter);
-				}
 			}
+
+			if ($excludeProducts)
+			{
+				if (!$filter)
+				{
+					$filter = new \Elastica\Filter\Bool();
+				}
+				$filter->addMustNot($facets[0]->getFiltersQuery(['model' => ['Rbs_Catalog_Product' => '1']], []));
+			}
+
+			if ($filter)
+			{
+				$query->setFilter($filter);
+			}
+			$queryHelper->addFacets($query, $facets);
+		}
+		elseif ($excludeProducts)
+		{
+			$filter = new \Elastica\Filter\Bool();
+			$facets = $fullTextIndex->getFacetsDefinition();
+			$filter->addMustNot($facets[0]->getFiltersQuery(['model' => ['Rbs_Catalog_Product' => '1']], []));
+			$query->setFilter($filter);
 			$queryHelper->addFacets($query, $facets);
 		}
 		else
@@ -237,7 +260,17 @@ class Result extends Block
 			{
 				$queryHelper->applyFacetFilters($facetValues, $facetFilters);
 			}
-			$attributes['facet'] = $facetValues[0];
+
+			$facet = $facetValues[0];
+			$newFacet = new \Rbs\Elasticsearch\Facet\AggregationValues($facet->getFacet());
+			foreach ($facet->getValues() as $value)
+			{
+				if (!$excludeProducts || $value->getKey() !== 'Rbs_Catalog_Product')
+				{
+					$newFacet->addValue($value);
+				}
+			}
+			$attributes['facet'] = $newFacet;
 		}
 		return 'result.twig';
 	}

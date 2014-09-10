@@ -1,4 +1,4 @@
-var app = angular.module('RbsChangeApp', ['ngCookies', 'ngAnimate']);
+var app = angular.module('RbsChangeApp', ['ngCookies', 'ngAnimate', 'ui.bootstrap']);
 app.config(function ($interpolateProvider) {
 	$interpolateProvider.startSymbol('(=').endSymbol('=)');
 });

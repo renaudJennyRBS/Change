@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Proximis
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,22 +22,10 @@ class FacetsInformation extends Information
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
-		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets_label', $ucf));
 
-		$this->addInformationMetaForDetailBlock('Rbs_Catalog_ProductList', $i18nManager);
-
-		$this->addInformationMeta('requiredSearchText', Property::TYPE_BOOLEAN, false, false)
-			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.required_search_text', $ucf));
-
-		$this->addInformationMeta('useCurrentSectionProductList', Property::TYPE_BOOLEAN, false, false)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_use_current', $ucf));
-
-		$this->addInformationMeta('showUnavailable', Property::TYPE_BOOLEAN, false, true)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_unavailable', $ucf));
-
-		$this->addInformationMeta('facets', \Change\Presentation\Blocks\ParameterInformation::TYPE_DOCUMENTIDARRAY)
-			->setAllowedModelsNames('Rbs_Elasticsearch_Facet')
-			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets', $ucf));
+		$this->addInformationMeta('excludeProducts', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_exclude_products', $ucf));
 
 		$this->addTTL(0);
 	}

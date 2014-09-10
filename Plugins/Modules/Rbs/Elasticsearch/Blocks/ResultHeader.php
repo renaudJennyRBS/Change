@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Proximis
+ * Copyright (C) 2014 Ready Business System
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,32 +8,33 @@
  */
 namespace Rbs\Elasticsearch\Blocks;
 
-use Change\Presentation\Blocks\Event;
-use Change\Presentation\Blocks\Parameters;
-use Change\Presentation\Blocks\Standard\Block;
-
 /**
- * @name \Rbs\Elasticsearch\Blocks\Result
+ * @name \Rbs\Elasticsearch\Blocks\ResultHeader
  */
-class Facets extends Block
+class ResultHeader extends \Change\Presentation\Blocks\Standard\Block
 {
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
 	 * Set Block Parameters on $event
-	 * @param Event $event
-	 * @return Parameters
+	 * @param \Change\Presentation\Blocks\Event $event
+	 * @return \Change\Presentation\Blocks\Parameters
 	 */
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('searchText');
+		$parameters->addParameterMeta('productResultsPage');
+		$parameters->addParameterMeta('otherResultsPage');
 		$parameters->addParameterMeta('allowedSectionIds');
-		$parameters->addParameterMeta('facetFilters', null);
-		$parameters->addParameterMeta('excludeProducts', null);
+		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
 
-		$parameters->setLayoutParameters($event->getBlockLayout());
+		$request = $event->getHttpRequest();
+		$searchText = $request->getQuery('searchText');
+		if ($searchText && is_string($searchText))
+		{
+			$parameters->setParameterValue('searchText', trim($searchText));
+		}
 
 		$genericServices = $this->getGenericServices($event);
 
@@ -45,59 +46,23 @@ class Facets extends Block
 			return $parameters;
 		}
 
-
 		$fulltextIndex = $genericServices->getIndexManager()->getFulltextIndexByWebsite($website, $website->getLCID());
 		if (!$fulltextIndex)
 		{
 			$this->setInvalidParameters($parameters);
 			return $parameters;
 		}
-
 		$parameters->setParameterValue('fulltextIndex', $fulltextIndex->getId());
 
-		$request = $event->getHttpRequest();
-		$queryFilters = $request->getQuery('facetFilters', null);
-		$facetFilters = array();
-		if (is_array($queryFilters)) {
-			foreach ($queryFilters as $fieldName => $rawValue)
-			{
-				if (is_string($fieldName) && $rawValue)
-				{
-					$facetFilters[$fieldName] = $rawValue;
-				}
-			}
-		}
-		$parameters->setParameterValue('facetFilters', $facetFilters);
+		/* @var $page \Rbs\Website\Documents\Page */
+		$page = $event->getParam('page');
+		$parameters->setParameterValue('currentPageId', $page->getId());
 
-		$searchText = $request->getQuery('searchText');
-		if ($searchText && is_string($searchText))
-		{
-			$parameters->setParameterValue('searchText', $searchText);
-		}
-
-		$uri = $event->getUrlManager()->getSelf();
-		$query = $uri->getQueryAsArray();
-		unset($query['facetFilters']);
-		$parameters->setParameterValue('formAction', $uri->setQuery($query)->normalize()->toString());
 		return $parameters;
 	}
 
 	/**
-	 * @param Event $event
-	 * @return \Rbs\Generic\GenericServices
-	 */
-	protected function getGenericServices($event)
-	{
-		$genericServices = $event->getServices('genericServices');
-		if (!($genericServices instanceof \Rbs\Generic\GenericServices))
-		{
-			return null;
-		}
-		return $genericServices;
-	}
-
-	/**
-	 * @param Parameters $parameters
+	 * @param \Change\Presentation\Blocks\Parameters $parameters
 	 */
 	protected function setInvalidParameters($parameters)
 	{
@@ -106,15 +71,15 @@ class Facets extends Block
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * @param Event $event
+	 * @param \Change\Presentation\Blocks\Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
 	 */
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$fullTextIndexId = $parameters->getParameter('fulltextIndex');
 
+		$fullTextIndexId = $parameters->getParameter('fulltextIndex');
 		$genericServices = $this->getGenericServices($event);
 		if (!$genericServices || !$fullTextIndexId)
 		{
@@ -126,15 +91,14 @@ class Facets extends Block
 
 		/** @var $fullTextIndex \Rbs\Elasticsearch\Documents\FullText */
 		$fullTextIndex = $documentManager->getDocumentInstance($fullTextIndexId, 'Rbs_Elasticsearch_FullText');
-		$searchText = $parameters->getParameter('searchText');
-		if (!$fullTextIndex || !$searchText)
+		if (!$fullTextIndex)
 		{
 			return null;
 		}
+		$searchText = $parameters->getParameter('searchText');
 		$allowedSectionIds = $parameters->getParameter('allowedSectionIds');
 
 		$indexManager = $genericServices->getIndexManager();
-
 		$client = $indexManager->getElasticaClient($fullTextIndex->getClientName());
 		if (!$client)
 		{
@@ -149,37 +113,26 @@ class Facets extends Block
 			return null;
 		}
 
-		$excludeProducts = $parameters->getParameterValue('excludeProducts');
 		$facetFilters = $parameters->getParameter('facetFilters');
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($fullTextIndex, $indexManager, $genericServices->getFacetManager());
 		$query = $queryHelper->getSearchQuery($searchText, $allowedSectionIds);
 		$queryHelper->addHighlight($query);
 
 		$facets = $fullTextIndex->getFacetsDefinition();
-		$filter = null;
 		if (is_array($facetFilters) && count($facetFilters))
 		{
 			$filter = $queryHelper->getFacetsFilter($facets, $facetFilters, []);
-		}
-
-		if ($excludeProducts)
-		{
-			if (!$filter)
+			if ($filter)
 			{
-				$filter = new \Elastica\Filter\Bool();
+				$query->setFilter($filter);
 			}
-			$filter->addMustNot($facets[0]->getFiltersQuery(['model' => ['Rbs_Catalog_Product' => '1']], []));
-		}
-
-		if ($filter)
-		{
-			$query->setFilter($filter);
 		}
 		$queryHelper->addFacets($query, $facets);
 
+		$resultCounts = [ 'total' => 0, 'products' => 0, 'others' => 0 ];
+
 		$query->setSize(0);
 		$searchResult = $index->getType($fullTextIndex->getDefaultTypeName())->search($query);
-
 		if ($searchResult)
 		{
 			$facetValues = $queryHelper->formatAggregations($searchResult->getAggregations(), $facets);
@@ -189,19 +142,39 @@ class Facets extends Block
 			}
 
 			$facet = $facetValues[0];
-			$newFacet = new \Rbs\Elasticsearch\Facet\AggregationValues($facet->getFacet());
+			$attributes['facet'] = $facet;
 			foreach ($facet->getValues() as $value)
 			{
-				if (!$excludeProducts || $value->getKey() !== 'Rbs_Catalog_Product')
+				if ($value->getKey() == 'Rbs_Catalog_Product')
 				{
-					$newFacet->addValue($value);
+					$resultCounts['products'] += $value->getValue();
 				}
+				else
+				{
+					$resultCounts['others'] += $value->getValue();
+				}
+				$resultCounts['total'] += $value->getValue();
 			}
-			$facetValues[0] = $newFacet;
-			$attributes['facets'] = $facets;
-			$attributes['facetValues'] = $facetValues;
 		}
+		$attributes['resultCounts'] = $resultCounts;
 
-		return 'facets.twig';
+		$attributes['isProductPage'] = $parameters->getParameterValue('productResultsPage') == $parameters->getParameterValue('currentPageId');
+		$attributes['isOtherPage'] = $parameters->getParameterValue('otherResultsPage') == $parameters->getParameterValue('currentPageId');
+
+		return 'result-header.twig';
+	}
+
+	/**
+	 * @param \Change\Presentation\Blocks\Event $event
+	 * @return \Rbs\Generic\GenericServices
+	 */
+	protected function getGenericServices($event)
+	{
+		$genericServices = $event->getServices('genericServices');
+		if (!($genericServices instanceof \Rbs\Generic\GenericServices))
+		{
+			return null;
+		}
+		return $genericServices;
 	}
 }

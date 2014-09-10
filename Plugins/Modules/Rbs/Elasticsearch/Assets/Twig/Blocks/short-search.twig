@@ -1,12 +1,20 @@
-<form class="form-inline" action="{{ parameters.formAction }}" method="GET">
-{% if parameters.sectionPageFunction %}
-	<input name="sectionPageFunction"  type="hidden" value="{{ parameters.sectionPageFunction }}" />
-{% endif %}
+<form class="form-inline" action="{{ parameters.formAction }}" method="GET" data-rbs-elasticsearch-short-search="">
+	{% if parameters.sectionPageFunction %}
+		<input name="sectionPageFunction" type="hidden" value="{{ parameters.sectionPageFunction }}" />
+	{% endif %}
 	<div class="input-group">
-		<input name="searchText" type="text" class="form-control typeahead elastic-search" value="{{ parameters.searchText }}"
-			placeholder="{{ i18nAttr('m.rbs.elasticsearch.front.search', ['ucf']) }}" />
+		<input name="searchText" type="text" value="{{ parameters.searchText }}" data-ng-model="searchText"
+			class="form-control elastic-search" autocomplete="off"
+			placeholder="{{ i18nAttr('m.rbs.elasticsearch.front.search', ['ucf']) }}"
+			data-typeahead="suggestion for suggestion in loadSuggestions($viewValue)"
+			data-typeahead-loading="suggestionsLoading"
+			data-typeahead-min-length="3"
+			data-typeahead-wait-ms="500"
+			data-typeahead-editable="true"
+			data-typeahead-on-select="submitForm($item)" />
 		<span class="input-group-btn">
-			<button type="submit" class="btn btn-primary" title="{{ i18nAttr('m.rbs.elasticsearch.front.search', ['ucf']) }}">
+			<button type="button" data-ng-click="submitForm()" class="btn btn-primary"
+				title="{{ i18nAttr('m.rbs.elasticsearch.front.search', ['ucf']) }}">
 				<i class="glyphicon glyphicon-search"></i>
 			</button>
 		</span>
