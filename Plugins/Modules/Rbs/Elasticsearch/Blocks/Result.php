@@ -149,7 +149,7 @@ class Result extends Block
 			return null;
 		}
 
-		$excludeProducts = $parameters->getParameterValue('excludeProducts');
+		$excludeProducts = $parameters->getParameter('excludeProducts');
 		$showModelFacet = $parameters->getParameter('showModelFacet');
 		if ($showModelFacet)
 		{
