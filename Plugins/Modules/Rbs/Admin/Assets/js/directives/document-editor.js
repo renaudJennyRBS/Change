@@ -342,7 +342,9 @@
 				function executeSaveAction() {
 					saveOperation("Saving Document");
 					var pList = $scope.changes;
-					pList.push('documentVersion');
+					if (!ArrayUtils.inArray('documentVersion', pList)) {
+						pList.push('documentVersion');
+					}
 					REST.save($scope.document, pList).then(saveSuccessHandler, saveErrorHandler);
 				}
 
@@ -481,7 +483,13 @@
 				function markFieldAsInvalid(fieldName) {
 					$element.find('.form-group[property="' + fieldName + '"]').addClass('error')
 						.find('.controls :input').first().focus();
-					getSectionOfField(fieldName).invalid.push(fieldName);
+					var section = getSectionOfField(fieldName);
+					if (section) {
+						section.invalid.push(fieldName);
+					}
+					else {
+						console.log('RbsDocumentEditor.markFieldAsInvalid()', 'Section not found for field: ' + fieldName);
+					}
 				}
 
 				/**
