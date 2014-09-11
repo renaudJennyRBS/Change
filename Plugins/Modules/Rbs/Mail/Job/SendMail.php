@@ -48,7 +48,7 @@ class SendMail
 				$from = $this->getFrom($mail, $website, $event);
 				$subject = $frontMailManager->getSubstitutedString($mail->getCurrentLocalization()->getSubject(), $substitutions);
 				$message = $mailManager->prepareMessage($from, $emails['to'], $subject, $html, null, $emails['cc'], $emails['bcc'], $emails['reply-to']);
-				$mailManager->prepareHeader($message, ['Content-type' => 'text/html; charset=utf8']);
+				$mailManager->prepareHeader($message, ['Content-type' => 'text/html; charset=UTF-8']);
 				$mailManager->send($message);
 				$documentManager->popLCID();
 				$event->success();
