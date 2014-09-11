@@ -1,12 +1,25 @@
-<div data-ng-repeat="fieldDef in fieldsDef">
+<div data-ng-repeat="fieldDef in fieldsDef" data-ng-form="innerForm">
 	<rbs-field label="(= fieldDef.title | rbsCapitalize =)" data-ng-class="{'required': fieldDef.required}" >
-		<div ng-if="fieldDef.collectionCode">
-			<select ng-model="fieldValues[fieldDef.code]" class="form-control" rbs-items-from-collection="(= fieldDef.collectionCode =)">
+		<div data-ng-if="fieldDef.collectionCode">
+			<select data-ng-model="fieldValues[fieldDef.code]" class="form-control"
+				data-rbs-items-from-collection="(= fieldDef.collectionCode =)">
 				<option value=""></option>
 			</select>
 		</div>
-		<div ng-if="!fieldDef.collectionCode">
-			<input type="text" class="form-control" ng-required="fieldDef.required" id="fieldInput_(= fieldDef.code =)" ng-model="fieldValues[fieldDef.code]" />
+		<div data-ng-if="!fieldDef.collectionCode">
+			<input data-ng-if="!fieldDef.match" type="text" class="form-control" data-ng-required="fieldDef.required"
+				name="field" id="fieldInput_(= fieldDef.code =)" data-ng-model="fieldValues[fieldDef.code]" />
+			<input data-ng-if="fieldDef.match" data-ng-pattern="/(= fieldDef.match =)/" type="text" class="form-control"
+				data-ng-required="fieldDef.required" name="field" id="fieldInput_(= fieldDef.code =)"
+				data-ng-model="fieldValues[fieldDef.code]" />
+		</div>
+		<div data-ng-show="innerForm.field.$dirty && innerForm.field.$error.pattern" class="text-danger">
+			<span data-ng-hide="fieldDef.matchErrorMessage">
+				{{ i18n('c.constraints.notmatch', ['ucf'])|replace({'%pattern%': '(= fieldDef.match =)'}) }}
+			</span>
+			<span data-ng-show="fieldDef.matchErrorMessage">
+				(= fieldDef.matchErrorMessage =)
+			</span>
 		</div>
 	</rbs-field>
 </div>

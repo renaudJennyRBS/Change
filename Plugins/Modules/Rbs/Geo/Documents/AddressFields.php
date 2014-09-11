@@ -144,9 +144,6 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
-			/** @var $addressFields AddressFields */
-			$addressFields = $event->getDocument();
-			$restResult->setProperty('editorDefinition', $this->buildEditorDefinition($addressFields));
 			$restResult->setProperty('fieldsLayout', $this->getFieldsLayout());
 			$restResult->setProperty('systemFieldsNames', $this->getSystemFieldsNames());
 		}
@@ -160,30 +157,5 @@ class AddressFields extends \Compilation\Rbs\Geo\Documents\AddressFields
 			return true;
 		}
 		return parent::processRestData($name, $value, $event);
-	}
-
-	/**
-	 * @param AddressFields $addressFields
-	 * @return array|null
-	 */
-	protected function buildEditorDefinition(AddressFields $addressFields)
-	{
-		$definition = ['fields' => []];
-		foreach ($addressFields->getFields() as $addressField)
-		{
-			$def = array(
-				'title' => $addressField->getTitle(),
-				'code' => $addressField->getCode(),
-				'required' => $addressField->getRequired(),
-				'defaultValue' => $addressField->getDefaultValue(),
-				'collectionCode' => $addressField->getCollectionCode()
-			);
-			$definition['fields'][] = $def;
-		}
-		if (count($definition['fields']))
-		{
-			return $definition;
-		}
-		return null;
 	}
 }

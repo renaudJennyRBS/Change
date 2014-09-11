@@ -14,6 +14,19 @@
 	<rbs-field-text property="match" label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'match'), ['ucf']) }}">
 	</rbs-field-text>
 
+	<rbs-field property="matchErrorMessage"
+		label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'matchErrorMessage'), ['ucf']) }}">
+		<div class="input-group">
+			<span class="input-group-addon input-group-addon-select">
+				<select required="required" class="form-control" data-ng-model="localization.LCID"
+					data-ng-options="key as value.label for (key , value) in LCIDArray()">
+				</select>
+			</span>
+			<input type="text" class="form-control" data-ng-disabled="!localization.LCID" name="label"
+				data-ng-model="document.LCID[localization.LCID].matchErrorMessage">
+		</div>
+	</rbs-field>
+
 	<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_AddressField', 'collectionCode'), ['ucf']) }}">
 		<select data-ng-model="document.collectionCode" class="form-control"
 				data-rbs-items-from-collection="Rbs_Collection_Collection_List">

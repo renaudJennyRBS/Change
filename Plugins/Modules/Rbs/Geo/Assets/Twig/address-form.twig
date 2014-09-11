@@ -74,7 +74,12 @@
 						{{ i18n('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }}
 					</div>
 					<div class="text-danger" data-ng-show="innerForm.field.$error.pattern">
-						{{ i18n('c.constraints.notmatch', ['ucf'])|replace({'%pattern%': '(= fieldDef.match =)'}) }}
+						<span data-ng-hide="fieldDef.matchErrorMessage">
+							{{ i18n('c.constraints.notmatch', ['ucf'])|replace({'%pattern%': '(= fieldDef.match =)'}) }}
+						</span>
+						<span data-ng-show="fieldDef.matchErrorMessage">
+							(= fieldDef.matchErrorMessage =)
+						</span>
 					</div>
 				</div>
 			</div>

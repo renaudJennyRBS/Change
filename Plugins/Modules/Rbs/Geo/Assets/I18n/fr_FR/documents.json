@@ -32,6 +32,9 @@
 	"addressfield_match":{
 		"message":"expression rationnelle de validation"
 	},
+	"addressfield_matcherrormessage":{
+		"message":"message d'erreur si invalide"
+	},
 	"addressfield_defaultvalue":{
 		"message":"valeur par défaut"
 	},
