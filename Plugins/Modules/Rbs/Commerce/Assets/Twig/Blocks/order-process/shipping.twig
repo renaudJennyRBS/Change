@@ -56,8 +56,8 @@
 						</button> <span data-ng-if="!addressCanBeUsed(address.fieldValues)">*</span>
 					</p>
 				</div>
-				<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg"></div>
-				<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md"></div>
+				<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg-block"></div>
+				<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md-block"></div>
 			</div>
 			<p data-ng-if="hasAddressCannotBeUsed()">
 				* {{ i18n('m.rbs.commerce.front.only_addresses_in_the_selected_country_can_be_used', ['ucf']) }}
