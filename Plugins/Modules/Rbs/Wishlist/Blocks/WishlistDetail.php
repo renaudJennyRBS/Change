@@ -43,6 +43,25 @@ class WishlistDetail extends Block
 
 		$this->setParameterValueForDetailBlock($parameters, $event);
 
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+		$webStore = $commerceServices->getContext()->getWebStore();
+		if ($webStore)
+		{
+			$parameters->setParameterValue('webStoreId', $webStore->getId());
+			if ($parameters->getParameter('displayPrices') === null)
+			{
+				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
+			}
+		}
+		else
+		{
+			$parameters->setParameterValue('webStoreId', 0);
+			$parameters->setParameterValue('displayPrices', false);
+			$parameters->setParameterValue('displayPricesWithTax', false);
+		}
+
 		return $parameters;
 	}
 	/**
@@ -86,29 +105,23 @@ class WishlistDetail extends Block
 
 		if ($wishlist)
 		{
-			$urlManager = $event->getUrlManager();
-			$stockManager = $commerceServices->getStockManager();
-
-			$attributes['products'] = [];
+			$rows = array();
 			foreach ($wishlist->getProducts() as $product)
 			{
-				$availability = null;
-				if ($product->getSku())
+				$url = $event->getUrlManager()->getCanonicalByDocument($product)->normalize()->toString();
+				$row = array('id' => $product->getId(), 'url' => $url);
+
+				$options = [ 'urlManager' => $event->getUrlManager() ];
+				$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
+				if ($productPresentation)
 				{
-					$availability = $stockManager->getInventoryThresholdTitle($stockManager->getInventoryThreshold($product->getSku()));
+					$productPresentation->evaluate();
+					$row['productPresentation'] = $productPresentation;
 				}
-				$attributes['products'][] = [
-					'title' => $product->getCurrentLocalization()->getTitle(),
-					'id' => $product->getId(),
-					'visual' => [
-						'src' => $product->getFirstVisual()->getPublicURL(100, 100),
-						'alt' => $product->getFirstVisual()->getCurrentLocalization()->getAlt()
-					],
-																  //FIXME
-//					'url' => $urlManager->getByDocument($product, $product->getPublicationSections()[0])->normalize()->toString(),
-					'availability' => $availability
-				];
+
+				$rows[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($documentManager);
 			}
+			$attributes['rows'] = $rows;
 			$attributes['productCountWarning'] = $this->getProductCountWarning($wishlist);
 			$attributes['isUserWishlist'] = $isUserWishlist;
 			$attributes['data'] = [
