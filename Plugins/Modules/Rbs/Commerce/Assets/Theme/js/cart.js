@@ -536,15 +536,6 @@
 		scope.currentStep = null;
 		scope.steps = ['cart', 'information', 'shipping', 'payment', 'confirm'];
 
-		$http.get('Action/Rbs/Geo/GetAddresses')
-			.success(function(data) {
-				scope.addresses = data;
-			})
-			.error(function(data, status, headers) {
-				console.log('GetAddresses error', data, status, headers);
-			}
-		);
-
 		$http.get('Action/Rbs/Commerce/GetShippingZonesCode')
 			.success(function(data) {
 				scope.shippingZonesCode = data;
@@ -572,6 +563,18 @@
 				}
 			);
 		}
+
+		function loadAddresses() {
+			$http.get('Action/Rbs/Geo/GetAddresses')
+				.success(function(data) {
+					scope.addresses = data;
+				})
+				.error(function(data, status, headers) {
+					console.log('GetAddresses error', data, status, headers);
+				}
+			);
+		}
+		loadAddresses();
 
 		scope.init = function(accessorId, confirmed)
 		{
@@ -700,6 +703,8 @@
 						scope.information.userId = data['accessorId'];
 						scope.confirmed = true;
 
+						loadAddresses();
+
 						var postData = { userId: scope.information.userId };
 						updateCart($http, scope, postData, scope.setAuthenticated);
 					}
@@ -722,6 +727,7 @@
 			scope.clearErrors('information');
 			$http.post('Action/Rbs/User/Logout', {keepCart:true})
 				.success(function() {
+					scope.addresses = {};
 					window.location.reload();
 				})
 				.error(function(data, status, headers) { console.log('Logout error', data, status, headers); });
