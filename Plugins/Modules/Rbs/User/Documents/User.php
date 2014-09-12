@@ -118,10 +118,14 @@ class User extends \Compilation\Rbs\User\Documents\User
 	{
 		if (in_array($hashMethod, hash_algos()))
 		{
-			$salt = $this->getSaltString();
-			if ($salt)
+			$saltString = $this->getSaltString();
+			if (!String::isEmpty($saltString))
 			{
-				return hash($hashMethod, $salt . '-' . $password);
+				return hash($hashMethod, $saltString . '-' . $password);
+			}
+			else
+			{
+				return hash($hashMethod, $password);
 			}
 		}
 		throw new \RuntimeException("hash $hashMethod does not exist");

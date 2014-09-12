@@ -174,7 +174,7 @@ class ProductList extends Block
 
 			if (!$parameters->getParameter('showUnavailable'))
 			{
-				$predicates[] = $commerceServices->getStockManager()->getProductAvailabilityRestriction($query->getColumn('id'));
+				$predicates[] = $commerceServices->getStockManager()->getProductAvailabilityRestriction($event->getApplicationServices()->getDbProvider(), $query->getColumn('id'));
 			}
 			$query->andPredicates($predicates);
 
