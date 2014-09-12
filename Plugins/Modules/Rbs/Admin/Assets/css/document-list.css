@@ -145,7 +145,8 @@ rbs-document-list > .btn-toolbar {
 	margin-bottom: 15px;
 }
 
-.add-elements-bar a {
+.add-elements-bar a,
+.add-elements-bar button {
 	display: inline-block;
 	font-weight: normal;
 	margin-right: 5px;
@@ -155,7 +156,8 @@ rbs-document-list > .btn-toolbar {
 	border-radius: 4px;
 }
 
-.add-elements-bar a:hover {
+.add-elements-bar a:hover,
+.add-elements-bar button:hover {
 	text-decoration: none;
 	background: #2790B0;
 	color: white;

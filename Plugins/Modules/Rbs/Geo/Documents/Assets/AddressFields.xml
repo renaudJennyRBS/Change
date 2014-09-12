@@ -13,6 +13,7 @@
 					<property name="collectionCode" type="String" />
 					<property name="defaultValue" type="String" />
 					<property name="match" type="String" />
+					<property name="matchErrorMessage" type="String" localized="true" />
 				</properties>
 			</inline>
 		</property>

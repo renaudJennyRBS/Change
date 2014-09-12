@@ -1,40 +1,65 @@
 <h1>{{ i18n('m.rbs.wishlist.front.wishlist_my_wishlists', ['ucf']) }}</h1>
 
-<div data-ng-controller="RbsWishlistListCtrl" data-ng-init='data = {{ data | json_encode() | raw }}'>
-	<div class="row">
-		<div class="col-lg-12">
-			{% if wishlists | length > 0 %}
-				<ul data-ng-cloak="" class="grid-list grid-list-4 grid-list-bordered grid-list-align-top product-list">
-					{% for wishlist in wishlists %}
-						<li>
-							<div class="product-visual">
+{% if wishlists | length > 0 %}
+	<div data-ng-controller="RbsWishlistListCtrl" data-ng-init='data = {{ data | json_encode() | raw }}'>
+		<div class="row">
+			{% for wishlist in wishlists %}
+				<div data-ng-cloak="" class="col-sm-6 col-lg-4">
+					<div class="row">
+						<div class="col-xs-6">
+							{% spaceless %}
 								<a href="{{ contextualURL(wishlist.id) }}">
-									<img alt="{{ wishlist.visual.alt }}" src="{{ wishlist.visual.src }}" />
+									<img class="img-responsive" alt="{{ wishlist.visual.alt }}" src="{{ imageURL(wishlist.visual.docId, 200, 200) }}" />
 								</a>
-								{% if isUserWishlists %}
-								<button type="button" data-ng-click="setDefaultWishlist({{ wishlist.id }})"
-									class="btn btn-default glyphicon glyphicon-heart{% if not wishlist.default %}-empty{% endif %}"
-									title="{{ i18nAttr('m.rbs.wishlist.front.wishlist_list_default_wishlist') }}">
-								</button>
-								<button type="button" data-ng-click="changeIsPublic({{ wishlist.id }}, {% if wishlist.public %}false{% else %}true{% endif %})"
-									class="btn btn-default">
-									{% if wishlist.public %}<span class="glyphicon glyphicon-eye-open"></span> {{ i18n('m.rbs.wishlist.front.wishlist_public') }}
-									{% else %}<span class="glyphicon glyphicon-eye-close"></span> {{ i18n('m.rbs.wishlist.front.wishlist_private') }}{% endif %}
-								</button>
+							{% endspaceless %}
+						</div>
+						<ul class="col-xs-6 list-unstyled">
+							<div><a href="{{ contextualURL(wishlist.id) }}">{{ wishlist.title }}</a></div>
+							<p class="small">{{ i18n('m.rbs.wishlist.front.wishlist_list_wishlist_product_count', ['ucf'], {count: wishlist.productCount}) }}</p>
+							{% if isUserWishlists %}
+								{% if wishlist.default %}
+									<div>
+										<span class="glyphicon glyphicon-heart"></span>
+										{{ i18nAttr('m.rbs.wishlist.front.wishlist_default', ['ucf']) }}
+									</div>
+								{% else %}
+									<div>
+										<span class="glyphicon glyphicon-heart-empty"></span>
+										<a href="javascript:;" data-ng-click="setDefaultWishlist({{ wishlist.id }})">
+											{{ i18nAttr('m.rbs.wishlist.front.wishlist_make_default', ['ucf']) }}
+										</a>
+									</div>
 								{% endif %}
-							</div>
-							<div class="product-label">
-								<a href="{{ contextualURL(wishlist.id) }}">{{ wishlist.title }}</a>
-								<span class="small">
-									{{ i18n('m.rbs.wishlist.front.wishlist_list_wishlist_product_count', ['ucf'], {count: wishlist.productCount}) }}
-								</span>
-							</div>
-						</li>
-					{% endfor %}
-				</ul>
-			{% else %}
-				<p>{{ i18n('m.rbs.wishlist.front.wishlist_list_no_wishlist_in_wishlist_list', ['ucf']) }}</p>
-			{% endif %}
+								{% if wishlist.public %}
+									<div>
+										<span class="glyphicon glyphicon-eye-open"></span>
+										{{ i18n('m.rbs.wishlist.front.wishlist_public', ['ucf']) }}
+									</div>
+									<div class="small">
+										<a href="javascript:;" data-ng-click="changeIsPublic({{ wishlist.id }},false)">
+											{{ i18n('m.rbs.wishlist.front.wishlist_make_private', ['ucf']) }}
+										</a>
+									</div>
+								{% else %}
+									<div>
+										<span class="glyphicon glyphicon-eye-close"></span>
+										{{ i18n('m.rbs.wishlist.front.wishlist_private', ['ucf']) }}
+									</div>
+									<div class="small">
+										<a href="javascript:;" data-ng-click="changeIsPublic({{ wishlist.id }}, true">
+											{{ i18n('m.rbs.wishlist.front.wishlist_make_public', ['ucf']) }}
+										</a>
+									</div>
+								{% endif %}
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+				{% if loop.index % 3 == 0 %}<div class="clearfix visible-lg-block standard-margin"></div>{% endif %}
+				{% if loop.index % 2 == 0 %}<div class="clearfix visible-sm-block visible-md-block standard-margin"></div>{% endif %}
+			{% endfor %}
 		</div>
 	</div>
-</div>
+{% else %}
+	<p>{{ i18n('m.rbs.wishlist.front.wishlist_list_no_wishlist_in_wishlist_list', ['ucf']) }}</p>
+{% endif %}

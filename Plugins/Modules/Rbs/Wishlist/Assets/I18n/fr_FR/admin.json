@@ -1,35 +1,35 @@
 {
 	"wishlist":{
-		"message":"wishlist"
+		"message":"liste d'envies"
 	},
 	"module_name":{
-		"message":"wishlist"
+		"message":"listes d'envies"
 	},
 	"module_keywords":{
 		"message":"wishlist,liste,souhaits,envies"
 	},
 	"wishlistbutton_label":{
-		"message":"bouton wishlist"
+		"message":"bouton « liste d'envies »"
 	},
 	"wishlist_products":{
 		"message":"produits"
 	},
 	"wishlistdetail_label":{
-		"message":"détail d'une wishlist"
+		"message":"détail d'une liste d'envies"
 	},
 	"wishlist_produit":{
 		"message":"produit"
 	},
 	"wishlist_function":{
-		"message":"Détail d'une wishlist"
+		"message":"détail d'une liste d'envies"
 	},
 	"wishlist_list":{
-		"message":"liste des wishlists"
+		"message":"liste des listes d'envies"
 	},
 	"wishlist_list_user":{
-		"message":"wishlists de l'utilisateur"
+		"message":"listes de l'utilisateur"
 	},
 	"wishlist_list_function":{
-		"message":"liste des wishlist"
+		"message":"liste des listes d'envies"
 	}
 }

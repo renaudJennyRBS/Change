@@ -134,5 +134,23 @@
 	},
 	"result_items_per_page":{
 		"message":"résultats par page"
+	},
+	"result_exclude_products":{
+		"message":"exclure les produits"
+	},
+	"result_header_label":{
+		"message":"en-tête de résultats de recherche"
+	},
+	"result_header_product_results_page":{
+		"message":"page de résultats produits"
+	},
+	"result_header_other_results_page":{
+		"message":"page de résultats contenus"
+	},
+	"facets_label":{
+		"message":"facettes de recherche contenus"
+	},
+	"store_facets_label":{
+		"message":"facettes de recherche magasin"
 	}
 }

@@ -4,13 +4,11 @@
 			<i class="glyphicon glyphicon-user"></i> {{ i18n('m.rbs.user.front.my_account', ['ucf']) }} <b class="caret"></b>
 		</a>
 		<ul class="dropdown-menu" data-ng-show="accessorId">
-			<li>
-				{% if parameters.userAccountPage != null %}
-					<a href="{{ canonicalURL(parameters.userAccountPage) }}">(= accessorName =)</a>
-				{% else %}
-					<a>(= accessorName =)</a>
-				{% endif %}
-			</li>
+			{% if parameters.userAccountPage != null %}
+				<li><a href="{{ canonicalURL(parameters.userAccountPage) }}">(= accessorName =)</a></li>
+			{% else %}
+				<li class="dropdown-text">(= accessorName =)</li>
+			{% endif %}
 			{% if rootMenuEntry and rootMenuEntry.hasChild %}
 				<li class="divider"></li>
 				{%- for child in rootMenuEntry.children -%}
@@ -38,13 +36,11 @@
 		</a>
 		{% if parameters.accessorId != null %}
 			<ul class="dropdown-menu">
-				<li>
-					{% if parameters.userAccountPage != null %}
-						<a href="{{ canonicalURL(parameters.userAccountPage) }}">{{ parameters.accessorName }}</a>
-					{% else %}
-						<a>{{ parameters.accessorName }}</a>
-					{% endif %}
-				</li>
+				{% if parameters.userAccountPage != null %}
+					<li><a href="{{ canonicalURL(parameters.userAccountPage) }}">{{ parameters.accessorName }}</a></li>
+				{% else %}
+					<li class="dropdown-text">{{ parameters.accessorName }}</li>
+				{% endif %}
 				{% if rootMenuEntry and rootMenuEntry.hasChild %}
 					<li class="divider"></li>
 					{%- for child in rootMenuEntry.children -%}

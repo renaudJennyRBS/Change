@@ -417,6 +417,12 @@ form .description {
 	background-image: linear-gradient(to right, #202020 50%, #5e6469 100%);
 }
 
+/** Search results */
+.result-sorting-method .input-group-addon,
+.result-sorting-method .input-group-btn {
+	width: auto;
+}
+
 /** Product detail */
 .product-details .main-price .price {
 	font-size: 1.4em;

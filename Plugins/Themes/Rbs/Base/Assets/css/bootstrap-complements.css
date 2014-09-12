@@ -74,6 +74,11 @@
 	margin-top: 0 !important;
 }
 
+/* Add the standard margin */
+.standard-margin {
+	margin-bottom: 15px;
+}
+
 /* Buttons containing only an icon */
 .btn-icon {
 	padding-left: 0;

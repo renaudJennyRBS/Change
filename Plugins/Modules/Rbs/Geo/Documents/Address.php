@@ -159,7 +159,7 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 					$match = $addressField->getMatch();
 					if ($match && $value !== null)
 					{
-						$c = $constraintManager->matches($match);
+						$c = $constraintManager->matches('/' . str_replace('/', '\/', $match) . '/');
 						if (!$c->isValid($value))
 						{
 							foreach($c->getMessages() as $error)

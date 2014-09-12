@@ -67,6 +67,7 @@ class FormDefinition
 				'title' => $addressField->getTitle(),
 				'required' => $addressField->getRequired(),
 				'match' => $addressField->getMatch(),
+				'matchErrorMessage' => $addressField->getCurrentLocalization()->getMatchErrorMessage(),
 				'defaultValue' => $addressField->getDefaultValue()
 			);
 			if ($addressField->getCollectionCode())

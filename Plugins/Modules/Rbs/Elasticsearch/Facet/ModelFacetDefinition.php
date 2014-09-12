@@ -15,7 +15,7 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	/**
 	 * @var string
 	 */
-	protected $title = 'm.rbs.elasticsearch.fo.facet-model-title';
+	protected $title = 'm.rbs.elasticsearch.front.facet_model_title';
 
 	/**
 	 * @var \Zend\Stdlib\Parameters
@@ -89,7 +89,7 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 	 */
 	public function getTitle()
 	{
-		return $this->getI18nManager()->trans($this->title);
+		return $this->getI18nManager()->trans($this->title, ['ucf']);
 	}
 
 	/**

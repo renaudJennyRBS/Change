@@ -38,6 +38,38 @@
 	},
 	"price_range":{
 		"message":"de $MINVALUE$ à $MAXVALUE$"
+	},
+	"sepecify_search_text":{
+		"message":"Vous devez psécifier un ou plusieurs mots d'au moins trois caractères à rechercher."
+	},
+	"no_result_for_search":{
+		"message":"<strong>Aucun</strong> résultat pour votre recherche « $TEXT$ »."
+	},
+	"one_result_for_search":{
+		"message":"<strong>Un</strong> résultat pour votre recherche « $TEXT$ »."
+	},
+	"several_results_for_search":{
+		"message":"<strong>$TOTAL$</strong> résultats pour votre recherche « $TEXT$ »."
+	},
+	"no_product":{
+		"message":"<strong>aucun</strong> produit"
+	},
+	"one_product":{
+		"message":"<strong>un</strong> produit"
+	},
+	"several_products":{
+		"message":"<strong>$TOTAL$</strong> produits"
+	},
+	"no_other":{
+		"message":"<strong>aucune</strong> autre contenu"
+	},
+	"one_other":{
+		"message":"<strong>un</strong> autre contenu"
+	},
+	"several_others":{
+		"message":"<strong>$TOTAL$</strong> autres contenus"
+	},
+	"facet_model_title":{
+		"message":"types de contenus"
 	}
-
 }

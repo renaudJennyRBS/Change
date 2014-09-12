@@ -1,5 +1,4 @@
-(function () {
-
+(function() {
 	"use strict";
 
 	/**
@@ -13,16 +12,14 @@
 	 *
 	 * @param {Document} address Address Document.
 	 */
-	angular.module('RbsChange').directive('rbsAddressFields', ['RbsChange.REST', function (REST)
-	{
+	angular.module('RbsChange').directive('rbsAddressFields', ['RbsChange.REST', function(REST) {
 		return {
-			restrict    : 'EA',
-			require     : 'ngModel',
-			scope       : true,
-			templateUrl : 'Rbs/Admin/js/directives/address-fields.twig',
+			restrict: 'EA',
+			require: 'ngModel',
+			scope: true,
+			templateUrl: 'Rbs/Admin/js/directives/address-fields.twig',
 
-			link : function (scope, elm, attrs, ngModel)
-			{
+			link: function(scope, elm, attrs, ngModel) {
 				scope.addressFieldsId = null;
 				scope.fieldsDef = [];
 				scope.fieldValues = {};
@@ -53,29 +50,31 @@
 					}
 				});
 
-				ngModel.$render = function ngModelRenderFn () {
-					if (ngModel.$viewValue){
+				ngModel.$render = function ngModelRenderFn() {
+					if (ngModel.$viewValue) {
 						scope.fieldValues = ngModel.$viewValue;
 					}
 				};
 
-				scope.generateFieldsEditor = function (addressFields) {
-					var editorDefinition = addressFields.editorDefinition;
-					if (angular.isObject(editorDefinition)) {
+				scope.generateFieldsEditor = function(addressFields) {
+					scope.fieldsDef = angular.copy(addressFields.fields);
+					if (angular.isArray(scope.fieldsDef)) {
 						if (!angular.isObject(ngModel.$viewValue)) {
 							ngModel.$setViewValue({});
 						}
-						scope.fieldsDef = editorDefinition.fields;
 						var fieldValues = ngModel.$viewValue;
 						var fields = scope.fieldsDef;
 						var field;
 						for (var i = 0; i < fields.length; i++) {
 							field = fields[i];
+							var currentLocalization = field.LCID[field.refLCID]; // TODO: Use current LCID of the interface.
+							field.title = currentLocalization.title;
+							field.matchErrorMessage = currentLocalization.matchErrorMessage;
 							var v = null;
-							if(fieldValues.hasOwnProperty(field.code)) {
+							if (fieldValues.hasOwnProperty(field.code)) {
 								v = fieldValues[field.code];
 							}
-							if(v === null) {
+							if (v === null) {
 								v = field.defaultValue;
 								fieldValues[field.code] = v;
 							}
@@ -83,7 +82,7 @@
 					}
 				};
 
-				scope.$watchCollection('fieldValues', function (fieldValues){
+				scope.$watchCollection('fieldValues', function(fieldValues) {
 					ngModel.$setViewValue(fieldValues);
 				});
 			}

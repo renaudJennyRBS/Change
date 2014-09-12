@@ -1,39 +1,4 @@
-<form class="form-horizontal" method="GET" action="{{ currentURL() }}">
-	<div class="form-group">
-		<label for="inputEmail3" class="col-sm-5 col-md-4 col-lg-3 control-label">
-			{{ i18n('m.rbs.elasticsearch.front.terms', ['ucf']) }}
-		</label>
-		<div class="col-sm-7 col-md-6 col-lg-9">
-			<input name="searchText" type="text" class="form-control typeahead" value="{{ parameters.searchText}}" />
-		</div>
-	</div>
-	<div class="form-group">
-		<label for="inputEmail3" class="col-sm-5 col-md-4 col-lg-3 control-label">
-			{{ i18n('m.rbs.elasticsearch.front.types', ['ucf']) }}
-		</label>
-{% if facet %}
-		<div class="col-sm-7 col-md-6 col-lg-9">
-			{% for value in facet.values %}
-				<label class="checkbox-inline">
-					<input type="checkbox" name="facetFilters[{{ facet.fieldName }}][{{ value.key }}]" value="1"
-						{% if value.selected %} checked="checked" {% endif %} />
-					{{ value.title }}  {% if value.value %}<span class="badge">{{ value.value }}</span>{% endif %}
-				</label>
-			{% endfor %}
-		</div>
-{% endif %}
-	</div>
-	<div class="form-group">
-		<div class="col-sm-7 col-md-6 col-lg-9 col-sm-offset-5 col-md-offset-4 col-lg-offset-3">
-			<button type="submit" class="btn btn-primary">
-				<i class="glyphicon glyphicon-search"></i> {{ i18n('m.rbs.elasticsearch.front.search', ['ucf']) }}
-			</button>
-		</div>
-	</div>
-</form>
-
 {% if showResult %}
-<h4>{{ i18n('m.rbs.elasticsearch.front.total_result_count', ['ucf', 'lab']) }} {{ totalCount }}</h4>
 <div class="list-group">
 	{% set separator = i18n('m.rbs.elasticsearch.front.fragment_separator', ['ucf']) %}
 	{% for item in items %}

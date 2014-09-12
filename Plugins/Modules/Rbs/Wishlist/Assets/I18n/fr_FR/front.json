@@ -3,13 +3,16 @@
 		"message":"Wishlist"
 	},
 	"wishlists_toggle_button":{
-		"message":"afficher les wishlists"
+		"message":"afficher les listes"
 	},
 	"wishlist_add":{
-		"message":"ajouter une wishlist"
+		"message":"ajouter une liste d'envies"
 	},
 	"wishlist_modal_close":{
 		"message":"fermer"
+	},
+	"wishlist_modal_cancel":{
+		"message":"annuler"
 	},
 	"wishlist_modal_add_confirm":{
 		"message":"ajouter"
@@ -21,87 +24,99 @@
 		"message":"titre"
 	},
 	"wishlist_error_wishlist_already_exist":{
-		"message":"vous possédez déjà une wishlist qui se nomme $WISHLIST$."
+		"message":"vous possédez déjà une liste d'envies qui se nomme $WISHLIST$."
 	},
 	"wishlist_error_can_t_add_products_to_wishlist":{
-		"message":"vous ne pouvez pas ajouter ces produits à votre wishlist"
+		"message":"vous ne pouvez pas ajouter ces produits à votre liste d'envies"
 	},
 	"wishlist_add_success":{
-		"message":"vous avez ajouté une wishlist"
+		"message":"vous avez ajouté une liste"
 	},
 	"wishlist_view_my_wishlist":{
-		"message":"voir ma wishlist"
+		"message":"voir ma liste d'envies"
 	},
 	"wishlist_view_my_wishlists":{
-		"message":"voir mes wishlists"
+		"message":"voir mes listes d'envies"
 	},
 	"wishlist_change_title":{
-		"message":"changer le nom de la wishlist"
+		"message":"modifier"
 	},
 	"wishlist_change_title_ok":{
 		"message":"OK"
 	},
 	"wishlist_please_wait_loading":{
-		"message":"veuillez patienter, chargement de la wishlist en cours"
+		"message":"veuillez patienter, chargement de la liste d'envies en cours"
 	},
 	"wishlist_remove_selected_products_from_wishlist":{
-		"message":"retirer les produits sélectionnés de la wishlist"
+		"message":"retirer les produits sélectionnés de la liste"
 	},
 	"wishlist_set_wishlist_private":{
-		"message":"rendre cette wishlist privée"
+		"message":"rendre cette liste privée"
 	},
 	"wishlist_set_wishlist_public":{
-		"message":"rendre cette wishlist publique"
+		"message":"rendre cette liste publique"
 	},
 	"wishlist_delete_wishlist":{
-		"message":"supprimer cette wishlist"
+		"message":"supprimer cette liste d'envies"
 	},
 	"wishlist_delete_modal_title":{
-		"message":"suppression d'une wishlist"
+		"message":"suppression d'une liste d'envies"
 	},
 	"wishlist_delete_modal_body":{
-		"message":"vous êtes sur le point de supprimer la wishlist, cette action est irréversible."
+		"message":"Vous êtes sur le point de supprimer cette liste d'envies, cette action est irréversible."
 	},
 	"wishlist_no_products_in_wishlist":{
-		"message":"cette wishlist est vide. Consulter le catalogue pour ajouter des produits."
+		"message":"Cette liste d'envies est vide. Consulter le catalogue pour ajouter des produits."
 	},
 	"wishlist_products_add_success":{
-		"message":"les produits $PRODUCTS$ ont bien été ajoutés à votre wishlist $WISHLIST$."
+		"message":"Les produits $PRODUCTS$ ont bien été ajoutés à votre liste $WISHLIST$."
 	},
 	"wishlist_add_wishlist_success":{
-		"message":"la wishlist $WISHLIST$ a été ajoutée avec les produits $PRODUCTS$."
+		"message":"La liste $WISHLIST$ a été ajoutée avec les produits $PRODUCTS$."
 	},
 	"wishlist_manage_wishlists":{
-		"message":"gérer mes wishlists"
+		"message":"gérer mes listes d'envies"
 	},
 	"wishlist_list_no_wishlist_in_wishlist_list":{
-		"message":"vous n'avez pas encore de wishlist, vous pouvez en ajouter une grâce au bouton wishlist sur la liste produit ou le détail d'un produit"
+		"message":"vous n'avez pas encore de liste d'envies, vous pouvez en ajouter une grâce au bouton « liste d'envies » sur la liste produit ou le détail d'un produit"
 	},
 	"wishlist_list_wishlist_product_count":{
 		"message":"contient $COUNT$ produits"
 	},
-	"wishlist_list_default_wishlist":{
-		"message":"wishlist par défaut"
+	"wishlist_default":{
+		"message":"liste par défaut"
+	},
+	"wishlist_make_default":{
+		"message":"utiliser par défaut"
 	},
 	"wishlist_public":{
-		"message":"public"
+		"message":"liste publique"
 	},
 	"wishlist_private":{
-		"message":"privée"
+		"message":"liste privée"
+	},
+	"wishlist_make_public":{
+		"message":"rendre publique"
+	},
+	"wishlist_make_private":{
+		"message":"rendre privée"
 	},
 	"wishlist_warning_product_count_limit":{
-		"message":"attention, votre wishlist contient $COUNT$ produit, vous pouvez au maximum avoir $MAX$ produits par wishlist, pensez à créer d'autres wishlists"
+		"message":"Attention, votre liste d'envies contient $COUNT$ produit. Vous pouvez au maximum avoir $MAX$ produits par liste, pensez à créer d'autres listes d'envies."
 	},
 	"wishlist_detail_unauthorized":{
-		"message":"vous n'êtes pas autorisé à consulter cette wishlist."
+		"message":"Vous n'êtes pas autorisé à consulter cette liste d'envies."
 	},
 	"wishlist_add_selected_products_to_cart":{
 		"message":"ajouter ces produits au panier"
 	},
 	"wishlist_my_wishlists":{
-		"message":"mes wishlists"
+		"message":"mes listes d'envies"
 	},
 	"must_log_in":{
-		"message":"Vous devez vous $OPEN_LINK$connecter$CLOSE_LINK$ pour accéder à la liste de vos wishlists."
+		"message":"Vous devez vous $OPEN_LINK$connecter$CLOSE_LINK$ pour accéder à vos listes d'envies."
+	},
+	"item_select":{
+		"message":"sélectionner"
 	}
 }

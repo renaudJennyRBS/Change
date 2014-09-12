@@ -23,7 +23,8 @@ class Suggest extends \Change\Http\Web\Actions\AbstractAjaxAction
 	public function execute(Event $event)
 	{
 		$result = array('items' => array());
-		$searchText = $event->getRequest()->getQuery('searchText', '');
+		$request = $event->getRequest();
+		$searchText = $request->getPost('searchText', $request->getQuery('searchText', ''));
 		if ($searchText)
 		{
 			//Elastic search special chars
