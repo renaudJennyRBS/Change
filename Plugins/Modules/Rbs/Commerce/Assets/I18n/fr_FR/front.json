@@ -267,5 +267,11 @@
 	},
 	"credit_notes_total_amounts":{
 		"message":"avoirs"
+	},
+	"shipping_fees_evaluation":{
+		"message":"évaluation des frais de port"
+	},
+	"shipping_fees_evaluation_free":{
+		"message":"offert"
 	}
 }
