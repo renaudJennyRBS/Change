@@ -1,0 +1,39 @@
+<div data-ng-show="data" class="vertical-if-animation panel panel-default" data-ng-cloak="" >
+	<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_fees_evaluation', ['ucf']) }}</div>
+	<div class="panel-body ng-binding">
+		<div class="row">
+			<div class="col-xs-12">
+				<select data-ng-show="data.countriesCount > 1" data-ng-cloak="" data-ng-model="currentCountry" class="form-control"
+					data-ng-options="c.code as c.title for c in data.countries">
+					<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
+				</select>
+				<div data-ng-hide="data.countriesCount > 1" data-ng-cloak="" class="form-control-static">(= data.countries[0].title =)</div>
+			</div>
+		</div>
+		<div class="row" data-ng-repeat="mode in currentShippingModes">
+			<div class="col-xs-6 col-md-4">
+				<img data-ng-src="(= mode.visualUrl =)" alt="" class="img-responsive" />
+			</div>
+			<div class="col-xs-6 col-md-8">
+				<div class="row">
+					<div class="col-xs-6">
+						<strong>(= mode.title =)</strong>
+					</div>
+					<div class="col-xs-6 price">
+							<span data-ng-show="mode.amount != null && mode.amount > 0">
+								<span data-ng-show="displayPrices">(= mode.formattedAmount =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr></span>
+								<span data-ng-show="displayPricesWithTax">(= mode.formattedAmountWithTax =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr></span>
+							</span>
+							<span data-ng-hide="mode.amount != null && mode.amount > 0">
+								{{ i18n('m.rbs.commerce.front.shipping_fees_evaluation_free', ['ucf']) }}
+							</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12" data-ng-bind-html="trustHtml(mode.description)">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

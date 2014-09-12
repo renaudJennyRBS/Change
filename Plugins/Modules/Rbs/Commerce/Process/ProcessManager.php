@@ -388,6 +388,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	{
 
 		$feesEvaluation = ['countries' => [], 'shippingModes' => []];
+		$globalCountries = [];
 		$cart = $event->getParam('cart');
 		$orderProcess = $event->getParam('orderProcess');
 		/** @var $website \Change\Presentation\Interfaces\Website */
@@ -440,12 +441,11 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 
 				if (count($countries))
 				{
-
-					$feesEvaluation['countries'] = array_merge($feesEvaluation['countries'], $countries);
-					$shippingModeEntry = ['id' => $shippingMode->getId(), 'countries' => array_keys($countries),
+					$globalCountries = array_merge($globalCountries, $countries);
+					$shippingModeEntry = ['id' => $shippingMode->getId(), 'countries' => $countries,
 						'sku' => null, 'amount' => null, 'amountWithTax' => null,
 						'title' => $shippingMode->getCurrentLocalization()->getTitle(),
-						'description' => null];
+						'description' => null, 'visualUrl' => null];
 
 					if ($richTextContext)
 					{
@@ -462,23 +462,42 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 							$shippingTaxes = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode);
 							if ($price->isWithTax())
 							{
-								$shippingModeEntry['amountWithTax'] = $price->getValue();
-								$shippingModeEntry['amount'] = $priceManager->getValueWithoutTax($price->getValue(), $shippingTaxes);
+								$amout = $priceManager->getValueWithoutTax($price->getValue(), $shippingTaxes);
+								$amoutWithTax = $price->getValue();
 							}
 							else
 							{
-								$shippingModeEntry['amount'] = $price->getValue();
-								$shippingModeEntry['amountWithTax'] = $priceManager->getValueWithTax($price->getValue(), $shippingTaxes);
+								$amout = $price->getValue();
+								$amoutWithTax = $priceManager->getValueWithTax($price->getValue(), $shippingTaxes);
 							}
+
+							$shippingModeEntry['amountWithTax'] = $amoutWithTax;
+							$shippingModeEntry['amount'] = $amout;
+							$shippingModeEntry['formattedAmountWithTax'] = $priceManager->formatValue($amoutWithTax, $currencyCode);
+							$shippingModeEntry['formattedAmount'] = $priceManager->formatValue($amout, $currencyCode);
+
 						}
 					}
+
+					$visual = $shippingMode->getVisual();
+					if ($visual)
+					{
+						$shippingModeEntry['visualUrl'] = $visual->getPublicURL(160, 90); // TODO: get size as a parameter?
+					}
+
 					$feesEvaluation['shippingModes'][] = $shippingModeEntry;
 				}
 			}
 		}
 
-		if (count($feesEvaluation['countries']))
+		if (count($globalCountries))
 		{
+			$feesEvaluation['countriesCount'] = count($globalCountries);
+
+			foreach($globalCountries as $key => $value)
+			{
+				$feesEvaluation['countries'][] = ['code' => $key, 'title' => $value];
+			}
 			$event->setParam('feesEvaluation', $feesEvaluation);
 		}
 	}
