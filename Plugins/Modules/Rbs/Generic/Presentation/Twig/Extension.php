@@ -348,10 +348,6 @@ class Extension implements \Twig_ExtensionInterface
 	 */
 	public function resourceURL($relativePath)
 	{
-		if ($this->getApplication()->inDevelopmentMode())
-		{
-			return $relativePath;
-		}
 		return $this->getApplicationServices()->getThemeManager()->getAssetBaseUrl() . $relativePath;
 	}
 

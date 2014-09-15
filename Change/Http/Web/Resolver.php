@@ -102,8 +102,8 @@ class Resolver extends BaseResolver
 		}
 		else
 		{
-			$relativePath = $this->getRelativePath($event->getRequest()->getPath(),
-				$website ? $website->getRelativePath() : null);
+			$websiteRelativePath = $website ? $website->getRelativePath() : null;
+			$relativePath = $this->getRelativePath($event->getRequest()->getPath(),  $websiteRelativePath);
 			$event->setParam('relativePath', $relativePath);
 			if (preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $relativePath, $matches))
 			{
@@ -222,9 +222,9 @@ class Resolver extends BaseResolver
 	 */
 	protected function findRule($event, $website)
 	{
-		$urlManager = $event->getUrlManager();
 		if ($website instanceof Website)
 		{
+			$websiteRelativePath = $website->getRelativePath();
 			$pathInfo = $event->getRequest()->getPath();
 			if ($pathInfo === $website->getScriptName())
 			{
@@ -232,19 +232,14 @@ class Resolver extends BaseResolver
 			}
 			$pathRule = new PathRule();
 			$pathRule->setWebsiteId($website->getId())->setLCID($website->getLCID());
-			if ($this->isBasePath($pathInfo, $website->getRelativePath()))
+
+			if ($this->isBasePath($pathInfo, $websiteRelativePath))
 			{
-				$relativePath = $this->getRelativePath($pathInfo, $website->getRelativePath());
+				$relativePath = $this->getRelativePath($pathInfo, $websiteRelativePath);
 			}
 			else
 			{
-				$pathRule->setRelativePath($pathInfo);
-				$uri = $urlManager->getByPathInfo($this->getRelativePath($pathInfo, null),
-					$event->getRequest()->getQuery()->toArray());
-				$location = $uri->normalize()->toString();
-				$pathRule->setLocation($location);
-				$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_301);
-				return $pathRule;
+				return null;
 			}
 
 			if (!$relativePath)

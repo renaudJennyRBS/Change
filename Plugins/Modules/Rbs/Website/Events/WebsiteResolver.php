@@ -68,25 +68,6 @@ class WebsiteResolver
 				}
 			}
 
-			if ($currentWebsite === null)
-			{
-				$cfg = $event->getApplication()->getConfiguration();
-				$singleWebsite = $cfg->getEntry('Rbs/Http/Web/SingleWebsite', true);
-				if ($singleWebsite)
-				{
-					$row = 	$data[0];
-					$model = $mm->getModelByName($row['model']);
-					$currentWebsite = $dm->getDocumentInstance(intval($row['id']), $model);
-					if ($currentWebsite instanceof Website)
-					{
-						$LCID = $currentWebsite->getRefLCID();
-						$i18nManager = $event->getApplicationServices()->getI18nManager();
-						$i18nManager->setLCID($LCID);
-						$request->setLCID($LCID);
-					}
-				}
-			}
-
 			if ($currentWebsite instanceof Website)
 			{
 				$event->setParam('website', $currentWebsite);
@@ -97,12 +78,14 @@ class WebsiteResolver
 				{
 					if ($path === '/')
 					{
+						$event->getApplication()->getLogging()->fatal('/ ' . $path);
 						$result = new \Change\Http\Result(Response::STATUS_CODE_301);
 						$result->setHeaderLocation($stdUrlManager->getByPathInfo(''));
 						$event->setResult($result);
 					}
 					elseif ($hostName != $currentWebsite->getHostName())
 					{
+						$event->getApplication()->getLogging()->fatal($hostName . ' -> ' . $path);
 						$result = new \Change\Http\Result(Response::STATUS_CODE_301);
 						$location = $urlManager->getSelf()->setHost($currentWebsite->getHostName())->normalize()->toString();
 						$result->setHeaderLocation($location);

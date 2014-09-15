@@ -48,11 +48,13 @@
 		},
 		"Http": {
 			"Web": {
-				"SingleWebsite": true,
 				"Monitoring" : false
 			},
 			"Rest": {
 				"useCorrection": true,
+				"Monitoring" : false
+			},
+			"Ajax": {
 				"Monitoring" : false
 			}
 		},
