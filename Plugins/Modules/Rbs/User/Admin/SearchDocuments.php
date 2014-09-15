@@ -19,23 +19,9 @@ class SearchDocuments
 	 */
 	public function execute(\Change\Events\Event $event)
 	{
-		if (is_array($event->getParam('documents')))
+		if ($event->getParam('modelName') == 'Rbs_User_User')
 		{
-			return;
-		}
-
-		$modelName = $event->getParam('modelName');
-		if ($modelName == 'Rbs_User_User')
-		{
-			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery($modelName);
-			$query->orPredicates(
-				$query->like('login', $event->getParam('searchString')),
-				$query->like('email', $event->getParam('searchString'))
-			);
-			$query->addOrder('login');
-			$query->addOrder('email');
-			$query->addOrder('id');
-			$event->setParam('documents', $query->getDocuments(0, $event->getParam('limit'))->toArray());
+			$event->setParam('propertyNames', ['login', 'email']);
 		}
 	}
 } 

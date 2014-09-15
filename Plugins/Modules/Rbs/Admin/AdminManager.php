@@ -954,7 +954,8 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		$args = $this->getEventManager()->prepareArgs([
 			'modelName' => $modelName,
 			'searchString' => $searchString,
-			'limit' => $limit
+			'limit' => $limit,
+			'propertyNames' => ['label']
 		]);
 		$this->getEventManager()->trigger('searchDocuments', $this, $args);
 		return isset($args['documents']) && is_array($args['documents']) ? $args['documents'] : [];
@@ -975,17 +976,33 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return;
 		}
+		$propertyNames = [];
+		foreach ($event->getParam('propertyNames') as $propertyName)
+		{
+			$property = $model->getProperty($propertyName);
+			if ($property && !$property->getStateless() && $property->getType() == \Change\Documents\Property::TYPE_STRING)
+			{
+				$propertyNames[] = $propertyName;
+			}
+		}
 
-		$property = $model->getProperty('label');
-		if (!$property || $property->getStateless())
+		if (!count($propertyNames))
 		{
 			return;
 		}
 
 		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery($model);
-		$query->andPredicates($query->like('label', $event->getParam('searchString')));
-		$query->addOrder('label');
-		$query->addOrder('id');
+		$restrictions = [];
+		foreach ($propertyNames as $propertyName)
+		{
+			$restrictions[] = $query->like($propertyName, $event->getParam('searchString'));
+			$query->addOrder($propertyName);
+		}
+		$query->orPredicates($restrictions);
+		if (!in_array($propertyNames, 'id'))
+		{
+			$query->addOrder('id');
+		}
 		$event->setParam('documents', $query->getDocuments(0, $event->getParam('limit'))->toArray());
 	}
 }
