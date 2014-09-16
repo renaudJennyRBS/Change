@@ -1,14 +1,14 @@
 <div class="order-status-item" data-ng-switch="order.processingStatus">
 	<span data-ng-switch-when="edition">
-		<i class="icon-large icon-edit-sign"></i> {{ i18n('m.rbs.order.admin.order_processingstatus_edition') }}
+		<i class="icon-large icon-edit-sign"></i> (= order.statusTitle =)
 	</span>
 	<span data-ng-switch-when="processing" class="text-info">
-		<i class="icon-large icon-info-sign"></i> {{ i18n('m.rbs.order.admin.order_processingstatus_processing') }}
+		<i class="icon-large icon-info-sign"></i> (= order.statusTitle =)
 	</span>
 	<span data-ng-switch-when="finalized" class="text-success">
-		<i class="icon-large icon-ok-sign"></i> {{ i18n('m.rbs.order.admin.order_processingstatus_finalized') }}
+		<i class="icon-large icon-ok-sign"></i> (= order.statusTitle =)
 	</span>
 	<span data-ng-switch-when="canceled" class="text-danger">
-		<i class="icon-large icon-remove-sign"></i> {{ i18n('m.rbs.order.admin.order_processingstatus_canceled') }}
+		<i class="icon-large icon-remove-sign"></i> (= order.statusTitle =)
 	</span>
 </div>

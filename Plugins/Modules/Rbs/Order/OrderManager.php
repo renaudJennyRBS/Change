@@ -47,6 +47,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getOrderPresentation', [$this, 'onDefaultGetOrderPresentation'], 15);
 		$eventManager->attach('getOrderPresentation', [$this, 'onCartGetOrderPresentation'], 10);
 		$eventManager->attach('getOrderPresentation', [$this, 'onArrayGetOrderPresentation'], 5);
+		$eventManager->attach('getOrderStatusInfo', [$this, 'onDefaultGetOrderStatusInfo'], 5);
 	}
 
 	/**
@@ -111,19 +112,19 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-		$skusByMode = [];
+		$skuArrayByMode = [];
 		foreach ($order->getShippingModes() as $shippingMode)
 		{
 			$modeId = $shippingMode->getId();
-			$skusByMode[$modeId] = [];
+			$skuArrayByMode[$modeId] = [];
 			foreach ($shippingMode->getLineKeys() as $lineKey)
 			{
 				if (isset($SKUbyLineKey[$lineKey]) && count($SKUbyLineKey[$lineKey]))
 				{
-					$skusByMode[$modeId] = array_merge($skusByMode[$modeId], $SKUbyLineKey[$lineKey]);
+					$skuArrayByMode[$modeId] = array_merge($skuArrayByMode[$modeId], $SKUbyLineKey[$lineKey]);
 				}
 			}
-			$statuses[$modeId] = count($skusByMode[$modeId]) ? 'noShipment' : 'unavailable';
+			$statuses[$modeId] = count($skuArrayByMode[$modeId]) ? 'noShipment' : 'unavailable';
 		}
 
 		$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
@@ -148,7 +149,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-		foreach ($skusByMode as $modeId => $skus)
+		foreach ($skuArrayByMode as $modeId => $skus)
 		{
 			$sentCount = 0;
 			$partialCount = 0;
@@ -397,8 +398,11 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			if (!$orderPresentation instanceof \Rbs\Order\Presentation\OrderPresentation)
 			{
 				$orderPresentation = new \Rbs\Order\Presentation\OrderPresentation($order);
+
 				$event->setParam('orderPresentation', $orderPresentation);
 			}
+
+			$orderPresentation->setStatusInfo($this->getOrderStatusInfo($order));
 
 			if ($event->getParam('withTransactions') === true)
 			{
@@ -444,6 +448,8 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$orderPresentation = new \Rbs\Order\Presentation\OrderPresentation($cart);
 				$event->setParam('orderPresentation', $orderPresentation);
 			}
+
+			$orderPresentation->setStatusInfo($this->getOrderStatusInfo($cart));
 
 			if ($event->getParam('withTransactions') === true)
 			{
@@ -545,6 +551,139 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$event->setParam('canViewOrder', true);
 			return;
+		}
+	}
+
+	/**
+	 * @param \Rbs\Order\Documents\Order|\Rbs\Commerce\Cart\Cart $order
+	 * @return array
+	 */
+	public function getOrderStatusInfo($order)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['order' => $order, 'statusInfo' => ['code' => null, 'title' => null]]);
+		$this->getEventManager()->trigger('getOrderStatusInfo', $this, $args);
+		return $args['statusInfo'];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetOrderStatusInfo(\Change\Events\Event $event)
+	{
+		$order = $event->getParam('order');
+		if (is_numeric($order))
+		{
+			$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($order);
+		}
+
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
+		if ($order instanceof \Rbs\Commerce\Cart\Cart) {
+			$statusInfo = ['code' => 'PAYMENT_VALIDATING',
+				'title' => $i18nManager->trans('m.rbs.order.front.payment_validating', ['ucf'])];
+			$event->setParam('statusInfo', $statusInfo);
+			return;
+		}
+
+		if ($order instanceof \Rbs\Order\Documents\Order)
+		{
+			$processingStatus = $order->getProcessingStatus();
+			if ($processingStatus === \Rbs\Order\Documents\Order::PROCESSING_STATUS_CANCELED)
+			{
+				$statusInfo = ['code' => 'CANCELED',
+					'title' => $i18nManager->trans('m.rbs.order.front.canceled', ['ucf'])];
+				$event->setParam('statusInfo', $statusInfo);
+			}
+			elseif ($processingStatus === \Rbs\Order\Documents\Order::PROCESSING_STATUS_FINALIZED)
+			{
+				$statusInfo = ['code' => 'FINALIZED',
+					'title' => $i18nManager->trans('m.rbs.order.front.finalized', ['ucf'])];
+				$event->setParam('statusInfo', $statusInfo);
+			}
+			elseif ($processingStatus === \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
+			{
+				$code = null;
+				$now = new \DateTime();
+				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
+				$query->andPredicates($query->eq('orderId', $order->getId()));
+				$query->addOrder('id', true);
+				/** @var $shipment \Rbs\Order\Documents\Shipment */
+				foreach ($query->getDocuments() as $shipment)
+				{
+					if ($shipment->getPrepared())
+					{
+						$shippingDate = $shipment->getShippingDate();
+						if ($shippingDate && $shippingDate <= $now)
+						{
+							if ($code === null)
+							{
+								$code = 'SHIPPED';
+							}
+							elseif ($code != 'SHIPPED')
+							{
+								$code = 'PARTIALLY_SHIPPED';
+								break;
+							}
+						}
+						else
+						{
+							if ($code === null)
+							{
+								$code = 'PREPARED';
+							}
+							elseif ($code == 'SHIPPED')
+							{
+								$code = 'PARTIALLY_SHIPPED';
+								break;
+							}
+						}
+					}
+					else
+					{
+						if ($code === null)
+						{
+							$code = 'PREPARATION';
+						}
+						elseif ($code == 'SHIPPED')
+						{
+							$code = 'PARTIALLY_SHIPPED';
+							break;
+						}
+					}
+				}
+				if ($code === null) {
+					$code = 'PROCESS_WAITING';
+				}
+
+				if ($code)
+				{
+					$statusInfo = ['code' => $code, 'title' => $code];
+					switch ($code) {
+						case 'PROCESS_WAITING':
+							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.process_waiting', ['ucf']);
+							break;
+						case 'PREPARATION':
+							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.preparation', ['ucf']);
+							break;
+						case 'PREPARED':
+							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.prepared', ['ucf']);
+							break;
+						case 'SHIPPED':
+							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.shipped', ['ucf']);
+							break;
+						case 'PARTIALLY_SHIPPED':
+							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.partially_shipped', ['ucf']);
+							break;
+					}
+					$event->setParam('statusInfo', $statusInfo);
+				}
+			}
+			elseif ($processingStatus === \Rbs\Order\Documents\Order::PROCESSING_STATUS_EDITION)
+			{
+				$statusInfo = ['code' => 'EDITION',
+					'title' => $i18nManager->trans('m.rbs.order.front.edition', ['ucf'])];
+				$event->setParam('statusInfo', $statusInfo);
+			}
 		}
 	}
 }

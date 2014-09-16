@@ -1,10 +1,10 @@
 <span class="order-status-item" data-ng-switch="order.processingStatus">
 	<i data-ng-switch-when="edition" class="icon-edit-sign icon-2x"
-		title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_edition') }}"></i>
+		title="(= order.statusTitle =)"></i>
 	<i data-ng-switch-when="processing" class="text-info icon-info-sign icon-2x"
-		title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_processing') }}"></i>
+		title="(= order.statusTitle =)"></i>
 	<i data-ng-switch-when="finalized" class="text-success icon-ok-sign icon-2x"
-		title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_finalized') }}"></i>
+		title="(= order.statusTitle =)"></i>
 	<i data-ng-switch-when="canceled" class="text-danger icon-remove-sign icon-2x"
-		title="{{ i18nAttr('m.rbs.order.admin.order_processingstatus_canceled') }}"></i>
+		title="(= order.statusTitle =)"></i>
 </span>

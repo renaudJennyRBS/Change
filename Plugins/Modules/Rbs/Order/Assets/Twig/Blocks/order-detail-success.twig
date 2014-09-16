@@ -11,18 +11,12 @@
 			</div>
 			<dl class="dl-horizontal">
 				<dt>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</dt>
-				<dd>
-					{% if order.code %}
-						{{ order.code }}
-					{% else %}
-						<em>{{ i18n('m.rbs.order.front.generating_order', ['ucf']) }}</em>
-					{% endif %}
-				</dd>
+				<dd>{{ order.code }}</dd>
 				<dt>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</dt>
 				<dd>{{ order.date | transDateTime }}</dd>
 				<dt>{{ i18n('m.rbs.order.front.order_processing_status', ['ucf']) }}</dt>
 				<dd{% if order.processingStatus == 'canceled' %} class="text-warning"{% endif %}>
-					{{ i18n('m.rbs.order.front.order_processing_status_' ~ order.processingStatus, ['ucf']) }}
+					{{ order.statusTitle }}
 				</dd>
 			</dl>
 		</div>

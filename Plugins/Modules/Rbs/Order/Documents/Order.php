@@ -720,6 +720,13 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 
 			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
+
+			$statusInfo = $commerceServices->getOrderManager()->getOrderStatusInfo($order);
+			if (is_array($statusInfo))
+			{
+				$documentResult->setProperty('statusTitle', $statusInfo['title']);
+			}
+
 			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
 			$currency = $order->getCurrencyCode();
 			$nf->setTextAttribute(\NumberFormatter::CURRENCY_CODE, $currency);
@@ -782,6 +789,17 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			$nf = new \NumberFormatter($event->getApplicationServices()->getI18nManager()->getLCID(), \NumberFormatter::CURRENCY);
 			$formattedAmount = $nf->formatCurrency($order->getPaymentAmountWithTaxes(), $order->getCurrencyCode());
 			$restResult->setProperty('formattedPaymentAmountWithTaxes', $formattedAmount);
+			$extraColumn = $event->getParam('extraColumn');
+			if (is_array($extraColumn) && in_array('statusTitle', $extraColumn))
+			{
+				/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+				$commerceServices = $event->getServices('commerceServices');
+				$statusInfo = $commerceServices->getOrderManager()->getOrderStatusInfo($order);
+				if (is_array($statusInfo))
+				{
+					$restResult->setProperty('statusTitle', $statusInfo['title']);
+				}
+			}
 		}
 	}
 
