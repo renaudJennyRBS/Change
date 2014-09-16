@@ -10,8 +10,10 @@
 				</h2>
 			</div>
 			<dl class="dl-horizontal">
+				{% if order.code %}
 				<dt>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</dt>
 				<dd>{{ order.code }}</dd>
+				{% endif %}
 				<dt>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</dt>
 				<dd>{{ order.date | transDateTime }}</dd>
 				<dt>{{ i18n('m.rbs.order.front.order_processing_status', ['ucf']) }}</dt>

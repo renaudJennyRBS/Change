@@ -78,14 +78,12 @@ class WebsiteResolver
 				{
 					if ($path === '/')
 					{
-						$event->getApplication()->getLogging()->fatal('/ ' . $path);
 						$result = new \Change\Http\Result(Response::STATUS_CODE_301);
 						$result->setHeaderLocation($stdUrlManager->getByPathInfo(''));
 						$event->setResult($result);
 					}
 					elseif ($hostName != $currentWebsite->getHostName())
 					{
-						$event->getApplication()->getLogging()->fatal($hostName . ' -> ' . $path);
 						$result = new \Change\Http\Result(Response::STATUS_CODE_301);
 						$location = $urlManager->getSelf()->setHost($currentWebsite->getHostName())->normalize()->toString();
 						$result->setHeaderLocation($location);
