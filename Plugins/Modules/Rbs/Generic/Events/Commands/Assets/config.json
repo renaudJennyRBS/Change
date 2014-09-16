@@ -120,6 +120,9 @@
 			"facet-mapping": {
 				"description": "set facet mapping",
 				"shortcut": "f"
+			},
+			"delete-all": {
+				"description": "delete all indexes on a client"
 			}
 		},
 		"arguments": {

@@ -65,6 +65,18 @@ class Client
 								}
 							}
 						}
+						elseif ($event->getParam('delete-all'))
+						{
+							foreach ($indexManager->getIndexesDefinition($clientName) as $indexDef)
+							{
+								$idx = $client->getIndex($indexDef->getName());
+								if ($idx->exists())
+								{
+									$indexManager->deleteIndex($indexDef);
+									$response->addInfoMessage('index: "' . $indexDef->getName() . '" deleted');
+								}
+							}
+						}
 						elseif (($indexName = $event->getParam('indexName')) != null)
 						{
 							$indexDef = $indexManager->findIndexDefinitionByName($clientName, $indexName);
