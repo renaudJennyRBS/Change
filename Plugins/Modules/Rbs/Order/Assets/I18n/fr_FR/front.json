@@ -32,6 +32,31 @@
 	"generating_order":{
 		"message":"en cours de génération"
 	},
+
+	"payment_validating":{
+		"message":"en attente de validation du paiement"
+	},
+	"process_waiting":{
+		"message":"en attente de traitement"
+	},
+	"preparation":{
+		"message":"en préparation"
+	},
+	"prepared":{
+		"message":"préparé"
+	},
+	"shipped":{
+		"message":"partiellement expédié"
+	},
+	"partially_shipped":{
+		"message":"partiellement expédié"
+	},
+	"finalized":{
+		"message":"expédié"
+	},
+	"canceled":{
+		"message":"annulé"
+	},
 	"order_number":{
 		"message":"numéro"
 	},

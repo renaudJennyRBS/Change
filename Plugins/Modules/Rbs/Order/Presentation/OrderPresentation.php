@@ -19,6 +19,11 @@ class OrderPresentation
 	protected $code;
 
 	/**
+	 * @var array|null
+	 */
+	protected $statusInfo;
+
+	/**
 	 * @var integer
 	 */
 	protected $id;
@@ -237,6 +242,10 @@ class OrderPresentation
 		{
 			$this->setId($array['id']);
 		}
+		if (isset($array['statusInfo']))
+		{
+			$this->setStatusInfo($array['statusInfo']);
+		}
 		if (isset($array['cartIdentifier']))
 		{
 			$this->setCartIdentifier($array['cartIdentifier']);
@@ -384,6 +393,36 @@ class OrderPresentation
 	public function getCartIdentifier()
 	{
 		return $this->cartIdentifier;
+	}
+
+	/**
+	 * @param array $statusInfo
+	 * @return $this
+	 */
+	public function setStatusInfo($statusInfo)
+	{
+		$this->statusInfo = $statusInfo;
+		return $this;
+	}
+
+	/**
+	 * @return array|null
+	 */
+	public function getStatusInfo()
+	{
+		return $this->statusInfo;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getStatusTitle()
+	{
+		if (is_array($this->statusInfo) && isset($this->statusInfo['title']))
+		{
+			return $this->statusInfo['title'];
+		}
+		return '';
 	}
 
 	/**

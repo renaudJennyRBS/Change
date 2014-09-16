@@ -51,6 +51,11 @@ class GetHome
 		$renderer = function () use ($templateFileName, $manager, $attributes, $devMode)
 		{
 			$resourceDirectoryPath = $devMode ? $manager->getResourceDirectoryPath() : null;
+			if ($resourceDirectoryPath)
+			{
+				\Change\Stdlib\File::rmdir($resourceDirectoryPath);
+				\Change\Stdlib\File::mkdir($resourceDirectoryPath);
+			}
 			$resourceBaseUrl = $manager->getResourceBaseUrl();
 
 			$scripts = $manager->prepareScriptAssets($resourceDirectoryPath, $resourceBaseUrl);

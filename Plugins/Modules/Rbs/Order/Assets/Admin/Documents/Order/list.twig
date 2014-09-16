@@ -16,7 +16,7 @@
 			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsOrderOrder" model="Rbs_Order_Order" filter-collection="filter">
+		<rbs-document-list data-dlid="DLRbsOrderOrder" model="Rbs_Order_Order" filter-collection="filter" use-properties="statusTitle">
 			<rbs-column name="code" primary="true"></rbs-column>
 			<rbs-column name="processingStatus" align="center"
 				label="{{ i18nAttr('m.rbs.order.admin.order_statuses', ['ucf']) }}">

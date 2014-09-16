@@ -39,7 +39,6 @@ class LocalStorage extends AbstractStorage
 	public function setBasePath($basePath)
 	{
 		$this->basePath = $basePath;
-		\Change\Stdlib\File::mkdir($basePath);
 	}
 
 	/**
@@ -49,6 +48,7 @@ class LocalStorage extends AbstractStorage
 	{
 		parent::setStorageManager($storageManager);
 		$this->basePath = $storageManager->getWorkspace()->composeAbsolutePath($this->basePath);
+		\Change\Stdlib\File::mkdir($this->basePath);
 	}
 
 	/**

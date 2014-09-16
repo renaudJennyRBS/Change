@@ -351,6 +351,12 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 			$resourceDirectoryPath = $this->getResourceDirectoryPath();
 		}
 
+		if ($resourceDirectoryPath)
+		{
+			\Change\Stdlib\File::rmdir($resourceDirectoryPath);
+			\Change\Stdlib\File::mkdir($resourceDirectoryPath);
+		}
+
 		$this->prepareCssAssets($resourceDirectoryPath);
 		$this->prepareScriptAssets($resourceDirectoryPath);
 		$this->prepareImageAssets($resourceDirectoryPath);
