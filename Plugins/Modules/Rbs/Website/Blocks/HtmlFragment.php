@@ -1,23 +1,22 @@
 <?php
 /**
- * Copyright (C) 2014 Eric Hauswald
+ * Copyright (C) 2014 Proximis
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 namespace Rbs\Website\Blocks;
 
-use Change\Presentation\Blocks\Standard\Block;
-
 /**
- * @name \Rbs\Website\Blocks\Text
+ * @name \Rbs\Website\Blocks\HtmlFragment
  */
-class Text extends Block
+class HtmlFragment extends \Change\Presentation\Blocks\Standard\Block
 {
 	/**
+	 * Event Params 'website', 'document', 'page'
 	 * @api
 	 * Set Block Parameters on $event
-	 * Required Event method: getBlockLayout, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param \Change\Presentation\Blocks\Event $event
 	 * @return \Change\Presentation\Blocks\Parameters
 	 */
@@ -36,12 +35,11 @@ class Text extends Block
 	 */
 	protected function isValidDocument($document)
 	{
-		return $document instanceof \Rbs\Website\Documents\Text;
+		return $document instanceof \Rbs\Website\Documents\HtmlFragment;
 	}
 
 	/**
 	 * Set $attributes and return a twig template file name OR set HtmlCallback on result
-	 * Required Event method: getBlockLayout, getBlockParameters, getApplication, getApplicationServices, getServices, getHttpRequest
 	 * @param \Change\Presentation\Blocks\Event $event
 	 * @param \ArrayObject $attributes
 	 * @return string|null
@@ -53,11 +51,11 @@ class Text extends Block
 		if ($docId)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
-			$document = $documentManager->getDocumentInstance($docId, 'Rbs_Website_Text');
+			$document = $documentManager->getDocumentInstance($docId, 'Rbs_Website_HtmlFragment');
 			if ($this->isValidDocument($document))
 			{
-				$attributes['text'] = $document;
-				return 'text.twig';
+				$attributes['htmlFragment'] = $document;
+				return 'html-fragment.twig';
 			}
 		}
 		return null;

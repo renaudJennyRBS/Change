@@ -1,4 +1,42 @@
 {
+	"/Rbs/Generic/HtmlFragment/": {
+		"model": "Rbs_Website_HtmlFragment",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/HtmlFragment/list.twig",
+			"labelKey": "m.rbs.website.admin.htmlfragment_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/HtmlFragment/:id": {
+		"model": "Rbs_Website_HtmlFragment",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/HtmlFragment/edit.twig",
+			"labelKey": "m.rbs.website.documents.htmlfragment | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/HtmlFragment/:id/translate/:LCID": {
+		"model": "Rbs_Website_HtmlFragment",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/HtmlFragment/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Generic/HtmlFragment/new": {
+		"model": "Rbs_Website_HtmlFragment",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Website/HtmlFragment/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Generic/Text/": {
 		"model": "Rbs_Website_Text",
 		"name": "list",
@@ -109,6 +147,10 @@
 		"auto": false
 	},
 	"/Rbs/Website/FunctionalPage/new": false,
+	"/Rbs/Website/HtmlFragment/": false,
+	"/Rbs/Website/HtmlFragment/:id": false,
+	"/Rbs/Website/HtmlFragment/:id/translate/:LCID": false,
+	"/Rbs/Website/HtmlFragment/new": false,
 	"/Rbs/Website/Menu/": false,
 	"/Rbs/Website/Menu/:id": false,
 	"/Rbs/Website/Menu/:id/translate/:LCID": false,

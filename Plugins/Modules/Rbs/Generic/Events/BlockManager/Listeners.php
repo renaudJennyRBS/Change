@@ -35,6 +35,7 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Website_Error', true, $events);
 		new RegisterByBlockName('Rbs_Website_XhtmlTemplate', true, $events);
 		new RegisterByBlockName('Rbs_Website_Text', true, $events);
+		new RegisterByBlockName('Rbs_Website_HtmlFragment', true, $events);
 		new RegisterByBlockName('Rbs_Website_TrackersAskConsent', true, $events);
 		new RegisterByBlockName('Rbs_Website_TrackersManage', true, $events);
 

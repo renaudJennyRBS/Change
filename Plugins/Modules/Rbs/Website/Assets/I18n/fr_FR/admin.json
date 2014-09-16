@@ -430,6 +430,15 @@
 	"ordering_apply":{
 		"message":"Ordonner"
 	},
+	"htmlfragment_list":{
+		"message":"fragments d'HTML"
+	},
+	"htmlfragment_create":{
+		"message":"ajouter un fragment d'HTML"
+	},
+	"html_fragment_label":{
+		"message":"fragment d'HTML"
+	},
 	"text_list":{
 		"message":"textes"
 	},
