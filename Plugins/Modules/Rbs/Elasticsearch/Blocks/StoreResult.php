@@ -263,6 +263,10 @@ class StoreResult extends Block
 		if ($parameters->getParameter('requiredSearchText'))
 		{
 			$searchText = $parameters->getParameter('searchText');
+			if (!$searchText)
+			{
+				return null;
+			}
 		}
 
 		$applicationServices = $event->getApplicationServices();
