@@ -447,5 +447,32 @@
 	},
 	"text_title_level":{
 		"message":"niveau du titre [1] à 6"
+	},
+	"trackers_ask_consent_label":{
+		"message":"demande d'acceptation des cookies et traceurs"
+	},
+	"trackers_ask_consent_text":{
+		"message":"contenu de la bannière"
+	},
+	"trackers_opt_out_confirmation_text":{
+		"message":"confirmation d'opt out"
+	},
+	"trackers_opt_in_confirmation_text":{
+		"message":"confirmation d'opt in"
+	},
+	"manage_trackers_function":{
+		"message":"information et paramétrage des cookies et traceurs"
+	},
+	"trackers_manage_label":{
+		"message":"paramétrage des cookies et traceurs"
+	},
+	"trackers_manage_not_chosen_text":{
+		"message":"texte si aucun choix n'est fait"
+	},
+	"trackers_manage_allowed_text":{
+		"message":"texte si tracker accepté"
+	},
+	"trackers_manage_not_allowed_text":{
+		"message":"texte si tracker refusé"
 	}
 }
