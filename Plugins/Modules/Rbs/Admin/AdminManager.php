@@ -818,6 +818,8 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			case 'String':
 				return 'text';
+			case 'LongString':
+				return 'long-text';
 			case 'RichText':
 				return 'rich-text';
 			case 'Document':
