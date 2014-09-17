@@ -40,12 +40,12 @@
 		<div class="form-group">
 			<span data-ng-show="readonlyCart">(= line.quantity =)</span>
 			<span data-ng-hide="readonlyCart" class="input-group" style="width: 100px;">
-				<input type="number" min="0" step="1" required="true" data-ng-model="line.quantity" class="form-control" />
+				<input type="number" min="0" step="1" required="true" data-ng-model="line.quantity" class="form-control" data-ng-disabled="oneOtherQuantityEdited()"/>
 				<span class="input-group-btn">
 					<button type="button" data-ng-disabled="!isQuantityEdited()" data-ng-click="updateLine(index)"
-						class="btn btn-icon btn-default ng-class: {'btn-success': isQuantityEdited()}"
+						class="btn btn-icon btn-default ng-class: {'btn-primary': isQuantityEdited()}"
 						title="{{ i18nAttr('m.rbs.commerce.front.update', ['ucf']) }}">
-						<i class="glyphicon glyphicon-ok"></i>
+						<i class="glyphicon glyphicon-refresh"></i>
 					</button>
 				</span>
 			</span>
@@ -101,8 +101,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr data-rbs-commerce-cart-line="" data-ng-repeat="(index, line) in cart.lines" data-cart="cart"
-					data-line="line" data-index="index" data-original-quantities="original-quantities" data-loading="loading">
+				<tr data-rbs-commerce-cart-line="" data-ng-repeat="(index, line) in cart.lines">
 				</tr>
 			</tbody>
 		</table>
