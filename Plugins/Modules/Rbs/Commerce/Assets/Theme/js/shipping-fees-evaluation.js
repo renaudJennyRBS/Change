@@ -23,7 +23,6 @@
 						{
 							scope.data = null;
 						}
-						console.log(scope.data);
 					})
 					.error(function(data, status, headers) {
 						console.log('GetShippingFeesEvaluation error', data, status, headers);
