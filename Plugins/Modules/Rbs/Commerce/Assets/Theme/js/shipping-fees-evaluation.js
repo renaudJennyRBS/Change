@@ -23,6 +23,9 @@
 						{
 							scope.data = null;
 						}
+						if (scope.data.countriesCount == 1){
+							scope.currentCountry = scope.data.countries[0].code;
+						}
 					})
 					.error(function(data, status, headers) {
 						console.log('GetShippingFeesEvaluation error', data, status, headers);
