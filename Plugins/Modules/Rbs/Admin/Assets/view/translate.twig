@@ -17,7 +17,7 @@
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ '{{' }} i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) {{ '}}' }}">
 {% for property in properties %}
-{% if property.type == 'text' or property.type == 'rich-text' %}
+{% if property.type == 'text' or property.type == 'rich-text' or property.type == 'long-text' %}
 
 				<rbs-field-{{ property.type }} property="{{ property.name }}"{% if property.required %} required="true"{% endif %}
 {# Empty line to avoid merging the label attribute with the precedent line because of the endif tag at the end of line... #}

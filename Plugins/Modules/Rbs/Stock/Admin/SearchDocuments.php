@@ -19,19 +19,9 @@ class SearchDocuments
 	 */
 	public function execute(\Change\Events\Event $event)
 	{
-		if (is_array($event->getParam('documents')))
+		if ($event->getParam('modelName') == 'Rbs_Stock_Sku')
 		{
-			return;
-		}
-
-		$modelName = $event->getParam('modelName');
-		if ($modelName == 'Rbs_Stock_Sku')
-		{
-			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery($modelName);
-			$query->andPredicates($query->like('code', $event->getParam('searchString')));
-			$query->addOrder('code');
-			$query->addOrder('id');
-			$event->setParam('documents', $query->getDocuments(0, $event->getParam('limit'))->toArray());
+			$event->setParam('propertyNames', ['code']);
 		}
 	}
 } 

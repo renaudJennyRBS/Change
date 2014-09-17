@@ -30,6 +30,10 @@ class Text extends Block
 		return $parameters;
 	}
 
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return bool
+	 */
 	protected function isValidDocument($document)
 	{
 		return $document instanceof \Rbs\Website\Documents\Text;

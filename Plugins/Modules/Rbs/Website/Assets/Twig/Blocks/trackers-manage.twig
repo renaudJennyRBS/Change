@@ -1,0 +1,35 @@
+<script type="text/javascript">
+	if (!__change.hasOwnProperty('rbsWebsiteTrackersManager')) {
+		__change.rbsWebsiteTrackersManager = {}
+	}
+	__change.rbsWebsiteTrackersManager.disableAutoConsent = true;
+</script>
+<div data-ng-controller="rbsWebsiteManageTrackers" data-ng-cloak="">
+	<div data-ng-show="isChosen">
+		<div data-ng-show="isAllowed">
+			<p>{{ parameters.allowedText }}</p>
+			<button class="btn btn-default" data-ng-click="optOut()">
+				<span class="glyphicon glyphicon-ban-circle text-danger"></span>
+				{{ i18n('m.rbs.website.front.refuse_trackers', ['ucf']) }}
+			</button>
+		</div>
+		<div data-ng-hide="isAllowed">
+			<p>{{ parameters.notAllowedText }}</p>
+			<button class="btn btn-default" data-ng-click="optIn()">
+				<span class="glyphicon glyphicon-ok-circle text-success"></span>
+				{{ i18n('m.rbs.website.front.accept_trackers', ['ucf']) }}
+			</button>
+		</div>
+	</div>
+	<div data-ng-hide="isChosen">
+		<p>{{ parameters.notChosenText }}</p>
+		<button class="btn btn-default" data-ng-click="optIn()">
+			<span class="glyphicon glyphicon-ok-circle text-success"></span>
+			{{ i18n('m.rbs.website.front.accept_trackers', ['ucf']) }}
+		</button>
+		<button class="btn btn-default" data-ng-click="optOut()">
+			<span class="glyphicon glyphicon-ban-circle text-danger"></span>
+			{{ i18n('m.rbs.website.front.refuse_trackers', ['ucf']) }}
+		</button>
+	</div>
+</div>

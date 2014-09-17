@@ -141,6 +141,13 @@
 			"parameters" : {
 				"fullyQualifiedTemplateName": "Rbs_Demo:xhtml-copyright.twig"
 			}
+		},
+
+		"trackersAskConsent" : {
+			"id" : "trackersAskConsent",
+			"type" : "block",
+			"name" : "Rbs_Website_TrackersAskConsent",
+			"visibility" : "raw"
 		}
 	}
 }

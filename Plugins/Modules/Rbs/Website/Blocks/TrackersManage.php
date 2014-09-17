@@ -1,17 +1,17 @@
 <?php
 /**
- * Copyright (C) 2014 Proximis
+ * Copyright (C) 2014 Ready Business System
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace #namespace#;
+namespace Rbs\Website\Blocks;
 
 /**
- * @name \#namespace#\#className#
+ * @name \Rbs\Website\Blocks\TrackersManage
  */
-class #className# extends \Change\Presentation\Blocks\Standard\Block
+class TrackersManage extends \Change\Presentation\Blocks\Standard\Block
 {
 	/**
 	 * Event Params 'website', 'document', 'page'
@@ -23,17 +23,10 @@ class #className# extends \Change\Presentation\Blocks\Standard\Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-
-		// Declare your parameters here.
-		//$parameters->addParameterMeta('myParameter');
-
+		$parameters->addParameterMeta('notChosenText');
+		$parameters->addParameterMeta('allowedText');
+		$parameters->addParameterMeta('notAllowedText');
 		$parameters->setLayoutParameters($event->getBlockLayout());
-
-		// Uncomment following line to disable caches on this block.
-		//$parameters->setNoCache();
-
-		// Fill your parameters here.
-		//$parameters->setParameterValue('myParameter', $value);
 
 		return $parameters;
 	}
@@ -50,6 +43,6 @@ class #className# extends \Change\Presentation\Blocks\Standard\Block
 
 		// Implement your block here.
 
-		return '#templateName#';
+		return 'trackers-manage.twig';
 	}
 }

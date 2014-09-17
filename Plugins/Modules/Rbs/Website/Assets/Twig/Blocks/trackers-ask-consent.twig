@@ -1,0 +1,119 @@
+<div id="trackers-ask-consent" class="alert alert-warning alert-cookie hidden">
+	<div class="richtext">{{ askConsentText.currentLocalization.text|richText }}</div>
+</div>
+
+<div id="trackers-confirmation" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span>
+					<span class="sr-only">{{ i18n('m.rbs.generic.front.close', ['ucf']) }}</span>
+				</button>
+				<h4 class="modal-title">{{ i18n('m.rbs.website.front.manage_trackers_modal', ['ucf']) }}</h4>
+			</div>
+			<div class="modal-body" id="trackers-confirm-opt-out">
+				<div class="richtext">{{ optOutConfirmationText.currentLocalization.text|richText }}</div>
+			</div>
+			<div class="modal-body" id="trackers-confirm-opt-in">
+				<div class="richtext">{{ optInConfirmationText.currentLocalization.text|richText }}</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">
+					{{ i18n('m.rbs.generic.front.close', ['ucf']) }}
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	/**
+	 * Code inspired by http://www.cnil.fr/vos-obligations/sites-web-cookies-et-autres-traceurs/outils-et-codes-sources/la-mesure-daudience/
+	 */
+	(function() {
+		var consentCookieName = 'rbsWebsiteTrackerHasConsent';
+
+		function getCookie(cookieName) {
+			if (document.cookie.length > 0) {
+				var begin = document.cookie.indexOf(cookieName + "=");
+				if (begin != -1) {
+					begin += cookieName.length + 1;
+					var end = document.cookie.indexOf(";", begin);
+					if (end == -1) {
+						end = document.cookie.length;
+					}
+					return unescape(document.cookie.substring(begin, end));
+				}
+			}
+			return null;
+		}
+
+		function getCookieExpireDate() {
+			var cookieTimeout = 34214400000; // 13 months in milliseconds.
+			var date = new Date();
+			date.setTime(date.getTime() + cookieTimeout);
+			return "; expires=" + date.toGMTString();
+		}
+
+		function askConsent() {
+			var div = jQuery('#trackers-ask-consent').detach();
+			div.removeClass('hidden');
+			jQuery('body').before(div);
+		}
+
+		if (!__change.hasOwnProperty('rbsWebsiteTrackersManager')) {
+			__change.rbsWebsiteTrackersManager = {}
+		}
+
+		__change.rbsWebsiteTrackersManager.optOut = function() {
+			jQuery('#trackers-ask-consent').addClass('hidden');
+			jQuery('#trackers-confirm-opt-out').removeClass('hidden');
+			jQuery('#trackers-confirm-opt-in').addClass('hidden');
+
+			{% block explicitOptOut %}
+			document.cookie = consentCookieName + '=false;' + getCookieExpireDate() + ';path=/';
+			{% endblock %}
+
+			jQuery('#trackers-confirmation').modal({});
+		};
+
+		__change.rbsWebsiteTrackersManager.optIn = function() {
+			jQuery('#trackers-ask-consent').addClass('hidden');
+			jQuery('#trackers-confirm-opt-out').addClass('hidden');
+			jQuery('#trackers-confirm-opt-in').removeClass('hidden');
+
+			{% block explicitOptIn %}
+			document.cookie = consentCookieName + '=true;' + getCookieExpireDate() + ';path=/';
+			{% endblock %}
+
+			jQuery('#trackers-confirmation').modal({});
+		};
+
+		__change.rbsWebsiteTrackersManager.isChosen = function () {
+			return getCookie(consentCookieName) ? true : false;
+		};
+
+		__change.rbsWebsiteTrackersManager.isAllowed = function () {
+			return getCookie(consentCookieName) == 'true';
+		};
+
+		/**
+		 * Show the banner to ask consent only if the user has not already consented.
+		 */
+		// If the user has no cookie for consent, check the referrer.
+		if (!getCookie(consentCookieName)) {
+			console.log(document.referrer, document.referrer.split('/')[2], document.location.host);
+			// If the user comes from an other site, ask consent and deactivate tracking.
+			if (document.referrer.split('/')[2] != document.location.host || __change.rbsWebsiteTrackersManager.disableAutoConsent) {
+				window.onload = askConsent;
+			}
+			// Else, by browsing, he implicitly consents.
+			else {
+				{% block implicitOptIn %}
+					document.cookie = consentCookieName + '=true;' + getCookieExpireDate() + ' ; path=/';
+				{% endblock %}
+			}
+		}
+	})();
+</script>

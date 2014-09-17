@@ -7,5 +7,14 @@
 	},
 	"error_403":{
 		"message":"oups!, vous n'avez pas les droits nécéssaires."
+	},
+	"manage_trackers_modal":{
+		"message":"paramétrage des cookies et traceurs"
+	},
+	"accept_trackers":{
+		"message":"accepter"
+	},
+	"refuse_trackers":{
+		"message":"refuser"
 	}
 }

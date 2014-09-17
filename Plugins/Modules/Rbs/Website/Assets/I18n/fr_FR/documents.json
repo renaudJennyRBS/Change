@@ -139,5 +139,11 @@
 	},
 	"text_text":{
 		"message":"texte"
+	},
+	"htmlfragment":{
+		"message":"fragment d'HTML"
+	},
+	"htmlfragment_content":{
+		"message":"contenu"
 	}
 }

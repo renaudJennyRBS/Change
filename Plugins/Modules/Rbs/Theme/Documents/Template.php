@@ -19,12 +19,18 @@ class Template extends \Compilation\Rbs\Theme\Documents\Template implements \Cha
 {
 	const FILE_META_KEY = "fileMeta";
 
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach([Event::EVENT_CREATE, Event::EVENT_UPDATE], [$this, 'onNormalizeEditableContent'], 5);
 	}
 
+	/**
+	 * @param Event $event
+	 */
 	public function onNormalizeEditableContent(Event $event)
 	{
 		if ($event->getDocument() !== $this)

@@ -557,3 +557,12 @@ form .description {
 	top: 3px;
 	margin-right: 3px;
 }
+
+/** CookieAskConsent Block */
+.alert-cookie {
+	margin-bottom: 0;
+	font-size: 15px;
+}
+.alert-cookie .richtext > :last-child {
+	margin-bottom: 0;
+}

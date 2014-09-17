@@ -29,6 +29,20 @@
 
 	/**
 	 * @ngdoc directive
+	 * @id RbsChange.directive:rbsFieldText
+	 * @name Field text
+	 * @restrict E
+	 *
+	 * @description
+	 * Displays a simple text field in a Document editor.
+	 *
+	 * @param {String} property Name of the property of the Document.
+	 * @param {String} label Label of the field.
+	 */
+	registerFieldDirective('LongText', '<textarea class="form-control" rows="5" style="max-width: 100%;"></textarea>', 'textarea');
+
+	/**
+	 * @ngdoc directive
 	 * @id RbsChange.directive:rbsFieldEmail
 	 * @name Field email
 	 * @restrict E
