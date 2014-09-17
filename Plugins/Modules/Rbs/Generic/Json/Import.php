@@ -396,8 +396,9 @@ class Import
 				if (is_array($value))
 				{
 					$subDoc = $this->resolveDocument($value);
-					if ($subDoc)
+					if ($subDoc instanceof \Change\Documents\AbstractDocument)
 					{
+						/** @var $subDoc \Change\Documents\AbstractDocument */
 						$this->import($subDoc, $value);
 					}
 				}
@@ -422,6 +423,10 @@ class Import
 					}
 				}
 				$property->setValue($document, $docs);
+			}
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_JSON)
+			{
+				$property->setValue($document, $this->recursivelyReplaceIds($value));
 			}
 			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
 			{
@@ -481,6 +486,46 @@ class Import
 	}
 
 	/**
+	 * Used to replace ids of documents in JSON properties.
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	protected function recursivelyReplaceIds($value)
+	{
+		if (is_array($value))
+		{
+			if (count($value) === 1)
+			{
+				if (isset($value['_id']))
+				{
+					$subDoc = $this->resolveDocument($value);
+					if ($subDoc)
+					{
+						$this->import($subDoc, $value);
+						return $subDoc->getId();
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid document: ' . var_export($value));
+					}
+				}
+				elseif (isset($value['_i18n']))
+				{
+					$value = ($this->getI18nManager()) ? $this->getI18nManager()->trans($value['_i18n']) : $value['_i18n'];
+				}
+			}
+			else
+			{
+				foreach ($value as $key => $subValue)
+				{
+					$value[$key] = $this->recursivelyReplaceIds($subValue);
+				}
+			}
+		}
+		return $value;
+	}
+
+	/**
 	 * @param \Change\Documents\AbstractModel $model
 	 * @param \Change\Documents\AbstractLocalizedDocument $document
 	 * @param array $jsonLCID
@@ -495,16 +540,13 @@ class Import
 				continue;
 			}
 			$value = $jsonLCID[$propertyName];
-			if ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
+			if ($property->getType() === \Change\Documents\Property::TYPE_JSON)
 			{
-				if ($this->getI18nManager())
-				{
-					$value = $this->getI18nManager()->trans($value['_i18n']);
-				}
-				else
-				{
-					$value = $value['_i18n'];
-				}
+				$value = $this->recursivelyReplaceIds($value);
+			}
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
+			{
+				$value = ($this->getI18nManager()) ? $this->getI18nManager()->trans($value['_i18n']) : $value['_i18n'];
 			}
 			$property->setLocalizedValue($document, $this->getValueConverter()->toPropertyValue($value, $property->getType()));
 		}
