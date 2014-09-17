@@ -120,7 +120,7 @@
 		"message":"votre demande a expiré. Merci de refaire une demande de ré-initialisation de mot de passe."
 	},
 	"submit_init_password":{
-		"message":"enregistrez votre mot de passe"
+		"message":"enregistrez mon mot de passe"
 	},
 	"forgot_your_password":{
 		"message":"mot de passe oublié ?"
@@ -132,10 +132,10 @@
 		"message":"demande de ré-initialisation envoyée"
 	},
 	"edit_account_title":{
-		"message":"édition de mes informations personnelles"
+		"message":"édition de mes informations"
 	},
 	"account_title":{
-		"message":"mes informations personnelles"
+		"message":"mes informations"
 	},
 	"update_account_success":{
 		"message":"mise à jour effectuée avec succès"
@@ -243,6 +243,6 @@
 		"message":"l'ancien mot de passe ne correspond pas."
 	},
 	"change_your_password":{
-		"message":"Modifier votre mot de passe"
+		"message":"Modifier mon mot de passe"
 	}
 }

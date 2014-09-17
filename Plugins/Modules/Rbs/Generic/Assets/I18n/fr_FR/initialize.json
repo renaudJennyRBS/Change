@@ -11,6 +11,12 @@
 	"reset_password": {
 		"message": "Ré-initialisation du mot de passe"
 	},
+	"edit_account": {
+		"message": "Mes informations"
+	},
+	"manage_addresses": {
+		"message": "Mes adresses"
+	},
 	"exception": {
 		"message": "Erreur interne de l'application"
 	},

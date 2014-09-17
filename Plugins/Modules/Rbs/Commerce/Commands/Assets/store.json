@@ -279,12 +279,126 @@
 			"versionOfId": 0,
 			"_LCID": {
 				"fr_FR": {
-					"title": "Compte utilisateur"
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"}
 				},
 				"en_US": {
-					"title": "User account"
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"}
 				}
 			}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_user_account_home",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_home"},
+			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"versionOfId": 0,
+			"hideLinks": true,
+			"pageTemplate":{"_id": "side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_home"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"content": {
+											"e": "Markdown",
+											"t": "# Mon compte",
+											"h": null
+										}
+									},
+									"name": "Rbs_Website_Richtext",
+									"label": "Rbs_Website_Richtext",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 5,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "processing",
+										"showIfEmpty": true,
+										"itemsPerPage": 100
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				},
+				"en_US": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_home"},
+					"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"content": {
+											"e": "Markdown",
+											"t": "# My account",
+											"h": null
+										}
+									},
+									"name": "Rbs_Website_Richtext",
+									"label": "Rbs_Website_Richtext",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 5,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "processing",
+										"showIfEmpty": true,
+										"itemsPerPage": 100
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_user_account_index_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Website_Section",
+			"section":{"_id":"rbs_commerce_initialize_user_account_topic"},
+			"page":{"_id":"rbs_commerce_initialize_user_account_home"}
 		},
 
 		{
@@ -293,10 +407,16 @@
 			"label": {"_i18n": "m.rbs.commerce.initialize.wishlist_list"},
 			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate":{"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -309,10 +429,16 @@
 							]
 						}
 					},
-					"title": "Mes wishlists"
+					"title": {"_i18n": "m.rbs.commerce.initialize.wishlist_list"}
 				},
 				"en_US": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -325,7 +451,7 @@
 							]
 						}
 					},
-					"title": "My Wishlists"
+					"title": {"_i18n": "m.rbs.commerce.initialize.wishlist_list"}
 				}
 			}
 		},
@@ -344,10 +470,16 @@
 			"section": {"_id": "website"},
 			"website": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate":{"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -360,10 +492,16 @@
 							]
 						}
 					},
-					"title": "Détail d'une wishlist"
+					"title": {"_i18n": "m.rbs.commerce.initialize.wishlist_detail"}
 				},
 				"en_US": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -376,7 +514,7 @@
 							]
 						}
 					},
-					"title": "Wishlist detail"
+					"title": {"_i18n": "m.rbs.commerce.initialize.wishlist_detail"}
 				}
 			}
 		},

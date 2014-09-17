@@ -5,23 +5,26 @@
 	"processing_orders":{
 		"message":"commandes en cours"
 	},
-	"finalized_orders":{
-		"message":"commandes finalisées"
+	"view_all_processing_orders":{
+		"message":"voir toutes les commandes en cours"
 	},
-	"last_n_finalized_orders":{
-		"message":"$NUMBER$ dernières commandes finalisées"
+	"finalized_orders":{
+		"message":"anciennes commandes"
 	},
 	"view_all_finalized_orders":{
-		"message":"voir toutes les commandes finalisées"
+		"message":"voir toutes les anciennes commandes"
 	},
 	"canceled_orders":{
 		"message":"commandes annulées"
 	},
-	"last_n_canceled_orders":{
-		"message":"$NUMBER$ dernières commandes annulées"
-	},
 	"view_all_canceled_orders":{
 		"message":"voir toutes les commandes annulées"
+	},
+	"edition_orders":{
+		"message":"commandes en édition"
+	},
+	"view_all_edition_orders":{
+		"message":"voir toutes les commandes en édition"
 	},
 	"view_all_orders":{
 		"message":"voir toutes les commandes"
@@ -32,7 +35,6 @@
 	"generating_order":{
 		"message":"en cours de génération"
 	},
-
 	"payment_validating":{
 		"message":"en attente de validation du paiement"
 	},
@@ -56,6 +58,9 @@
 	},
 	"canceled":{
 		"message":"annulé"
+	},
+	"edition":{
+		"message":"en cours d'édition"
 	},
 	"order_number":{
 		"message":"numéro"
@@ -84,8 +89,20 @@
 	"order_processing_status_canceled":{
 		"message":"annulée"
 	},
+	"order_processing_status_edition":{
+		"message":"édition"
+	},
 	"no_processing_order":{
 		"message":"Vous n'avez aucune commande en cours."
+	},
+	"no_canceled_order":{
+		"message":"Vous n'avez aucune commande annulée."
+	},
+	"no_finalized_order":{
+		"message":"Vous n'avez aucune anciene commande."
+	},
+	"no_edition_order":{
+		"message":"Vous n'avez aucune commande en édition."
 	},
 	"order_general_information":{
 		"message":"informations générales"

@@ -40,8 +40,8 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
+		$eventManager->attach('getByUser', [$this, 'onProcessingGetByUser'], 10);
 		$eventManager->attach('getByUser', [$this, 'onDefaultGetByUser'], 5);
-		$eventManager->attach('getPaginatedByUser', [$this, 'onDefaultGetPaginatedByUser'], 5);
 		$eventManager->attach('canViewOrder', [$this, 'onDefaultCanViewOrder'], 10);
 		$eventManager->attach('canViewOrder', [$this, 'onCartCanViewOrder'], 5);
 		$eventManager->attach('getOrderPresentation', [$this, 'onDefaultGetOrderPresentation'], 15);
@@ -185,43 +185,22 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @param \Rbs\User\Documents\User|null $user
 	 * @param integer[] $ownerIds
-	 * @return \Rbs\Order\Presentation\OrderPresentation[]
-	 */
-	public function getProcessingByUser($user, $ownerIds = array())
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array(
-			'user' => $user,
-			'ownerIds' => $ownerIds,
-			'processingStatus' => \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING
-		));
-		$this->getEventManager()->trigger('getByUser', $this, $args);
-		if (isset($args['orderPresentations']))
-		{
-			return $args['orderPresentations'];
-		}
-		return array();
-	}
-
-	/**
-	 * @api
-	 * @param \Rbs\User\Documents\User|null $user
-	 * @param integer[] $ownerIds
+	 * @param string $status
 	 * @param integer $pageNumber
 	 * @param integer $itemsPerPage
 	 * @return \Rbs\Generic\Presentation\Paginator
 	 */
-	public function getFinalizedByUser($user, $ownerIds = array(), $pageNumber = 1, $itemsPerPage = 10)
+	public function getByUser($user, $ownerIds = array(), $status, $pageNumber = 1, $itemsPerPage = 10)
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array(
 			'user' => $user,
 			'ownerIds' => $ownerIds,
-			'processingStatus' => \Rbs\Order\Documents\Order::PROCESSING_STATUS_FINALIZED,
+			'processingStatus' => $status,
 			'pageNumber' => $pageNumber,
 			'itemsPerPage' => $itemsPerPage
 		));
-		$this->getEventManager()->trigger(static::EVENT_GET_PAGINATED_BY_USER, $this, $args);
+		$this->getEventManager()->trigger(static::EVENT_GET_BY_USER, $this, $args);
 		if (isset($args['paginator']))
 		{
 			return $args['paginator'];
@@ -230,43 +209,25 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @api
-	 * @param \Rbs\User\Documents\User|null $user
-	 * @param integer[] $ownerIds
-	 * @param integer $pageNumber
-	 * @param integer $itemsPerPage
-	 * @return \Rbs\Generic\Presentation\Paginator
-	 */
-	public function getCanceledByUser($user, $ownerIds = array(), $pageNumber = 1, $itemsPerPage = 10)
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array(
-			'user' => $user,
-			'ownerIds' => $ownerIds,
-			'processingStatus' => \Rbs\Order\Documents\Order::PROCESSING_STATUS_CANCELED,
-			'pageNumber' => $pageNumber,
-			'itemsPerPage' => $itemsPerPage
-		));
-		$this->getEventManager()->trigger('getPaginatedByUser', $this, $args);
-		if (isset($args['paginator']))
-		{
-			return $args['paginator'];
-		}
-		return null;
-	}
-
-	/**
+	 * "Processing orders" contains carts and orders, so here we must get all instances, sort them and make pagination after.
 	 * @param \Change\Events\Event $event
 	 * @return \Change\Documents\DocumentCollection
 	 */
-	public function onDefaultGetByUser(\Change\Events\Event $event)
+	public function onProcessingGetByUser(\Change\Events\Event $event)
 	{
+		if ($event->getParam('paginator') || $event->getParam('processingStatus') != \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
+		{
+			return;
+		}
+
 		$user = $event->getParam('user');
 		$ownerIds = $event->getParam('ownerIds', array());
 		$processingStatus = $event->getParam('processingStatus');
-		if ($processingStatus && ($user instanceof \Rbs\User\Documents\User || count($ownerIds)))
+		if ($user instanceof \Rbs\User\Documents\User || count($ownerIds))
 		{
 			$orderPresentations = array();
+
+			// Get the orders.
 			$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Order');
 			$query->andPredicates(
 				$this->getOwnerPredicate($query, $user, $ownerIds),
@@ -278,28 +239,36 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$orderPresentations[] = $this->getOrderPresentation($order);
 			}
 
-			// If the required status is "processing", add the carts.
-			if ($processingStatus == \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
+			// Add the carts.
+			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+			$commerceServices = $event->getServices('commerceServices');
+			$cartManager = $commerceServices->getCartManager();
+			foreach ($cartManager->getProcessingCartsByUser($user) as $cart)
 			{
-				/** @var $commerceServices \Rbs\Commerce\CommerceServices */
-				$commerceServices = $event->getServices('commerceServices');
-				$cartManager = $commerceServices->getCartManager();
-				foreach ($cartManager->getProcessingCartsByUser($user) as $cart)
-				{
-					$orderPresentations[] = $this->getOrderPresentation($cart);
-				}
-
-				usort($orderPresentations, function (\Rbs\Order\Presentation\OrderPresentation $a, \Rbs\Order\Presentation\OrderPresentation $b)
-				{
-					if ($a->getDate() == $b->getDate())
-					{
-						return 0;
-					}
-					return ($a->getDate() > $b->getDate()) ? -1 : 1;
-				});
+				$orderPresentations[] = $this->getOrderPresentation($cart);
 			}
 
-			$event->setParam('orderPresentations', $orderPresentations);
+			usort($orderPresentations, function (\Rbs\Order\Presentation\OrderPresentation $a, \Rbs\Order\Presentation\OrderPresentation $b)
+			{
+				if ($a->getDate() == $b->getDate())
+				{
+					return 0;
+				}
+				return ($a->getDate() > $b->getDate()) ? -1 : 1;
+			});
+
+			$totalCount = count($orderPresentations);
+			$itemsPerPage = $event->getParam('itemsPerPage', null);
+			$offset = ($event->getParam('pageNumber', 1) - 1) * $itemsPerPage;
+			if ($offset > $totalCount || $offset < 0)
+			{
+				$offset = 0;
+			}
+			$orderPresentations = array_slice($orderPresentations, $offset, $itemsPerPage);
+
+			$pageNumber = ceil($offset / $itemsPerPage) + 1;
+			$paginator = new \Rbs\Generic\Presentation\Paginator($orderPresentations, $pageNumber, $itemsPerPage, $totalCount);
+			$event->setParam('paginator', $paginator);
 		}
 	}
 
@@ -307,13 +276,19 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Change\Events\Event $event
 	 * @return \Change\Documents\DocumentCollection
 	 */
-	public function onDefaultGetPaginatedByUser(\Change\Events\Event $event)
+	public function onDefaultGetByUser(\Change\Events\Event $event)
 	{
+		if ($event->getParam('paginator'))
+		{
+			return;
+		}
+
 		$user = $event->getParam('user');
 		$ownerIds = $event->getParam('ownerIds', array());
 		$processingStatus = $event->getParam('processingStatus');
 		if ($processingStatus && ($user instanceof \Rbs\User\Documents\User || count($ownerIds)))
 		{
+			// Get the total count.
 			$orderPresentations = array();
 			$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Order');
 			$query->andPredicates(
@@ -322,6 +297,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			);
 			$totalCount = $query->getCountDocuments();
 
+			// Get the orders for the current page.
 			$query->addOrder('creationDate', false);
 			$itemsPerPage = $event->getParam('itemsPerPage', null);
 			$offset = ($event->getParam('pageNumber', 1) - 1) * $itemsPerPage;
@@ -391,8 +367,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultGetOrderPresentation(\Change\Events\Event $event)
 	{
 		$order = $event->getParam('order');
-		if ($order instanceof \Rbs\Order\Documents\Order
-			&& $order->getProcessingStatus() != \Rbs\Order\Documents\Order::PROCESSING_STATUS_EDITION)
+		if ($order instanceof \Rbs\Order\Documents\Order)
 		{
 			$orderPresentation = $event->getParam('orderPresentation');
 			if (!$orderPresentation instanceof \Rbs\Order\Presentation\OrderPresentation)
@@ -512,11 +487,6 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($order);
 		}
 		if (!($order instanceof \Rbs\Order\Documents\Order))
-		{
-			return;
-		}
-
-		if ($order->getProcessingStatus() == \Rbs\Order\Documents\Order::PROCESSING_STATUS_EDITION)
 		{
 			return;
 		}

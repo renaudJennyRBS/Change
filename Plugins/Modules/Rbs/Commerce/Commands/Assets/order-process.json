@@ -273,10 +273,16 @@
 			"website": {"_id": "website"},
 			"hideLinks": true,
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate":{"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -293,6 +299,12 @@
 				},
 				"en_US": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -318,16 +330,176 @@
 		},
 
 		{
+			"_id": "rbs_commerce_initialize_order_list_full_canceled",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.order_list_full_canceled"},
+			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"hideLinks": true,
+			"pageTemplate":{"_id": "side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_list_full_canceled"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "canceled",
+										"showIfEmpty": true,
+										"itemsPerPage": 10
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				},
+				"en_US": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_list_full_canceled"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "canceled",
+										"showIfEmpty": true,
+										"itemsPerPage": 10
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				}
+			}
+		},
+
+		{
+			"_id": "rbs_commerce_initialize_order_list_full_finalized",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.order_list_full_finalized"},
+			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"hideLinks": true,
+			"pageTemplate":{"_id": "side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "finalized",
+										"showIfEmpty": true,
+										"itemsPerPage": 10
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_list_full_finalized"}
+				},
+				"en_US": {
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "finalized",
+										"showIfEmpty": true,
+										"itemsPerPage": 10
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.order_list_full_finalized"}
+				}
+			}
+		},
+
+		{
 			"_id": "rbs_commerce_initialize_order_list",
 			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.order_list"},
 			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
 			"website": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate":{"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -335,7 +507,45 @@
 							"type": "container",
 							"items":[
 								{
-									"type": "block", "name": "Rbs_Order_OrderList", "id": 2, "label": "Rbs_Order_OrderList"
+									"type": "block",
+									"id": 2,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "processing",
+										"showIfEmpty": true,
+										"itemsPerPage": 100
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 4,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "finalized",
+										"showIfEmpty": false,
+										"itemsPerPage": 10,
+										"fullListPage": {"_id": "rbs_commerce_initialize_order_list_full_finalized"}
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 6,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "canceled",
+										"showIfEmpty": false,
+										"itemsPerPage": 10,
+										"fullListPage": {"_id": "rbs_commerce_initialize_order_list_full_canceled"}
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
 								}
 							]
 						}
@@ -344,6 +554,12 @@
 				},
 				"en_US": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -351,7 +567,45 @@
 							"type": "container",
 							"items":[
 								{
-									"type": "block", "name": "Rbs_Order_OrderList", "id": 2, "label": "Rbs_Order_OrderList"
+									"type": "block",
+									"id": 2,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "processing",
+										"showIfEmpty": true,
+										"itemsPerPage": 100
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 4,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "finalized",
+										"showIfEmpty": false,
+										"itemsPerPage": 10,
+										"fullListPage": {"_id": "rbs_commerce_initialize_order_list_full_finalized"}
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 6,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "canceled",
+										"showIfEmpty": false,
+										"itemsPerPage": 10,
+										"fullListPage": {"_id": "rbs_commerce_initialize_order_list_full_canceled"}
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
 								}
 							]
 						}

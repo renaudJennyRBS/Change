@@ -52,7 +52,10 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Catalog_CrossSelling_CartProductChoiceStrategy':
 					(new \Rbs\Catalog\Collection\Collections())->addCartProductChoiceStrategyCollection($event);
 					break;
-				case 'Rbs_Order_Collection_ProcessingStatus':
+				case 'Rbs_Discount_Collection_DiscountTypes':
+					(new \Rbs\Discount\Collection\Collections())->addDiscountTypes($event);
+					break;
+				case 'Rbs_Order_ProcessingStatuses':
 					(new \Rbs\Order\Collection\Collections())->addProcessingStatuses($event);
 					break;
 				case 'Rbs_Price_Collection_BillingAreasForWebStore':
@@ -73,9 +76,6 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Store_Collection_WebStores':
 					(new \Rbs\Store\Collection\Collections())->addWebStores($event);
 					break;
-				case 'Rbs_Discount_Collection_DiscountTypes':
-					(new \Rbs\Discount\Collection\Collections())->addDiscountTypes($event);
-					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -89,15 +89,14 @@ class Listeners implements ListenerAggregateInterface
 			$codes[] = 'Rbs_Catalog_Collection_AttributeSet';
 			$codes[] = 'Rbs_Catalog_Collection_AttributeVisibility';
 			$codes[] = 'Rbs_Catalog_Collection_AttributeProductProperties';
+			$codes[] = 'Rbs_Catalog_CrossSelling_CartProductChoiceStrategy';
+			$codes[] = 'Rbs_Discount_Collection_DiscountTypes';
+			$codes[] = 'Rbs_Order_ProcessingStatus';
 			$codes[] = 'Rbs_Price_Collection_BillingAreasForWebStore';
 			$codes[] = 'Rbs_Price_Collection_ModifierNames';
 			$codes[] = 'Rbs_Price_Collection_Iso4217';
 			$codes[] = 'Rbs_Price_Collection_TaxRoundingStrategy';
 			$codes[] = 'Rbs_Store_Collection_WebStores';
-			$codes[] = 'Rbs_Order_Collection_ProcessingStatus';
-			$codes[] = 'Rbs_Order_Collection_ShippingStatus';
-			$codes[] = 'Rbs_Order_Collection_PaymentStatus';
-			$codes[] = 'Rbs_Discount_Collection_DiscountTypes';
 			$event->setParam('codes', $codes);
 		};
 		$events->attach(CollectionManager::EVENT_GET_CODES, $callback, 1);

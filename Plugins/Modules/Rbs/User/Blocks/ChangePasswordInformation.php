@@ -23,9 +23,5 @@ class ChangePasswordInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.user.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.user.admin.change_password_label', $ucf));
-
-		// Declare your parameters here.
-		//$this->addInformationMeta('myParameterName', Property::TYPE_INTEGER)
-		//	->setLabel($i18nManager->trans('m.rbs.user.admin.change_password_my_parameter_name', $ucf));
 	}
 }

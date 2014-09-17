@@ -25,5 +25,16 @@ class OrderListInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.order.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.order.admin.order_list_label', $ucf));
+
+		$this->addInformationMeta('processingStatus', \Change\Documents\Property::TYPE_STRING, true, \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
+			->setCollectionCode('Rbs_Order_ProcessingStatuses')
+			->setLabel($i18nManager->trans('m.rbs.order.admin.order_list_processing_status', $ucf));
+		$this->addInformationMeta('showIfEmpty', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.order.admin.order_list_show_if_empty', $ucf));
+		$this->addInformationMeta('itemsPerPage', \Change\Documents\Property::TYPE_INTEGER, false, 10)
+			->setLabel($i18nManager->trans('m.rbs.order.admin.order_list_items_per_page', $ucf));
+		$this->addInformationMeta('fullListPage', \Change\Documents\Property::TYPE_DOCUMENT, false)
+			->setAllowedModelsNames('Rbs_Website_StaticPage')
+			->setLabel($i18nManager->trans('m.rbs.order.admin.order_list_full_list_page', $ucf));
 	}
 }

@@ -27,11 +27,10 @@ class OrderList extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('accessorId');
+		$parameters->addParameterMeta('processingStatus');
+		$parameters->addParameterMeta('showIfEmpty', true);
 		$parameters->addParameterMeta('itemsPerPage', 10);
-		$parameters->addParameterMeta('pageNumber', 1);
-		$parameters->addParameterMeta('mode');
-
+		$parameters->addParameterMeta('fullListPage');
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
 
@@ -42,7 +41,6 @@ class OrderList extends Block
 		}
 
 		$request = $event->getHttpRequest();
-		$parameters->setParameterValue('mode', $request->getQuery('mode', 'default'));
 		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
 
 		return $parameters;
@@ -57,33 +55,28 @@ class OrderList extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$itemsPerPage = $parameters->getParameter('itemsPerPage');
+		$processingStatus = $parameters->getParameter('processingStatus');
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$user = $documentManager->getDocumentInstance($parameters->getParameter('accessorId'));
-		if ($user instanceof \Rbs\User\Documents\User)
+		if ($processingStatus && $user instanceof \Rbs\User\Documents\User)
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
 			$orderManager = $commerceServices->getOrderManager();
-			switch ($parameters->getParameter('mode'))
+			$itemsPerPage = $parameters->getParameter('itemsPerPage');
+			$pageNumber = $parameters->getParameter('pageNumber');
+			$paginator = $orderManager->getByUser($user, [], $processingStatus, $pageNumber, $itemsPerPage);
+			if ($paginator->getTotalCount() || $parameters->getParameter('showIfEmpty'))
 			{
-				case 'finalized':
-					$pageNumber = $parameters->getParameter('pageNumber');
-					$attributes['paginator'] = $orderManager->getFinalizedByUser($user, [], $pageNumber, $itemsPerPage);
-					return 'order-list-finalized.twig';
-
-				case 'canceled':
-					$pageNumber = $parameters->getParameter('pageNumber');
-					$attributes['paginator'] = $orderManager->getCanceledByUser($user, [], $pageNumber, $itemsPerPage);
-					return 'order-list-canceled.twig';
-
-				default:
-					$attributes['processingOrders'] = $orderManager->getProcessingByUser($user);
-					$attributes['finalizedOrdersPaginator'] = $orderManager->getFinalizedByUser($user, [], 0, $itemsPerPage);
-					$attributes['canceledOrdersPaginator'] = $orderManager->getCanceledByUser($user, [], 0, $itemsPerPage);
-					return 'order-list-default.twig';
+				$attributes['paginator'] = $paginator;
+				$fullListPage = $documentManager->getDocumentInstance($parameters->getParameter('fullListPage'));
+				if ($fullListPage instanceof \Rbs\Website\Documents\StaticPage)
+				{
+					$attributes['fullListPage'] = $fullListPage;
+				}
+				return 'order-list.twig';
 			}
 		}
-		return 'order-list-error.twig';
+		return null;
 	}
 }
