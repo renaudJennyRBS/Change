@@ -113,10 +113,33 @@
 			templateUrl: '/simpleLine.static.tpl',
 			link: function(scope) {
 				scope.originalQuantities[scope.index] = scope.line.quantity;
+				var i, j;
+
+				if (scope.cart.modifiedQuantities == null || scope.cart.modifiedQuantities == undefined){
+					scope.cart.modifiedQuantities = [];
+				}
+
+				if (scope.cart.modifiedQuantities.length != scope.cart.lines.length){
+					for(i = 0; i<scope.cart.lines.length; i++){
+						scope.cart.modifiedQuantities[i] = false;
+					}
+				}
 
 				scope.isQuantityEdited = function() {
-					return scope.originalQuantities[scope.index] != scope.line.quantity
-				}
+					var bool =  scope.originalQuantities[scope.index] != scope.line.quantity;
+					scope.cart.modifiedQuantities[scope.index] = bool;
+					return bool;
+				};
+
+				scope.oneOtherQuantityEdited = function() {
+					for(j = 0; j<scope.cart.modifiedQuantities.length; j++){
+						if (j != scope.index && scope.cart.modifiedQuantities[j] == true)
+						{
+							return true;
+						}
+					}
+					return false;
+				};
 			}
 		}
 	}
