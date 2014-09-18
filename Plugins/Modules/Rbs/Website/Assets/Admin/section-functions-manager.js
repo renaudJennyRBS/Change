@@ -1,5 +1,4 @@
-(function () {
-
+(function() {
 	"use strict";
 
 	var app = angular.module('RbsChange'),
@@ -14,16 +13,23 @@
 	 * @param Navigation
 	 * @constructor
 	 */
-	function SectionFunctionsManagerDirective($q, REST, Query, ArrayUtils, Navigation)
-	{
+	function SectionFunctionsManagerDirective($q, REST, Query, ArrayUtils, Navigation) {
 		return {
-			restrict    : 'E',
-			templateUrl : 'Rbs/Website/section-functions-manager.twig',
-			replace     : false,
-			scope       : { 'section' : '=' },
+			restrict: 'E',
+			templateUrl: 'Rbs/Website/section-functions-manager.twig',
+			replace: false,
+			scope: {'section': '='},
 
-			link : function linkFn (scope)
-			{
+			link: function linkFn(scope) {
+				/**
+				 * Set the website.
+				 */
+				scope.$watch('section', function (section) {
+					if (section) {
+						scope.website = (section.hasOwnProperty('website')) ? section.website : section;
+					}
+				}, true);
+
 				/**
 				 * Loads the Functions implemented in the given Section.
 				 *
@@ -34,29 +40,26 @@
 				 * @param sortColumn
 				 * @param sortDesc
 				 */
-				function loadSectionPageFunctions (section, sortColumn, sortDesc)
-				{
+				function loadSectionPageFunctions(section, sortColumn, sortDesc) {
 					var query = Query.simpleQuery('Rbs_Website_SectionPageFunction', 'section', section.id),
 						p;
 
 					query.limit = queryLimit;
 					query.offset = 0;
 					if (sortColumn) {
-						query.order = [{ 'property': sortColumn, 'order': sortDesc ? 'desc' : 'asc' }];
+						query.order = [{'property': sortColumn, 'order': sortDesc ? 'desc' : 'asc'}];
 					}
 					p = REST.query(query, {"column": ['functionCode', 'page']});
-					p.then(function (result)
-					{
+					p.then(function(result) {
 						scope.sectionPageFunctionList = result.resources;
-						angular.forEach(scope.sectionPageFunctionList, function (spf) {
+						angular.forEach(scope.sectionPageFunctionList, function(spf) {
 							spf.label = scope.getFunctionLabel(spf.functionCode);
 
 						});
 					});
 
-					return $q.all([ p, loadInheritedFunctions(section) ]);
+					return $q.all([p, loadInheritedFunctions(section)]);
 				}
-
 
 				/**
 				 * Loads the inherited Functions for the given Section (the Functions implemented on the ancestors
@@ -67,15 +70,13 @@
 				 *
 				 * @param section
 				 */
-				function loadInheritedFunctions (section)
-				{
-					var p = REST.call(REST.getBaseUrl('Rbs/Website/InheritedFunctions'), {'section' : section.id});
-					p.then(function (functions) {
+				function loadInheritedFunctions(section) {
+					var p = REST.call(REST.getBaseUrl('Rbs/Website/InheritedFunctions'), {'section': section.id});
+					p.then(function(functions) {
 						scope.inheritedFunctions = functions;
 					});
 					return p;
 				}
-
 
 				/**
 				 * Loads the pages that can be used to implement a function for the given Section.
@@ -92,30 +93,26 @@
 				 *
 				 * @returns Promise
 				 */
-				function loadPages (section)
-				{
+				function loadPages(section) {
 					var promises = [],
 						query, p,
 						websiteId = section.model === "Rbs_Website_Website" ? section.id : section.website.id;
 
-					if (section.id != websiteId)
-					{
+					if (section.id != websiteId) {
 						// Load StaticPages
 						query = Query.treeChildrenQuery('Rbs_Website_StaticPage', section.id);
 					}
-					else
-					{
+					else {
 						query = Query.treeDescendantsQuery('Rbs_Website_StaticPage', websiteId);
 					}
 
 					query.limit = queryLimit;
 					query.offset = 0;
 					query.sort = [{
-						'property' : 'label'
+						'property': 'label'
 					}];
 					p = REST.query(query);
-					p.then(function (result)
-					{
+					p.then(function(result) {
 						scope.staticPages = result.resources;
 					});
 					promises.push(p);
@@ -125,11 +122,10 @@
 					query.limit = queryLimit;
 					query.offset = 0;
 					query.sort = [{
-						'property' : 'label'
+						'property': 'label'
 					}];
 					p = REST.query(query);
-					p.then(function (result)
-					{
+					p.then(function(result) {
 						scope.functionalPages = result.resources;
 					});
 					promises.push(p);
@@ -137,7 +133,7 @@
 					// When all the pages are loaded (Static and Functional),
 					// we build an Array that contains all the pages.
 					p = $q.all(promises);
-					p.then(function () {
+					p.then(function() {
 						scope.allPages = [];
 						ArrayUtils.append(scope.allPages, scope.staticPages);
 						ArrayUtils.append(scope.allPages, scope.functionalPages);
@@ -145,7 +141,6 @@
 
 					return p;
 				}
-
 
 				/**
 				 * Loads the whole list of available Functions.
@@ -155,19 +150,17 @@
 				 *
 				 * @returns {*}
 				 */
-				function loadAllFunctions ()
-				{
+				function loadAllFunctions() {
 					var p = REST.call(REST.getBaseUrl('Rbs/Website/FunctionsList'));
-					p.then(function (functions) {
+					p.then(function(functions) {
 						scope.allFunctions = functions;
 						scope.allFunctions.unshift({
-							'code' : INDEX_FUNCTION_CODE,
-							'label' : INDEX_FUNCTION_CODE
+							'code': INDEX_FUNCTION_CODE,
+							'label': INDEX_FUNCTION_CODE
 						});
 					});
 					return p;
 				}
-
 
 				/**
 				 * Tells whether a Function is implemented in the current Section or not.
@@ -175,10 +168,9 @@
 				 * @param functionCode
 				 * @returns {boolean}
 				 */
-				function isFunctionImplemented (functionCode)
-				{
+				function isFunctionImplemented(functionCode) {
 					var i, result = false;
-					for (i=0 ; i<scope.sectionPageFunctionList.length && ! result ; i++) {
+					for (i = 0; i < scope.sectionPageFunctionList.length && !result; i++) {
 						if (scope.sectionPageFunctionList[i].functionCode === functionCode) {
 							result = true;
 						}
@@ -186,24 +178,20 @@
 					return result;
 				}
 
-
 				/**
 				 * Creates the list of unimplemented Functions in the current Section.
 				 *
 				 * This method populates the following objects in the scope:
 				 * - unimplementedFunctions : array of all the unimplemented Functions in the current Section.
 				 */
-				function initUnimplementedFunctions ()
-				{
+				function initUnimplementedFunctions() {
 					scope.unimplementedFunctions.length = 0;
-					angular.forEach(scope.allFunctions, function (f)
-					{
-						if (! isFunctionImplemented(f.code)) {
+					angular.forEach(scope.allFunctions, function(f) {
+						if (!isFunctionImplemented(f.code)) {
 							scope.unimplementedFunctions.push(f);
 						}
 					});
 				}
-
 
 				/**
 				 * Retrieves a Function from its code.
@@ -211,17 +199,15 @@
 				 * @param functionCode
 				 * @returns {*}
 				 */
-				function getFunctionByCode (functionCode)
-				{
+				function getFunctionByCode(functionCode) {
 					var i, result = null;
-					for (i=0 ; i<scope.allFunctions.length && ! result ; i++) {
+					for (i = 0; i < scope.allFunctions.length && !result; i++) {
 						if (scope.allFunctions[i].code === functionCode) {
 							result = scope.allFunctions[i];
 						}
 					}
 					return result;
 				}
-
 
 				/**
 				 * Prepares the selection of a page for the given function.
@@ -234,32 +220,27 @@
 				 * @param functionCode
 				 * @returns {*}
 				 */
-				function preparePageSelectionForFunction (functionCode)
-				{
-					var section = scope.section;
-					var websiteId =  (section.hasOwnProperty('website')) ? section.website.id : section.id;
+				function preparePageSelectionForFunction(functionCode) {
+					var websiteId = scope.website.id;
 					var p = REST.call(REST.getBaseUrl('Rbs/Website/PagesForFunction'),
 						{"function": functionCode, "websiteId": websiteId});
-					p.then(function (pages)
-					{
+					p.then(function(pages) {
 						scope.readyForFunctionPages = [];
 						scope.notReadyForFunctionPages = [];
 
 						// Dispatch pages:
 						// - into 'scope.readyForFunctionPages' for pages ready to implement the function
 						// - into 'scope.notReadyForFunctionPages' for pages NOT ready to implement the function
-						function dispatchPages (pages, readyPages)
-						{
-							angular.forEach(pages, function (p)
-							{
+						function dispatchPages(pages, readyPages) {
+							angular.forEach(pages, function(p) {
 								var i, ready = false;
-								for (i=0 ; i<readyPages.length && ! ready ; i++) {
+								for (i = 0; i < readyPages.length && !ready; i++) {
 									if (readyPages[i].id === p.id) {
 										scope.readyForFunctionPages.push(p);
 										ready = true;
 									}
 								}
-								if (! ready) {
+								if (!ready) {
 									scope.notReadyForFunctionPages.push(p);
 								}
 							});
@@ -273,40 +254,18 @@
 				}
 
 				/**
-				 * Finds an existing SectionPageFunction document with the given functionCode.
-				 *
-				 * @param functionCode
-				 * @returns Rbs_Website_SectionPageFunction
-				 */
-				function getSectionPageFunctionByCode (functionCode)
-				{
-					var i, result = null;
-					for (i=0 ; i<scope.sectionPageFunctionList.length && ! result ; i++)
-					{
-						if (scope.sectionPageFunctionList[i].functionCode === functionCode) {
-							result = scope.sectionPageFunctionList[i];
-						}
-					}
-					return result;
-				}
-
-
-				/**
 				 * Gets (creates if needed) the Rbs_Website_SectionPageFunction document suitable for the implementation
 				 * of the given Function.
 				 *
 				 * @param func
 				 * @returns {*}
 				 */
-				function getSectionPageFunctionDocument (func)
-				{
+				function getSectionPageFunctionDocument(func) {
 					var spf;
-					if (func.model === 'Rbs_Website_SectionPageFunction')
-					{
+					if (func.model === 'Rbs_Website_SectionPageFunction') {
 						spf = func;
 					}
-					else
-					{
+					else {
 						spf = REST.newResource('Rbs_Website_SectionPageFunction');
 						spf.section = scope.section.id;
 						spf.functionCode = func.code;
@@ -314,13 +273,11 @@
 					return spf;
 				}
 
-
 				//----------------------------//
 				//                            //
 				//   Scope methods and data   //
 				//                            //
 				//----------------------------//
-
 
 				scope.sectionPageFunctionList = [];
 				scope.unimplementedFunctions = [];
@@ -330,104 +287,85 @@
 				scope.showAllPages = false;
 
 				// Returns the label of a Function from its code.
-				scope.getFunctionLabel = function (functionCode)
-				{
+				scope.getFunctionLabel = function(functionCode) {
 					var f = getFunctionByCode(functionCode);
 					return f ? f.label : '**' + functionCode + '**';
 				};
 
-
 				// Called when the user wants the change the page attributed to a Function.
-				scope.changePage = function (spf)
-				{
-					preparePageSelectionForFunction(spf.functionCode).then(function ()
-					{
+				scope.changePage = function(spf) {
+					preparePageSelectionForFunction(spf.functionCode).then(function() {
 						scope.newFunction = spf;
 					});
 				};
 
-
 				// Called when the user wants to implement a new Function to the Section.
-				scope.implementFunction = function (func)
-				{
-					preparePageSelectionForFunction(func.code).then(function ()
-					{
+				scope.implementFunction = function(func) {
+					preparePageSelectionForFunction(func.code).then(function() {
 						scope.newFunction = func;
 					});
 				};
 
-
-				scope.hasInheritedFunctions = function ()
-				{
+				scope.hasInheritedFunctions = function() {
 					var count = 0;
 					// Here we check if the object is empty or not.
 					// (angular.forEach does the hasOwnProperty() check).
-					angular.forEach(scope.inheritedFunctions, function ()
-					{
+					angular.forEach(scope.inheritedFunctions, function() {
 						count++;
 					});
 					return count > 0;
 				};
 
-
-				scope.closePageSelection = function ()
-				{
+				scope.closePageSelection = function() {
 					scope.newFunction = null;
 				};
 
-
 				// Called when the user selects a page for the Function to be implemented.
-				scope.selectPage = function (p)
-				{
+				scope.selectPage = function(p) {
 					var spf = getSectionPageFunctionDocument(scope.newFunction);
 					spf.page = p.id;
 
 					REST.save(spf).then(
 						// Success
-						function () {
+						function() {
 							scope.closePageSelection();
 							loadSectionPageFunctions(scope.section, null, null).then(initUnimplementedFunctions);
 						},
 						// Error
-						function (error) {
+						function(error) {
 							console.log("error: ", error);
 						}
 					);
 				};
 
-
 				// Called when the user wants to remove a Function in the Section.
-				scope.removeFunction = function (spf)
-				{
-					REST['delete'](spf).then(function ()
-					{
+				scope.removeFunction = function(spf) {
+					REST['delete'](spf).then(function() {
 						loadSectionPageFunctions(scope.section, null, null).then(initUnimplementedFunctions);
 					});
 				};
 
-
 				// Initialization:
 				// load available functions, current section's data, child pages, used functions...
-				scope.$watch('section', function (section)
-				{
+				scope.$watch('section', function(section) {
 					if (section) {
 						scope.document = section;
-						loadAllFunctions().then(function ()
-						{
+						loadAllFunctions().then(function() {
 							$q.all([
 								loadPages(section),
 								loadSectionPageFunctions(section, null, null)
-							]).then(function () {
+							]).then(function() {
 								initUnimplementedFunctions();
 							});
 						});
 					}
 				});
 
-				scope.$on('Navigation.saveContext', function (event, args) {
+				scope.$on('Navigation.saveContext', function(event, args) {
 					var label = scope.section.label;
 					args.context.label(label);
 					var data = {
+						website: scope.website,
 						section: scope.section,
 						newFunction: scope.newFunction,
 						readyForFunctionPages: scope.readyForFunctionPages,
@@ -440,6 +378,7 @@
 				if (currentContext) {
 					var contextData = currentContext.savedData('functions');
 					if (contextData) {
+						scope.website = contextData.website;
 						scope.section = contextData.section;
 						scope.newFunction = contextData.newFunction;
 						scope.readyForFunctionPages = contextData.readyForFunctionPages;
@@ -453,7 +392,6 @@
 			}
 		};
 	}
-
 
 	app.directive(
 		'rbsSectionFunctionsManager',
