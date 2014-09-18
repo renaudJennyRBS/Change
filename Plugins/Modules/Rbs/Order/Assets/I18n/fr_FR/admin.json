@@ -478,6 +478,11 @@
 	},
 	"credit_note_amount":{
 		"message":"montant"
+	},
+	"credit_note_summary_label":{
+		"message":"avoirs disponibles"
+	},
+	"credit_note_summary_show_if_empty":{
+		"message":"afficher s'il n'y a pas d'avoir"
 	}
-
 }

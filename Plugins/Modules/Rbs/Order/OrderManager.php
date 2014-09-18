@@ -48,6 +48,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getOrderPresentation', [$this, 'onCartGetOrderPresentation'], 10);
 		$eventManager->attach('getOrderPresentation', [$this, 'onArrayGetOrderPresentation'], 5);
 		$eventManager->attach('getOrderStatusInfo', [$this, 'onDefaultGetOrderStatusInfo'], 5);
+		$eventManager->attach('getAvailableCreditNotesInfo', [$this, 'onDefaultGetAvailableCreditNotesInfo'], 5);
 	}
 
 	/**
@@ -236,6 +237,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			$query->addOrder('creationDate', false);
 			foreach ($query->getDocuments() as $order)
 			{
+				/* @var $order \Rbs\Order\Documents\Order */
 				$orderPresentations[] = $this->getOrderPresentation($order);
 			}
 
@@ -307,6 +309,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			foreach ($query->getDocuments($offset, $itemsPerPage) as $order)
 			{
+				/* @var $order \Rbs\Order\Documents\Order */
 				$orderPresentations[] = $this->getOrderPresentation($order);
 			}
 
@@ -389,6 +392,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$transactionPresentations = array();
 				foreach ($query->getDocuments() as $transaction)
 				{
+					/* @var $transaction \Rbs\Payment\Documents\Transaction */
 					$transactionPresentations[] = new \Rbs\Order\Presentation\TransactionPresentation($transaction);
 				}
 				$orderPresentation->setTransactions($transactionPresentations);
@@ -402,6 +406,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$shipmentPresentations = array();
 				foreach ($query->getDocuments() as $shipment)
 				{
+					/* @var $shipment \Rbs\Order\Documents\Shipment */
 					$shipmentPresentations[] = new \Rbs\Order\Presentation\ShipmentPresentation($shipment);
 				}
 				$orderPresentation->setShipments($shipmentPresentations);
@@ -437,6 +442,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$transactionPresentations = array();
 				foreach ($query->getDocuments() as $transaction)
 				{
+					/* @var $transaction \Rbs\Payment\Documents\Transaction */
 					$transactionPresentations[] = new \Rbs\Order\Presentation\TransactionPresentation($transaction);
 				}
 			}
@@ -654,6 +660,67 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 					'title' => $i18nManager->trans('m.rbs.order.front.edition', ['ucf'])];
 				$event->setParam('statusInfo', $statusInfo);
 			}
+		}
+	}
+
+	/**
+	 * This method gets the total available amount of credit notes, grouped by currency.
+	 * The result contains array of associative arrays, each containing 'currencyCode' and 'amountNotApplied' entries.
+	 * In most cases, there will be only one item (a user won't often have credit notes in different currencies).
+	 * @param \Rbs\User\Documents\User|null $user
+	 * @param Integer[] $ownerIds
+	 * @return array
+	 */
+	public function getAvailableCreditNotesInfo($user, array $ownerIds = array())
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs([
+			'user' => $user,
+			'ownerIds' => $ownerIds
+		]);
+		$this->getEventManager()->trigger('getAvailableCreditNotesInfo', $this, $args);
+		return isset($args['creditNotesInfo']) ? $args['creditNotesInfo'] : [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetAvailableCreditNotesInfo(\Change\Events\Event $event)
+	{
+		$ownerIds = $event->getParam('ownerIds');
+		$user = $event->getParam('user');
+		if ($user instanceof \Rbs\User\Documents\User)
+		{
+			$ownerIds[] = $user->getId();
+		}
+
+		if (count($ownerIds))
+		{
+			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_CreditNote');
+			$query->andPredicates($query->in('ownerId', $ownerIds), $query->gt('amountNotApplied', 0));
+			$dbQueryBuilder = $query->dbQueryBuilder();
+			$fragmentBuilder = $dbQueryBuilder->getFragmentBuilder();
+			$dbQueryBuilder->group($fragmentBuilder->getDocumentColumn('currencyCode'));
+			$dbQueryBuilder->addColumn($fragmentBuilder->alias(
+				$query->getFragmentBuilder()->getDocumentColumn('currencyCode'),
+				'currencyCode'
+			));
+			$dbQueryBuilder->addColumn($fragmentBuilder->alias(
+				$fragmentBuilder->sum($fragmentBuilder->getDocumentColumn('amountNotApplied')),
+				'amountNotApplied'
+			));
+			$results = $dbQueryBuilder->query()->getResults();
+
+			$LCID = $event->getApplicationServices()->getI18nManager()->getLCID();
+			foreach ($results as $index => $result)
+			{
+				$currency = $result['currencyCode'];
+				$nf = new \NumberFormatter($LCID, \NumberFormatter::CURRENCY);
+				$nf->setTextAttribute(\NumberFormatter::CURRENCY_CODE, $currency);
+				$results[$index]['formattedAmountNotApplied'] = $nf->formatCurrency($result['amountNotApplied'], $currency);
+			}
+
+			$event->setParam('creditNotesInfo', $results);
 		}
 	}
 }

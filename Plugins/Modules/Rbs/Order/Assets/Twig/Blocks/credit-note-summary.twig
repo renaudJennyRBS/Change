@@ -1,0 +1,23 @@
+<h2>{{ i18n('m.rbs.order.front.credit_note_summary_title', ['ucf']) }}</h2>
+
+{% if creditNotesInfo|length == 0 %}
+	<p>{{ i18n('m.rbs.order.front.credit_note_no_available', ['ucf']) }}</p>
+{% elseif creditNotesInfo|length == 1 %}
+	<p>
+		{{ i18n('m.rbs.order.front.credit_note_available_amount', ['ucf', 'lab']) }}
+		<strong>{{ creditNotesInfo[0]['formattedAmountNotApplied'] }}</strong>
+	</p>
+{% else %}
+	<p>{{ i18n('m.rbs.order.front.credit_note_available_amounts_by_currency', ['ucf', 'lab']) }}</p>
+	<ul>
+		{% for creditNoteInfo in creditNotesInfo %}
+			<li><strong>{{ creditNoteInfo['formattedAmountNotApplied'] }}</strong></li>
+		{% endfor %}
+	</ul>
+{% endif %}
+
+{% if usage %}
+	<div class="credit-note-usage">
+		{{ usage|richText }}
+	</div>
+{% endif %}

@@ -187,5 +187,17 @@
 	},
 	"shipment_address":{
 		"message":"adresse"
+	},
+	"credit_note_summary_title":{
+		"message":"avoirs"
+	},
+	"credit_note_no_available":{
+		"message":"Vous n'avez aucun avoir disponible."
+	},
+	"credit_note_available_amount":{
+		"message":"montant total des avoirs disponibles"
+	},
+	"credit_note_available_amounts_by_currency":{
+		"message":"montant total des avoirs disponibles par devise"
 	}
 }

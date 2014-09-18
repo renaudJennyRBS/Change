@@ -1,6 +1,24 @@
 {
 	"documents": [
 		{
+			"_id": "rbs_commerce_initialize_credit_notes_usage_text",
+			"_model": "Rbs_Website_Text",
+			"label": "Texte sur l'utilisation des avoirs",
+			"_LCID": {
+				"fr_FR": {
+					"creationDate": "2014-09-18T12:53:41+0000",
+					"title": "Texte sur l'utilisation des avoirs",
+					"text": {
+						"e": "Markdown",
+						"t": "texte sur l'utilisation des avoirs",
+						"h": null
+					},
+					"authorName": "admin"
+				}
+			}
+		},
+
+		{
 			"_id": "rbs_commerce_initialize_user_account_topic",
 			"_model": "Rbs_Website_Topic",
 			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"},
@@ -265,6 +283,145 @@
 			"section":{"_id":"website"},
 			"page":{"_id":"rbs_commerce_initialize_create_account_for_transaction"}
 		},
+
+		{
+			"_id": "rbs_commerce_initialize_user_account_home",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_home"},
+			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"versionOfId": 0,
+			"hideLinks": true,
+			"pageTemplate":{"_id": "side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_home"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"content": {
+											"e": "Markdown",
+											"t": "# Mon compte",
+											"h": null
+										}
+									},
+									"name": "Rbs_Website_Richtext",
+									"label": "Rbs_Website_Richtext",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 5,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "processing",
+										"showIfEmpty": true,
+										"itemsPerPage": 100
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 8,
+									"parameters": {
+										"TTL": 60,
+										"showIfEmpty": false,
+										"usage": {"_id": "rbs_commerce_initialize_credit_notes_usage_text"}
+									},
+									"name": "Rbs_Order_CreditNoteSummary",
+									"label": "Rbs_Order_CreditNoteSummary",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				},
+				"en_US": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_home"},
+					"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"content": {
+											"e": "Markdown",
+											"t": "# My account",
+											"h": null
+										}
+									},
+									"name": "Rbs_Website_Richtext",
+									"label": "Rbs_Website_Richtext",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 5,
+									"parameters": {
+										"TTL": 60,
+										"processingStatus": "processing",
+										"showIfEmpty": true,
+										"itemsPerPage": 100
+									},
+									"name": "Rbs_Order_OrderList",
+									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 8,
+									"parameters": {
+										"TTL": 60,
+										"showIfEmpty": false,
+										"usage": {"_id": "rbs_commerce_initialize_credit_notes_usage_text"}
+									},
+									"name": "Rbs_Order_CreditNoteSummary",
+									"label": "Rbs_Order_CreditNoteSummary",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_user_account_index_function",
+			"_model": "Rbs_Website_SectionPageFunction",
+			"functionCode": "Rbs_Website_Section",
+			"section":{"_id":"rbs_commerce_initialize_user_account_topic"},
+			"page":{"_id":"rbs_commerce_initialize_user_account_home"}
+		},
+
 		{
 			"_id": "rbs_commerce_initialize_order_detail",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -508,6 +665,21 @@
 							"items":[
 								{
 									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"content": {
+											"e": "Markdown",
+											"t": "# Mes commandes\n\ntexte",
+											"h": null
+										}
+									},
+									"name": "Rbs_Website_Richtext",
+									"label": "Rbs_Website_Richtext",
+									"visibility": null
+								},
+								{
+									"type": "block",
 									"id": 2,
 									"parameters": {
 										"TTL": 60,
@@ -517,6 +689,18 @@
 									},
 									"name": "Rbs_Order_OrderList",
 									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 8,
+									"parameters": {
+										"TTL": 60,
+										"showIfEmpty": false,
+										"usage": {"_id": "rbs_commerce_initialize_credit_notes_usage_text"}
+									},
+									"name": "Rbs_Order_CreditNoteSummary",
+									"label": "Rbs_Order_CreditNoteSummary",
 									"visibility": null
 								},
 								{
@@ -568,6 +752,21 @@
 							"items":[
 								{
 									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"content": {
+											"e": "Markdown",
+											"t": "# My orders\n\ntext",
+											"h": null
+										}
+									},
+									"name": "Rbs_Website_Richtext",
+									"label": "Rbs_Website_Richtext",
+									"visibility": null
+								},
+								{
+									"type": "block",
 									"id": 2,
 									"parameters": {
 										"TTL": 60,
@@ -577,6 +776,18 @@
 									},
 									"name": "Rbs_Order_OrderList",
 									"label": "Rbs_Order_OrderList",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 8,
+									"parameters": {
+										"TTL": 60,
+										"showIfEmpty": false,
+										"usage": {"_id": "rbs_commerce_initialize_credit_notes_usage_text"}
+									},
+									"name": "Rbs_Order_CreditNoteSummary",
+									"label": "Rbs_Order_CreditNoteSummary",
 									"visibility": null
 								},
 								{
