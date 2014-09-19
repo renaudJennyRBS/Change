@@ -423,6 +423,11 @@
 				}
 			});
 			scope.axesValues[index] = values;
+
+			if (scope.axesValues[index].length == 1)
+			{
+				scope.selectedAxesValues[index] = scope.axesValues[index][0];
+			}
 		}
 
 		function eqAxesValues(expected, actual) {

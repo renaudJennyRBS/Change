@@ -77,13 +77,12 @@ class InheritedFunctions
 				{
 					/* @var $page \Rbs\Website\Documents\Page */
 					$page = $spf->getPage();
-					$section = $spf->getSection();
 					$code = $spf->getFunctionCode();
 
 					// Skip special function 'Rbs_Website_Section' (index page).
 					// Since we are traversing the tree from root to deepest section, Functions implemented
 					// at a lower level will override any existing Function in the '$functionsByCode' array.
-					if ($code !== 'Rbs_Website_Section')
+					if ($code !== 'Rbs_Website_Section' && $page)
 					{
 						$functionsByCode[$code] = array(
 							'id' => $spf->getId(),
