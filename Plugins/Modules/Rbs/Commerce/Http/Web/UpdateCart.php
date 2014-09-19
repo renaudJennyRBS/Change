@@ -42,7 +42,16 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 
 		$request = $event->getRequest();
 		$arguments = array_merge($request->getQuery()->toArray(), $request->getPost()->toArray());
-		$validKeys = ['lineQuantities', 'userId', 'email', 'address', 'shippingModes', 'coupons', 'contextShippingAddress'];
+		$validKeys = [
+			'lineQuantities',
+			'userId',
+			'email',
+			'address',
+			'shippingModes',
+			'coupons',
+			'contextShippingAddress',
+			'acceptTermsAndConditions'
+		];
 		if (count(array_intersect($validKeys, array_keys($arguments))) == 0)
 		{
 			(new GetCurrentCart())->execute($event);
@@ -135,10 +144,16 @@ class UpdateCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 					continue;
 				}
 				$couponCode = $data['code'];
-				if (!$cart->getCouponByCode($couponCode)) {
+				if (!$cart->getCouponByCode($couponCode))
+				{
 					$cart->appendCoupon(new \Rbs\Commerce\Process\BaseCoupon($data));
 				}
 			}
+		}
+
+		if (isset($arguments['acceptTermsAndConditions']))
+		{
+			$cart->getContext()->set('acceptTermsAndConditions', $arguments['acceptTermsAndConditions'] === true);
 		}
 
 		$cartManager->normalize($cart);

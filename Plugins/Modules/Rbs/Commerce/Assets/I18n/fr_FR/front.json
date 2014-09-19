@@ -84,7 +84,10 @@
 		"message":"actions"
 	},
 	"accept_terms_and_conditions":{
-		"message":"Avant de passer ma commande, je reconnais avoir lu et compris les $LINK_OPEN$conditions générales de vente$LINK_CLOSE$."
+		"message":"J'accepte les $LINK_OPEN$conditions générales de vente$LINK_CLOSE$ d'une commande avec obligation de paiement (obligatoire pour passer commande)"
+	},
+	"will_open_new_tab":{
+		"message":"la page s'ouvrira dans un nouvel onglet"
 	},
 	"proceed_to_checkout":{
 		"message":"passer commande"
@@ -273,5 +276,11 @@
 	},
 	"shipping_fees_evaluation_free":{
 		"message":"offert"
+	},
+	"back_to_cart":{
+		"message":"revenir au panier"
+	},
+	"must_accept_terms_and_conditions":{
+		"message":"Vous devez accepter les conditions générales de vente avant de pouvoir passer commande."
 	}
 }

@@ -477,11 +477,13 @@
 		scope.readonlyCart = false;
 		scope.cart = null;
 		scope.loading = false;
+		scope.acceptTermsAndConditions = false;
 		scope.originalQuantities = {};
 
 		function setCart(data) {
 			scope.loading = false;
 			scope.cart = data;
+			scope.acceptTermsAndConditions = scope.cart.context.acceptTermsAndConditions;
 			scope.originalQuantities = {};
 		}
 
@@ -526,7 +528,7 @@
 
 		scope.canOrder = function() {
 			if (!scope.cart || !scope.cart.lines || scope.cart.lines.count < 1 || !scope.cart.orderProcess
-				|| scope.cart.errors.length) {
+				|| scope.cart.errors.length || !scope.acceptTermsAndConditions) {
 				return false;
 			}
 			var result = true;
@@ -539,6 +541,16 @@
 		};
 
 		loadCurrentCart();
+
+		scope.$watch('acceptTermsAndConditions', function (newValue) {
+			if (scope.cart && newValue !== scope.cart.context.acceptTermsAndConditions) {
+				scope.loading = true;
+				updateCart($http, scope, { acceptTermsAndConditions: newValue }, function(data) {
+					$rootScope.$broadcast('rbsRefreshCart', {'cart': data});
+					setCart(data);
+				})
+			}
+		})
 	}
 
 	rbsCommerceCartController.$inject = ['$scope', '$http', '$rootScope'];
@@ -703,7 +715,7 @@
 			scope.information.userId = scope.accessorId;
 			var postData = { userId: scope.information.userId };
 			updateCart($http, scope, postData, scope.setAuthenticated);
-		}
+		};
 
 		scope.canAuthenticate = function() {
 			return scope.information.login && scope.information.password;
@@ -992,7 +1004,7 @@
 
 		scope.addCoupon = function() {
 			scope.payment.coupons.push({ 'code': scope.payment.newCouponCode });
-			scope.payment.newCouponCode = '';
+			scope.payment.newCouponCode = null;
 			updateCart($http, scope, { coupons: scope.payment.coupons }, function() { scope.setCurrentStep('payment'); });
 		};
 

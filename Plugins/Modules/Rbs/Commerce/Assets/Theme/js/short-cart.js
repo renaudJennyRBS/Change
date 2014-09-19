@@ -11,12 +11,9 @@
 			transclude: true,
 
 			link: function(scope) {
-
-				$rootScope.$on('rbsRefreshCart', function(event, params)
-				{;
+				$rootScope.$on('rbsRefreshCart', function(event, params) {
 					scope.cart = params['cart'];
 				});
-
 			}
 		}
 	}
