@@ -1,5 +1,6 @@
 (function() {
 	"use strict";
+
 	var app = angular.module('RbsChangeApp');
 
 	function rbsShippingFeesEvaluation($http, $sce) {
@@ -19,11 +20,10 @@
 				$http.post('Action/Rbs/Commerce/GetShippingFeesEvaluation', {refresh: false})
 					.success(function(data) {
 						scope.data = data;
-						if (scope.data.length == 0)
-						{
+						if (scope.data.length == 0) {
 							scope.data = null;
 						}
-						if (scope.data.countriesCount == 1){
+						if (scope.data && scope.data.countriesCount == 1) {
 							scope.currentCountry = scope.data.countries[0].code;
 						}
 					})
@@ -33,14 +33,11 @@
 					}
 				);
 
-				scope.$watch('currentCountry', function(){
+				scope.$watch('currentCountry', function() {
 					scope.currentShippingModes = [];
-					if (scope.currentCountry != null)
-					{
-						for (var i = 0; i < scope.data.shippingModes.length; i++)
-						{
-							if (scope.data.shippingModes[i].countries.hasOwnProperty(scope.currentCountry))
-							{
+					if (scope.currentCountry != null) {
+						for (var i = 0; i < scope.data.shippingModes.length; i++) {
+							if (scope.data.shippingModes[i].countries.hasOwnProperty(scope.currentCountry)) {
 								scope.currentShippingModes.push(scope.data.shippingModes[i]);
 							}
 						}
@@ -57,4 +54,3 @@
 	rbsShippingFeesEvaluation.$inject = ['$http', '$sce'];
 	app.directive('rbsShippingFeesEvaluation', rbsShippingFeesEvaluation);
 })();
-
