@@ -74,12 +74,10 @@
 				delete(existingAddress[key]);
 			}
 		});
-		if (addressToUse.hasOwnProperty('name'))
-		{
+		if (addressToUse.hasOwnProperty('name')) {
 			existingAddress.name = addressToUse.name;
 		}
-		if (addressToUse.hasOwnProperty('__id'))
-		{
+		if (addressToUse.hasOwnProperty('__id')) {
 			existingAddress.__id = addressToUse.__id;
 		}
 	}
@@ -115,26 +113,25 @@
 				scope.originalQuantities[scope.index] = scope.line.quantity;
 				var i, j;
 
-				if (scope.cart.modifiedQuantities == null || scope.cart.modifiedQuantities == undefined){
+				if (scope.cart.modifiedQuantities == null || scope.cart.modifiedQuantities == undefined) {
 					scope.cart.modifiedQuantities = [];
 				}
 
-				if (scope.cart.modifiedQuantities.length != scope.cart.lines.length){
-					for(i = 0; i<scope.cart.lines.length; i++){
+				if (scope.cart.modifiedQuantities.length != scope.cart.lines.length) {
+					for (i = 0; i < scope.cart.lines.length; i++) {
 						scope.cart.modifiedQuantities[i] = false;
 					}
 				}
 
 				scope.isQuantityEdited = function() {
-					var bool =  scope.originalQuantities[scope.index] != scope.line.quantity;
+					var bool = scope.originalQuantities[scope.index] != scope.line.quantity;
 					scope.cart.modifiedQuantities[scope.index] = bool;
 					return bool;
 				};
 
 				scope.oneOtherQuantityEdited = function() {
-					for(j = 0; j<scope.cart.modifiedQuantities.length; j++){
-						if (j != scope.index && scope.cart.modifiedQuantities[j] == true)
-						{
+					for (j = 0; j < scope.cart.modifiedQuantities.length; j++) {
+						if (j != scope.index && scope.cart.modifiedQuantities[j] == true) {
 							return true;
 						}
 					}
@@ -174,8 +171,7 @@
 						scope.information.login = attributes.login;
 						scope.information.guest = false;
 
-						if (scope.confirmed == true)
-						{
+						if (scope.confirmed == true) {
 							scope.setUserConfirmed();
 						}
 					}
@@ -206,16 +202,14 @@
 				scope.hasLogin = attributes.hasOwnProperty('login') && attributes.login != '';
 				scope.addressModes = null;
 				scope.pickupModes = null;
-				scope.isShippingAddressValid = {value : false};
+				scope.isShippingAddressValid = { value: false };
 
-				scope.delivery.isShippingAddressValid = {value : false};
+				scope.delivery.isShippingAddressValid = { value: false };
 
-				if (!scope.delivery.addressReference.hasOwnProperty('__addressFieldsId'))
-				{
+				if (!scope.delivery.addressReference.hasOwnProperty('__addressFieldsId')) {
 					scope.delivery.addressReference = angular.copy(scope.cart.address);
 				}
-				if (!scope.shippingAddress)
-				{
+				if (!scope.shippingAddress) {
 					scope.shippingAddress = angular.copy(scope.delivery.addressReference);
 				}
 
@@ -232,39 +226,34 @@
 				});
 
 				function updateSelectedMode() {
-					if (scope.addressModes != null && scope.pickupModes != null)
-					{
+					if (scope.addressModes != null && scope.pickupModes != null) {
 						var i;
 						var modeFound = false;
-						if (scope.delivery.modeId !== null)
-						{
+						if (scope.delivery.modeId !== null) {
 							for (i = 0; i < scope.addressModes.length; i++) {
-								if (scope.addressModes[i].id == scope.delivery.modeId)
-								{
+								if (scope.addressModes[i].id == scope.delivery.modeId) {
 									scope.selectAddressMode(i);
 									modeFound = true;
 									break;
 								}
 							}
 							for (i = 0; i < scope.pickupModes.length; i++) {
-								if (scope.pickupModes[i].id == scope.delivery.modeId)
-								{
+								if (scope.pickupModes[i].id == scope.delivery.modeId) {
 									scope.selectPickupMode(i);
 									modeFound = true;
 									break;
 								}
 							}
 						}
-						if (!modeFound)
-						{
+						if (!modeFound) {
 							scope.currentMode = null;
 							scope.delivery.modeId = null;
 							scope.delivery.modeTitle = null;
 							scope.delivery.address = null;
 							scope.delivery.isConfigured = false;
 							// Need to update cart to delete mode id ? Currently it's impossible to valid cart in status
-							if (scope.cart.shippingModes[scope.deliveryIndex].id != null && scope.cart.shippingModes[scope.deliveryIndex].id > 0)
-							{
+							if (scope.cart.shippingModes[scope.deliveryIndex].id != null &&
+								scope.cart.shippingModes[scope.deliveryIndex].id > 0) {
 								scope.cart.shippingModes[scope.deliveryIndex].id = null;
 								scope.cart.shippingModes[scope.deliveryIndex].title = null;
 								var postData = { shippingModes: scope.cart.shippingModes };
@@ -286,19 +275,19 @@
 				}
 
 				function loadCompatibleShippingModes(needAddress) {
-					$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes', {lines: scope.lines, needAddress: needAddress, deliveryIndex: scope.deliveryIndex})
+					$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes',
+						{ lines: scope.lines, needAddress: needAddress, deliveryIndex: scope.deliveryIndex })
 						.success(function(data) {
-							if (needAddress)
-							{
+							if (needAddress) {
 								scope.addressModes = data;
 							}
-							else
-							{
+							else {
 								scope.pickupModes = data;
 							}
 						})
 						.error(function(data, status, headers) {
-							console.log('rbsCommerceShippingModeSelector - GetCompatibleShippingModes error', data, status, headers);
+							console.log('rbsCommerceShippingModeSelector - GetCompatibleShippingModes error', data, status,
+								headers);
 						});
 				}
 
@@ -355,8 +344,7 @@
 				scope.addressCannotBeUsed = false;
 				scope.addressCanBeUsed = function(address) {
 					var bool = (address.countryCode == scope.shippingAddress.countryCode);
-					if (!bool)
-					{
+					if (!bool) {
 						scope.addressCannotBeUsed = true;
 						return false;
 					}
@@ -426,7 +414,7 @@
 				scope.connectors = [];
 				scope.selectedConnector = null;
 
-				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors', {transactionId: scope.payment.transaction.id})
+				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors', { transactionId: scope.payment.transaction.id })
 					.success(function(data) {
 						scope.connectors = data;
 						scope.payment.connectorId = null;
@@ -489,7 +477,7 @@
 
 		function loadCurrentCart() {
 			scope.loading = true;
-			$http.post('Action/Rbs/Commerce/GetCurrentCart', {refresh: false})
+			$http.post('Action/Rbs/Commerce/GetCurrentCart', { refresh: false })
 				.success(function(data) {
 					setCart(data);
 				})
@@ -504,10 +492,12 @@
 			if (scope.cart.lines.length > index) {
 				scope.loading = true;
 				var line = scope.cart.lines[index];
-				updateCart($http, scope, { lineQuantities: [
-					{ key: line.key, quantity: 0}
-				] }, function(data) {
-					$rootScope.$broadcast('rbsRefreshCart', {'cart': data});
+				updateCart($http, scope, {
+					lineQuantities: [
+						{ key: line.key, quantity: 0 }
+					]
+				}, function(data) {
+					$rootScope.$broadcast('rbsRefreshCart', { 'cart': data });
 					setCart(data);
 				});
 			}
@@ -517,10 +507,12 @@
 			if (scope.cart.lines[index].quantity != scope.originalQuantities.index) {
 				scope.loading = true;
 				var line = scope.cart.lines[index];
-				updateCart($http, scope, { lineQuantities: [
-					{ key: line.key, quantity: line.quantity }
-				] }, function(data) {
-					$rootScope.$broadcast('rbsRefreshCart', {'cart': data});
+				updateCart($http, scope, {
+					lineQuantities: [
+						{ key: line.key, quantity: line.quantity }
+					]
+				}, function(data) {
+					$rootScope.$broadcast('rbsRefreshCart', { 'cart': data });
 					setCart(data);
 				});
 			}
@@ -542,11 +534,11 @@
 
 		loadCurrentCart();
 
-		scope.$watch('acceptTermsAndConditions', function (newValue) {
+		scope.$watch('acceptTermsAndConditions', function(newValue) {
 			if (scope.cart && newValue !== scope.cart.context.acceptTermsAndConditions) {
 				scope.loading = true;
 				updateCart($http, scope, { acceptTermsAndConditions: newValue }, function(data) {
-					$rootScope.$broadcast('rbsRefreshCart', {'cart': data});
+					$rootScope.$broadcast('rbsRefreshCart', { 'cart': data });
 					setCart(data);
 				})
 			}
@@ -587,7 +579,7 @@
 
 		function loadCurrentCart() {
 			scope.loading = true;
-			$http.post('Action/Rbs/Commerce/GetCurrentCart', {refresh: false})
+			$http.post('Action/Rbs/Commerce/GetCurrentCart', { refresh: false })
 				.success(function(data) {
 					setCart(data);
 					scope.setCurrentStep('information');
@@ -609,10 +601,10 @@
 				}
 			);
 		}
+
 		loadAddresses();
 
-		scope.init = function(accessorId, confirmed)
-		{
+		scope.init = function(accessorId, confirmed) {
 			scope.accessorId = accessorId;
 			scope.confirmed = angular.fromJson(confirmed);
 		};
@@ -669,8 +661,7 @@
 					break;
 				}
 			}
-			if (currentIndex < scope.steps.length-2)
-			{
+			if (currentIndex < scope.steps.length - 2) {
 				currentIndex++;
 			}
 			return scope.steps[currentIndex];
@@ -694,8 +685,7 @@
 			scope.information.confirmEmail = scope.cart.email;
 			scope.information.address = getObject(scope.cart.address, true);
 
-			if (!scope.information.address.hasOwnProperty('__addressFieldsId'))
-			{
+			if (!scope.information.address.hasOwnProperty('__addressFieldsId') && scope.addresses) {
 				for (var i = 0; i < scope.addresses.length; i++) {
 					if (scope.addresses[i].default == true) {
 						applyAddress(scope.information.address, scope.addresses[i]);
@@ -760,7 +750,7 @@
 
 		scope.logout = function() {
 			scope.clearErrors('information');
-			$http.post('Action/Rbs/User/Logout', {keepCart:true})
+			$http.post('Action/Rbs/User/Logout', { keepCart: true })
 				.success(function() {
 					scope.addresses = {};
 					window.location.reload();
@@ -823,14 +813,13 @@
 			var callback = function() {
 				scope.information.address = getObject(scope.cart.address, true);
 
-				if (!scope.information.address.hasOwnProperty('name') || (scope.information.address.hasOwnProperty('name') && scope.information.address.name == '') )
-				{
+				if (!scope.information.address.hasOwnProperty('name') || scope.information.address.name == '') {
 					var lineCount = scope.information.address.__lines.length;
-					scope.information.address.name = scope.information.address.__lines[0] - scope.information.address.__lines[lineCount-1];
+					scope.information.address.name = scope.information.address.__lines[0] -
+					scope.information.address.__lines[lineCount - 1];
 				}
-				if (scope.information.login)
-				{
-					scope.saveAddress(scope.information.address, function(){
+				if (scope.information.login) {
+					scope.saveAddress(scope.information.address, function() {
 						// Update again cart to add address id
 						var postData = { address: scope.information.address };
 						updateCart($http, scope, postData);
@@ -841,7 +830,7 @@
 			updateCart($http, scope, postData, callback);
 		};
 
-		scope.clearAddress = function () {
+		scope.clearAddress = function() {
 			scope.information.address.name = '';
 			angular.forEach(scope.information.address, function(value, key) {
 				if (key != 'countryCode' && key != '__addressFieldsId') {
@@ -850,36 +839,30 @@
 			});
 		};
 
-		scope.saveAddress = function (address, successAddCallback, errorCallback) {
+		scope.saveAddress = function(address, successAddCallback, errorCallback) {
 			var postData = {
 				name: address.name,
 				fieldValues: address
 			};
 
-			if (address.__id)
-			{
+			if (address.__id) {
 				$http.post('Action/Rbs/Geo/UpdateAddress', postData)
 					.success(function(data) {
 						scope.addresses = angular.copy(data);
 					})
 					.error(function(data, status, headers) { console.log('Update Address error', data, status, headers); });
 			}
-			else
-			{
+			else {
 				$http.post('Action/Rbs/Geo/AddAddress', postData)
 					.success(function(data) {
 						var maxId = 0;
-						for (var i=0; i < data.length; i++)
-						{
-							if (data[i].fieldValues.__id && data[i].fieldValues.__id > maxId)
-							{
+						for (var i = 0; i < data.length; i++) {
+							if (data[i].fieldValues.__id && data[i].fieldValues.__id > maxId) {
 								maxId = data[i].fieldValues.__id;
 							}
 						}
-						for (var j=0; j < data.length; j++)
-						{
-							if (data[j].fieldValues.__id && data[j].fieldValues.__id == maxId)
-							{
+						for (var j = 0; j < data.length; j++) {
+							if (data[j].fieldValues.__id && data[j].fieldValues.__id == maxId) {
 								address.__id = maxId;
 								scope.addresses.push(data[j]);
 								if (angular.isFunction(successAddCallback)) {
@@ -903,7 +886,7 @@
 
 			if (scope.shipping.deliveries.length == 0) {
 				// TODO: handle forced shipping modes.
-				var defaultDelivery = { lines: [], address: {}, addressReference: {}, options: { } };
+				var defaultDelivery = { lines: [], address: {}, addressReference: {}, options: {} };
 				for (var i = 0; i < scope.cart.lines.length; i++) {
 					defaultDelivery.lines.push(scope.cart.lines[i]);
 				}
@@ -938,8 +921,7 @@
 						addressReference: getObject(cartDelivery.addressReference, true),
 						options: getObject(cartDelivery.options, true)
 					};
-					if (cartDelivery.lineKeys)
-					{
+					if (cartDelivery.lineKeys) {
 						for (j = 0; j < cartDelivery.lineKeys.length; j++) {
 							var key = cartDelivery.lineKeys[j];
 							for (k = 0; k < scope.cart.lines.length; k++) {
@@ -979,10 +961,9 @@
 			updateCart($http, scope, postData, function() {
 				scope.setShippingDeliveries();
 
-				if (scope.information.login)
-				{
+				if (scope.information.login) {
 					for (i = 0; i < scope.cart.shippingModes.length; i++) {
-						scope.saveAddress(scope.cart.shippingModes[i].address, function(){
+						scope.saveAddress(scope.cart.shippingModes[i].address, function() {
 							// Update again cart to add address id
 							var postData = { shippingModes: scope.cart.shippingModes };
 							updateCart($http, scope, postData);
