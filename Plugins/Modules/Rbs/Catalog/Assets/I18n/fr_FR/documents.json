@@ -144,6 +144,9 @@
 	"productset_products":{
 		"message":"produits"
 	},
+	"attribute_technicalname":{
+		"message":"nom technique"
+	},
 	"attribute_title":{
 		"message":"titre"
 	},
@@ -179,9 +182,6 @@
 	},
 	"attribute_axis":{
 		"message":"axe de déclinaison"
-	},
-	"attribute_visibility_comparisons":{
-		"message":"comparaisons"
 	},
 	"attribute_visibility_specifications":{
 		"message":"caractéristiques"

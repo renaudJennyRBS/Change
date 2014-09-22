@@ -15,7 +15,7 @@
 		"localizedValue":false,
 		"collectionCode":null,
 		"productProperty":"pictograms",
-		"visibility":["specifications", "comparisons"],
+		"visibility":["specifications", "listItem"],
 		"documentType":"Rbs_Media_Image"
 	},
 	"brand" : {
@@ -25,7 +25,7 @@
 		"localizedValue":false,
 		"collectionCode":null,
 		"productProperty":"brand",
-		"visibility":["specifications", "comparisons"],
+		"visibility":["specifications", "listItem"],
 		"documentType":"Rbs_Brand_Brand"
 	},
 	"genericAttributes" : {
@@ -35,7 +35,7 @@
 		"defaultValue":"",
 		"localizedValue":false,
 		"collectionCode":null,
-		"visibility":["specifications", "comparisons"],
+		"visibility":["specifications", "listItem"],
 		"documentType":"",
 		"attributes":["description", "brand", "pictograms"],
 		"productTypology":true
