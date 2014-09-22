@@ -37,6 +37,7 @@ class ParameterInformation
 	function __construct($name, $type = Property::TYPE_STRING, $required = false, $defaultValue = null)
 	{
 		$this->attributes['name'] = $name;
+		$this->attributes['hidden'] = false;
 		$this->attributes['type'] = $type;
 		$this->attributes['required'] = $required;
 		$this->attributes['defaultValue']= $defaultValue;
@@ -66,6 +67,24 @@ class ParameterInformation
 	public function getLabel()
 	{
 		return $this->attributes['label'];
+	}
+
+	/**
+	 * @param boolean $hidden
+	 * @return $this
+	 */
+	public function setHidden($hidden)
+	{
+		$this->attributes['hidden'] = $hidden;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getHidden()
+	{
+		return $this->attributes['hidden'];
 	}
 
 	/**
@@ -188,7 +207,7 @@ class ParameterInformation
 		else
 		{
 			$name = $this->getName();
-			return isset($parametersValues[$name]) ? $parametersValues[$name] : $this->getDefaultValue();
+			return (isset($parametersValues[$name]) && !$this->getHidden()) ? $parametersValues[$name] : $this->getDefaultValue();
 		}
 	}
 }
