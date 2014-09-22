@@ -42,6 +42,45 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	}
 
 	/**
+	 * @var \Zend\Stdlib\Parameters
+	 */
+	protected $context;
+
+	/**
+	 * @param array $context
+	 * @return $this
+	 */
+	public function setContext($context = null)
+	{
+		$this->context = new \Zend\Stdlib\Parameters();
+		if (is_array($context))
+		{
+			$this->context->fromArray($context);
+		}
+		elseif ($context instanceof \Traversable)
+		{
+			foreach ($context as $n => $v)
+			{
+				$this->context->set($n, $v);
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	public function getContext()
+	{
+		if ($this->context === null)
+		{
+			$this->setContext($this->getContextData());
+		}
+		return $this->context;
+	}
+
+
+	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 */
 	protected function attachEvents($eventManager)
@@ -69,11 +108,17 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 			{
 				$this->setCode($commerceServices->getProcessManager()->getNewCode($this));
 			}
-			//if the shipment has just been prepared, decrement stock reservation
+			// If the shipment has just been prepared, decrement stock reservation.
 			if ($this->isPropertyModified('prepared'))
 			{
 				$this->decrementOrderReservation($commerceServices->getStockManager(), $event->getApplicationServices()->getDocumentManager());
 			}
+		}
+
+		if ($this->context instanceof \Zend\Stdlib\Parameters)
+		{
+			$this->setContextData($this->context->toArray());
+			$this->context = null;
 		}
 	}
 
@@ -130,6 +175,9 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 				$i18nManager = $event->getApplicationServices()->getI18nManager();
 				$restResult->setProperty('label', $i18nManager->trans('m.rbs.order.admin.code_waiting', ['ucf']));
 			}
+
+			$context = $this->getContext()->toArray();
+			$restResult->setProperty('context', (count($context)) ? $context : null);
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
@@ -139,6 +187,25 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 				$linkResult->setProperty('code', $linkResult->getProperty('label'));
 			}
 		}
+	}
+
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 * @param \Change\Http\Event $event
+	 * @return boolean
+	 */
+	protected function processRestData($name, $value, \Change\Http\Event $event)
+	{
+		switch($name)
+		{
+			case 'context':
+				$this->setContext($value);
+				break;
+			default:
+				return parent::processRestData($name, $value, $event);
+		}
+		return true;
 	}
 
 	/**
