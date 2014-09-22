@@ -60,7 +60,7 @@ class ShipmentPresentation
 	{
 		if ($shipment instanceof \Rbs\Order\Documents\Shipment)
 		{
-			$this->fromTransaction($shipment);
+			$this->fromShipment($shipment);
 		}
 		else
 		{
@@ -71,7 +71,7 @@ class ShipmentPresentation
 	/**
 	 * @param \Rbs\Order\Documents\Shipment $shipment
 	 */
-	protected function fromTransaction($shipment)
+	protected function fromShipment($shipment)
 	{
 		$this->setId($shipment->getId());
 		$this->setCode($shipment->getCode());
