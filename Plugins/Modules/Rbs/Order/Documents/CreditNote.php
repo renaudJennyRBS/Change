@@ -15,6 +15,9 @@ use Change\Documents\Events\Event;
  */
 class CreditNote extends \Compilation\Rbs\Order\Documents\CreditNote
 {
+	/**
+	 * @param \Zend\EventManager\EventManagerInterface $eventManager
+	 */
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);

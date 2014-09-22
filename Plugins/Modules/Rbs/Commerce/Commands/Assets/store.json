@@ -279,10 +279,10 @@
 			"versionOfId": 0,
 			"_LCID": {
 				"fr_FR": {
-					"title": "Compte utilisateur"
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"}
 				},
 				"en_US": {
-					"title": "User account"
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"}
 				}
 			}
 		},
@@ -293,10 +293,16 @@
 			"label": {"_i18n": "m.rbs.commerce.initialize.wishlist_list"},
 			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate":{"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -309,10 +315,16 @@
 							]
 						}
 					},
-					"title": "Mes wishlists"
+					"title": {"_i18n": "m.rbs.commerce.initialize.wishlist_list"}
 				},
 				"en_US": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -325,7 +337,7 @@
 							]
 						}
 					},
-					"title": "My Wishlists"
+					"title": {"_i18n": "m.rbs.commerce.initialize.wishlist_list"}
 				}
 			}
 		},
@@ -344,10 +356,16 @@
 			"section": {"_id": "website"},
 			"website": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate":{"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -360,10 +378,16 @@
 							]
 						}
 					},
-					"title": "Détail d'une wishlist"
+					"title": {"_i18n": "m.rbs.commerce.initialize.wishlist_detail"}
 				},
 				"en_US": {
 					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
 						"mainContent":
 						{
 							"id": "mainContent",
@@ -376,7 +400,7 @@
 							]
 						}
 					},
-					"title": "Wishlist detail"
+					"title": {"_i18n": "m.rbs.commerce.initialize.wishlist_detail"}
 				}
 			}
 		},

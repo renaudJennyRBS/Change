@@ -174,6 +174,10 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 						{
 							$parameter->setLabel($parameterName);
 						}
+						if (isset($parameterConfig['hidden']))
+						{
+							$parameter->setHidden($parameterConfig['hidden'] === true);
+						}
 						if (isset($parameterConfig['allowedModelsNames']))
 						{
 							$parameter->setAllowedModelsNames($parameterConfig['allowedModelsNames']);

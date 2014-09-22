@@ -12,9 +12,9 @@
 		"message":"adresse nécessaire"
 	},
 	"mode_cartfilterdata":{
-		"message":"Critères d'application"
+		"message":"critères d'application"
 	},
 	"mode_deliveryzones":{
-		"message":"Zones de livraison"
+		"message":"zones de livraison"
 	}
 }

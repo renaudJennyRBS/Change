@@ -1,0 +1,1 @@
+ui-bootstrap version 0.11 causes conflicts with bootstrap (open dropdowns needs a double-click instead of a simple click), so we use 0.10.

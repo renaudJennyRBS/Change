@@ -35,7 +35,7 @@ class Collections
 			{
 				$items[$s] = $i18nManager->trans('m.rbs.order.admin.order_processingstatus_' . $s, array('ucf'));
 			}
-			$event->setParam('collection', new CollectionArray('Rbs_Order_Collection_ProcessingStatus', $items));
+			$event->setParam('collection', new CollectionArray('Rbs_Order_ProcessingStatuses', $items));
 			$event->stopPropagation();
 		}
 	}

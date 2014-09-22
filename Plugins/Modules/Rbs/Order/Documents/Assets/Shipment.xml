@@ -6,6 +6,7 @@
 		<property name="label" stateless="true" />
 		<property name="code" type="String" />
 		<property name="orderId" type="DocumentId" document-type="Rbs_Order_Order" />
+		<property name="contextData" type="JSON" internal="true" />
 		<property name="prepared" type="Boolean" default-value="false" required="true" />
 		<property name="parcelCode" type="String" />
 		<property name="shippingModeCode" type="String" />

@@ -9,7 +9,6 @@
 namespace Rbs\Order\Blocks;
 
 use Change\Presentation\Blocks\Event;
-use Change\Presentation\Blocks\Parameters;
 use Change\Presentation\Blocks\Standard\Block;
 
 /**
@@ -162,9 +161,7 @@ class OrderDetail extends Block
 			$order = $documentManager->getDocumentInstance($orderId);
 			if (!($order instanceof \Rbs\Order\Documents\Order))
 			{
-				$i18n = $event->getApplicationServices()->getI18nManager();
-				$attributes['errorMessage'] = $i18n->trans('m.rbs.order.front.order_error_invalid', ['ucf']);
-				return 'order-detail-error.twig';
+				return null;
 			}
 		}
 		elseif ($cartIdentifier)
@@ -172,20 +169,16 @@ class OrderDetail extends Block
 			$order = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
 			if (!($order instanceof \Rbs\Commerce\Cart\Cart))
 			{
-				$i18n = $event->getApplicationServices()->getI18nManager();
-				$attributes['errorMessage'] = $i18n->trans('m.rbs.order.front.order_error_invalid', ['ucf']);
-				return 'order-detail-error.twig';
+				return null;
 			}
 		}
 		else
 		{
-			$i18n = $event->getApplicationServices()->getI18nManager();
-			$attributes['errorMessage'] = $i18n->trans('m.rbs.order.front.order_error_invalid', ['ucf']);
-			return 'order-detail-error.twig';
+			return null;
 		}
 
 		$options = [ 'withTransactions' => true, 'withShipments' => true ];
 		$attributes['order'] = $commerceServices->getOrderManager()->getOrderPresentation($order, $options);
-		return 'order-detail-success.twig';
+		return 'order-detail.twig';
 	}
 }

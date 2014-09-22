@@ -1,6 +1,0 @@
-<h1>{{ i18n('m.rbs.order.front.my_orders', ['ucf']) }}</h1>
-
-<div class="alert alert-warning">
-	{% set openLink = '<a href="' ~ functionURL('Rbs_User_Login') ~ '">' %}
-	{{ i18n('m.rbs.order.front.must_log_in', ['ucf'], {'OPEN_LINK': openLink, 'CLOSE_LINK': '</a>' }) | raw }}
-</div>

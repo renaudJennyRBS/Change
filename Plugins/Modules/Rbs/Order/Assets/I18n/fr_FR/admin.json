@@ -413,6 +413,18 @@
 	"order_list_label":{
 		"message":"liste des commandes"
 	},
+	"order_list_processing_status":{
+		"message":"statut des commandes à afficher"
+	},
+	"order_list_show_if_empty":{
+		"message":"afficher si la liste est vide"
+	},
+	"order_list_items_per_page":{
+		"message":"nombre d'élément par page"
+	},
+	"order_list_full_list_page":{
+		"message":"page affichant la liste complète"
+	},
 	"order_detail_function":{
 		"message":"détail d'une commande"
 	},
@@ -466,6 +478,11 @@
 	},
 	"credit_note_amount":{
 		"message":"montant"
+	},
+	"credit_note_summary_label":{
+		"message":"avoirs disponibles"
+	},
+	"credit_note_summary_show_if_empty":{
+		"message":"afficher s'il n'y a pas d'avoir"
 	}
-
 }

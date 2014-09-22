@@ -20,11 +20,14 @@
 	"user_account_topic": {
 		"message": "Mon compte"
 	},
+	"user_account_home": {
+		"message": "Mon compte"
+	},
 	"wishlist_list": {
-		"message": "Mes wishlists"
+		"message": "Mes listes d'envies"
 	},
 	"wishlist_detail": {
-		"message": "Détail d'une wishlist"
+		"message": "Détail d'une liste d'envies"
 	},
 	"cart_detail": {
 		"message": "Mon panier"
@@ -46,6 +49,15 @@
 	},
 	"order_list": {
 		"message": "Mes commandes"
+	},
+	"order_list_full_processing": {
+		"message": "Toutes mes commandes en cours"
+	},
+	"order_list_full_finalized": {
+		"message": "Toutes mes anciennes commandes"
+	},
+	"order_list_full_canceled": {
+		"message": "Toutes mes commandes annulées"
 	},
 	"billing_area_france": {
 		"message": "France"

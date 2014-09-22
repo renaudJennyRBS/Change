@@ -163,27 +163,11 @@
 		},
 
 		{
-			"_id": "rbs_generic_initialize_user_account_topic",
-			"_model": "Rbs_Website_Topic",
-			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"},
-			"website": {"_id": "website"},
-			"versionOfId": 0,
-			"_LCID": {
-				"fr_FR": {
-					"title": "Mon Compte"
-				},
-				"en_US": {
-					"title": "My Account"
-				}
-			}
-		},
-
-		{
 			"_id": "rbs_generic_initialize_reset_password",
-			"_model": "Rbs_Website_StaticPage",
+			"_model": "Rbs_Website_FunctionalPage",
 			"label": {"_i18n": "m.rbs.generic.initialize.reset_password"},
-			"section": {"_id": "rbs_generic_initialize_user_account_topic"},
-			"hideLinks": true,
+			"website": {"_id": "website"},
+			"section": {"_id": "website"},
 			"versionOfId": 0,
 			"pageTemplate":{"_id": "no_side_bar_template"},
 			"_LCID": {
@@ -201,7 +185,7 @@
 							]
 						}
 					},
-					"title": "Ré-initialisation du mot de passe"
+					"title": {"_i18n": "m.rbs.generic.initialize.reset_password"}
 				},
 				"en_US": {
 					"editableContent": {
@@ -217,7 +201,7 @@
 							]
 						}
 					},
-					"title": "Reset password"
+					"title": {"_i18n": "m.rbs.generic.initialize.reset_password"}
 				}
 			}
 		},
@@ -227,6 +211,180 @@
 			"functionCode": "Rbs_User_ResetPassword",
 			"section":{"_id":"website"},
 			"page":{"_id":"rbs_generic_initialize_reset_password"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_user_account_topic",
+			"_model": "Rbs_Website_Topic",
+			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"_LCID": {
+				"fr_FR": {
+					"title": "Mon Compte"
+				},
+				"en_US": {
+					"title": "My Account"
+				}
+			}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_edit_account",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.edit_account"},
+			"section": {"_id": "rbs_generic_initialize_user_account_topic"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"title": {"_i18n": "m.rbs.generic.initialize.edit_account"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60
+									},
+									"name": "Rbs_User_EditAccount",
+									"label": "Rbs_User_EditAccount",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 5,
+									"parameters": {
+										"TTL": 60
+									},
+									"name": "Rbs_User_ChangePassword",
+									"label": "Rbs_User_ChangePassword",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				},
+				"en_US": {
+					"title": {"_i18n": "m.rbs.generic.initialize.edit_account"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60
+									},
+									"name": "Rbs_User_EditAccount",
+									"label": "Rbs_User_EditAccount",
+									"visibility": null
+								},
+								{
+									"type": "block",
+									"id": 5,
+									"parameters": {
+										"TTL": 60
+									},
+									"name": "Rbs_User_ChangePassword",
+									"label": "Rbs_User_ChangePassword",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				}
+			}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_manage_addresses",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.manage_addresses"},
+			"section": {"_id": "rbs_generic_initialize_user_account_topic"},
+			"versionOfId": 0,
+			"pageTemplate":{"_id": "side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"title": {"_i18n": "m.rbs.generic.initialize.manage_addresses"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60
+									},
+									"name": "Rbs_Geo_ManageAddresses",
+									"label": "Rbs_Geo_ManageAddresses",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				},
+				"en_US": {
+					"title": {"_i18n": "m.rbs.generic.initialize.manage_addresses"},
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60
+									},
+									"name": "Rbs_Geo_ManageAddresses",
+									"label": "Rbs_Geo_ManageAddresses",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					}
+				}
+			}
 		},
 
 		{

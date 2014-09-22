@@ -40,14 +40,15 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
+		$eventManager->attach('getByUser', [$this, 'onProcessingGetByUser'], 10);
 		$eventManager->attach('getByUser', [$this, 'onDefaultGetByUser'], 5);
-		$eventManager->attach('getPaginatedByUser', [$this, 'onDefaultGetPaginatedByUser'], 5);
 		$eventManager->attach('canViewOrder', [$this, 'onDefaultCanViewOrder'], 10);
 		$eventManager->attach('canViewOrder', [$this, 'onCartCanViewOrder'], 5);
 		$eventManager->attach('getOrderPresentation', [$this, 'onDefaultGetOrderPresentation'], 15);
 		$eventManager->attach('getOrderPresentation', [$this, 'onCartGetOrderPresentation'], 10);
 		$eventManager->attach('getOrderPresentation', [$this, 'onArrayGetOrderPresentation'], 5);
 		$eventManager->attach('getOrderStatusInfo', [$this, 'onDefaultGetOrderStatusInfo'], 5);
+		$eventManager->attach('getAvailableCreditNotesInfo', [$this, 'onDefaultGetAvailableCreditNotesInfo'], 5);
 	}
 
 	/**
@@ -185,43 +186,22 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @param \Rbs\User\Documents\User|null $user
 	 * @param integer[] $ownerIds
-	 * @return \Rbs\Order\Presentation\OrderPresentation[]
-	 */
-	public function getProcessingByUser($user, $ownerIds = array())
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array(
-			'user' => $user,
-			'ownerIds' => $ownerIds,
-			'processingStatus' => \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING
-		));
-		$this->getEventManager()->trigger('getByUser', $this, $args);
-		if (isset($args['orderPresentations']))
-		{
-			return $args['orderPresentations'];
-		}
-		return array();
-	}
-
-	/**
-	 * @api
-	 * @param \Rbs\User\Documents\User|null $user
-	 * @param integer[] $ownerIds
+	 * @param string $status
 	 * @param integer $pageNumber
 	 * @param integer $itemsPerPage
 	 * @return \Rbs\Generic\Presentation\Paginator
 	 */
-	public function getFinalizedByUser($user, $ownerIds = array(), $pageNumber = 1, $itemsPerPage = 10)
+	public function getByUser($user, $ownerIds = array(), $status, $pageNumber = 1, $itemsPerPage = 10)
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array(
 			'user' => $user,
 			'ownerIds' => $ownerIds,
-			'processingStatus' => \Rbs\Order\Documents\Order::PROCESSING_STATUS_FINALIZED,
+			'processingStatus' => $status,
 			'pageNumber' => $pageNumber,
 			'itemsPerPage' => $itemsPerPage
 		));
-		$this->getEventManager()->trigger(static::EVENT_GET_PAGINATED_BY_USER, $this, $args);
+		$this->getEventManager()->trigger(static::EVENT_GET_BY_USER, $this, $args);
 		if (isset($args['paginator']))
 		{
 			return $args['paginator'];
@@ -230,43 +210,25 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @api
-	 * @param \Rbs\User\Documents\User|null $user
-	 * @param integer[] $ownerIds
-	 * @param integer $pageNumber
-	 * @param integer $itemsPerPage
-	 * @return \Rbs\Generic\Presentation\Paginator
-	 */
-	public function getCanceledByUser($user, $ownerIds = array(), $pageNumber = 1, $itemsPerPage = 10)
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array(
-			'user' => $user,
-			'ownerIds' => $ownerIds,
-			'processingStatus' => \Rbs\Order\Documents\Order::PROCESSING_STATUS_CANCELED,
-			'pageNumber' => $pageNumber,
-			'itemsPerPage' => $itemsPerPage
-		));
-		$this->getEventManager()->trigger('getPaginatedByUser', $this, $args);
-		if (isset($args['paginator']))
-		{
-			return $args['paginator'];
-		}
-		return null;
-	}
-
-	/**
+	 * "Processing orders" contains carts and orders, so here we must get all instances, sort them and make pagination after.
 	 * @param \Change\Events\Event $event
 	 * @return \Change\Documents\DocumentCollection
 	 */
-	public function onDefaultGetByUser(\Change\Events\Event $event)
+	public function onProcessingGetByUser(\Change\Events\Event $event)
 	{
+		if ($event->getParam('paginator') || $event->getParam('processingStatus') != \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
+		{
+			return;
+		}
+
 		$user = $event->getParam('user');
 		$ownerIds = $event->getParam('ownerIds', array());
 		$processingStatus = $event->getParam('processingStatus');
-		if ($processingStatus && ($user instanceof \Rbs\User\Documents\User || count($ownerIds)))
+		if ($user instanceof \Rbs\User\Documents\User || count($ownerIds))
 		{
 			$orderPresentations = array();
+
+			// Get the orders.
 			$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Order');
 			$query->andPredicates(
 				$this->getOwnerPredicate($query, $user, $ownerIds),
@@ -275,31 +237,40 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			$query->addOrder('creationDate', false);
 			foreach ($query->getDocuments() as $order)
 			{
+				/* @var $order \Rbs\Order\Documents\Order */
 				$orderPresentations[] = $this->getOrderPresentation($order);
 			}
 
-			// If the required status is "processing", add the carts.
-			if ($processingStatus == \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
+			// Add the carts.
+			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+			$commerceServices = $event->getServices('commerceServices');
+			$cartManager = $commerceServices->getCartManager();
+			foreach ($cartManager->getProcessingCartsByUser($user) as $cart)
 			{
-				/** @var $commerceServices \Rbs\Commerce\CommerceServices */
-				$commerceServices = $event->getServices('commerceServices');
-				$cartManager = $commerceServices->getCartManager();
-				foreach ($cartManager->getProcessingCartsByUser($user) as $cart)
-				{
-					$orderPresentations[] = $this->getOrderPresentation($cart);
-				}
-
-				usort($orderPresentations, function (\Rbs\Order\Presentation\OrderPresentation $a, \Rbs\Order\Presentation\OrderPresentation $b)
-				{
-					if ($a->getDate() == $b->getDate())
-					{
-						return 0;
-					}
-					return ($a->getDate() > $b->getDate()) ? -1 : 1;
-				});
+				$orderPresentations[] = $this->getOrderPresentation($cart);
 			}
 
-			$event->setParam('orderPresentations', $orderPresentations);
+			usort($orderPresentations, function (\Rbs\Order\Presentation\OrderPresentation $a, \Rbs\Order\Presentation\OrderPresentation $b)
+			{
+				if ($a->getDate() == $b->getDate())
+				{
+					return 0;
+				}
+				return ($a->getDate() > $b->getDate()) ? -1 : 1;
+			});
+
+			$totalCount = count($orderPresentations);
+			$itemsPerPage = $event->getParam('itemsPerPage', null);
+			$offset = ($event->getParam('pageNumber', 1) - 1) * $itemsPerPage;
+			if ($offset > $totalCount || $offset < 0)
+			{
+				$offset = 0;
+			}
+			$orderPresentations = array_slice($orderPresentations, $offset, $itemsPerPage);
+
+			$pageNumber = ceil($offset / $itemsPerPage) + 1;
+			$paginator = new \Rbs\Generic\Presentation\Paginator($orderPresentations, $pageNumber, $itemsPerPage, $totalCount);
+			$event->setParam('paginator', $paginator);
 		}
 	}
 
@@ -307,13 +278,19 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Change\Events\Event $event
 	 * @return \Change\Documents\DocumentCollection
 	 */
-	public function onDefaultGetPaginatedByUser(\Change\Events\Event $event)
+	public function onDefaultGetByUser(\Change\Events\Event $event)
 	{
+		if ($event->getParam('paginator'))
+		{
+			return;
+		}
+
 		$user = $event->getParam('user');
 		$ownerIds = $event->getParam('ownerIds', array());
 		$processingStatus = $event->getParam('processingStatus');
 		if ($processingStatus && ($user instanceof \Rbs\User\Documents\User || count($ownerIds)))
 		{
+			// Get the total count.
 			$orderPresentations = array();
 			$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Order');
 			$query->andPredicates(
@@ -322,6 +299,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			);
 			$totalCount = $query->getCountDocuments();
 
+			// Get the orders for the current page.
 			$query->addOrder('creationDate', false);
 			$itemsPerPage = $event->getParam('itemsPerPage', null);
 			$offset = ($event->getParam('pageNumber', 1) - 1) * $itemsPerPage;
@@ -331,6 +309,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			foreach ($query->getDocuments($offset, $itemsPerPage) as $order)
 			{
+				/* @var $order \Rbs\Order\Documents\Order */
 				$orderPresentations[] = $this->getOrderPresentation($order);
 			}
 
@@ -391,8 +370,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultGetOrderPresentation(\Change\Events\Event $event)
 	{
 		$order = $event->getParam('order');
-		if ($order instanceof \Rbs\Order\Documents\Order
-			&& $order->getProcessingStatus() != \Rbs\Order\Documents\Order::PROCESSING_STATUS_EDITION)
+		if ($order instanceof \Rbs\Order\Documents\Order)
 		{
 			$orderPresentation = $event->getParam('orderPresentation');
 			if (!$orderPresentation instanceof \Rbs\Order\Presentation\OrderPresentation)
@@ -414,6 +392,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$transactionPresentations = array();
 				foreach ($query->getDocuments() as $transaction)
 				{
+					/* @var $transaction \Rbs\Payment\Documents\Transaction */
 					$transactionPresentations[] = new \Rbs\Order\Presentation\TransactionPresentation($transaction);
 				}
 				$orderPresentation->setTransactions($transactionPresentations);
@@ -427,6 +406,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$shipmentPresentations = array();
 				foreach ($query->getDocuments() as $shipment)
 				{
+					/* @var $shipment \Rbs\Order\Documents\Shipment */
 					$shipmentPresentations[] = new \Rbs\Order\Presentation\ShipmentPresentation($shipment);
 				}
 				$orderPresentation->setShipments($shipmentPresentations);
@@ -462,6 +442,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$transactionPresentations = array();
 				foreach ($query->getDocuments() as $transaction)
 				{
+					/* @var $transaction \Rbs\Payment\Documents\Transaction */
 					$transactionPresentations[] = new \Rbs\Order\Presentation\TransactionPresentation($transaction);
 				}
 			}
@@ -512,11 +493,6 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($order);
 		}
 		if (!($order instanceof \Rbs\Order\Documents\Order))
-		{
-			return;
-		}
-
-		if ($order->getProcessingStatus() == \Rbs\Order\Documents\Order::PROCESSING_STATUS_EDITION)
 		{
 			return;
 		}
@@ -684,6 +660,67 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 					'title' => $i18nManager->trans('m.rbs.order.front.edition', ['ucf'])];
 				$event->setParam('statusInfo', $statusInfo);
 			}
+		}
+	}
+
+	/**
+	 * This method gets the total available amount of credit notes, grouped by currency.
+	 * The result contains array of associative arrays, each containing 'currencyCode' and 'amountNotApplied' entries.
+	 * In most cases, there will be only one item (a user won't often have credit notes in different currencies).
+	 * @param \Rbs\User\Documents\User|null $user
+	 * @param Integer[] $ownerIds
+	 * @return array
+	 */
+	public function getAvailableCreditNotesInfo($user, array $ownerIds = array())
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs([
+			'user' => $user,
+			'ownerIds' => $ownerIds
+		]);
+		$this->getEventManager()->trigger('getAvailableCreditNotesInfo', $this, $args);
+		return isset($args['creditNotesInfo']) ? $args['creditNotesInfo'] : [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetAvailableCreditNotesInfo(\Change\Events\Event $event)
+	{
+		$ownerIds = $event->getParam('ownerIds');
+		$user = $event->getParam('user');
+		if ($user instanceof \Rbs\User\Documents\User)
+		{
+			$ownerIds[] = $user->getId();
+		}
+
+		if (count($ownerIds))
+		{
+			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_CreditNote');
+			$query->andPredicates($query->in('ownerId', $ownerIds), $query->gt('amountNotApplied', 0));
+			$dbQueryBuilder = $query->dbQueryBuilder();
+			$fragmentBuilder = $dbQueryBuilder->getFragmentBuilder();
+			$dbQueryBuilder->group($fragmentBuilder->getDocumentColumn('currencyCode'));
+			$dbQueryBuilder->addColumn($fragmentBuilder->alias(
+				$query->getFragmentBuilder()->getDocumentColumn('currencyCode'),
+				'currencyCode'
+			));
+			$dbQueryBuilder->addColumn($fragmentBuilder->alias(
+				$fragmentBuilder->sum($fragmentBuilder->getDocumentColumn('amountNotApplied')),
+				'amountNotApplied'
+			));
+			$results = $dbQueryBuilder->query()->getResults();
+
+			$LCID = $event->getApplicationServices()->getI18nManager()->getLCID();
+			foreach ($results as $index => $result)
+			{
+				$currency = $result['currencyCode'];
+				$nf = new \NumberFormatter($LCID, \NumberFormatter::CURRENCY);
+				$nf->setTextAttribute(\NumberFormatter::CURRENCY_CODE, $currency);
+				$results[$index]['formattedAmountNotApplied'] = $nf->formatCurrency($result['amountNotApplied'], $currency);
+			}
+
+			$event->setParam('creditNotesInfo', $results);
 		}
 	}
 }

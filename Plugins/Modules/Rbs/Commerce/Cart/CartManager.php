@@ -1301,7 +1301,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 			$query = $documentManager->getNewQuery('Rbs_Order_CreditNote');
 			$query->andPredicates($query->eq('ownerId', $ownerId), $query->eq('currencyCode', $cart->getCurrencyCode()),
-				$query->gt('currencyCode', 0));
+				$query->gt('amountNotApplied', 0));
 
 			/** @var $document \Rbs\Order\Documents\CreditNote */
 			foreach ($query->getDocuments() as $document)
