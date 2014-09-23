@@ -21,7 +21,9 @@
 		{% for row in rows %}
 			<li>
 				<div class="grid-list-cell">
-					{% include 'Rbs_Catalog/product-list-item.twig' %}
+					{% block productItem %}
+						{% include 'Rbs_Catalog/product-list-item.twig' %}
+					{% endblock %}
 				</div>
 			</li>
 		{% endfor %}
