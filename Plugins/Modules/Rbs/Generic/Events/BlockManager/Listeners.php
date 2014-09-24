@@ -58,6 +58,9 @@ class Listeners implements ListenerAggregateInterface
 
 		new  RegisterByBlockName('Rbs_Seo_HeadMetas', true, $events);
 
+		new RegisterByBlockName('Rbs_Theme_ThemeSelector', true, $events);
+		new RegisterByBlockName('Rbs_Theme_ThemeSelectorMail', true, $events);
+
 		new RegisterByBlockName('Rbs_Elasticsearch_ShortSearch', true, $events);
 		new RegisterByBlockName('Rbs_Elasticsearch_ResultHeader', true, $events);
 		new RegisterByBlockName('Rbs_Elasticsearch_Result', true, $events);

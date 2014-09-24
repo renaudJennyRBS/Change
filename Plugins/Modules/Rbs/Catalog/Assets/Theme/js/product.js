@@ -160,7 +160,8 @@
 				data.modalInfos = {
 					sectionPageFunction: 'Rbs_Catalog_ProductAddedToCart',
 					sectionId: scope.sectionId,
-					productId: scope.product.id
+					productId: scope.product.id,
+					themeName: __change.navigationContext.themeName
 				};
 			}
 

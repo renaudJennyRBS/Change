@@ -119,6 +119,11 @@ class AddLineToCart extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$product = $documentManager->getDocumentInstance($modalInfos['productId']);
 			$section = $documentManager->getDocumentInstance($modalInfos['sectionId']);
 			$query = ['sectionPageFunction' => $modalInfos['sectionPageFunction']];
+			if (isset($modalInfos['themeName']))
+			{
+				$query['themeName'] = $modalInfos['themeName'];
+			}
+
 			if ($product)
 			{
 				$urlManager = $event->getUrlManager();

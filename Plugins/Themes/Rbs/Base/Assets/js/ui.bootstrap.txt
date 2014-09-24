@@ -1,1 +1,1 @@
-ui-bootstrap version 0.11 causes conflicts with bootstrap (open dropdowns needs a double-click instead of a simple click), so we use 0.10.
+Include only typeahead component of ui-bootstrap because other components cause conflicts with static usage of Bootstrap (dropdowns, carousels and maybe other).
