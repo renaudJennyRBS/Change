@@ -158,10 +158,16 @@
 							<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md-block"></div>
 						</div>
 
-						<div data-ng-if="information.login" data-rbs-address-form="" data-ng-model="information.address"
+						<div data-ng-if="information.login && addresses" data-rbs-address-form="" data-ng-model="information.address"
 							data-valid="information.isAddressValid"
-							data-address-name="information.address.name" data-manage-name="true">
+							data-address-name="information.address.__name" data-manage-name="optional">
 						</div>
+
+						<div data-ng-if="information.login && addresses == false" data-rbs-address-form="" data-ng-model="information.address"
+								data-valid="information.isAddressValid"
+								data-address-name="information.address.__name" data-manage-name="required">
+						</div>
+
 						<div data-ng-if="!information.login" data-rbs-address-form="" data-ng-model="information.address"
 								data-valid="information.isAddressValid">
 						</div>

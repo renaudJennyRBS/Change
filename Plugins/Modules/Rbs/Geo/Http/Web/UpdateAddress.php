@@ -41,7 +41,7 @@ class UpdateAddress extends \Change\Http\Web\Actions\AbstractAjaxAction
 		{
 			throw new \RuntimeException('Invalid field values', 999999);
 		}
-		$addressName = isset($arguments['name']) ? $arguments['name'] : array();
+		$addressName = isset($arguments['name']) ? $arguments['name'] : null;
 
 		$success = $genericServices->getGeoManager()->updateAddress($fieldValues, $addressName);
 		if (!$success)

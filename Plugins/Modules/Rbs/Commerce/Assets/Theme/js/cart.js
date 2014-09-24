@@ -74,12 +74,6 @@
 				delete(existingAddress[key]);
 			}
 		});
-		if (addressToUse.hasOwnProperty('name')) {
-			existingAddress.name = addressToUse.name;
-		}
-		if (addressToUse.hasOwnProperty('__id')) {
-			existingAddress.__id = addressToUse.__id;
-		}
 	}
 
 	function rbsCommerceCartData() {
@@ -192,7 +186,8 @@
 				delivery: '=',
 				zoneCode: '=',
 				cart: '=',
-				addresses: '='
+				addresses: '=',
+				saveAddress: '='
 			},
 			templateUrl: '/shipping-mode-selector.static.tpl',
 
@@ -202,9 +197,9 @@
 				scope.hasLogin = attributes.hasOwnProperty('login') && attributes.login != '';
 				scope.addressModes = null;
 				scope.pickupModes = null;
-				scope.isShippingAddressValid = { value: false };
+				scope.isShippingAddressValid = { value: true };
 
-				scope.delivery.isShippingAddressValid = { value: false };
+				scope.delivery.isShippingAddressValid = { value: true };
 
 				if (!scope.delivery.addressReference.hasOwnProperty('__addressFieldsId')) {
 					scope.delivery.addressReference = angular.copy(scope.cart.address);
@@ -320,13 +315,8 @@
 
 				scope.openEditShippingAddressForm = function() {
 					scope.editShippingAddress = true;
-					angular.forEach(scope.shippingAddress, function(value, key) {
-						if (key != 'countryCode' && key != '__addressFieldsId') {
-							scope.shippingAddress[key] = null;
-						}
-					});
-					scope.shippingAddress.name = '';
-					scope.isShippingAddressValid.value = false;
+					scope.shippingAddress.__name = '';
+					scope.isShippingAddressValid.value = true;
 					scope.delivery.underConfiguration = true;
 				};
 
@@ -338,7 +328,6 @@
 
 				scope.loadShippingAddressInForm = function(address, addressName) {
 					scope.shippingAddress = address;
-					scope.shippingAddress.name = addressName;
 				};
 
 				scope.addressCannotBeUsed = false;
@@ -356,16 +345,25 @@
 				};
 
 				scope.validShippingAddressForm = function() {
-					scope.cart.shippingModes[scope.deliveryIndex].addressReference = angular.copy(scope.shippingAddress);
-
-					var postData = { shippingModes: scope.cart.shippingModes };
-					updateCart($http, scope, postData, function() {
+					var callback = function() {
 						scope.delivery.underConfiguration = false;
 						scope.editShippingAddress = false;
 						scope.shippingAddress = angular.copy(scope.cart.shippingModes[scope.deliveryIndex].addressReference);
 						scope.delivery.addressReference = angular.copy(scope.shippingAddress);
 						scope.addressModes = loadCompatibleShippingModes(true);
-					});
+					};
+
+					var address = angular.copy(scope.shippingAddress);
+
+					if (scope.cart.userId && address.__name) {
+						scope.saveAddress(address, function(address) {
+							scope.cart.shippingModes[scope.deliveryIndex].addressReference = address;
+							updateCart($http, scope, {shippingModes: scope.cart.shippingModes}, callback);
+						});
+					} else {
+						scope.cart.shippingModes[scope.deliveryIndex].addressReference = address;
+						updateCart($http, scope, {shippingModes: scope.cart.shippingModes}, callback);
+					}
 				};
 			}
 		}
@@ -772,6 +770,7 @@
 
 			$http.post('Action/Rbs/User/CheckEmailAvailability', postData)
 				.success(function() {
+					scope.information.login = scope.information.password = null;
 					updateCart($http, scope, postData, scope.setAuthenticated);
 				})
 				.error(function(data) {
@@ -780,6 +779,7 @@
 					}
 				});
 		};
+
 
 		scope.setAuthenticated = function() {
 			scope.information.authenticated = true;
@@ -809,29 +809,23 @@
 		};
 
 		scope.finalizeInformationStep = function() {
-			var postData = { address: scope.information.address };
-			var callback = function() {
-				scope.information.address = getObject(scope.cart.address, true);
 
-				if (!scope.information.address.hasOwnProperty('name') || scope.information.address.name == '') {
-					var lineCount = scope.information.address.__lines.length;
-					scope.information.address.name = scope.information.address.__lines[0] -
-					scope.information.address.__lines[lineCount - 1];
-				}
-				if (scope.information.login) {
-					scope.saveAddress(scope.information.address, function() {
-						// Update again cart to add address id
-						var postData = { address: scope.information.address };
-						updateCart($http, scope, postData);
-					});
-				}
+			var callback = function() {
 				scope.setCurrentStep(scope.getNextStep());
 			};
-			updateCart($http, scope, postData, callback);
+
+			var address = scope.information.address;
+			if (scope.information.login && address.__name) {
+				scope.saveAddress(address, function(address) {
+					updateCart($http, scope, {address: address}, callback);
+				});
+			} else {
+				updateCart($http, scope, {address: address}, callback);
+			}
 		};
 
 		scope.clearAddress = function() {
-			scope.information.address.name = '';
+			scope.information.address.__name = '';
 			angular.forEach(scope.information.address, function(value, key) {
 				if (key != 'countryCode' && key != '__addressFieldsId') {
 					scope.information.address[key] = null;
@@ -839,41 +833,31 @@
 			});
 		};
 
-		scope.saveAddress = function(address, successAddCallback, errorCallback) {
+		scope.saveAddress = function(address, successAddCallback) {
 			var postData = {
-				name: address.name,
+				name: address.__name,
 				fieldValues: address
 			};
-
-			if (address.__id) {
-				$http.post('Action/Rbs/Geo/UpdateAddress', postData)
-					.success(function(data) {
-						scope.addresses = angular.copy(data);
-					})
-					.error(function(data, status, headers) { console.log('Update Address error', data, status, headers); });
-			}
-			else {
-				$http.post('Action/Rbs/Geo/AddAddress', postData)
-					.success(function(data) {
-						var maxId = 0;
-						for (var i = 0; i < data.length; i++) {
-							if (data[i].fieldValues.__id && data[i].fieldValues.__id > maxId) {
-								maxId = data[i].fieldValues.__id;
-							}
+			$http.post('Action/Rbs/Geo/AddAddress', postData)
+				.success(function(data) {
+					scope.addresses = angular.copy(data);
+					var maxId = 0;
+					for (var i = 0; i < data.length; i++) {
+						if (data[i].fieldValues.__id && data[i].fieldValues.__id > maxId) {
+							maxId = data[i].fieldValues.__id;
 						}
-						for (var j = 0; j < data.length; j++) {
-							if (data[j].fieldValues.__id && data[j].fieldValues.__id == maxId) {
-								address.__id = maxId;
-								scope.addresses.push(data[j]);
-								if (angular.isFunction(successAddCallback)) {
-									successAddCallback(address, data[j]);
-								}
-								break;
-							}
-						}
-					})
-					.error(function(data, status, headers) { console.log('Add Address error', data, status, headers); });
-			}
+					}
+					if (maxId) {
+						address.__id = maxId;
+						delete address.__name;
+					}
+					if (angular.isFunction(successAddCallback)) {
+						successAddCallback(address);
+					}
+				})
+				.error(function(data, status, headers) {
+					console.log('Add Address error', data, status, headers);
+				});
 		};
 
 		/**
@@ -921,6 +905,8 @@
 						addressReference: getObject(cartDelivery.addressReference, true),
 						options: getObject(cartDelivery.options, true)
 					};
+
+
 					if (cartDelivery.lineKeys) {
 						for (j = 0; j < cartDelivery.lineKeys.length; j++) {
 							var key = cartDelivery.lineKeys[j];
@@ -954,23 +940,11 @@
 					addressReference: delivery.addressReference,
 					options: delivery.options
 				});
-
 			}
 
 			var postData = { shippingModes: scope.cart.shippingModes };
 			updateCart($http, scope, postData, function() {
 				scope.setShippingDeliveries();
-
-				if (scope.information.login) {
-					for (i = 0; i < scope.cart.shippingModes.length; i++) {
-						scope.saveAddress(scope.cart.shippingModes[i].address, function() {
-							// Update again cart to add address id
-							var postData = { shippingModes: scope.cart.shippingModes };
-							updateCart($http, scope, postData);
-						});
-					}
-				}
-
 				scope.setCurrentStep(scope.getNextStep());
 			});
 		};

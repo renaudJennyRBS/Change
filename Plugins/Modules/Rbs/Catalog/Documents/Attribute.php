@@ -145,7 +145,7 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	public function setDefaultValues(\Change\Documents\AbstractModel $documentModel)
 	{
 		parent::setDefaultValues($documentModel);
-		$this->setAttributes(array('specifications', 'comparisons'));
+		$this->setAttributes(array('specifications', 'listItem'));
 	}
 
 	/**
@@ -155,7 +155,19 @@ class Attribute extends \Compilation\Rbs\Catalog\Documents\Attribute
 	public function isVisibleFor($visibility)
 	{
 		$vis = $this->getVisibility();
-		return is_array($vis) ? in_array($visibility, $vis) : false;
+		if (!is_array($vis))
+		{
+			$vis = [];
+		}
+		if (!$visibility && count($vis) == 0)
+		{
+			return true;
+		}
+		elseif ($visibility && in_array($visibility, $vis))
+		{
+			return true;
+		}
+		return  false;
 	}
 
 	/**

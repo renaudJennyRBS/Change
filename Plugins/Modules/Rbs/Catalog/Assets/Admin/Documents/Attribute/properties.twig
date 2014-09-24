@@ -11,6 +11,11 @@
 	</select>
 </rbs-field>
 
+<div data-ng-hide="document.valueType == 'Property'">
+	<rbs-field-text property="technicalName" label="{{ i18nAttr(propertyKey('Rbs_Catalog_Attribute', 'technicalName'), ['ucf']) }}">
+	</rbs-field-text>
+</div>
+
 <div data-ng-hide="document.valueType == 'Group'">
 	<div data-ng-hide="document.valueType == 'Text' || document.valueType == 'DocumentId' || document.valueType == 'DocumentIdArray' || document.valueType == 'Property'">
 		<rbs-field-text property="defaultValue"

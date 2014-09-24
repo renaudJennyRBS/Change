@@ -9,7 +9,6 @@
 		"jsAssets" : [
 			"Theme/Rbs/Base/js/jquery-2.1.1.min.js",
 			"Theme/Rbs/Base/js/bootstrap.min.js",
-			"Theme/Rbs/Base/js/bootstrap-complements.js",
 			"Theme/Rbs/Demo/js/default.js",
 			"Theme/Rbs/Base/js/angular-1.2.23/angular.min.js",
 			"Theme/Rbs/Base/js/angular-1.2.23/angular-cookies.min.js",

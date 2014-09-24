@@ -434,7 +434,11 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			$tm->begin();
 
 			$address->setFieldValues($fieldValues);
-			$address->setName($event->getParam('addressName'));
+			$addressName = $event->getParam('addressName');
+			if ($addressName)
+			{
+				$address->setName($addressName);
+			}
 			$address->save();
 
 			$tm->commit();
