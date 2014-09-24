@@ -50,7 +50,7 @@
 					</address>
 					<p>
 						<button type="button" class="btn btn-sm btn-primary"
-							data-ng-click="loadShippingAddressInForm(address.fieldValues, address.name)"
+							data-ng-click="loadShippingAddressInForm(address.fieldValues)"
 							data-ng-disabled="!addressCanBeUsed(address.fieldValues)">
 							{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
 						</button> <span data-ng-if="!addressCanBeUsed(address.fieldValues)">*</span>
@@ -65,7 +65,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div data-ng-if="zoneCode.length > 0 && hasLogin" data-rbs-address-form="" data-ng-model="shippingAddress" data-valid="isShippingAddressValid.value"
-						data-address-name="shippingAddress.name" data-manage-name="true"
+						data-address-name="shippingAddress.__name" data-manage-name="optional"
 						data-zone-code="(= zoneCode =)">
 					</div>
 					<div data-ng-if="zoneCode.length > 0 && !hasLogin" data-rbs-address-form="" data-ng-model="shippingAddress" data-valid="isShippingAddressValid.value"
@@ -185,7 +185,8 @@
 	</div>
 
 	<div data-rbs-commerce-shipping-mode-selector="" data-delivery="delivery" data-zone-code="shippingZonesCode" data-cart="cart"
-		data-readonly="(= !isCurrentStep('shipping') =)" data-addresses="addresses" data-delivery-index="(= $index =)" data-login="information.login"></div>
+		data-readonly="(= !isCurrentStep('shipping') =)" data-addresses="addresses"
+			data-save-address="saveAddress" data-delivery-index="(= $index =)" data-login="information.login"></div>
 </div>
 
 <div data-ng-show="isCurrentStep('shipping')" class="clearfix">

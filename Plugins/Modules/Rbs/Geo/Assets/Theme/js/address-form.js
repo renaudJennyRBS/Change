@@ -20,10 +20,18 @@
 				scope.countries = [];
 				scope.fieldsDef = [];
 				scope.fieldValues = {};
-				scope.data = {};
+				scope.data = {useName: false};
 				scope.zoneCode = attributes.zoneCode;
 				scope.readonly = attributes.readonly;
-				scope.manageName = attributes.hasOwnProperty('manageName');
+				if (attributes.hasOwnProperty('manageName'))  {
+					if (attributes.manageName == 'optional') {
+						scope.manageName = 'optional';
+					} else {
+						scope.manageName = 'required';
+					}
+				} else {
+					scope.manageName = 'none';
+				}
 
 				attributes.$observe('readonly', function(newValue) {
 					scope.readonly = (newValue == 'true');
@@ -33,7 +41,6 @@
 					scope.zoneCode = angular.fromJson(newValue);
 					$http.post('Action/Rbs/Geo/GetCountriesByZoneCode', {zoneCode: scope.zoneCode})
 						.success(function(data) {
-							console.log('rbsAddressForm - GetCountriesByZoneCode success');
 							scope.countries = data;
 							if (data.length == 1) {
 								scope.fieldValues.countryCode = data[0].code;
@@ -73,8 +80,18 @@
 					scope.addressName = newValue;
 				});
 
+				scope.$watch('data.useName', function(newValue, oldValue) {
+					if (!newValue && newValue !== oldValue)
+					{
+						scope.addressName = '';
+					}
+				});
+
 				scope.$watch('addressName', function(newValue) {
 					scope.data.name = newValue;
+					if (newValue) {
+						scope.data.useName = true;
+					}
 				});
 
 				ngModel.$render = function ngModelRenderFn() {

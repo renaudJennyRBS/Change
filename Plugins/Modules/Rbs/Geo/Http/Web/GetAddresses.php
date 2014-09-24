@@ -39,9 +39,14 @@ class GetAddresses extends \Change\Http\Web\Actions\AbstractAjaxAction
 				'fieldValues' => $address->toArray(),
 				'lines' => $address->getLines()
 			);
+
 			if (method_exists($address, 'getName'))
 			{
 				$addressInfos['name'] = $address->getName();
+			}
+			else
+			{
+				$addressInfos['name'] = '-';
 			}
 
 			if ($defaultFieldValues && $defaultFieldValues == $fieldValues)
