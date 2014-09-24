@@ -46,6 +46,11 @@ class Page extends Result
 	protected $monitoring;
 
 	/**
+	 * @var array
+	 */
+	protected $navigationContext;
+
+	/**
 	 * @var \Change\Http\Web\Result\BlockResult[]
 	 */
 	protected $blockResults;
@@ -195,6 +200,24 @@ class Page extends Result
 	public function getMonitoring()
 	{
 		return $this->monitoring;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getNavigationContext()
+	{
+		return $this->navigationContext;
+	}
+
+	/**
+	 * @param array $navigationContext
+	 * @return $this
+	 */
+	public function setNavigationContext($navigationContext)
+	{
+		$this->navigationContext = $navigationContext;
+		return $this;
 	}
 
 	/**

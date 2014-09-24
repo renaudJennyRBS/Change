@@ -35,6 +35,14 @@ class DefaultPageResult
 		$websiteId = ($section && $section->getWebsite()) ? $section->getWebsite()->getId() : null;
 		$templateLayout = $pageTemplate->getContentLayout($websiteId);
 
+		$navigationContext = [
+			'websiteId' => $websiteId,
+			'sectionId' => $section ? $section->getId() : null,
+			'pageIdentifier' => $page->getIdentifier(),
+			'themeName' => $pageTemplate->getTheme()->getName()
+		];
+		$result->setNavigationContext($navigationContext);
+
 		$pageLayout = $page->getContentLayout();
 		$containers = array();
 		foreach ($templateLayout->getItems() as $item)

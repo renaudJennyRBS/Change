@@ -1,6 +1,13 @@
 {
 	"mailSuitable":true,
 	"editableContent":{
+		"themeSelector" : {
+			"id" : "themeSelector",
+			"type" : "block",
+			"name" : "Rbs_Theme_ThemeSelectorMail",
+			"visibility" : "raw",
+			"parameters": { "TTL": 3600 }
+		},
 		"header" : {
 			"id" : "header",
 			"grid" : 12,

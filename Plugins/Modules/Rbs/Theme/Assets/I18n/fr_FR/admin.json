@@ -46,5 +46,8 @@
 	},
 	"default_configuration":{
 		"message":"configuration par défaut"
+	},
+	"theme_selector_label":{
+		"message":"sélecteur de thème"
 	}
 }
