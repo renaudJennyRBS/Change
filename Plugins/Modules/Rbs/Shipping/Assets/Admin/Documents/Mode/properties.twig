@@ -3,7 +3,7 @@
 </rbs-field-label-title>
 
 <rbs-field-text property="code" required="true"
-		label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'code'), ['ucf']) }}">
+	label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'code'), ['ucf']) }}">
 </rbs-field-text>
 
 <rbs-field-rich-text property="description"
@@ -11,12 +11,12 @@
 </rbs-field-rich-text>
 
 <rbs-field-picker property="visual" label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'visual'), ['ucf']) }}"
-		accepted-model="Rbs_Media_Image"
-		selector-title="{{ i18nAttr('m.rbs.shipping.admin.mode_select_visual', ['ucf']) }}">
+	accepted-model="Rbs_Media_Image"
+	selector-title="{{ i18nAttr('m.rbs.shipping.admin.mode_select_visual', ['ucf']) }}">
 </rbs-field-picker>
 
 <rbs-field-boolean property="hasAddress"
-		label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'hasAddress'), ['ucf']) }}">
+	label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'hasAddress'), ['ucf']) }}">
 </rbs-field-boolean>
 
 <rbs-field label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'cartFilterData'), ['ucf']) }}">
@@ -26,6 +26,24 @@
 </rbs-field>
 
 <rbs-field-picker-multiple property="deliveryZones" accepted-model="Rbs_Geo_Zone"
-		label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'deliveryZones'), ['ucf']) }}"
-		selector-title="{{ i18nAttr('m.rbs.shipping.admin.mode_select_delivery_zones', ['ucf']) }}">
+	label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'deliveryZones'), ['ucf']) }}"
+	selector-title="{{ i18nAttr('m.rbs.shipping.admin.mode_select_delivery_zones', ['ucf']) }}">
 </rbs-field-picker-multiple>
+
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Shipping_Mode', 'trackingUrlTemplate'), ['ucf']) }}">
+	<div class="input-group">
+		<input type="text" class="form-control" data-ng-model="document.trackingUrlTemplate" />
+		<div class="input-group-btn">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				{{ i18n('m.rbs.shipping.admin.variables', ['ucf']) }} <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu pull-right">
+				<li>
+					<a href="" data-ng-click="addVariable('trackingUrlTemplate', 'CODE')">
+						{CODE} ({{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'trackingCode')) }})
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</rbs-field>

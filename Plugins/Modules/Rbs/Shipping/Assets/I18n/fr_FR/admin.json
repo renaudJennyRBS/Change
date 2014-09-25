@@ -16,5 +16,8 @@
 	},
 	"module_keywords":{
 		"message":"expédition,livraison,transporteur,mode de livraison"
+	},
+	"variables":{
+		"message":"variables"
 	}
 }

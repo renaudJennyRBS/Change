@@ -460,6 +460,10 @@
 						if (angular.isObject(carrier) && carrier.id > 0) {
 							REST.ensureLoaded(carrier).then(function(data) {
 								scope.document.shippingModeCode = data.code;
+								if (!angular.isObject(scope.document.context) || angular.isArray(scope.document.context)) {
+									scope.document.context = {};
+								}
+								scope.document.context.shippingModeId = data.id;
 								refreshOrderInformation();
 							}, function(error) {
 								NotificationCenter.error(i18n.trans('m.rbs.order.adminjs.shipment_invalid_query_shipping_mode | ucf'),

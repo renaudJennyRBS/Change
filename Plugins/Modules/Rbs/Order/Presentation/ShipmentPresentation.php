@@ -54,6 +54,11 @@ class ShipmentPresentation
 	protected $address;
 
 	/**
+	 * @var string|null
+	 */
+	protected $trackingUrl;
+
+	/**
 	 * @param \Rbs\Order\Documents\Shipment|array $shipment
 	 */
 	public function __construct($shipment)
@@ -108,6 +113,10 @@ class ShipmentPresentation
 		if (isset($array['trackingCode']))
 		{
 			$this->setTrackingCode($array['trackingCode']);
+		}
+		if (isset($array['trackingUrl']))
+		{
+			$this->setTrackingUrl($array['trackingUrl']);
 		}
 		if (isset($array['processingDate']))
 		{
@@ -207,6 +216,24 @@ class ShipmentPresentation
 	public function getTrackingCode()
 	{
 		return $this->trackingCode;
+	}
+
+	/**
+	 * @return null|string
+	 */
+	public function getTrackingUrl()
+	{
+		return $this->trackingUrl;
+	}
+
+	/**
+	 * @param null|string $trackingUrl
+	 * @return $this
+	 */
+	public function setTrackingUrl($trackingUrl)
+	{
+		$this->trackingUrl = $trackingUrl;
+		return $this;
 	}
 
 	/**

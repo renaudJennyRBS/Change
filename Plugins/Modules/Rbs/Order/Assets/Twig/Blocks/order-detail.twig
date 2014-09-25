@@ -299,7 +299,14 @@
 							</td>
 							<td>
 								{{ shipment.shippingModeCode }}
-								{% if shipment.trackingCode %}<br />{{ shipment.trackingCode }}{% endif %}
+								{% if shipment.trackingCode %}
+									<br />
+									{% if shipment.trackingUrl %}
+										<a href="{{ shipment.trackingUrl }}">{{ shipment.trackingCode }}</a>
+									{% else %}
+										{{ shipment.trackingCode }}
+									{% endif %}
+								{% endif %}
 								{% if shipment.carrierStatus %}<br />{{ shipment.carrierStatus }}{% endif %}
 							</td>
 							<td>

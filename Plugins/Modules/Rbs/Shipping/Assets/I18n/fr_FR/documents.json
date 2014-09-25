@@ -16,5 +16,8 @@
 	},
 	"mode_deliveryzones":{
 		"message":"zones de livraison"
+	},
+	"mode_trackingUrlTemplate":{
+		"message":"modèle d'URL de suivi du colis"
 	}
 }
