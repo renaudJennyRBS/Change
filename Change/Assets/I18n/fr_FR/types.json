@@ -1,0 +1,14 @@
+{
+	"true":{
+		"message":"vrai"
+	},
+	"false":{
+		"message":"faux"
+	},
+	"yes":{
+		"message":"oui"
+	},
+	"no":{
+		"message":"non"
+	}
+}
