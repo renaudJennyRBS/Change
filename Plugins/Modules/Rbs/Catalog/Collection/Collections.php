@@ -134,7 +134,7 @@ class Collections
 			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
 				'specifications' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_specifications', array('ucf')),
-				'comparisons' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_comparisons', array('ucf')),
+				'listItem' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_list_item', array('ucf'))
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeVisibility', $collection);
 			$event->setParam('collection', $collection);
