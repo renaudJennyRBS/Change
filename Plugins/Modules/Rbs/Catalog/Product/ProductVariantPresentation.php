@@ -9,7 +9,7 @@
 namespace Rbs\Catalog\Product;
 
 /**
- * @name \Rbs\Catalog\Product\VariantProductPresentation
+ * @name \Rbs\Catalog\Product\ProductVariantPresentation
  */
 class ProductVariantPresentation extends ProductPresentation
 {
