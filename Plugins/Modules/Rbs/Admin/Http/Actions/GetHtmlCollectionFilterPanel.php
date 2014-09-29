@@ -79,7 +79,7 @@ class GetHtmlCollectionFilterPanel
 									}
 									else
 									{
-										$definitions[$key]['config']['selectModel'] = 'true';
+										$definitions[$key]['config']['selectModel'] = json_encode(['editable' => true, 'abstract' => false]);
 									}
 									break;
 							}
