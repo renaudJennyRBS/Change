@@ -1192,6 +1192,53 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @api
+	 * @param array $variantsConfiguration
+	 * @param integer|\Rbs\Store\Documents\WebStore|null $webStore
+	 * @return array
+	 */
+	public function addStockDataInVariantsConfiguration($variantsConfiguration, $webStore)
+	{
+		if (!is_array($variantsConfiguration) || !is_array($variantsConfiguration['axes'])
+			|| !is_array($variantsConfiguration['axes']['products']))
+		{
+			return $variantsConfiguration;
+		}
+
+		foreach ($variantsConfiguration['axes']['products'] as $index => $variant)
+		{
+			$variantsConfiguration['axes']['products'][$index]['stockData'] = $this->getVariantStockData($variant['id'], $webStore);
+		}
+		return $variantsConfiguration;
+	}
+
+	/**
+	 * @param integer $productId
+	 * @param integer|\Rbs\Store\Documents\WebStore|null $webStore
+	 * @return array
+	 */
+	protected function getVariantStockData($productId, $webStore)
+	{
+		$product = $this->getDocumentManager()->getDocumentInstance($productId);
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return [];
+		}
+
+		/* @var $product \Rbs\Catalog\Documents\Product */
+		$sku = $product->getSku();
+		if (!($sku instanceof \Rbs\Stock\Documents\Sku))
+		{
+			return [];
+		}
+
+		/* @var $sku \Rbs\Stock\Documents\Sku */
+		$level = $this->getStockManager()->getInventoryLevel($sku, $webStore);
+		$threshold = $this->getStockManager()->getInventoryThreshold($sku, $webStore, $level);
+		return ['hasStock' => $level > 0, 'threshold' => $threshold, 'allowBackorders' => $sku->getAllowBackorders()];
+	}
+
+	/**
+	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param boolean $onlyPublishedProduct
 	 * @return array

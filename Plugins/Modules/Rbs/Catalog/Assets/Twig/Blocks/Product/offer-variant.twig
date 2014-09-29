@@ -79,6 +79,7 @@
 					<label for="selectedVariant{{ i }}">{{ axisName }}</label>
 					<select data-ng-show="axesValues[{{ i }}].length > 1" data-ng-cloak="" id="selectedVariant{{ i }}" class="form-control" data-ng-model="selectedAxesValues[{{ i }}]"
 						data-ng-options="var.title for var in axesValues[{{ i }}]" data-ng-change="variantChanged({{ i }})"
+						data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
 						{% if i > 0 %}data-ng-disabled="!selectedAxesValues[{{ i - 1}}]"{% endif %}>
 						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
 					</select>
