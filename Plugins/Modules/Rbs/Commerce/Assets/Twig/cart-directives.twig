@@ -1,0 +1,185 @@
+{% block emptyCart %}
+	<h1>{{ i18n('m.rbs.commerce.front.empty_cart', (['ucf'])) }}</h1>
+	<p>{{ i18n('m.rbs.commerce.front.empty_cart_message', (['ucf'])) }}</p>
+{% endblock emptyCart %}
+
+{% block cartStructure %}
+	<script type="text/ng-template" id="/rbsCommerceCart.tpl">
+		<h1>{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}</h1>
+		{% block cartLoader %}
+			<div data-ng-show="loading">
+				<div class="modal-backdrop fade in"></div>
+				<div data-ng-show="loading" class="modal" style="display: block;">
+					<div class="modal-dialog">
+						<div class="modal-content text-center well">
+							<p>{{ i18n('m.rbs.commerce.front.please_wait_loading_cart', ['ucf', 'etc']) | raw }}</p>
+							<img alt="" src="data:image/gif;base64,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" />
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endblock cartLoader%}
+
+		{% block cartErrors %}
+			<div class="alert alert-danger" data-ng-show="cartData.common.errors.length">
+				<ul class="list-unstyled">
+					<li data-ng-repeat="error in cartData.common.errors">(= error.message =)</li>
+				</ul>
+			</div>
+		{% endblock cartErrors %}
+
+	{% block cartLines %}
+		<div class="table-responsive" data-ng-show="cartData">
+			<table summary="{{ i18nAttr('m.rbs.commerce.front.cart_contents', ['ucf']) }}" class="table table-striped table-vertical-middle">
+				<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
+					<th data-ng-if="showPrices" colspan="2">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
+				</tr>
+				</thead>
+				<tbody data-role="cart-lines">
+				</tbody>
+			</table>
+		</div>
+	{% endblock cartLines %}
+
+		<div class="row" data-ng-if="showPrices"  data-ng-show="cartData">
+			<div class="col-md-6">
+				{% block cartFeesEvaluation %}
+				<div data-rbs-shipping-fees-evaluation=""
+						{% if parameters.displayPricesWithoutTax %}data-display-prices-without-tax=""{% endif %}
+						{% if parameters.displayPricesWithTax %}data-display-prices-with-tax=""{% endif %}
+						></div>
+				{% endblock cartFeesEvaluation %}
+			</div>
+			<div class="col-md-6">
+	{% block cartAmounts %}
+				<table summary="" class="table table-striped table-bordered">
+					<tbody>
+					{% if parameters.displayPricesWithoutTax and cartData.amounts.linesAmountWithoutTaxes %}<tr>
+						<td>{{ i18n('m.rbs.commerce.front.amount_without_tax', ['ucf']) }}</td>
+						<td class="price">(= cartData.amounts.linesAmountWithoutTaxes | rbsFormatPrice:currencyCode =)</td>
+					</tr>{% endif %}
+					{% if parameters.displayPricesWithTax and cartData.amounts.linesAmountWithTaxes %}<tr>
+						<td>{{ i18n('m.rbs.commerce.front.amount_with_tax', ['ucf']) }}</td>
+						<td class="price">(= cartData.amounts.linesAmountWithTaxes | rbsFormatPrice:currencyCode =)</td>
+					</tr>{% endif %}
+					</tbody>
+				</table>
+	{% endblock cartAmounts %}
+			</div>
+		</div>
+
+		<div class="clearfix text-right">
+			{% block startOrderProcess %}
+			<p>
+				<label>
+					<input type="checkbox" data-ng-model="acceptTermsAndConditions" />
+					{% block acceptTermsAndConditionsText %}
+						{% set linkHref = functionURL('Rbs_Commerce_TermsAndConditions') %}
+						{% set linkTitle = i18nAttr('m.rbs.commerce.front.will_open_new_tab', ['ucf']) %}
+						{% set linkOpen = '<a href="' ~ linkHref ~ '" target="_blank" title="' ~ linkTitle ~ '">' %}
+						{{ i18n('m.rbs.commerce.front.accept_terms_and_conditions', ['ucf'], {'LINK_OPEN': linkOpen, 'LINK_CLOSE': '</a>'})|raw }}
+					{% endblock acceptTermsAndConditionsText %}
+				</label>
+			</p>
+			<p>
+				<a class="btn btn-primary btn-lg" href="{{ functionURL('Rbs_Commerce_OrderProcess') }}" data-ng-disabled="!canOrder()">
+					{{ i18n('m.rbs.commerce.front.proceed_to_checkout', ['ucf']) }}
+				</a>
+			</p>
+			{% endblock startOrderProcess %}
+		</div>
+	</script>
+{% endblock cartStructure %}
+
+{% block cartLine %}
+<script type="text/ng-template" id="/rbsCommerceCartLineDefault.tpl">
+	<tr>
+		<td>
+			<a title="(= line.product.common.title =)" href="javascript:"
+					data-ng-href="(= line.product.common.URL.canonical =)">
+				<img data-ng-show="line.product.common.visuals[0].cartItem"
+						alt="(= line.product.common.title =)" data-ng-src="(= line.product.common.visuals[0].cartItem =)" />
+				<div class="text-left text-muted" data-ng-hide="line.product.common.visuals[0].cartItem">
+					<span class="glyphicon glyphicon-camera" style="font-size:80px"></span>
+				</div>
+			</a>
+		</td>
+		<td>
+			<ul class="list-unstyled">
+				<li data-ng-bind="line.product.common.title"></li>
+				<li data-ng-show="line.product.common.reference" data-ng-bind="line.product.common.reference"></li>
+			</ul>
+			<dl class="dl-inline-items" data-ng-if="line.options.axesInfo.length">
+				<dt data-ng-repeat-start="(index, axisInfo) in line.options.axesInfo">(= axisInfo.name =)</dt>
+				<dd data-ng-repeat-end="">(= axisInfo.value =)</dd>
+			</dl>
+		</td>
+		<td  style="min-width: 150px">
+			<div class="form-inline">
+				<input type="number" min="(=line.product.cart.minQuantity =)" max="(= line.product.cart.maxQuantity =)"
+						step="(= line.product.cart.quantityIncrement =)" data-ng-disabled="disabledQuantity()"
+						data-ng-model="quantity" class="form-control"  style="width:75px;"/>
+				<button type="button" data-ng-click="updateQuantity()" data-ng-hide="quantity == line.quantity"
+						class="btn btn-icon btn-default btn-primary"
+						title="{{ i18nAttr('m.rbs.commerce.front.update', ['ucf']) }}">
+					<i class="glyphicon glyphicon-refresh"></i>
+				</button>
+			</div>
+			<a href="javascript:" data-ng-click="remove()">{{ i18n('m.rbs.commerce.front.remove', ['ucf']) }}</a>
+		</td>
+		<td data-ng-if="showPrices" class="text-right">
+			<ul class="list-unstyled" data-ng-show="line.quantity != 1">
+				<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
+					<del class="text-muted">(= line.quantity =) x (= line.unitBasedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+						</abbr>
+					</del>
+
+				</li>
+				<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
+					<del class="text-muted">(= line.quantity =) x (= line.unitBasedAmountWithTaxes | rbsFormatPrice:currencyCode =)</del>
+				</li>
+				<li class="price" data-ng-show="parameters.displayPricesWithoutTax">
+					<span class="text-muted">(= quantity =) x (= line.unitAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+						</abbr>
+					</span>
+				</li>
+				<li class="price" data-ng-show="parameters.displayPricesWithTax">
+					<span class="text-muted">(= line.quantity =) x (= line.unitAmountWithTaxes | rbsFormatPrice:currencyCode =)</span>
+				</li>
+			</ul>
+		</td>
+		<td data-ng-if="showPrices" class="text-right">
+			<ul class="list-unstyled main-price">
+				<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
+					<del>(= line.basedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+						</abbr>
+					</del>
+				</li>
+				<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
+					<del>(= line.basedAmountWithTaxes | rbsFormatPrice:currencyCode =)</del>
+				</li>
+				<li class="price" data-ng-show="parameters.displayPricesWithoutTax">
+					<span>(= line.amountWithoutTaxes | rbsFormatPrice:currencyCode =)
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+						</abbr>
+					</span>
+				</li>
+				<li class="price" data-ng-show="parameters.displayPricesWithTax">
+					<span>(= line.amountWithTaxes | rbsFormatPrice:currencyCode =)</span>
+				</li>
+			</ul>
+		</td>
+	</tr>
+</script>
+{% endblock cartLine %}

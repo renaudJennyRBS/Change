@@ -80,11 +80,21 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('createOrderFromCart', [$this, 'sendOrderConfirmationMail'], 1);
 
 		$eventManager->attach('getOrderProcessByCart', [$this, 'onDefaultGetOrderProcessByCart'], 5);
+
 		$eventManager->attach('getCompatibleShippingModes', [$this, 'onDefaultGetCompatibleShippingModes'], 5);
+		$eventManager->attach('getShippingModeData', [$this, 'onDefaultGetShippingModeData'], 5);
+		$eventManager->attach('getShippingModesDataByAddress', [$this, 'onDefaultGetShippingModesDataByAddress'], 5);
+		$eventManager->attach('isValidAddressForShippingMode', [$this, 'onDefaultIsValidAddressForShippingMode'], 5);
+
 		$eventManager->attach('getCompatiblePaymentConnectors', [$this, 'onDefaultGetCompatiblePaymentConnectors'], 5);
 		$eventManager->attach('getShippingZones', [$this, 'onDefaultGetShippingZones'], 5);
 		$eventManager->attach('getShippingFee', [$this, 'onDefaultGetShippingFee'], 5);
 		$eventManager->attach('getShippingFeesEvaluation', [$this, 'onDefaultGetShippingFeesEvaluation'], 5);
+
+
+		$eventManager->attach('getPaymentConnectorData', [$this, 'onDefaultGetPaymentConnectorData'], 5);
+
+		$eventManager->attach('getProcessData', [$this, 'onDefaultGetProcessData'], 5);
 	}
 
 	/**
@@ -140,11 +150,14 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$dm = $event->getApplicationServices()->getDocumentManager();
 		$cart = $event->getParam('cart');
-		if ($cart instanceof \Rbs\Commerce\Cart\Cart) {
-			$webstore = $dm->getDocumentInstance($cart->getWebStoreId());
-			if ($webstore instanceof \Rbs\Store\Documents\WebStore) {
-				$process = $webstore->getOrderProcess();
-				if ($process && $process->activated()) {
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->getWebStoreId())
+		{
+			$webStore = $dm->getDocumentInstance($cart->getWebStoreId());
+			if ($webStore instanceof \Rbs\Store\Documents\WebStore)
+			{
+				$process = $webStore->getOrderProcess();
+				if ($process && $process->activated())
+				{
 					$event->setParam('process', $process);
 				}
 			}
@@ -152,16 +165,91 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @api
-	 * @param \Rbs\Commerce\Documents\Process $orderProcess
-	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param \Rbs\Shipping\Documents\Mode|integer $shippingMode
+	 * @param \Rbs\Geo\Address\AddressInterface|array $address
 	 * @param array $options
-	 * @return \Rbs\Shipping\Documents\Mode[]
+	 * @return boolean
 	 */
-	public function getCompatibleShippingModes($orderProcess, $cart, array $options = [])
+	public function isValidAddressForShippingMode($shippingMode, $address, array $options = [])
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(['orderProcess' => $orderProcess, 'cart' => $cart, 'options' => $options]);
+		$args = $em->prepareArgs(['shippingMode' => $shippingMode, 'address' => $address, 'options' => $options]);
+		$this->getEventManager()->trigger('isValidAddressForShippingMode', $this, $args);
+		if (isset($args['isValid']))
+		{
+			return $args['isValid'] == true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultIsValidAddressForShippingMode(\Change\Events\Event $event)
+	{
+		if ($event->getParam('isValid') !== null)
+		{
+			return;
+		}
+
+		/** @var \Rbs\Shipping\Documents\Mode $shippingMode */
+		$shippingMode = $event->getParam('shippingMode');
+		if (is_numeric($shippingMode))
+		{
+			$shippingMode = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($shippingMode);
+		}
+		if (!$shippingMode instanceof \Rbs\Shipping\Documents\Mode)
+		{
+			return;
+		}
+
+		/** @var \Rbs\Geo\Address\AddressInterface $address */
+		$address = $event->getParam('address');
+		if (is_array($address))
+		{
+			$address = new \Rbs\Geo\Address\BaseAddress($address);
+		}
+
+		if (!$address instanceof \Rbs\Geo\Address\AddressInterface)
+		{
+			return;
+		}
+
+		if ($shippingMode->getDeliveryZonesCount())
+		{
+			/* @var $genericServices \Rbs\Generic\GenericServices */
+			$genericServices = $event->getServices('genericServices');
+			$geoManager = $genericServices->getGeoManager();
+			foreach ($shippingMode->getDeliveryZones() as $zone)
+			{
+				if ($geoManager->isValidAddressForZone($address, $zone))
+				{
+					$event->setParam('isValid', true);
+					return;
+				}
+			}
+			$event->setParam('isValid', false);
+		}
+		else
+		{
+			$event->setParam('isValid', true);
+		}
+	}
+
+	/**
+	 * @api
+	 *  Default context:
+	 *  - data:
+	 *     - cartId
+	 * @param \Rbs\Commerce\Documents\Process $orderProcess
+	 * @param array $context
+	 * @return \Rbs\Shipping\Documents\Mode[]
+	 */
+	public function getCompatibleShippingModes($orderProcess, array $context)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['orderProcess' => $orderProcess, 'context' => $context]);
 		$this->getEventManager()->trigger('getCompatibleShippingModes', $this, $args);
 		if (isset($args['shippingModes']) && is_array($args['shippingModes']))
 		{
@@ -175,74 +263,310 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onDefaultGetCompatibleShippingModes(\Change\Events\Event $event)
 	{
-		$cart = $event->getParam('cart');
-		$orderProcess = $event->getParam('orderProcess');
-		$options = $event->getParam('options');
-		$hasAddress = isset($options['hasAddress']) ? $options['hasAddress'] : false;
-		if (isset($options['address']) && is_array($options['address']))
+		if ($event->getParam('shippingModes') !== null)
 		{
-			$checkAddress = new \Rbs\Geo\Address\BaseAddress($options['address']);
+			return;
+		}
+		$context = $event->getParam('context');
+		if (isset($context['data']['cartId']))
+		{
+			/** @var \Rbs\Commerce\CommerceServices $commerceServices */
+			$commerceServices = $event->getServices('commerceServices');
+			$cart = $commerceServices->getCartManager()->getCartByIdentifier($context['data']['cartId']);
 		}
 		else
 		{
-			$checkAddress = null;
+			$cart = null;
 		}
 
-		$deliveryIndex = isset($options['deliveryIndex']) ? $options['deliveryIndex'] : null;
-
-		/* @var $genericServices \Rbs\Generic\GenericServices */
-		$genericServices = $event->getServices('genericServices');
-		$geoManager = ($genericServices instanceof \Rbs\Generic\GenericServices) ? $genericServices->getGeoManager() : null;
-
-		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $orderProcess instanceof \Rbs\Commerce\Documents\Process)
+		$orderProcess = $event->getParam('orderProcess');
+		if ($orderProcess instanceof \Rbs\Commerce\Documents\Process)
 		{
 			$shippingModes = [];
 			foreach ($orderProcess->getShippingModes() as $shippingMode)
 			{
-				if ($hasAddress != $shippingMode->getHasAddress())
+				if (!$shippingMode->activated() || ($cart && !$shippingMode->isCompatibleWith($cart)))
 				{
 					continue;
 				}
-
-				if (!$shippingMode->isCompatibleWith($cart))
-				{
-					continue;
-				}
-
-				if ($shippingMode->getDeliveryZonesCount())
-				{
-					$address = $checkAddress ? $checkAddress : $cart->getAddress();
-					$cartShippingModes = $cart->getShippingModes();
-					if ($deliveryIndex !== null && isset($cartShippingModes[$deliveryIndex]))
-					{
-						$cartShippingMode = $cartShippingModes[$deliveryIndex];
-						if (!$checkAddress)
-						{
-							$address = $cartShippingMode->getAddressReference();
-						}
-					}
-
-					if ($address instanceof \Rbs\Geo\Address\AddressInterface && $geoManager)
-					{
-						foreach ($shippingMode->getDeliveryZones() as $zone)
-						{
-							if ($geoManager->isValidAddressForZone($address, $zone))
-							{
-								$shippingModes[] = $shippingMode;
-								break;
-							}
-						}
-					}
-				}
-				else
-				{
-					$shippingModes[] = $shippingMode;
-				}
+				$shippingModes[] = $shippingMode;
 			}
 			$event->setParam('shippingModes', $shippingModes);
 		}
 	}
+	/**
+	 * @api
+	 * Default context:
+	 *  - *visualFormats, *website
+	 * @param \Rbs\Payment\Documents\Connector|integer $paymentConnector
+	 * @param array $context
+	 * @return array
+	 */
+	public function getPaymentConnectorData($paymentConnector, array $context)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['paymentConnector' => $paymentConnector, 'context' => $context]);
+		$em->trigger('getPaymentConnectorData', $this, $args);
+		if (isset($args['paymentConnectorData']) && is_array($args['paymentConnectorData']))
+		{
+			return $args['paymentConnectorData'];
+		}
+		return [];
+	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetPaymentConnectorData(\Change\Events\Event $event)
+	{
+		if ($event->getParam('paymentConnectorData') !== null)
+		{
+			return;
+		}
+
+		/** @var \Rbs\Payment\Documents\Connector $paymentConnector */
+		$paymentConnector = $event->getParam('paymentConnector');
+		if (is_numeric($paymentConnector))
+		{
+			$paymentConnector = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($paymentConnector);
+		}
+		if (!$paymentConnector instanceof \Rbs\Payment\Documents\Connector)
+		{
+			return;
+		}
+
+		$context = $event->getParam('context');
+		if (!is_array($context))
+		{
+			$context = [];
+		}
+
+		//Set default context values
+		$context += ['visualFormats' => [], 'website' => null, 'data' => [], 'detailed' => false, 'dataSetNames' => []];
+
+		$applicationServices = $event->getApplicationServices();
+
+		$paymentConnectorData = ['common' => [
+			'id' => $paymentConnector->getId(),
+			'title' => $paymentConnector->getCurrentLocalization()->getTitle(),
+			'category' => 'default',
+		]];
+
+
+		if ($context['detailed'])
+		{
+			$visualFormats = $context['visualFormats'];
+			$website = $context['website'];
+			$richTextContext = array('website' => $website);
+			$richTextManager = $applicationServices->getRichTextManager();
+
+			$paymentConnectorData['presentation'] = [
+				'description' => $richTextManager->render($paymentConnector->getCurrentLocalization()
+					->getDescription(), 'Website', $richTextContext)];
+
+			$visual = $paymentConnector->getVisual();
+			if ($visual && $visualFormats)
+			{
+				$imagesFormats = new \Rbs\Media\Http\Ajax\V1\ImageFormats($visual);
+				$formats = $imagesFormats->getFormatsData($visualFormats);
+				if (count($formats))
+				{
+					$paymentConnectorData['presentation']['visual'] = $formats;
+				}
+			}
+		}
+
+		/** @var \Rbs\Commerce\CommerceServices $commerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+		if (array_key_exists('transaction', $context['dataSetNames'])) {
+			$paymentConnectorData['transaction'] = null;
+
+			$transaction = isset($context['data']['transaction']) ? $context['data']['transaction'] : null;
+			if ($transaction instanceof \Rbs\Payment\Documents\Transaction) {
+				$em = $paymentConnector->getEventManager();
+				$args = $em->prepareArgs(['context' => $context]);
+				$em->trigger('getPaymentData', $paymentConnector, $args);
+				if (isset($args['paymentData']) && is_array($args['paymentData'])) {
+					$paymentConnectorData['transaction'] = $args['paymentData'];
+				}
+			}
+		}
+		$event->setParam('paymentConnectorData', $paymentConnectorData);
+	}
+
+	/**
+	 * @api
+	 * Default context:
+	 *  - *visualFormats, *website, detailed, dataSetNames
+	 *  - *data
+	 *     - cartId
+	 * @param \Rbs\Shipping\Documents\Mode|integer $shippingMode
+	 * @param array $context
+	 * @return array
+	 */
+	public function getShippingModeData($shippingMode, array $context)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['shippingMode' => $shippingMode, 'context' => $context]);
+		$em->trigger('getShippingModeData', $this, $args);
+		if (isset($args['shippingModeData']) && is_array($args['shippingModeData']))
+		{
+			return $args['shippingModeData'];
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetShippingModeData(\Change\Events\Event $event)
+	{
+		if ($event->getParam('shippingModeData') !== null)
+		{
+			return;
+		}
+
+		/** @var \Rbs\Shipping\Documents\Mode $shippingMode */
+		$shippingMode = $event->getParam('shippingMode');
+		if (is_numeric($shippingMode))
+		{
+			$shippingMode = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($shippingMode);
+		}
+		if (!$shippingMode instanceof \Rbs\Shipping\Documents\Mode)
+		{
+			return;
+		}
+
+		$context = $event->getParam('context');
+		if (!is_array($context))
+		{
+			$context = [];
+		}
+
+		//Set default context values
+		$context += ['visualFormats' => [], 'website' => null, 'data' => [], 'detailed' => false, 'dataSetNames' => []];
+
+		$applicationServices = $event->getApplicationServices();
+
+		/** @var \Rbs\Commerce\CommerceServices $commerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+
+		$shippingModeData = ['common' => [
+			'id' => $shippingMode->getId(),
+			'title' => $shippingMode->getCurrentLocalization()->getTitle(),
+			'category' => $shippingMode->getCategory(),
+		]];
+
+		foreach ($shippingMode->getDeliveryZones() as $deliveryZone)
+		{
+			$deliveryZoneData = ['id' => $deliveryZone->getId()];
+			$country = $deliveryZone->getCountry();
+			if ($country) {
+				$deliveryZoneData['countryCode'] = $country->getCode();
+			}
+			$shippingModeData['deliveryZones'][$deliveryZone->getCode()] = $deliveryZoneData;
+		}
+
+		if ($context['detailed'])
+		{
+			$visualFormats = $context['visualFormats'];
+			$website = $context['website'];
+			$richTextContext = array('website' => $website);
+			$richTextManager = $applicationServices->getRichTextManager();
+
+			$shippingModeData['presentation'] = [
+				'description' => $richTextManager->render($shippingMode->getCurrentLocalization()
+					->getDescription(), 'Website', $richTextContext)];
+
+			$visual = $shippingMode->getVisual();
+			if ($visual && $visualFormats)
+			{
+				$imagesFormats = new \Rbs\Media\Http\Ajax\V1\ImageFormats($visual);
+				$formats = $imagesFormats->getFormatsData($visualFormats);
+				if (count($formats))
+				{
+					$shippingModeData['presentation']['visual'] = $formats;
+				}
+			}
+		}
+
+		if (isset($context['data']['cartId']) && ($context['detailed'] || array_key_exists('fee', $context['dataSetNames'])))
+		{
+			$cart = $commerceServices->getCartManager()->getCartByIdentifier($context['data']['cartId']);
+			if ($cart)
+			{
+				$orderProcess = $this->getOrderProcessByCart($cart);
+				if ($orderProcess)
+				{
+					$fee = $this->getShippingFee($orderProcess, $cart, $shippingMode);
+					if ($fee && $fee->getSku())
+					{
+						$webStore = $applicationServices->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
+						$billingArea = $cart->getBillingArea();
+						if ($webStore && $billingArea)
+						{
+							$priceManager = $commerceServices->getPriceManager();
+
+							$price = $priceManager->getPriceBySku($fee->getSku(),
+								['webStore' => $webStore, 'billingArea' => $billingArea, 'cart' => $cart,
+									'shippingMode' => $shippingMode, 'fee' => $fee]);
+
+							if ($price && ($feesValue = $price->getValue()) > 0)
+							{
+								$currencyCode = $billingArea->getCurrencyCode();
+								$zone = $cart->getZone();
+								$precision = $priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
+
+								$shippingModeData['fee']['id'] = $fee->getId();
+								$shippingModeData['fee']['currencyCode'] = $currencyCode;
+								$shippingModeData['fee']['precision'] = $precision;
+								if ($zone)
+								{
+									$taxes = $commerceServices->getPriceManager()
+										->getTaxesApplication($price, $billingArea->getTaxes(), $zone, $billingArea->getCurrencyCode());
+
+									if ($price->isWithTax())
+									{
+										$amountWithTaxes = $feesValue;
+										$amountWithoutTaxes = $commerceServices->getPriceManager()
+											->getValueWithoutTax($amountWithTaxes, $taxes);
+									}
+									else
+									{
+										$amountWithoutTaxes = $feesValue;
+										$amountWithTaxes = $commerceServices->getPriceManager()
+											->getValueWithTax($amountWithoutTaxes, $taxes);
+									}
+									$shippingModeData['fee']['amountWithoutTaxes'] = $priceManager->roundValue($amountWithoutTaxes, $precision);
+									$shippingModeData['fee']['amountWithTaxes'] = $priceManager->roundValue($amountWithTaxes, $precision);
+								}
+								else
+								{
+									if ($price->isWithTax())
+									{
+										$shippingModeData['fee']['amountWithTaxes'] = $priceManager->roundValue($feesValue, $precision);
+										$shippingModeData['fee']['amountWithoutTaxes'] = null;
+									}
+									else
+									{
+										$shippingModeData['fee']['amountWithTaxes'] = null;
+										$shippingModeData['fee']['amountWithoutTaxes'] = $priceManager->roundValue($feesValue, $precision);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (!isset($shippingModeData['fee']))
+			{
+				$shippingModeData['fee']['free'] = $applicationServices->getI18nManager()
+					->trans('m.rbs.commerce.front.free_shipping_fee', ['ucf']);
+			}
+		}
+		$event->setParam('shippingModeData', $shippingModeData);
+	}
 
 	/**
 	 * @api
@@ -377,15 +701,18 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @api
+	 * Default context:
+	 *  - website
+	 *  - data
 	 * @param \Rbs\Commerce\Documents\Process $orderProcess
 	 * @param \Rbs\Commerce\Cart\Cart $cart
-	 * @param \Change\Presentation\Interfaces\Website $website
+	 * @param array $context
 	 * @return array
 	 */
-	public function getShippingFeesEvaluation($orderProcess, $cart, $website)
+	public function getShippingFeesEvaluation($orderProcess, $cart, array $context)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(['orderProcess' => $orderProcess, 'cart' => $cart, 'website' => $website]);
+		$args = $em->prepareArgs(['orderProcess' => $orderProcess, 'cart' => $cart, 'context' => $context]);
 		$this->getEventManager()->trigger('getShippingFeesEvaluation', $this, $args);
 		if (isset($args['feesEvaluation']) && is_array($args['feesEvaluation']))
 		{
@@ -400,42 +727,20 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onDefaultGetShippingFeesEvaluation(\Change\Events\Event $event)
 	{
-
-		$feesEvaluation = ['countries' => [], 'shippingModes' => []];
+		/** @var array $context */
+		$context = $event->getParam('context');
+		$context += ['website' => null, 'data' => []];
+		$feesEvaluation = ['countries' => [], 'shippingModes' => [], 'countriesCount' => 0];
 		$globalCountries = [];
 		$cart = $event->getParam('cart');
 		$orderProcess = $event->getParam('orderProcess');
-		/** @var $website \Change\Presentation\Interfaces\Website */
-		$website = $event->getParam('website');
+
 		$commerceServices = $event->getServices('commerceServices');
-		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices && $cart instanceof \Rbs\Commerce\Cart\Cart &&
+		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices &&
+			$cart instanceof \Rbs\Commerce\Cart\Cart &&
 			$orderProcess instanceof \Rbs\Commerce\Documents\Process)
 		{
-			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
-			$priceManager = $commerceServices->getPriceManager();
-			$currencyCode = $cart->getCurrencyCode();
-			$zone = $cart->getZone();
-			$taxes = $cart->getTaxes();
-			if (!$currencyCode || !$zone || count($taxes) == 0)
-			{
-				$taxes = null;
-			}
-			if ($website)
-			{
-				$richTextContext = [
-					'website' => $website,
-					'currentURI' => $website->getUrlManager($i18nManager->getLCID())->getBaseUri()
-				];
-			}
-			else
-			{
-				$richTextContext = null;
-			}
-
-			$webStore = $documentManager->getDocumentInstance($cart->getWebStoreId());
-			$billingArea = $cart->getBillingArea();
-			$priceOptions = ['webStore' => $webStore, 'billingArea' => $billingArea, 'cart' => $cart];
 			foreach ($orderProcess->getShippingModes() as $shippingMode)
 			{
 				if (!$shippingMode->activated())
@@ -444,6 +749,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				}
 
 				$countries = [];
+
 				foreach ($shippingMode->getDeliveryZones() as $deliveryZone)
 				{
 					$country = $deliveryZone->getCountry();
@@ -456,64 +762,230 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				if (count($countries))
 				{
 					$globalCountries = array_merge($globalCountries, $countries);
-					$shippingModeEntry = ['id' => $shippingMode->getId(), 'countries' => $countries,
-						'sku' => null, 'amount' => null, 'amountWithTax' => null,
-						'title' => $shippingMode->getCurrentLocalization()->getTitle(),
-						'description' => null, 'visualUrl' => null];
 
-					if ($richTextContext)
+					$context['data']['cartId'] = $cart->getIdentifier();
+					$context['detailed'] = true;
+
+					$shippingModeData = $this->getShippingModeData($shippingMode, $context);
+					if (count($shippingModeData))
 					{
-						$shippingModeEntry['description'] = $event->getApplicationServices()->getRichTextManager()->render($shippingMode->getCurrentLocalization()->getDescription(), 'Website', $richTextContext);
+						$feesEvaluation['shippingModes'][] = $shippingModeData;
 					}
-
-					$fee = $this->getShippingFee($orderProcess, $cart, $shippingMode);
-					if ($fee && (($sku = $fee->getSku()) != null))
-					{
-						$shippingModeEntry['sku'] = $sku->getCode();
-						$price = $priceManager->getPriceBySku($sku, $priceOptions);
-						if ($price && $price->getValue())
-						{
-							$shippingTaxes = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode);
-							if ($price->isWithTax())
-							{
-								$amout = $priceManager->getValueWithoutTax($price->getValue(), $shippingTaxes);
-								$amoutWithTax = $price->getValue();
-							}
-							else
-							{
-								$amout = $price->getValue();
-								$amoutWithTax = $priceManager->getValueWithTax($price->getValue(), $shippingTaxes);
-							}
-
-							$shippingModeEntry['amountWithTax'] = $amoutWithTax;
-							$shippingModeEntry['amount'] = $amout;
-							$shippingModeEntry['formattedAmountWithTax'] = $priceManager->formatValue($amoutWithTax, $currencyCode);
-							$shippingModeEntry['formattedAmount'] = $priceManager->formatValue($amout, $currencyCode);
-
-						}
-					}
-
-					$visual = $shippingMode->getVisual();
-					if ($visual)
-					{
-						$shippingModeEntry['visualUrl'] = $visual->getPublicURL(160, 90); // TODO: get size as a parameter?
-					}
-
-					$feesEvaluation['shippingModes'][] = $shippingModeEntry;
 				}
 			}
 		}
 
-		if (count($globalCountries))
+		$feesEvaluation['countriesCount'] = count($globalCountries);
+		foreach($globalCountries as $key => $value)
 		{
-			$feesEvaluation['countriesCount'] = count($globalCountries);
-
-			foreach($globalCountries as $key => $value)
-			{
-				$feesEvaluation['countries'][] = ['code' => $key, 'title' => $value];
-			}
-			$event->setParam('feesEvaluation', $feesEvaluation);
+			$feesEvaluation['countries'][] = ['code' => $key, 'title' => $value];
 		}
+		$event->setParam('feesEvaluation', $feesEvaluation);
+	}
+
+	/**
+	 * Default context:
+	 *  - *dataSetNames, *visualFormats, *URLFormats
+	 *  - website, websiteUrlManager, section, page, detailed
+	 *  - *data
+	 * @api
+	 * @param \Rbs\Commerce\Documents\Process|integer $process
+	 * @param array $context
+	 * @return array
+	 */
+	public function getProcessData($process, array $context)
+	{
+		$em = $this->getEventManager();
+		$eventArgs = $em->prepareArgs(['process' => $process, 'context' => $context]);
+		$em->trigger('getProcessData', $this, $eventArgs);
+		if (isset($eventArgs['processData']))
+		{
+			$processData = $eventArgs['processData'];
+			if (is_object($processData))
+			{
+				$callable = [$processData, 'toArray'];
+				if (is_callable($callable))
+				{
+					$processData = call_user_func($callable);
+				}
+			}
+			if (is_array($processData))
+			{
+				return $processData;
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * Input params: process, context
+	 * Output param: processData
+	 * @param \Change\Events\Event $event
+	 */
+	public function  onDefaultGetProcessData(\Change\Events\Event $event)
+	{
+		if (!$event->getParam('processData'))
+		{
+			$process = $event->getParam('process');
+			if (is_numeric($process))
+			{
+				$process = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($process);
+			}
+
+			if ($process instanceof \Rbs\Commerce\Documents\Process)
+			{
+				$event->setParam('process', $process);
+				$processDataComposer = new \Rbs\Commerce\Process\ProcessDataComposer($event);
+				$event->setParam('processData', $processDataComposer->toArray());
+			}
+		}
+	}
+
+	/**
+	 * Default context:
+	 *  - *dataSetNames, *visualFormats, *URLFormats
+	 *  - website, websiteUrlManager, section, page, detailed
+	 *  - *data :
+	 *    address
+	 * @api
+	 * @param \Rbs\Commerce\Documents\Process|integer $process
+	 * @param array $context
+	 * @return array
+	 */
+	public function getShippingModesDataByAddress($process, array $context)
+	{
+		$em = $this->getEventManager();
+		$eventArgs = $em->prepareArgs(['process' => $process, 'context' => $context]);
+		$em->trigger('getShippingModesDataByAddress', $this, $eventArgs);
+		if (isset($eventArgs['shippingModesData']) && is_array($eventArgs['shippingModesData']))
+		{
+			return $eventArgs['shippingModesData'];
+		}
+		return [];
+	}
+
+	/**
+	 * Input params: process, context
+	 * Output param: processData
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetShippingModesDataByAddress(\Change\Events\Event $event)
+	{
+		if (!$event->getParam('shippingModesData'))
+		{
+			$process = $event->getParam('process');
+			if (is_numeric($process))
+			{
+				$process = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($process);
+			}
+			if ($process instanceof \Rbs\Commerce\Documents\Process)
+			{
+				$context = $event->getParam('context');
+				$data = isset($context['data']) && is_array($context['data']) ? $context['data'] : [];
+				$addressData = isset($data['address']) && is_array($data['address']) ? $data['address'] : [];
+				if ($addressData)
+				{
+					$shippingModesData = [];
+					$address = new \Rbs\Geo\Address\BaseAddress($addressData);
+					$shippingModes = $this->getCompatibleShippingModes($process, $context);
+
+					foreach ($shippingModes as $shippingMode)
+					{
+						if ($this->isValidAddressForShippingMode($shippingMode, $address))
+						{
+							$shippingModesData[] = $this->getShippingModeData($shippingMode, $context);
+						}
+					}
+					$event->setParam('shippingModesData', $shippingModesData);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Default context usage:
+	 *  - website
+	 *  - dataSetNames: connectors
+	 *  - data:
+	 *    - returnSuccessFunction
+	 * @param \Rbs\Commerce\Cart\Cart|string $cart
+	 * @param array $context
+	 * @return array|null
+	 */
+	public function getCartTransactionData($cart, array $context)
+	{
+		if (is_string($cart)) {
+			$cart = $this->getCartManager()->getCartByIdentifier($cart);
+		}
+
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			if (!$cart->isLocked())
+			{
+				if (!$this->getCartManager()->lockCart($cart))
+				{
+					$errorsData = ['errors' => []];
+					foreach ($cart->getErrors() as $error)
+					{
+						$errorsData['errors'][] = $error->toArray();
+					}
+					return $errorsData;
+				}
+			}
+
+			$context += ['website' => null, 'data' => [], 'dataSetNames' => []];
+			/** @var \Change\Presentation\Interfaces\Website $website */
+			$website = $context['website'];
+
+			/** @var array $data */
+			$data = $context['data'];
+
+			$contextData = $cart->getContext()->toArray();
+			$contextData['from'] = 'cart';
+			$contextData['guestCheckout'] = !$cart->getUserId();
+			if ($website instanceof \Change\Presentation\Interfaces\Website) {
+				$contextData['websiteId'] = $website->getId();
+				$contextData['LCID'] = $website->getLCID();
+			}
+			$contextData['returnSuccessFunction'] = isset($data['returnSuccessFunction']) ? $data['returnSuccessFunction'] :'Rbs_Commerce_PaymentReturn';
+
+			$transaction = $this->getNewTransaction(
+				$cart->getIdentifier(), $cart->getPaymentAmount(), $cart->getCurrencyCode(),
+				$cart->getEmail(), $cart->getUserId(), $cart->getOwnerId(),
+				$contextData
+			);
+
+			if ($transaction)
+			{
+				$transactionData = ['common' => ['id' => $transaction->getId(),
+					'amount' => $transaction->getAmount(), 'currencyCode' => $transaction->getCurrencyCode(),
+					'targetIdentifier' => $transaction->getTargetIdentifier()]];
+				$transactionContext = $transaction->getContextData();
+				$transactionData['context'] = is_array($transactionContext) && count($transactionContext) ? $transactionContext : null;
+				$process = $this->getOrderProcessByCart($cart);
+				if ($process && array_key_exists('connectors', $context['dataSetNames']))
+				{
+					$transactionData['connectors'] = [];
+					foreach ($process->getPaymentConnectors() as $paymentConnector)
+					{
+						$context['detailed'] = false;
+						$context['data']['transaction'] = $transaction;
+						$context['dataSetNames']['transaction'] = true;
+						if ($paymentConnector->isCompatibleWith($cart))
+						{
+							$paymentConnectorData = $this->getPaymentConnectorData($paymentConnector, $context);
+							if (count($paymentConnectorData))
+							{
+								$transactionData['connectors'][] = $paymentConnectorData;
+							}
+						}
+					}
+				}
+
+				return $transactionData;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -631,7 +1103,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					$order->appendLine($line->toArray());
 				}
-				$order->setLinesAmount($cart->getLinesAmount());
+				$order->setLinesAmountWithoutTaxes($cart->getLinesAmountWithoutTaxes());
 				$order->setLinesTaxes($cart->getLinesTaxes());
 				$order->setLinesAmountWithTaxes($cart->getLinesAmountWithTaxes());
 
@@ -642,12 +1114,12 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				$order->setFees($cart->getFees());
 				$order->setDiscounts($cart->getDiscounts());
 
-				$order->setTotalAmount($cart->getTotalAmount());
+				$order->setTotalAmountWithoutTaxes($cart->getTotalAmountWithoutTaxes());
 				$order->setTotalTaxes($cart->getTotalTaxes());
 				$order->setTotalAmountWithTaxes($cart->getTotalAmountWithTaxes());
 
 				$order->setCreditNotes($cart->getCreditNotes());
-				$order->setPaymentAmountWithTaxes($cart->getPaymentAmountWithTaxes());
+				$order->setPaymentAmount($cart->getPaymentAmount());
 
 				$order->setProcessingStatus(\Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING);
 				$order->save();
@@ -770,7 +1242,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				else
 				{
-					$invoice->setAmountWithTax($order->getPaymentAmountWithTaxes());
+					$invoice->setAmountWithTax($order->getPaymentAmount());
 					$invoice->setCurrencyCode($order->getCurrencyCode());
 				}
 

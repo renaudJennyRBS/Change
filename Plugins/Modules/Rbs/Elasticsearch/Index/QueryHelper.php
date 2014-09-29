@@ -278,15 +278,15 @@ class QueryHelper
 	 * Accepted sortBy title.[asc|.desc], dateAdded.[asc|.desc], price.[asc|.desc]
 	 * @param \Elastica\Query $query
 	 * @param string $sortBy
-	 * @param array $context Expected key productListId, productListSortBy, storeId, billingAreaId, zone
+	 * @param array $context Expected key listId, listSortBy, webStoreId, billingAreaId, zone
 	 */
 	public function addSortArgs($query, $sortBy, array $context)
 	{
 		$sort = [];
-		if ($sortBy == null && isset($context['productListId']))
+		if ($sortBy == null && isset($context['listId']))
 		{
-			$sort['position'] = ['order' => 'asc', 'nested_path' => 'listItems', 'nested_filter' => ['term'=>['listId' => $context['productListId']]]];
-			$sortBy = $context['productListSortBy'];
+			$sort['position'] = ['order' => 'asc', 'nested_path' => 'listItems', 'nested_filter' => ['term'=>['listId' => $context['listId']]]];
+			$sortBy = $context['listSortBy'];
 		}
 
 		if ($sortBy)
@@ -299,9 +299,9 @@ class QueryHelper
 						$sort['title.untouched'] = ['order' => $sortDir];
 						break;
 					case 'dateAdded' :
-						if (isset($context['productListId']))
+						if (isset($context['listId']))
 						{
-							$sort['creationDate'] = ['order' => $sortDir, 'nested_path' => 'listItems', 'nested_filter' => ['term'=>['listId' => $context['productListId']]]];
+							$sort['creationDate'] = ['order' => $sortDir, 'nested_path' => 'listItems', 'nested_filter' => ['term'=>['listId' => $context['listId']]]];
 						}
 						else
 						{
@@ -309,15 +309,15 @@ class QueryHelper
 						}
 						break;
 					case 'price' :
-						$storeId = isset($context['storeId']) ? $context['storeId'] : 0;
+						$webStoreId = isset($context['webStoreId']) ? $context['webStoreId'] : 0;
 						$billingAreaId = isset($context['billingAreaId']) ? $context['billingAreaId'] : 0;
-						if ($billingAreaId && $storeId)
+						if ($billingAreaId && $webStoreId)
 						{
 							$zone = isset($context['zone']) ? $context['zone'] : '';
 							$now = (new \DateTime())->format(\DateTime::ISO8601);
 							$bool = new \Elastica\Filter\Bool();
 							$bool->addMust(new \Elastica\Filter\Term(['billingAreaId' => $billingAreaId]));
-							$bool->addMust(new \Elastica\Filter\Term(['storeId' => $storeId]));
+							$bool->addMust(new \Elastica\Filter\Term(['storeId' => $webStoreId]));
 							$bool->addMust(new \Elastica\Filter\Term(['zone' => $zone ? $zone : '']));
 							$bool->addMust(new \Elastica\Filter\Range('startActivation', array('lte' => $now)));
 							$bool->addMust(new \Elastica\Filter\Range('endActivation', array('gt' => $now)));

@@ -185,7 +185,7 @@ class ProductData
 			$q->addOrder('startActivation', false);
 
 			$billingAreaId = null;
-			$storeId = null;
+			$webStoreId = null;
 			$startActivation = null;
 			$zones = null;
 			$now = new \DateTime();
@@ -203,10 +203,10 @@ class ProductData
 					continue;
 				}
 
-				if ($billingAreaId != $price->getBillingAreaId() || $storeId != $price->getWebStoreId())
+				if ($billingAreaId != $price->getBillingAreaId() || $webStoreId != $price->getWebStoreId())
 				{
 					$billingAreaId = $price->getBillingAreaId();
-					$storeId = $price->getWebStoreId();
+					$webStoreId = $price->getWebStoreId();
 					if (!($endActivation instanceof \DateTime))
 					{
 						$endActivation = (new \DateTime())->add(new \DateInterval('P10Y'));
@@ -230,7 +230,7 @@ class ProductData
 				}
 				$startActivation = $price->getStartActivation();
 
-				$priceData = ['priceId' => $price->getId(), 'billingAreaId' => $billingAreaId, 'storeId' => $storeId,
+				$priceData = ['priceId' => $price->getId(), 'billingAreaId' => $billingAreaId, 'storeId' => $webStoreId,
 					'startActivation' => $startActivation->format(\DateTime::ISO8601),
 					'endActivation' => $endActivation->format(\DateTime::ISO8601),
 					'zone' => '', 'value' => $priceValue, 'valueWithTax' => $priceValue];

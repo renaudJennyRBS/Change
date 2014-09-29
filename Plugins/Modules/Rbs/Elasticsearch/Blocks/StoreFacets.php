@@ -32,14 +32,19 @@ class StoreFacets extends Block
 		$parameters->addParameterMeta('showUnavailable', true);
 		$parameters->addParameterMeta('facets');
 		$parameters->addParameterMeta('sortBy');
-		$parameters->addParameterMeta('requiredSearchText', false);
+		$parameters->addParameterMeta('searchMode', false);
 		$parameters->setNoCache();
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$parameters->addParameterMeta('facetFilters', null);
 		$parameters->addParameterMeta('formAction', null);
 		$parameters->addParameterMeta('indexId', null);
-		$parameters->addParameterMeta('commerceContext', []);
+
+		$parameters->addParameterMeta('conditionId');
+		$parameters->addParameterMeta('webStoreId');
+		$parameters->addParameterMeta('billingAreaId');
+		$parameters->addParameterMeta('zone');
+
 		$parameters->addParameterMeta('searchText', null);
 
 		$commerceServices = $this->getCommerceServices($event);
@@ -62,7 +67,7 @@ class StoreFacets extends Block
 		}
 		$parameters->setParameterValue('indexId', $storeIndex->getId());
 
-		if ($parameters->getParameter('requiredSearchText'))
+		if ($parameters->getParameter('searchMode'))
 		{
 			$searchText = $event->getHttpRequest()->getQuery('searchText');
 			if (!\Change\Stdlib\String::isEmpty($searchText))
@@ -71,19 +76,25 @@ class StoreFacets extends Block
 			}
 		}
 
-		$ctx = $commerceServices->getContext();
-		$commerceContext = [];
-		if ($ctx->getZone()) {
-			$commerceContext['zone'] = $ctx->getZone();
-		}
-		if ($ctx->getWebStore()) {
-			$commerceContext['storeId'] = $ctx->getWebStore()->getId();
-		}
-		if ($ctx->getBillingArea()) {
-			$commerceContext['billingAreaId'] = $ctx->getBillingArea()->getId();
-		}
+		$parameters->setParameterValue('webStoreId', 0);
+		$parameters->setParameterValue('billingAreaId', 0);
+		$parameters->setParameterValue('zone', null);
+		$webStore = $commerceServices->getContext()->getWebStore();
+		if ($webStore)
+		{
+			$parameters->setParameterValue('webStoreId', $webStore->getId());
+			$billingArea = $commerceServices->getContext()->getBillingArea();
+			if ($billingArea)
+			{
+				$parameters->setParameterValue('billingAreaId', $billingArea->getId());
+			}
 
-		$parameters->setParameterValue('commerceContext', $commerceContext);
+			$zone = $commerceServices->getContext()->getZone();
+			if ($zone)
+			{
+				$parameters->setParameterValue('zone', $zone);
+			}
+		}
 
 		// Product list.
 		$this->setParameterValueForDetailBlock($parameters, $event);
@@ -254,11 +265,7 @@ class StoreFacets extends Block
 			return null;
 		}
 
-		$searchText = null;
-		if ($parameters->getParameter('requiredSearchText'))
-		{
-			$searchText = $parameters->getParameter('searchText');
-		}
+
 
 		$applicationServices = $event->getApplicationServices();
 		$documentManager = $applicationServices->getDocumentManager();
@@ -328,11 +335,17 @@ class StoreFacets extends Block
 		{
 			return null;
 		}
+
 		$availableInWarehouseId = $parameters->getParameter('showUnavailable') ? null : 0;
-		$context = $parameters->getParameter('commerceContext');
+		$context = [];
+		$context['webStoreId'] = $parameters->getParameter('webStoreId');
+		$context['billingAreaId'] = $parameters->getParameter('billingAreaId');
+		$context['zone'] = $parameters->getParameter('zone');
+		$context['conditionId'] = $parameters->getParameter('conditionId');
 
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 
+		$searchText = $parameters->getParameter('searchText');
 		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId, $searchText);
 		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $context);
 

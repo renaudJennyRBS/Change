@@ -151,5 +151,17 @@
 	},
 	"template_manage_addresses_label":{
 		"message":"Distinguer livraison et facturation"
+	},
+	"tax_behavior_no_tax":{
+		"message":"pas de taxe"
+	},
+	"tax_behavior_unique":{
+		"message":"zone de taxe unique"
+	},
+	"tax_behavior_before_process":{
+		"message":"selection de la zone avant le processus"
+	},
+	"tax_behavior_during_process":{
+		"message":"selection de la zone durant le processus"
 	}
 }

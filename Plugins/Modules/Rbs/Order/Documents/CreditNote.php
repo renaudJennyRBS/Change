@@ -22,6 +22,7 @@ class CreditNote extends \Compilation\Rbs\Order\Documents\CreditNote
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(Event::EVENT_CREATE, [$this, 'onDefaultCreate'], 5);
+		$eventManager->attach(Event::EVENT_UPDATE, [$this, 'onDefaultUpdate'], 5);
 	}
 
 	/**
@@ -29,22 +30,78 @@ class CreditNote extends \Compilation\Rbs\Order\Documents\CreditNote
 	 */
 	public function onDefaultCreate(Event $event)
 	{
-		if ($event->getDocument() !== $this) {
+		if ($event->getDocument() !== $this)
+		{
 			return;
 		}
-		if ($this->getAmountNotApplied() === null)
-		{
-			$this->setAmountNotApplied($this->getAmount());
-		}
 
-		if ($this->getCode() === null)
+		$commerceServices = $event->getServices('commerceServices');
+		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
-			$commerceServices = $event->getServices('commerceServices');
-			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+			$priceManager = $commerceServices->getPriceManager();
+			$currencyCode = $this->getCurrencyCode();
+			if (!$currencyCode)
+			{
+				$currencyCode = 'EUR';
+				$this->setCurrencyCode($currencyCode);
+			}
+
+			$precision = $priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
+			$this->setAmount($priceManager->roundValue($this->getAmount(), $precision));
+
+			if ($this->getAmountNotApplied() === null)
+			{
+				$this->setAmountNotApplied($this->getAmount());
+			}
+			else
+			{
+				$this->setAmountNotApplied($priceManager->roundValue($this->getAmountNotApplied(), $precision));
+			}
+
+			if ($this->getCode() === null)
 			{
 				$this->setCode($commerceServices->getProcessManager()->getNewCode($this));
 			}
 		}
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultUpdate(Event $event)
+	{
+		if ($event->getDocument() !== $this)
+		{
+			return;
+		}
+		$commerceServices = $event->getServices('commerceServices');
+		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+		{
+			$priceManager = $commerceServices->getPriceManager();
+			$precision = $priceManager->getRoundPrecisionByCurrencyCode($this->getCurrencyCode());
+			if ($this->isPropertyModified('amount'))
+			{
+				$this->setAmount($priceManager->roundValue($this->getAmount(), $precision));
+			}
+			if ($this->isPropertyModified('amountNotApplied'))
+			{
+				$priceManager = $commerceServices->getPriceManager();
+				$precision = $priceManager->getRoundPrecisionByCurrencyCode($this->getCurrencyCode());
+				$this->setAmount($priceManager->roundValue($this->getAmount(), $precision));
+			}
+		}
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isConsumed()
+	{
+		if ($this->getAmount())
+		{
+			return ($this->getAmount() - $this->getAmountNotApplied()) <= 0.0001;
+		}
+		return true;
 	}
 
 	/**

@@ -239,9 +239,31 @@ class Address extends \Compilation\Rbs\Geo\Documents\Address implements \Rbs\Geo
 	 */
 	public function toArray()
 	{
+		$fields = $this->getFields();
+		if (array_key_exists('__lines', $fields))
+		{
+			$lines = $fields['__lines'];
+			unset($fields['__lines']);
+		}
+		else
+		{
+			$lines = [];
+		}
+		$array = ['common' => ['id' => $this->getId(),'addressFieldsId' => $this->getAddressFieldsId(), 'name' => $this->getName()]];
+		$array['fields'] = $fields;
+		$array['lines'] = is_array($lines) ? $lines : [];
+		return $array;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toFlatArray()
+	{
 		$array = $this->getFields();
 		$array['__id'] = $this->getId();
 		$array['__addressFieldsId'] = $this->getAddressFieldsId();
+		$array['__name'] = $this->getName();
 		return $array;
 	}
 

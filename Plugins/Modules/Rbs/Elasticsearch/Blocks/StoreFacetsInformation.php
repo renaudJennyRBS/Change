@@ -24,13 +24,14 @@ class StoreFacetsInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.store_facets_label', $ucf));
 
-		$this->addInformationMetaForDetailBlock('Rbs_Catalog_ProductList', $i18nManager);
-
-		$this->addInformationMeta('requiredSearchText', Property::TYPE_BOOLEAN, false, false)
-			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.required_search_text', $ucf));
+		$this->addInformationMetaForDetailBlock('Rbs_Catalog_ProductList', $i18nManager)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_list', $ucf));;
 
 		$this->addInformationMeta('useCurrentSectionProductList', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_use_current', $ucf));
+
+		$this->addInformationMeta('searchMode', Property::TYPE_BOOLEAN, false, false)
+			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.search_mode', $ucf));
 
 		$this->addInformationMeta('showUnavailable', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_unavailable', $ucf));

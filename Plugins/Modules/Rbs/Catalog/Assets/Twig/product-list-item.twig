@@ -1,75 +1,60 @@
-<script type="text/ng-template" id="/addItemLineToCart.tpl">
-	<button name="key" type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()">
-		<i class="glyphicon glyphicon-shopping-cart"></i>
-		{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-	</button>
+{% set cacheKey = 'product_' ~ productData.common.id %}
+<script type="application/javascript">
+	window.__change['{{ cacheKey }}'] = {{ productData | json_encode | raw }};
 </script>
-
+<div data-ng-controller="RbsCatalogProductItemController" data-cache-key="{{ cacheKey }}">
+{% set productURL = parameters.contextualUrls ? productData.common.URL['contextual'] : productData.common.URL['canonical'] %}
 {% block visual %}
 	<div class="product-visual">
-		<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
-			href="{{ row.url }}">
-			{% set visuals = row.productPresentation.getFirstVisual({'list': listFormat}).data %}
-			{% if visuals|length %}
-				<img alt="{{ visuals[0].alt }}" src="{{ visuals[0].url.list }}" />
+		<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productData.common.title}) }}"
+				href="{{ productURL }}">
+			{% set visualData = productData.common.visuals[0] %}
+			{% if visualData %}
+				<img alt="{{ visualData.alt }}" src="{{ visualData.listItem }}" />
+			{% else %}
+				<div class="text-center text-muted">
+					<span class="glyphicon glyphicon-camera" style="font-size: 100px"></span>
+				</div>
 			{% endif %}
 		</a>
-		{% set pictograms = row.productPresentation.getPictograms({'pictogram': pictogramFormat}).data %}
-		{% if pictograms|length %}
-			<div class="pictograms-container">
-				{% spaceless %}
-					<ul class="list-inline">
-						{% for pictogram in pictograms %}
-							<li>
-								{% if pictogram.targetUrl %}<a href="{{ pictogram.targetUrl }}">{% endif %}
-								<img alt="{{ pictogram.alt }}" src="{{ pictogram.url.pictogram }}" />
-								{% if pictogram.targetUrl %}</a>{% endif %}
-							</li>
-						{% endfor %}
-					</ul>
-				{% endspaceless %}
-			</div>
-		{% endif %}
+		<div data-rbs-catalog-product-pictograms="" data-pictogram-format="'pictogram'" data-pictograms="pictograms"></div>
 	</div>
 {% endblock %}
 <div class="product-label">
-	<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: row.productPresentation.general.title}) }}"
-		href="{{ row.url }}">{{ row.productPresentation.general.title }}</a>
+	<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productData.common.title}) }}"
+			href="{{ productURL }}">{{ productData.common.title }}</a>
 </div>
 <div class="product-availability">
-	{{ row.productPresentation.stock.thresholdTitle }}
+	{{ productData.stock.thresholdTitle }}
 </div>
 {% if parameters.webStoreId %}
 	{% block prices %}
-		{% if row.productPresentation.prices.price %}
-			{% if parameters.displayPrices %}
+		{% if productData.price.currencyCode %}
+			{% if parameters.displayPricesWithoutTax %}
 				<div class="product-price price">
-					{% if not row.productPresentation.general.hasOwnSku and row.productPresentation.prices.price %}
+					{% if productData.price.hasDifferentPrices %}
 						{{ i18n('m.rbs.catalog.front.from') }}
 					{% endif %}
-					{{ formatPrice(row.productPresentation.prices.price) }}
+					{{ formatPrice(productData.price.valueWithoutTax, productData.price.currencyCode) }}
 					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
 						{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
 					</abbr>
-					{% if row.productPresentation.prices.priceWithoutDiscount %}
+					{% if productData.price.baseValueWithoutTax %}
 						<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-							{{- formatPrice(row.productPresentation.prices.priceWithoutDiscount) -}}
+							{{- formatPrice(productData.price.baseValueWithoutTax, productData.price.currencyCode) -}}
 						</del>
 					{% endif %}
 				</div>
 			{% endif %}
 			{% if parameters.displayPricesWithTax %}
 				<div class="product-price price">
-					{% if not row.productPresentation.general.hasOwnSku and row.productPresentation.prices.price %}
+					{% if productData.price.hasDifferentPrices %}
 						{{ i18n('m.rbs.catalog.front.from') }}
 					{% endif %}
-					{{ formatPrice(row.productPresentation.prices.priceWithTax) }}
-					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">
-						{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}
-					</abbr>
-					{% if row.productPresentation.prices.priceWithoutDiscountWithTax %}
+					{{ formatPrice(productData.price.valueWithTax, productData.price.currencyCode) }}
+					{% if productData.price.baseValueWithTax %}
 						<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-							{{- formatPrice(row.productPresentation.prices.priceWithoutDiscountWithTax) -}}
+							{{- formatPrice(productData.price.baseValueWithTax, productData.price.currencyCode ) -}}
 						</del>
 					{% endif %}
 				</div>
@@ -79,41 +64,20 @@
 
 	{% block addToCart %}
 		<div class="product-add">
-			{% if row.productPresentation.general.hasOwnSku %}
-				<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" >
-					<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
-					<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
-					<fieldset>
-						{% if row.productPresentation.general.canBeOrdered %}
-							<input type="hidden" name="key" value="{{ row.productPresentation.general.id }}">
-							<input type="hidden" name="designation" value="{{ row.productPresentation.general.title }}">
-							<input type="hidden" name="options[productId]" value="{{ row.productPresentation.general.id }}">
-							<input type="hidden" name="items[][codeSKU]" value="{{ row.productPresentation.stock.sku }}">
-
-							<div data-ng-controller="RbsCatalogProductItemController">
-								<div data-rbs-catalog-product-item-data="" data-product-id="{{ row.productPresentation.general.id }}"
-									data-modal-id="addToCartConfirmationModal-{{ blockId }}" data-section-id="{{ section.id }}"
-									data-product-title="{{ row.productPresentation.general.title }}"
-									data-stock-sku="{{ row.productPresentation.stock.sku }}"
-									data-product-quantity="{{ row.productPresentation.stock.minQuantity }}">
-									<button type="submit" class="btn btn-primary btn-sm">
-										<i class="glyphicon glyphicon-shopping-cart"></i>
-										{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-									</button>
-								</div>
-							</div>
-						{% else %}
-							<button type="submit" class="btn btn-primary btn-sm" disabled="disabled">
-								{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-							</button>
-						{% endif %}
-					</fieldset>
-				</form>
+			{% if productData.stock.sku %}
+				{% if productData.cart.key %}
+					<div data-rbs-catalog-add-list-item-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}">
+					</div>
+				{% else %}
+					<button type="submit" class="btn btn-primary btn-sm" disabled="disabled">
+						{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
+					</button>
+				{% endif %}
 			{% else %}
-				<div class="ng-valid ng-dirty">
-					{% set productTitle = row.productPresentation.general.title %}
-					<a class="btn btn-primary btn-sm" href="{{ row.url }}"
-						title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productTitle}) }}">
+				<div>
+					{% set productTitle = productData.common.title %}
+					<a class="btn btn-primary btn-sm" href="{{ productURL }}"
+							title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productTitle}) }}">
 						<i class="glyphicon glyphicon-arrow-right"></i>
 						{{ i18n('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productTitle}) }}
 					</a>
@@ -122,3 +86,4 @@
 		</div>
 	{% endblock %}
 {% endif %}
+</div>

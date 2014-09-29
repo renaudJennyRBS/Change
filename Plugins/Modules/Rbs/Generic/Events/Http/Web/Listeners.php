@@ -29,13 +29,13 @@ class Listeners implements ListenerAggregateInterface
 		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'), 10);
 		$callback = function (Event $event)
 		{
-			(new \Rbs\User\Http\Web\Login())->authenticate($event);
+			(new \Rbs\User\Http\Ajax\Authentication())->authenticate($event);
 		};
 		$events->attach(Event::EVENT_AUTHENTICATE, $callback, 5);
 
 		$callback = function (Event $event)
 		{
-			(new \Rbs\User\Http\Web\Login())->loginFromCookie($event);
+			(new \Rbs\User\Http\Ajax\Authentication())->authenticateFromCookie($event);
 		};
 		$events->attach(Event::EVENT_AUTHENTICATE, $callback, 1);
 

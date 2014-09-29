@@ -17,6 +17,9 @@ use Change\Presentation\Blocks\Standard\Block;
  */
 class CartCrossSelling extends Block
 {
+
+	use \Rbs\Commerce\Blocks\Traits\ContextParameters;
+
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -30,21 +33,19 @@ class CartCrossSelling extends Block
 		$parameters->addParameterMeta('title');
 		$parameters->addParameterMeta('productChoiceStrategy');
 		$parameters->addParameterMeta('crossSellingType');
-		$parameters->addParameterMeta('webStoreId');
 		$parameters->addParameterMeta('itemsPerSlide', 3);
 		$parameters->addParameterMeta('slideCount');
-		$parameters->addParameterMeta('displayPrices');
-		$parameters->addParameterMeta('displayPricesWithTax');
 
+		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
+
+		$parameters->addParameterMeta('cartIdentifier');
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		if ($parameters->getParameter('cartIdentifier') === null)
-		{
-			$parameters->setParameterValue('cartIdentifier', $commerceServices->getContext()->getCartIdentifier());
-		}
+		$parameters->setParameterValue('cartIdentifier', $commerceServices->getContext()->getCartIdentifier());
 
+		$cart = null;
 		if ($parameters->getParameter('cartIdentifier') !== null)
 		{
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($parameters->getParameter('cartIdentifier'));
@@ -54,21 +55,11 @@ class CartCrossSelling extends Block
 			}
 		}
 
-		$webStore = $commerceServices->getContext()->getWebStore();
-		if ($webStore)
+		if ($cart)
 		{
-			$parameters->setParameterValue('webStoreId', $webStore->getId());
-			if ($parameters->getParameter('displayPrices') === null)
-			{
-				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
-				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
-			}
-		}
-		else
-		{
-			$parameters->setParameterValue('webStoreId', 0);
-			$parameters->setParameterValue('displayPrices', false);
-			$parameters->setParameterValue('displayPricesWithTax', false);
+			/** @var \Rbs\Store\Documents\WebStore $webStore */
+			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
+			$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(), $parameters);
 		}
 
 		return $parameters;
@@ -91,7 +82,6 @@ class CartCrossSelling extends Block
 		if ($cart && $productChoiceStrategy && $crossSellingType)
 		{
 			$productManager = $commerceServices->getProductManager();
-
 			$rows = array();
 			if ($cart instanceof \Rbs\Commerce\Cart\Cart)
 			{
@@ -99,6 +89,9 @@ class CartCrossSelling extends Block
 				$csParameters['urlManager'] = $event->getUrlManager();
 				$csParameters['crossSellingType'] = $crossSellingType;
 				$csParameters['productChoiceStrategy'] = $productChoiceStrategy;
+				$csParameters['webStoreId'] = $parameters->getParameter('webStoreId');
+				$csParameters['billingAreaId'] = $parameters->getParameter('billingAreaId');
+				$csParameters['zone'] = $parameters->getParameter('zone');
 				$rows = $productManager->getCrossSellingForCart($cart, $csParameters);
 			}
 

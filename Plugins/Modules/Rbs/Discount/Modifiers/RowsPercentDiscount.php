@@ -30,7 +30,7 @@ class RowsPercentDiscount extends \Rbs\Commerce\Cart\CartDiscountModifier
 			}
 			else
 			{
-				$value = $this->cart->getLinesAmount() * $percent;
+				$value = $this->cart->getLinesAmountWithoutTaxes() * $percent;
 			}
 			$price = new \Rbs\Commerce\Std\BasePrice(['value' => $value, 'withTax' => $priceValueWithTax]);
 			foreach ($this->cart->getLines() as $line)

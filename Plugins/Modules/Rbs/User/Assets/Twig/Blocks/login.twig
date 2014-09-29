@@ -1,57 +1,25 @@
-{% if parameters.accessorId != null %}
-	<p>{{ i18n('m.rbs.user.front.you_are_authentified_as', ['ucf'], { 'name': parameters.accessorName }) }}</p>
-	<p><a href="Action/Rbs/User/Logout?redirectLocation={{ currentURL()|url_encode }}">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></p>
-{% else %}
-	<form method="post" id="Login" action="Action/Rbs/User/Login">
-		<input type="hidden" name="realm" value="{{ parameters.realm }}">
-		<input type="hidden" name="redirectLocation" value="{{ currentURL() }}" />
-		<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
-		<fieldset>
-			<legend>{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</legend>
-			{% for error in errors %}
-				<p class="text-danger">{{ error }}</p>
-			{% endfor %}
-			<div class="form-group">
-				<label for="rbs-user-login-login">{{ i18n('m.rbs.user.front.login', ['ucf']) }}</label>
-				<input id="rbs-user-login-login" type="text" name="login" class="form-control"
-					placeholder="{{ i18nAttr('m.rbs.user.front.login_placeholder', ['ucf']) }}" value="{{ login }}"/>
-			</div>
-			<div class="form-group">
-				<label for="rbs-user-login-password">{{ i18n('m.rbs.user.front.password', ['ucf']) }}</label>
-				<input id="rbs-user-login-password" type="password" name="password" class="form-control"
-					placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
-			</div>
-			<div class="text-right" data-rbs-user-forgot-password=""></div>
-			<div class="checkbox">
-				<label><input type="checkbox" name="rememberMe" {% if rememberMe %} checked="true" {% endif %}> {{ i18n('m.rbs.user.front.remember_me', ['ucf']) }}</label>
-			</div>
-			<input type="hidden" name="device" id="device"/>
-			<button class="btn btn-primary" type="submit">{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}</button>
-		</fieldset>
-	</form>
-	<script type="text/javascript">
-		var userAgent = window.navigator.userAgent;
-
-		var system =
-			userAgent.match(/windows/i) ? 'Windows' :
-			userAgent.match(/kindle/i) ? 'Kindle' :
-			userAgent.match(/android/i) ? 'Android' :
-			userAgent.match(/ipad/i) ? 'iPad' :
-			userAgent.match(/iphone/i) ? 'iPhone' :
-			userAgent.match(/ipod/i) ? 'iPod' :
-			userAgent.match(/mac/i) ? 'OS X' :
-			userAgent.match(/(linux|x11)/i) ? 'Linux' :
-			'unknown system';
-
-		var webBrowser =
-			userAgent.match(/firefox/i) && !userAgent.match(/seamonkey/i) ? 'Firefox' :
-			userAgent.match(/seamonkey/i) ? 'Seamonkey' :
-			userAgent.match(/chrome/i) && !userAgent.match(/chromium/i) ? 'Chrome' :
-			userAgent.match(/chromium/i) ? 'Chromium' :
-			userAgent.match(/safari/i) && !userAgent.match(/chrome/i) && !userAgent.match(/chromium/i) ? 'Safari' :
-			userAgent.match(/msie/i) ? 'Internet Explorer' :
-			'unknown web browser';
-
-		window.document.getElementById('device').value = webBrowser + ' - ' + system;
-	</script>
-{% endif %}
+<form id="Login" name="loginForm" data-ng-submit="submit($event)" data-ng-controller="rbsUserLoginController" data-cache-key="{{ blockId }}">
+	<fieldset data-ng-hide="parameters.accessorId">
+		<legend>{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</legend>
+		<p class="text-danger" data-ng-show="error">(= error =)</p>
+		<div class="form-group">
+			<label for="rbs-user-login-login">{{ i18n('m.rbs.user.front.login', ['ucf']) }}</label>
+			<input id="rbs-user-login-login" type="text" name="login" class="form-control"
+				placeholder="{{ i18nAttr('m.rbs.user.front.login_placeholder', ['ucf']) }}" data-ng-model="parameters.login"/>
+		</div>
+		<div class="form-group">
+			<label for="rbs-user-login-password">{{ i18n('m.rbs.user.front.password', ['ucf']) }}</label>
+			<input id="rbs-user-login-password" type="password" name="password" class="form-control"
+				placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" data-ng-model="parameters.password"/>
+		</div>
+		<div class="text-right" data-rbs-user-forgot-password=""></div>
+		<div class="checkbox">
+			<label><input type="checkbox" name="rememberMe" data-ng-model="parameters.rememberMe" > {{ i18n('m.rbs.user.front.remember_me', ['ucf']) }}</label>
+		</div>
+		<button class="btn btn-primary" type="submit" data-ng-disabled="!parameters.login || !parameters.password">{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}</button>
+	</fieldset>
+	<div data-ng-show="parameters.accessorId">
+		<p>{{ i18n('m.rbs.user.front.you_are_authentified_as', ['ucf'], {'NAME': ''}) }} <span data-ng-bind="parameters.accessorName"></span></p>
+		<p><a href="javascript:" data-ng-click="logout()">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></p>
+	</div>
+</form>

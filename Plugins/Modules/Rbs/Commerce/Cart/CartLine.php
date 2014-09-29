@@ -152,9 +152,9 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 			'designation' => $this->designation,
 			'items' => $this->items,
 			'taxes' => $this->taxes,
-			'amount' => $this->amount,
+			'amountWithoutTaxes' => $this->amountWithoutTaxes,
 			'amountWithTaxes' => $this->amountWithTaxes,
-			'basedAmount' => $this->basedAmount,
+			'basedAmountWithoutTaxes' => $this->basedAmountWithoutTaxes,
 			'basedAmountWithTaxes' => $this->basedAmountWithTaxes,
 			'options' => $this->options);
 		return serialize($this->getCartManager()->getSerializableValue($serializedData));
@@ -184,9 +184,12 @@ class CartLine extends \Rbs\Commerce\Std\BaseLine implements LineInterface, \Ser
 		$this->designation = $serializedData['designation'];
 		$this->items = $serializedData['items'];
 		$this->taxes = $serializedData['taxes'];
-		$this->amount = $serializedData['amount'];
+
+		$this->amountWithoutTaxes = isset($serializedData['amountWithoutTaxes']) ? $serializedData['amountWithoutTaxes']:
+			(isset($serializedData['amount']) ? $serializedData['amount'] : null);
 		$this->amountWithTaxes = $serializedData['amountWithTaxes'];
-		$this->basedAmount = (isset($serializedData['basedAmount'])) ? $serializedData['basedAmount'] : null;
+		$this->basedAmountWithoutTaxes =  isset($serializedData['basedAmountWithoutTaxes']) ? $serializedData['basedAmountWithoutTaxes']:
+			((isset($serializedData['basedAmount'])) ? $serializedData['basedAmount'] : null);
 		$this->basedAmountWithTaxes = (isset($serializedData['basedAmountWithTaxes'])) ? $serializedData['basedAmountWithTaxes'] : null;
 		$this->options = $serializedData['options'];
 		foreach ($this->items as $item)

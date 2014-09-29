@@ -51,7 +51,7 @@ interface LineInterface
 	/**
 	 * @return float|null
 	 */
-	public function getAmount();
+	public function getAmountWithoutTaxes();
 
 	/**
 	 * @return float|null
@@ -61,7 +61,7 @@ interface LineInterface
 	/**
 	 * @return float|null
 	 */
-	public function getBasedAmount();
+	public function getBasedAmountWithoutTaxes();
 
 	/**
 	 * @return float|null
@@ -72,4 +72,17 @@ interface LineInterface
 	 * @return array
 	 */
 	public function toArray();
+
+
+	/**
+	 * @deprecated
+	 * @see \Rbs\Commerce\Interfaces\LineInterface::getAmountWithoutTaxes()
+	 */
+	public function getAmount();
+
+	/**
+	 * @deprecated
+	 * @see \Rbs\Commerce\Interfaces\LineInterface::getBasedAmountWithoutTaxes()
+	 */
+	public function getBasedAmount();
 }

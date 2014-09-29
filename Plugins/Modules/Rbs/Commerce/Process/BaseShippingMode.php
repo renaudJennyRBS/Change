@@ -34,11 +34,6 @@ class BaseShippingMode implements \Rbs\Commerce\Process\ShippingModeInterface
 	protected $address;
 
 	/**
-	 * @var \Rbs\Geo\Address\AddressInterface
-	 */
-	protected $addressReference;
-
-	/**
 	 * @var \Zend\Stdlib\Parameters
 	 */
 	protected $options;
@@ -153,24 +148,6 @@ class BaseShippingMode implements \Rbs\Commerce\Process\ShippingModeInterface
 	}
 
 	/**
-	 * @param \Rbs\Geo\Address\BaseAddress $addressReference
-	 * @return $this
-	 */
-	public function setAddressReference($addressReference)
-	{
-		$this->addressReference = $addressReference;
-		return $this;
-	}
-
-	/**
-	 * @return \Rbs\Geo\Address\BaseAddress
-	 */
-	public function getAddressReference()
-	{
-		return $this->addressReference;
-	}
-
-	/**
 	 * @param \Rbs\Commerce\Process\ShippingModeInterface $shippingMode
 	 * @return $this
 	 */
@@ -216,19 +193,6 @@ class BaseShippingMode implements \Rbs\Commerce\Process\ShippingModeInterface
 					}
 					$this->address = $address;
 					break;
-
-				case 'addressReference':
-					if (!is_array($value))
-					{
-						$addressReference = null;
-					}
-					else
-					{
-						$addressReference = new \Rbs\Geo\Address\BaseAddress($value);
-					}
-					$this->addressReference = $addressReference;
-					break;
-
 				case 'options':
 					$this->options = null;
 					if (is_array($value))
@@ -254,7 +218,6 @@ class BaseShippingMode implements \Rbs\Commerce\Process\ShippingModeInterface
 			'title' => $this->title,
 			'lineKeys' => $this->lineKeys,
 			'address' => $this->address ? $this->address->toArray() : null,
-			'addressReference' => $this->addressReference ? $this->addressReference->toArray() : null,
 			'options' => $this->getOptions()->toArray()
 		);
 		return $array;

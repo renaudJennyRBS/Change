@@ -29,9 +29,9 @@ class GetOrderLineByProduct
 
 			/* @var $order \Rbs\Order\Documents\Order */
 			$order = $documentManager->getDocumentInstance($request->getPost('orderId'), 'Rbs_Order_Order');
+
 			/* @var $product \Rbs\Catalog\Documents\Product */
 			$product = $documentManager->getDocumentInstance($request->getPost('productId'), 'Rbs_Catalog_Product');
-
 			if (!$order || !$product)
 			{
 				$result = new \Change\Http\Rest\V1\ErrorResult(999999, 'Invalid parameters');
@@ -44,6 +44,7 @@ class GetOrderLineByProduct
 
 			/* @var $webStore \Rbs\Store\Documents\WebStore */
 			$webStore = $order->getWebStoreIdInstance();
+
 			/* @var $billingArea \Rbs\Price\Documents\BillingArea */
 			$billingArea = $order->getBillingAreaIdInstance();
 
@@ -51,17 +52,16 @@ class GetOrderLineByProduct
 			{
 				$currencyCode = $billingArea->getCurrencyCode();
 				$taxes = $billingArea->getTaxes();
+				$zone = $order->getZone();
+				$precision = $priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
 				$pricesValueWithTax = $webStore->getPricesValueWithTax();
 			}
 			else
 			{
-				$taxes = $currencyCode = null;
+				$taxes = $currencyCode = $zone = $precision = null;
 				$pricesValueWithTax = false;
 			}
-
-			$zone = $order->getZone();
 			$lineQuantity = 1;
-
 			$orderLine = new \Rbs\Order\OrderLine();
 			$orderLine->setQuantity($lineQuantity);
 			$orderLine->getOptions()->set('productId', $product->getId());
@@ -88,8 +88,8 @@ class GetOrderLineByProduct
 			}
 			$orderLine->appendItem($item);
 
-			$taxesLine = [];
-			$amount = null;
+			$taxesLine = ($zone) ? [] : null;
+			$amountWithoutTaxes = null;
 			$amountWithTaxes = null;
 
 			$items = $orderLine->getItems();
@@ -113,39 +113,41 @@ class GetOrderLineByProduct
 				$price->setWithTax($pricesValueWithTax);
 
 				$value = $price->getValue();
-				if ($value !== null)
+				if ($value !== null && $currencyCode)
 				{
 					$lineItemValue = $value * $lineQuantity;
-					if ($taxes !== null)
+					if ($zone)
 					{
 						$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
-						if (count($taxArray))
-						{
-							$taxesLine = $priceManager->addTaxesApplication($taxesLine, $taxArray);
-						}
-
-						if ($price->isWithTax())
+						$taxesLine = $priceManager->addTaxesApplication($taxesLine, $taxArray);
+						if ($pricesValueWithTax)
 						{
 							$amountWithTaxes += $lineItemValue;
-							$amount += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+							$amountWithoutTaxes += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
 						}
 						else
 						{
-							$amount += $lineItemValue;
+							$amountWithoutTaxes += $lineItemValue;
 							$amountWithTaxes = $priceManager->getValueWithTax($lineItemValue, $taxArray);
 						}
 					}
 					else
 					{
-						$amountWithTaxes += $lineItemValue;
-						$amount += $lineItemValue;
+						if ($pricesValueWithTax)
+						{
+							$amountWithTaxes += $lineItemValue;
+						}
+						else
+						{
+							$amountWithoutTaxes += $lineItemValue;
+						}
 					}
 				}
 			}
 
 			$orderLine->setTaxes($taxesLine);
 			$orderLine->setAmountWithTaxes($amountWithTaxes);
-			$orderLine->setAmount($amount);
+			$orderLine->setAmountWithoutTaxes($amountWithoutTaxes);
 
 			$result = new \Change\Http\Rest\V1\ArrayResult();
 			$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);

@@ -28,14 +28,17 @@ class Login extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
+		$parameters->addParameterMeta('realm', 'web');
+		$parameters->addParameterMeta('reloadOnSuccess', false);
+		$parameters->setLayoutParameters($event->getBlockLayout());
+
 		$parameters->addParameterMeta('errId');
 		$parameters->addParameterMeta('login');
 		$parameters->addParameterMeta('password');
 		$parameters->addParameterMeta('rememberMe');
-		$parameters->addParameterMeta('realm', 'web');
 		$parameters->addParameterMeta('accessorId');
 
-		$parameters->setLayoutParameters($event->getBlockLayout());
+
 		$request = $event->getHttpRequest();
 
 		$parameters->setParameterValue('errId', $request->getQuery('errId'));
@@ -71,25 +74,6 @@ class Login extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-
-		// Handle errors.
-		$errId = $parameters->getParameterValue('errId');
-		if ($errId)
-		{
-			$session = new \Zend\Session\Container('Change_Errors');
-			$sessionErrors = isset($session[$errId]) ? $session[$errId] : null;
-			if ($sessionErrors && is_array($sessionErrors))
-			{
-				$attributes['errors'] = isset($sessionErrors['errors']) ? $sessionErrors['errors'] : [];
-				$attributes['login'] = isset($sessionErrors['login']) ? $sessionErrors['login'] : '';
-				$attributes['rememberMe'] = isset($sessionErrors['rememberMe']);
-			}
-		}
-		else
-		{
-			$attributes['login'] = $parameters->getParameterValue('login');
-		}
-
 		return 'login.twig';
 	}
 }

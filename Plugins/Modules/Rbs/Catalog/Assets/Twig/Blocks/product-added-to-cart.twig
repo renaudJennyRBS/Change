@@ -1,16 +1,15 @@
-{% set attributeThumbnailFormat = {'maxWidth' : 160, 'maxHeight' : 120}  %}
 <div class="row">
-	{% set visuals = productPresentation.getFirstVisual({'thumbnail': attributeThumbnailFormat}).data %}
-	{% if visuals|length %}
+	{% set visualData = productData.common.visuals[0] %}
+	{% if visualData %}
 		{% set secondColumnClass = 'col-sm-8' %}
 		<div class="col-sm-4">
-			<img alt="{{ visuals[0].alt }}" src="{{ visuals[0].url.thumbnail }}" />
+			<img alt="{{ visualData.alt }}" src="{{ visualData.listItem }}" />
 		</div>
 	{% else %}
 		{% set secondColumnClass = 'col-sm-12' %}
 	{% endif %}
 	<div class="{{ secondColumnClass }}">
-		<h3>{{ productPresentation.general.title }}</h3>
+		<h3>{{ productData.common.title }}</h3>
 		<div class="alert alert-success">{{ i18n('m.rbs.catalog.front.this_product_added_to_cart', ['ucf']) }}</div>
 	</div>
 </div>

@@ -9,9 +9,9 @@
 		"OrderProcess": {
 			"jsAssets": [
 				"Theme/Rbs/Base/Rbs_Website/js/animations.js",
-				"Theme/Rbs/Base/Rbs_Geo/js/address-form.js",
+				"Theme/Rbs/Base/Rbs_Geo/js/address-editor.js",
 				"Theme/Rbs/Base/Rbs_Commerce/js/cart.js",
-				"Theme/Rbs/Base/Rbs_Commerce/js/process-menu.js",
+				"Theme/Rbs/Base/Rbs_Commerce/js/process.js",
 				"Theme/Rbs/Base/Rbs_User/js/user.js"
 			],
 			"cssAssets": [

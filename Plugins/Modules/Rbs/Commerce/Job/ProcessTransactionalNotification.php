@@ -290,11 +290,11 @@ class ProcessTransactionalNotification
 										{
 											$pm = $commerceServices->getPriceManager();
 											$currency = $order->getCurrencyCode();
-											$total = $pm->formatValue($order->getPaymentAmountWithTaxes(), $currency);
+											$total = $pm->formatValue($order->getPaymentAmount(), $currency);
 										}
 										else
 										{
-											$total = $order->getPaymentAmountWithTaxes();
+											$total = $order->getPaymentAmount();
 										}
 
 										$mailManager->send('rbs_commerce_order_confirmation', $website, $LCID, $order->getEmail(),
@@ -386,11 +386,11 @@ class ProcessTransactionalNotification
 											{
 												$pm = $commerceServices->getPriceManager();
 												$currency = $order->getCurrencyCode();
-												$total = $pm->formatValue($order->getPaymentAmountWithTaxes(), $currency);
+												$total = $pm->formatValue($order->getPaymentAmount(), $currency);
 											}
 											else
 											{
-												$total = $order->getPaymentAmountWithTaxes();
+												$total = $order->getPaymentAmount();
 											}
 
 											$mailManager->send('rbs_commerce_order_canceled', $website, $LCID, $userEmail,

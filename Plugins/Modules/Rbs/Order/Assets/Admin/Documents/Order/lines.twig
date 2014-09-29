@@ -175,7 +175,7 @@
 							</strong>
 							<strong data-ng-if="!priceInfo.withTax">
 								{{ i18n('m.rbs.order.admin.order_lines_amount_without_taxes', ['ucf', 'lab']) | raw }}
-								(= document.linesAmount | number:priceInfo.decimals =)
+								(= document.linesAmountWithoutTaxes | number:priceInfo.decimals =)
 							</strong>
 						</td>
 					</tr>

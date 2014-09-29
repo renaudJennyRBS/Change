@@ -9,8 +9,8 @@
 namespace Rbs\Price\Tax;
 
 /**
-* @name \Rbs\Commerce\Interfaces\BillingArea
-*/
+ * @name \Rbs\Price\Tax\BillingAreaInterface
+ */
 interface BillingAreaInterface
 {
 	/**

@@ -1,54 +1,20 @@
-<script type="text/ng-template" id="/productPictograms.tpl">
-	<div data-ng-show="pictograms"  class="pictograms-container pull-right">
-		{% spaceless %}
-			<ul class="list-inline">
-				<li data-ng-repeat="pictogram in pictograms">
-					<a data-ng-if="pictogram.targetUrl" data-ng-href="(= pictogram.targetUrl =)">
-						<img alt="(= pictogram.alt =)" data-ng-src="(= pictogram.url.pictogram =)" />
-					</a>
-					<img data-ng-if="!pictogram.targetUrl" alt="(= pictogram.alt =)"
-						data-ng-src="(= pictogram.url.pictogram =)" />
-				</li>
-			</ul>
-		{% endspaceless %}
-	</div>
-	<div data-ng-show="!pictograms" data-ng-transclude=""></div>
-</script>
-
-<div data-rbs-catalog-product-pictograms="" data-pictogram-formats="{{ {'pictogram': pictogramFormat} | json_encode }}">
-	{% set pictograms = productPresentation.getPictograms({'pictogram': pictogramFormat}).data %}
-	{% if pictograms|length %}
-		<div class="pictograms-container pull-right">
-			{% spaceless %}
-				<ul class="list-inline">
-					{% for pictogram in pictograms %}
-						<li>
-							{% if pictogram.targetUrl %}<a href="{{ pictogram.targetUrl }}">{% endif %}
-								<img alt="{{ pictogram.alt }}" src="{{ pictogram.url.pictogram }}" />
-							{% if pictogram.targetUrl %}</a>{% endif %}
-						</li>
-					{% endfor %}
-				</ul>
-			{% endspaceless %}
-		</div>
-	{% endif %}
+<div data-rbs-catalog-product-pictograms="" data-pictogram-format="'pictogram'" data-pictograms="pictograms" class="pull-right">
 </div>
 
-<meta itemprop="url" content="{{ productPresentation.general.url }}" />
-<h1 itemprop="name">{{ productPresentation.general.title }}</h1>
+<meta itemprop="url" content="{{ productData.common.URL['canonical'] }}" />
+<h1 itemprop="name">{{ productData.common.title }}</h1>
 {% spaceless %}
-	{% if productPresentation.stock.sku %}<meta itemprop="sku" content="{{ productPresentation.stock.sku }}" />{% endif %}
+	{% if productData.stock.sku %}<meta itemprop="sku" content="{{ productData.stock.sku }}" />{% endif %}
 	<dl class="list-inline list-divided">
-		{% if (productPresentation.product.code) %}
+		{% if (productData.common.reference) %}
 		<dt>{{ i18n('m.rbs.catalog.front.reference', ['ucf']) }}</dt>
-		<dd>{{ productPresentation.product.code }}</dd>
+		<dd>{{ productData.common.reference }}</dd>
 		{% endif %}
-		{% if productPresentation.general.brand %}
+		{% set brandAttribute = getAttributeByName(productData, 'brand') %}
+		{% if brandAttribute.value %}
 		<dt>{{ i18n('m.rbs.catalog.front.brand', ['ucf']) }}</dt>
 		<dd>
-			<a itemprop="brand" href="{{ canonicalURL(productPresentation.general.brand ) }}">
-				{{ productPresentation.general.brand.currentLocalization.title }}
-			</a>
+			<a itemprop="brand" href="{{ brandAttribute.value.URL.canonical }}">{{ brandAttribute.value.title }}</a>
 		</dd>
 		{% endif %}
 	</dl>

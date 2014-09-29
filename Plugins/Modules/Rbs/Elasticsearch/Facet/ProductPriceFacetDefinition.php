@@ -195,7 +195,7 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 	 */
 	protected function buildRangesFilter($ranges, array $context)
 	{
-		$context = $context + ['now' => new \DateTime(), 'zone' => '', 'billingAreaId' => 0, 'storeId' => 0];
+		$context = $context + ['now' => new \DateTime(), 'zone' => '', 'billingAreaId' => 0, 'webStoreId' => 0];
 		$now = $context['now'];
 		if ($now instanceof \DateTime)
 		{
@@ -203,7 +203,7 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 		}
 		$zone = strval($context['zone']);
 		$billingAreaId = intval($context['billingAreaId']);
-		$storeId = intval($context['storeId']);
+		$webStoreId = intval($context['webStoreId']);
 
 		$filterQuery = new \Elastica\Filter\Nested();
 		$filterQuery->setPath('prices');
@@ -211,7 +211,7 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 
 		$nestedBool->addMust(new \Elastica\Query\Term(['prices.billingAreaId' => $billingAreaId]));
 		$nestedBool->addMust(new \Elastica\Query\Term(['prices.zone' => $zone]));
-		$nestedBool->addMust(new \Elastica\Query\Term(['prices.storeId' => $storeId]));
+		$nestedBool->addMust(new \Elastica\Query\Term(['prices.storeId' => $webStoreId]));
 		$nestedBool->addMust(new \Elastica\Query\Range('prices.startActivation', ['lte' => $now]));
 		$nestedBool->addMust(new \Elastica\Query\Range('prices.endActivation', ['gt' => $now]));
 
@@ -225,12 +225,12 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 	}
 
 	/**
-	 * @param array $context Expectex keys : now, zone, billingAreaId, storeId
+	 * @param array $context Expectex keys : now, zone, billingAreaId, webStoreId
 	 * @return \Elastica\Aggregation\AbstractAggregation
 	 */
 	public function getAggregation(array $context = [])
 	{
-		$context = $context + ['now' => new \DateTime(), 'zone' => '', 'billingAreaId' => 0, 'storeId' => 0];
+		$context = $context + ['now' => new \DateTime(), 'zone' => '', 'billingAreaId' => 0, 'webStoreId' => 0];
 		$nestedPrice = new \Elastica\Aggregation\Nested('prices', 'prices');
 
 		$contextFilter = new \Elastica\Aggregation\Filter('context');
@@ -238,7 +238,7 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 		if ($now instanceof \DateTime) {$now = $now->format(\DateTime::ISO8601);}
 		$zone = strval($context['zone']);
 		$billingAreaId = intval($context['billingAreaId']);
-		$storeId = intval($context['storeId']);
+		$webStoreId = intval($context['webStoreId']);
 
 		$min = $this->getParameters()->get('minAmount');
 		$max = $this->getParameters()->get('maxAmount');
@@ -247,7 +247,7 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 		$bool = new \Elastica\Filter\Bool();
 		$bool->addMust(new \Elastica\Filter\Term(['prices.billingAreaId' => $billingAreaId]));
 		$bool->addMust(new \Elastica\Filter\Term(['prices.zone' => $zone]));
-		$bool->addMust(new \Elastica\Filter\Term(['prices.storeId' => $storeId]));
+		$bool->addMust(new \Elastica\Filter\Term(['prices.storeId' => $webStoreId]));
 		$bool->addMust(new \Elastica\Filter\Range('prices.startActivation', array('lte' => $now)));
 		$bool->addMust(new \Elastica\Filter\Range('prices.endActivation', array('gt' => $now)));
 		if ($min !== null)

@@ -8,7 +8,6 @@
  */
 namespace Rbs\Catalog;
 
-use Change\Stdlib\String;
 
 /**
  * @name \Rbs\Catalog\CatalogManager
@@ -18,9 +17,6 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	use \Change\Events\EventsCapableTrait;
 
 	const EVENT_MANAGER_IDENTIFIER = 'CatalogManager';
-
-	const EVENT_GET_VISUALS = 'getVisuals';
-	const EVENT_GET_PICTOGRAMS = 'getPictograms';
 
 	/**
 	 * @return string
@@ -43,11 +39,11 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$eventManager->attach(static::EVENT_GET_PICTOGRAMS, [$this, 'onDefaultGetPictograms'], 5);
-		$eventManager->attach(static::EVENT_GET_VISUALS, [$this, 'onDefaultGetVisuals'], 5);
-		$eventManager->attach('getProductPresentation', [$this, 'onVariantGetProductPresentation'], 15);
-		$eventManager->attach('getProductPresentation', [$this, 'onSetGetProductPresentation'], 10);
-		$eventManager->attach('getProductPresentation', [$this, 'onDefaultGetProductPresentation'], 5);
+
+		$eventManager->attach('getProductData', [$this, 'onDefaultGetProductData'], 5);
+
+		$eventManager->attach('getProductsData', [$this, 'onDefaultGetProductsData'], 10);
+		$eventManager->attach('getProductsData', [$this, 'onDefaultGetProductsArrayData'], 5);
 
 		$itemOrdering = null;
 
@@ -677,565 +673,8 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	//
-	// Variants.
+	// Product Data.
 	//
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @return \Rbs\Catalog\Documents\Product
-	 */
-	public function getProductToBeDisplayed($product)
-	{
-		// If product is a simple product or is root product of variant or is categorizable.
-		if (!$product->getVariantGroup() || $product->hasVariants() ||  $product->getCategorizable())
-		{
-			return $product;
-		}
-
-		// Else you have a product that is a final product of variant.
-		// If you have generated intermediate variant.
-		if (!$product->getVariantGroup()->mustGenerateOnlyLastVariant())
-		{
-			// Try to find the intermediate variant that must be used to display product.
-			$newProductId = $this->getVariantProductIdMustBeDisplayedForVariant($product);
-			if ($newProductId != null)
-			{
-				$product = $this->getDocumentManager()->getDocumentInstance($newProductId);
-				if ($product instanceof \Rbs\Catalog\Documents\Product)
-				{
-					return $product;
-				}
-			}
-		}
-
-		// Else try to return the root product of variant.
-		return $this->getRootProductOfVariantGroup($product->getVariantGroup());
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
-	 * @return \Rbs\Catalog\Documents\Product|null
-	 */
-	protected function getRootProductOfVariantGroup($variantGroup)
-	{
-		$rootProduct = $variantGroup->getRootProduct();
-
-		if ($rootProduct->published())
-		{
-			return $rootProduct;
-		}
-		return null;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $variant
-	 * @return integer|null
-	 */
-	protected function getVariantProductIdMustBeDisplayedForVariant($variant)
-	{
-		$ancestorId = $this->getProductAncestorIds($variant, true);
-
-		if ($ancestorId && count($ancestorId) > 0)
-		{
-			return $ancestorId[0];
-		}
-
-		return null;
-	}
-
-	/**
-	 * @api
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @return array
-	 */
-	public function getVariantInfo($product)
-	{
-		$variantInfo = array();
-
-		if ($product->getVariantGroup())
-		{
-			$vConfiguration = $this->getVariantsConfiguration($product, false);
-
-			$variantInfo['isRoot'] = $product->hasVariants();
-			$variantInfo['depth'] = count($vConfiguration['axes']['axesValues']);
-
-			foreach ($vConfiguration['axes']['products'] as $infoProduct)
-			{
-				if ($infoProduct['id'] === $product->getId())
-				{
-					$variantInfo['isFinal'] = true;
-					$variantInfo['level'] = $variantInfo['depth'];
-					for ($i = 0; $i < count($infoProduct['values']); $i++)
-					{
-						if ($infoProduct['values'][$i]['value'] === null)
-						{
-							$variantInfo['isFinal'] = false;
-							$variantInfo['level'] = $i;
-							break;
-						}
-					}
-				}
-			}
-
-			return $variantInfo;
-		}
-
-		return null;
-	}
-
-	//
-	// Product presentation.
-	//
-
-	/**
-	 * @api
-	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param \Change\Http\Web\UrlManager|null $urlManager
-	 * @return array
-	 */
-	public function getGeneralInfo($product, $urlManager = null)
-	{
-		$generalInfo = array();
-
-		if (is_numeric($product))
-		{
-			$product = $this->getDocumentManager()->getDocumentInstance($product);
-		}
-		if (!($product instanceof \Rbs\Catalog\Documents\Product))
-		{
-			return $generalInfo;
-		}
-
-		$generalInfo['id'] = $product->getId();
-		$generalInfo['product'] = $product;
-		$generalInfo['title'] = $product->getCurrentLocalization()->getTitle();
-
-		// Description must be present in product attributes and not empty
-		$generalInfo['description'] = null;
-		$pDescription = $product->getCurrentLocalization()->getDescription();
-		if ($pDescription !== null && $pDescription->getRawText() !== null
-			&& $this->getAttributeManager()->hasAttributeForProperty($product, 'description')
-		)
-		{
-			$generalInfo['description'] = $pDescription;
-		}
-
-		$generalInfo['hasVariants'] = $product->hasVariants();
-
-		if ($product->getSku() !== null)
-		{
-			$generalInfo['hasOwnSku'] = true;
-			$generalInfo['allowBackorders'] = $product->getSku()->getAllowBackorders();
-		}
-		else
-		{
-			$generalInfo['hasOwnSku'] = false;
-			$generalInfo['allowBackorders'] = false;
-		}
-
-		if ($product->getBrand() && $product->getBrand()->published()
-			&& $this->getAttributeManager()->hasAttributeForProperty($product, 'brand')
-		)
-		{
-			$generalInfo['brand'] = $product->getBrand();
-		}
-
-		if ($urlManager instanceof \Change\Http\Web\UrlManager)
-		{
-			$generalInfo['url'] = $urlManager->getCanonicalByDocument($product)->normalize()->toString();
-		}
-
-		return $generalInfo;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Store\Documents\WebStore $webStore
-	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
-	 * @return null|\Rbs\Price\PriceInterface
-	 */
-	protected function getProductPrice($product, $webStore, $billingArea)
-	{
-		if ($product->getSku())
-		{
-			return $this->priceManager->getPriceBySku($product->getSku(),
-				['webStore' => $webStore, 'billingArea' => $billingArea]);
-		}
-		else
-		{
-			$skus = $this->getAllSku($product, true);
-			if (!count($skus))
-			{
-				return null;
-			}
-
-			$prices = array();
-			foreach ($skus as $sku)
-			{
-				$price = $this->priceManager->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
-				if ($price != null)
-				{
-					$prices[] = $price;
-				}
-			}
-
-			$lowestPrice = null;
-			foreach ($prices as $price)
-			{
-				/* @var $price \Rbs\Price\Documents\Price */
-				/* @var $lowestPrice \Rbs\Price\Documents\Price */
-				if ($lowestPrice == null)
-				{
-					$lowestPrice = $price;
-				}
-				else
-				{
-					if ($price->getValue() < $lowestPrice->getValue())
-					{
-						$lowestPrice = $price;
-					}
-				}
-			}
-
-			return $lowestPrice;
-		}
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param \Rbs\Store\Documents\WebStore|null $webStore
-	 * @return integer|null
-	 */
-	protected function getProductStockLevel($product, $webStore = null)
-	{
-		$level = null;
-		if ($product->getSku())
-		{
-			$sku = $product->getSku();
-			if ($sku)
-			{
-				$level = $this->getStockManager()->getInventoryLevel($sku, $webStore);
-			}
-		}
-		else
-		{
-			$skus = $this->getAllSku($product, true);
-			if (count($skus))
-			{
-				$level = $this->getStockManager()->getInventoryLevelForManySku($skus, $webStore);
-			}
-		}
-		return $level;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param integer $level
-	 * @param \Rbs\Store\Documents\WebStore|null $webStore
-	 * @return string
-	 */
-	protected function getProductThreshold($product, $level, $webStore = null)
-	{
-		$threshold = null;
-		if ($product->getSku())
-		{
-			$sku = $product->getSku();
-			if ($sku)
-			{
-				$threshold = $this->getStockManager()->getInventoryThreshold($sku, $webStore, $level);
-			}
-		}
-		else
-		{
-			$skus = $this->getAllSku($product, true);
-			if (count($skus))
-			{
-				$threshold = $this->getStockManager()->getInventoryThresholdForManySku($skus, $webStore, $level);
-			}
-		}
-		return $threshold;
-	}
-
-	/**
-	 * @api
-	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param \Rbs\Store\Documents\WebStore|null $webStore
-	 * @return array
-	 */
-	public function getStockInfo($product, $webStore = null)
-	{
-		$stockInfo = array();
-
-		if (is_numeric($product))
-		{
-			$product = $this->getDocumentManager()->getDocumentInstance($product);
-		}
-		if (!($product instanceof \Rbs\Catalog\Documents\Product))
-		{
-			return $stockInfo;
-		}
-
-		$level = $this->getProductStockLevel($product, $webStore);
-		$threshold = $this->getProductThreshold($product, $level, $webStore);
-
-		$stockInfo['level'] = $level;
-		$stockInfo['threshold'] = $threshold;
-		$stockInfo['thresholdClass'] = 'stock-' . \Change\Stdlib\String::toLower($threshold);
-		switch ($threshold)
-		{
-			case \Rbs\Stock\StockManager::THRESHOLD_AVAILABLE:
-				$stockInfo['thresholdClass'] .= ' alert-success';
-				break;
-			case \Rbs\Stock\StockManager::THRESHOLD_UNAVAILABLE:
-				$stockInfo['thresholdClass'] .= 'alert-danger';
-				break;
-		}
-
-		$stockInfo['thresholdTitle'] = $this->getStockManager()->getInventoryThresholdTitle($threshold);
-
-		if (!$product->getSku() && $product->getVariantGroup())
-		{
-			$tmpSkuCode = preg_replace('/[^a-zA-Z0-9]+/', '-',
-				String::stripAccents(String::toUpper($product->getLabel())) . time());
-			$stockInfo['sku'] = String::subString($tmpSkuCode, 0, 80);
-			$stockInfo['minQuantity'] = 1;
-			$stockInfo['maxQuantity'] = \Rbs\Stock\StockManager::UNLIMITED_LEVEL;
-			$stockInfo['quantityIncrement'] = 1;
-		}
-		else
-		{
-			$sku = $product->getSku();
-
-			if ($sku)
-			{
-				$stockInfo['sku'] = $sku->getCode();
-				$stockInfo['minQuantity'] = $sku->getMinQuantity();
-				if ($sku->getAllowBackorders())
-				{
-					$stockInfo['maxQuantity'] = null;
-				}
-				else
-				{
-					$stockInfo['maxQuantity'] = $sku->getMaxQuantity() ? min(max($sku->getMinQuantity(), $sku->getMaxQuantity()),
-						$level) : $level;
-				}
-
-				$stockInfo['quantityIncrement'] = $sku->getQuantityIncrement() ? $sku->getQuantityIncrement() : 1;
-			}
-		}
-
-		return $stockInfo;
-	}
-
-	/**
-	 * @api
-	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param integer $quantity
-	 * @param \Rbs\Store\Documents\WebStore $webStore
-	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
-	 * @param string $zone
-	 * @return array
-	 */
-	public function getPricesInfos($product, $quantity, $webStore, $billingArea, $zone)
-	{
-		$priceInfo = array();
-
-		if (is_numeric($product))
-		{
-			$product = $this->getDocumentManager()->getDocumentInstance($product);
-		}
-		if (!($product instanceof \Rbs\Catalog\Documents\Product) || !$billingArea)
-		{
-			return $priceInfo;
-		}
-
-		$price = $this->getProductPrice($product, $webStore, $billingArea);
-		if ($price && ($value = $price->getValue()) !== null)
-		{
-			$priceManager = $this->getPriceManager();
-
-			$value *= $quantity;
-			$isWithTax = $price->isWithTax();
-			$taxCategories = $price->getTaxCategories();
-
-			$priceInfo['currencyCode'] = $currencyCode = $billingArea->getCurrencyCode();
-			if ($zone)
-			{
-				if ($isWithTax)
-				{
-					$taxes = $priceManager->getTaxByValueWithTax($value, $taxCategories, $billingArea, $zone);
-				}
-				else
-				{
-					$taxes = $priceManager->getTaxByValue($value, $taxCategories, $billingArea, $zone);
-				}
-			}
-			else
-			{
-				$taxes = null;
-			}
-
-			if ($isWithTax)
-			{
-				$priceInfo['priceWithTax'] = $value;
-				$priceInfo['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
-				if ($taxes)
-				{
-					$value = $priceManager->getValueWithoutTax($value, $taxes);
-					$priceInfo['price'] = $value;
-					$priceInfo['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
-				}
-			}
-			else
-			{
-				$priceInfo['price'] = $value;
-				$priceInfo['formattedPrice'] = $priceManager->formatValue($value, $currencyCode);
-				if (is_array($taxes))
-				{
-					$value = $priceManager->getValueWithTax($value, $taxes);
-					$priceInfo['priceWithTax'] = $value;
-					$priceInfo['formattedPriceWithTax'] = $priceManager->formatValue($value, $currencyCode);
-				}
-			}
-
-			if (($oldValue = $price->getBasePriceValue()) !== null)
-			{
-				$oldValue *= $quantity;
-				if ($zone)
-				{
-					if ($isWithTax)
-					{
-						$taxes = $priceManager->getTaxByValueWithTax($oldValue, $taxCategories, $billingArea, $zone);
-					}
-					else
-					{
-						$taxes = $priceManager->getTaxByValue($oldValue, $taxCategories, $billingArea, $zone);
-					}
-				}
-				else
-				{
-					$taxes = null;
-				}
-				if ($isWithTax)
-				{
-					$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
-					$priceInfo['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue,
-						$currencyCode);
-					if (is_array($taxes))
-					{
-						$oldValue = $priceManager->getValueWithoutTax($oldValue, $taxes);
-						$priceInfo['priceWithoutDiscount'] = $oldValue;
-						$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue,
-							$currencyCode);
-					}
-				}
-				else
-				{
-					$priceInfo['priceWithoutDiscount'] = $oldValue;
-					$priceInfo['formattedPriceWithoutDiscount'] = $priceManager->formatValue($oldValue, $currencyCode);
-					if (is_array($taxes))
-					{
-						$oldValue = $priceManager->getValueWithTax($oldValue, $taxes);
-						$priceInfo['priceWithoutDiscountWithTax'] = $oldValue;
-						$priceInfo['formattedPriceWithoutDiscountWithTax'] = $priceManager->formatValue($oldValue,
-							$currencyCode);
-					}
-				}
-			}
-
-			if ($price instanceof \Rbs\Price\Documents\Price)
-			{
-				if ($price->getEcoTax() !== null)
-				{
-					$priceInfo['ecoTax'] = ($price->getEcoTax() * $quantity);
-					$priceInfo['formattedEcoTax'] = $priceManager->formatValue($priceInfo['ecoTax'], $currencyCode);
-				}
-				if ($price->getDiscountDetail())
-				{
-					$priceInfo['discountDetail'] = $price->getDiscountDetail();
-				}
-			}
-		}
-
-		return $priceInfo;
-	}
-
-	/**
-	 * @api
-	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param boolean $onlyPublishedProduct
-	 * @return array
-	 */
-	public function getVariantsConfiguration($product, $onlyPublishedProduct = true)
-	{
-		$variantsConfiguration = array();
-		if (is_numeric($product))
-		{
-			$product = $this->getDocumentManager()->getDocumentInstance($product);
-		}
-		if (!($product instanceof \Rbs\Catalog\Documents\Product))
-		{
-			return $variantsConfiguration;
-		}
-
-		// TODO Active a cache on variant group
-		if ($product->getVariantGroup())
-		{
-			$variantsConfiguration['variantGroup'] = $product->getVariantGroup();
-			$variantsConfiguration['axes'] = $this->getAttributeManager()
-				->buildVariantConfiguration($product->getVariantGroup(), $onlyPublishedProduct);
-			$variantsConfiguration['axesNames'] = $this->getAxesNames($product->getVariantGroup(), $this->getDocumentManager());
-		}
-
-		return $variantsConfiguration;
-	}
-
-	/**
-	 * @api
-	 * @param array $variantsConfiguration
-	 * @param integer|\Rbs\Store\Documents\WebStore|null $webStore
-	 * @return array
-	 */
-	public function addStockDataInVariantsConfiguration($variantsConfiguration, $webStore)
-	{
-		if (!is_array($variantsConfiguration) || !is_array($variantsConfiguration['axes'])
-			|| !is_array($variantsConfiguration['axes']['products']))
-		{
-			return $variantsConfiguration;
-		}
-
-		foreach ($variantsConfiguration['axes']['products'] as $index => $variant)
-		{
-			$variantsConfiguration['axes']['products'][$index]['stockData'] = $this->getVariantStockData($variant['id'], $webStore);
-		}
-		return $variantsConfiguration;
-	}
-
-	/**
-	 * @param integer $productId
-	 * @param integer|\Rbs\Store\Documents\WebStore|null $webStore
-	 * @return array
-	 */
-	protected function getVariantStockData($productId, $webStore)
-	{
-		$product = $this->getDocumentManager()->getDocumentInstance($productId);
-		if (!($product instanceof \Rbs\Catalog\Documents\Product))
-		{
-			return [];
-		}
-
-		/* @var $product \Rbs\Catalog\Documents\Product */
-		$sku = $product->getSku();
-		if (!($sku instanceof \Rbs\Stock\Documents\Sku))
-		{
-			return [];
-		}
-
-		/* @var $sku \Rbs\Stock\Documents\Sku */
-		$level = $this->getStockManager()->getInventoryLevel($sku, $webStore);
-		$threshold = $this->getStockManager()->getInventoryThreshold($sku, $webStore, $level);
-		return ['hasStock' => $level > 0, 'threshold' => $threshold, 'allowBackorders' => $sku->getAllowBackorders()];
-	}
 
 	/**
 	 * @api
@@ -1255,13 +694,14 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					continue;
 				}
-				elseif ($subProduct->getSku())
+
+				if ($subProduct->getSku())
 				{
 					$skuArray[] = $subProduct->getSku();
 				}
 				else
 				{
-					$skuArray = array_merge($skuArray, $this->getAllSku($subProduct));
+					$skuArray = array_merge($skuArray, $this->getAllSku($subProduct, $onlyPublishedProduct));
 				}
 			}
 			return $skuArray;
@@ -1270,33 +710,23 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			if (!$product->getSku() && $product->getVariantGroup())
 			{
-				// If root product.
-				if ($product->hasVariants())
+				$skuArray = [];
+				foreach ($this->getVariantDescendantIds($product) as $id)
 				{
-					$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Sku');
-					$productQuery = $query->getPropertyModelBuilder('id', 'Rbs_Catalog_Product', 'sku');
-					$productQuery->andPredicates($productQuery->eq('variant', true),
-						$productQuery->eq('variantGroup', $product->getVariantGroup()));
-					if ($onlyPublishedProduct)
+					$descProduct = $this->getDocumentManager()->getDocumentInstance($id);
+					if ($descProduct instanceof \Rbs\Catalog\Documents\Product)
 					{
-						$productQuery->andPredicates($productQuery->published());
-					}
-					return $query->getDocuments()->toArray();
-				}
-				else
-				{
-					$skuArray = [];
-					$products = $this->getProductDescendants($product, true);
-					foreach ($products as $subProduct)
-					{
-						$sku = $subProduct->getSku();
-						if ($sku)
+						if (!$onlyPublishedProduct || $descProduct->published())
 						{
-							$skuArray[] = $sku;
+							$sku = $descProduct->getSku();
+							if ($sku)
+							{
+								$skuArray[] = $sku;
+							}
 						}
 					}
-					return $skuArray;
 				}
+				return $skuArray;
 			}
 		}
 		return [];
@@ -1305,33 +735,57 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @api
 	 * @param \Rbs\Stock\Documents\Sku $sku
-	 * @param boolean $onlyPublishedProduct
 	 * @return \Rbs\Catalog\Documents\Product[]
 	 */
-	public function getProductsBySku($sku, $onlyPublishedProduct)
+	public function getProductsBySku($sku)
 	{
 		$products = [];
-
 		if ($sku instanceof \Rbs\Stock\Documents\Sku)
 		{
-			$q = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
-			$productArray = $q->andPredicates($q->eq('sku', $sku))->getDocuments();
+			$documentManager = $this->getDocumentManager();
+			$q = $documentManager->getNewQuery('Rbs_Catalog_Product');
+			$q->andPredicates($q->eq('sku', $sku));
 
 			/** @var $product \Rbs\Catalog\Documents\Product */
-			foreach ($productArray as $product)
+			foreach ($q->getDocuments() as $product)
 			{
 				if (isset($products[$product->getId()]))
 				{
 					continue;
 				}
+
 				$products[$product->getId()] = $product;
-				foreach ($this->getProductAncestors($product, false) as $ancestorProduct)
+
+				if ($product->getVariant() && $product->getVariantGroup())
 				{
-					if (isset($products[$ancestorProduct->getId()]))
+					$ancestorIds = $this->getVariantAncestorIds($product);
+					$ancestorIds[] = $product->getVariantGroup()->getRootProductId();
+					foreach ($ancestorIds as $ancestorId)
 					{
-						continue;
+						if (isset($products[$ancestorId]))
+						{
+							continue;
+						}
+						$ancestorProduct = $documentManager->getDocumentInstance($ancestorId);
+						if ($ancestorProduct instanceof \Rbs\Catalog\Documents\Product)
+						{
+							$products[$ancestorId] = $ancestorProduct;
+						}
 					}
-					$products[$ancestorProduct->getId()] = $ancestorProduct;
+				}
+
+				$query = $documentManager->getNewQuery('Rbs_Catalog_ProductSet');
+				$query->andPredicates($query->eq('products', $product));
+				$productSets = $query->getDocuments();
+
+				/** @var $productSet \Rbs\Catalog\Documents\ProductSet */
+				foreach ($productSets as $productSet)
+				{
+					$rootProduct = $productSet->getRootProduct();
+					if ($rootProduct)
+					{
+						$products[$rootProduct->getId()] = $rootProduct;
+					}
 				}
 			}
 		}
@@ -1339,535 +793,175 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param boolean $onlyPublishedProduct
-	 * @return integer[]
-	 */
-	protected function getProductAncestorIds($product, $onlyPublishedProduct)
-	{
-		if (!$product->getVariant())
-		{
-			return array();
-		}
-
-		// Look for the axes configuration of the product.
-		$productAxesConfiguration = null;
-		$variantConfiguration = $this->getAttributeManager()
-			->buildVariantConfiguration($product->getVariantGroup(), $onlyPublishedProduct);
-		foreach ($variantConfiguration['products'] as $infoProduct)
-		{
-			if ($infoProduct['id'] === $product->getId())
-			{
-				$productAxesConfiguration = $infoProduct;
-				break;
-			}
-		}
-
-		// Look for the product with the same values for the first axes and null for the other ones.
-		$ancestors = array();
-		foreach ($variantConfiguration['products'] as $infoProduct)
-		{
-			$keyParts = array();
-			foreach ($infoProduct['values'] as $level => $axis)
-			{
-				if ($axis['value'] === null)
-				{
-					$ancestors[implode('/', $keyParts)] = $infoProduct['id'];
-					break;
-				}
-				elseif ($axis['value'] == $productAxesConfiguration['values'][$level]['value'])
-				{
-					$keyParts[] = $axis['value'];
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-
-		// Sort by key and return ancestors.
-		ksort($ancestors);
-		return array_values($ancestors);
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param boolean $onlyPublishedProduct
-	 * @return \Rbs\Catalog\Documents\Product[]
-	 */
-	protected function getProductAncestors($product, $onlyPublishedProduct)
-	{
-		$ancestorsId = $this->getProductAncestorIds($product, $onlyPublishedProduct);
-		$ancestors = array();
-
-		$dm = $this->getDocumentManager();
-		foreach ($ancestorsId as $key => $value)
-		{
-			$ancestors[$key] = $dm->getDocumentInstance($value, 'Rbs_catalog_Product');
-		}
-
-		return $ancestors;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param boolean $onlyPublishedProduct
-	 * @return integer[]
-	 */
-	public function getProductDescendantIds($product, $onlyPublishedProduct)
-	{
-		// Is Root product
-		if ($product->hasVariants())
-		{
-			// Get all published variant
-			$query = $this->getDocumentManager()->getNewQuery('Rbs_Catalog_Product');
-			$query->andPredicates($query->eq('variant', true), $query->eq('variantGroup', $product->getVariantGroup()),
-				$query->neq('id', $product->getId()));
-			if ($onlyPublishedProduct)
-			{
-				$query->andPredicates($query->published());
-			}
-
-			return $query->getDocuments()->ids();
-		}
-
-		// Is not Root product
-		// Look for the axes configuration of the product.
-		$productAxesConfiguration = null;
-		$variantConfiguration = $this->getAttributeManager()
-			->buildVariantConfiguration($product->getVariantGroup(), $onlyPublishedProduct);
-
-		foreach ($variantConfiguration['products'] as $infoProduct)
-		{
-			if ($infoProduct['id'] === $product->getId())
-			{
-				$productAxesConfiguration = $infoProduct;
-				break;
-			}
-		}
-
-		if (!$productAxesConfiguration)
-		{
-			return [];
-		}
-
-		// Look for the product with the same values for the first axes and null for the other ones.
-		$descendants = [];
-		foreach ($variantConfiguration['products'] as $infoProduct)
-		{
-			if ($infoProduct['id'] !== $productAxesConfiguration['id'])
-			{
-				$add = true;
-				foreach ($productAxesConfiguration['values'] as $index => $confValues)
-				{
-					if ($confValues['value'] !== null && $infoProduct['values'][$index]['value'] != $confValues['value'])
-					{
-						$add = false;
-						break;
-					}
-				}
-				if ($add)
-				{
-					$descendants[] = $infoProduct['id'];
-				}
-			}
-		}
-
-		return array_values($descendants);
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product $product
-	 * @param boolean $onlyPublishedProduct
-	 * @return \Rbs\Catalog\Documents\Product[]
-	 */
-	public function getProductDescendants($product, $onlyPublishedProduct)
-	{
-		$descendantsId = $this->getProductDescendantIds($product, $onlyPublishedProduct);
-		$descendants = array();
-
-		$dm = $this->getDocumentManager();
-		foreach ($descendantsId as $key => $value)
-		{
-			$descendants[$key] = $dm->getDocumentInstance($value, 'Rbs_catalog_Product');
-		}
-
-		return $descendants;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\VariantGroup $variantGroup
-	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @return array
-	 */
-	protected function getAxesNames($variantGroup, $documentManager)
-	{
-		$axesNames = array();
-		$configuration = $variantGroup->getAxesConfiguration();
-		if (is_array($configuration) && count($configuration))
-		{
-			foreach ($configuration as $confArray)
-			{
-				$conf = (new \Rbs\Catalog\Product\AxisConfiguration())->fromArray($confArray);
-				/* @var $axeAttribute \Rbs\Catalog\Documents\Attribute */
-				$axeAttribute = $documentManager->getDocumentInstance($conf->getId());
-				if ($axeAttribute)
-				{
-					$axesNames[] = $axeAttribute->getCurrentLocalization()->getTitle();
-				}
-			}
-		}
-		return $axesNames;
-	}
-
-	/**
-	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param string $visibility
-	 * @return array
-	 */
-	public function getAttributesConfiguration($product, $visibility = 'specifications')
-	{
-		if (is_numeric($product))
-		{
-			$product = $this->getDocumentManager()->getDocumentInstance($product);
-		}
-		return $this->getAttributeManager()->getProductAttributesConfiguration($visibility, $product);
-	}
-
-	/**
+	 * Default context:
+	 *  - *dataSetNames, *visualFormats, *URLFormats
+	 *  - website, websiteUrlManager, section, page, detailed
+	 *  - *data
+	 *     - billingAreaId
+	 *     - webStoreId
+	 *     - zone
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param array $formats
-	 * @param boolean $onlyFirst
+	 * @param array $context
 	 * @return array
 	 */
-	public function getVisualsInfos($product, $formats, $onlyFirst = false)
-	{
-		if (is_numeric($product))
-		{
-			$product = $this->getDocumentManager()->getDocumentInstance($product);
-		}
-		if (!($product instanceof \Rbs\Catalog\Documents\Product))
-		{
-			return array();
-		}
-
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('product' => $product, 'formats' => $formats, 'onlyFirst' => $onlyFirst));
-		$this->getEventManager()->trigger(static::EVENT_GET_VISUALS, $this, $args);
-		if (isset($args['visualsInfos']))
-		{
-			return $args['visualsInfos'];
-		}
-		return array();
-	}
-
-	/**
-	 * $event requires two parameters: product, formats and onlyFirst
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultGetVisuals(\Change\Events\Event $event)
-	{
-		$product = $event->getParam('product');
-		if (!($product instanceof \Rbs\Catalog\Documents\Product))
-		{
-			return;
-		}
-		$formats = is_array($event->getParam('formats')) ? $event->getParam('formats') : array();
-		$onlyFirst = $event->getParam('onlyFirst');
-
-		$visualsInfos = array();
-		$visualsInfos['instances'] = array();
-		$visualsInfos['data'] = array();
-
-		if ($product->getVisualsCount() > 0)
-		{
-			$visualsInfos['instances'] = $onlyFirst ? [$product->getFirstVisual()] : $product->getVisuals();
-		}
-		elseif ($product->getVariantGroup())
-		{
-			if ($product->getVariant())
-			{
-				$ancestors = $this->getProductAncestors($product, true);
-				$ancestors = array_reverse($ancestors);
-				$ancestors[] = $product->getVariantGroup()->getRootProduct();
-				foreach ($ancestors as $ancestor)
-				{
-					/* @var $ancestor \Rbs\Catalog\Documents\Product */
-					if ($ancestor->getVisualsCount() > 0)
-					{
-						$visualsInfos['instances'] = $onlyFirst ? [$ancestor->getFirstVisual()] : $ancestor->getVisuals();
-						break;
-					}
-				}
-			}
-
-			// Get visual of one of under product.
-			if (!count($visualsInfos['instances']))
-			{
-				$query = $this->getDocumentManager()->getNewQuery('Rbs_Media_Image');
-				$pqb = $query->getModelBuilder('Rbs_Catalog_Product', 'visuals');
-				$query->andPredicates(
-					$pqb->getPredicateBuilder()->published(),
-					$pqb->getPredicateBuilder()->eq('variantGroup', $product->getVariantGroup())
-				);
-				$visual = $query->getFirstDocument();
-				if ($visual)
-				{
-					$visualsInfos['instances'][] = $visual;
-				}
-			}
-		}
-		$visualsInfos['count'] = count($visualsInfos['instances']);
-
-		foreach ($visualsInfos['instances'] as $instance)
-		{
-			$visualsInfos['data'][] = $this->getImageInfos($instance, $formats);
-		}
-
-		$event->setParam('visualsInfos', $visualsInfos);
-	}
-
-	/**
-	 * @api
-	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param array $formats
-	 * @return array
-	 */
-	public function getPictogramsInfos($product, $formats)
-	{
-		if (is_numeric($product))
-		{
-			$product = $this->getDocumentManager()->getDocumentInstance($product);
-		}
-		if (!($product instanceof \Rbs\Catalog\Documents\Product))
-		{
-			return array();
-		}
-
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('product' => $product, 'formats' => $formats));
-		$this->getEventManager()->trigger(static::EVENT_GET_PICTOGRAMS, $this, $args);
-		if (isset($args['pictogramsInfos']))
-		{
-			return $args['pictogramsInfos'];
-		}
-		return array();
-	}
-
-	/**
-	 * $event requires two parameters : product and formats
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultGetPictograms(\Change\Events\Event $event)
-	{
-		$product = $event->getParam('product');
-		if (!($product instanceof \Rbs\Catalog\Documents\Product))
-		{
-			return;
-		}
-		$formats = is_array($event->getParam('formats')) ? $event->getParam('formats') : array();
-
-		$pictogramsInfos = array();
-		$pictogramsInfos['instances'] = array();
-		$pictogramsInfos['data'] = array();
-
-		// Variants always use the pictograms from the root product.
-		if ($product->getVariantGroup())
-		{
-			$pictogramsInfos['instances'] = $product->getVariantGroup()->getRootProduct()->getPictograms();
-		}
-		else
-		{
-			$pictogramsInfos['instances'] = $product->getPictograms();
-		}
-		$pictogramsInfos['count'] = count($pictogramsInfos['instances']);
-
-		foreach ($pictogramsInfos['instances'] as $instance)
-		{
-			$pictogramsInfos['data'][] = $this->getImageInfos($instance, $formats);
-		}
-		$event->setParam('pictogramsInfos', $pictogramsInfos);
-	}
-
-	/**
-	 * @param \Rbs\Media\Documents\Image $image
-	 * @param array $formats
-	 * @return array
-	 */
-	protected function getImageInfos($image, $formats)
-	{
-		$infos = array('id' => $image->getId(), 'alt' => $image->getCurrentLocalization()->getAlt(), 'url' => array());
-		$infos['url']['main'] = $image->getPublicURL();
-
-		// Foreach formats, generate URL.
-		foreach ($formats as $type => $values)
-		{
-			$w = isset($values['maxWidth']) ? $values['maxWidth'] : null;
-			$h = isset($values['maxHeight']) ? $values['maxHeight'] : null;
-			$infos['url'][$type] = $image->getPublicURL(intval($w), intval($h));
-		}
-		return $infos;
-	}
-
-	/**
-	 * Used for product sets.
-	 * @api
-	 * @param \Rbs\Catalog\Product\ProductPresentation $productPresentation
-	 * @param array $options
-	 * @return \Rbs\Catalog\Product\ProductPresentation[]
-	 */
-	public function getSubProductPresentations($productPresentation, $options)
-	{
-		$product = $this->getDocumentManager()->getDocumentInstance($productPresentation->getProductId());
-		if (!($product instanceof \Rbs\Catalog\Documents\Product))
-		{
-			return array();
-		}
-
-		$set = $product->getProductSet();
-		if (!($set instanceof \Rbs\Catalog\Documents\ProductSet))
-		{
-			return array();
-		}
-
-		$subProductsPresentations = array();
-		foreach($set->getProducts() as $subProduct)
-		{
-			$subProductsPresentations[] = $this->getProductPresentation($subProduct, $options);
-		}
-		return $subProductsPresentations;
-	}
-
-	/**
-	 * Default options:
-	 *  - urlManager
-	 *  - webStore (got from context if not specified)
-	 *  - billingArea (got from context if not specified)
-	 *  - zone (got from context if not specified)
-	 * @api
-	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param array $options
-	 * @return \Rbs\Catalog\Product\ProductPresentation
-	 */
-	public function getProductPresentation($product, $options)
+	public function getProductData($product, array $context)
 	{
 		$em = $this->getEventManager();
-		if (!is_array($options))
+		if (is_numeric($product))
 		{
-			$options = array();
-		}
-		$options['product'] = $product;
-		$args = $em->prepareArgs($options);
-		$this->getEventManager()->trigger('getProductPresentation', $this, $args);
-		if (isset($args['productPresentation']))
-		{
-			return $args['productPresentation'];
-		}
-		return array();
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultGetProductPresentation(\Change\Events\Event $event)
-	{
-		$productPresentation = $event->getParam('productPresentation');
-		if (!($productPresentation instanceof \Rbs\Catalog\Product\ProductPresentation))
-		{
-			$productPresentation = new \Rbs\Catalog\Product\ProductPresentation();
-			$event->setParam('productPresentation', $productPresentation);
+			$product = $this->getDocumentManager()->getDocumentInstance($product, 'Rbs_Catalog_Product');
 		}
 
-		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-		$commerceServices = $event->getServices('commerceServices');
-
-		$productPresentation->setCatalogManager($this);
-		$productPresentation->setUrlManager($event->getParam('urlManager'));
-
-		$webStore = $event->getParam('webStore');
-		if (!$webStore instanceof \Rbs\Store\Documents\WebStore)
-		{
-			$webStore = $commerceServices->getContext()->getWebStore();
-		}
-		$productPresentation->setWebStore($webStore);
-
-		$billingArea = $event->getParam('billingArea');
-		if (!$billingArea instanceof \Rbs\Price\Tax\BillingAreaInterface)
-		{
-			$billingArea = $commerceServices->getContext()->getBillingArea();
-		}
-		$productPresentation->setBillingArea($billingArea);
-
-		$zone = $event->getParam('zone');
-		if (!$zone)
-		{
-			$zone = $commerceServices->getContext()->getZone();
-		}
-		$productPresentation->setZone($zone);
-
-		$product = $event->getParam('product');
 		if ($product instanceof \Rbs\Catalog\Documents\Product)
 		{
-			$productId = $product->getId();
+			$eventArgs = $em->prepareArgs(['product' => $product, 'context' => $context]);
+			$this->getEventManager()->trigger('getProductData', $this, $eventArgs);
+			if (isset($eventArgs['productData']))
+			{
+				$productData = $eventArgs['productData'];
+				if (is_object($productData))
+				{
+					$callable = [$productData, 'toArray'];
+					if (is_callable($callable))
+					{
+						$productData = call_user_func($callable);
+					}
+				}
+				if (is_array($productData))
+				{
+					return $productData;
+				}
+			}
 		}
-		else
-		{
-			$productId = intval($product);
-		}
-		$productPresentation->setProductId($productId);
+		return [];
+	}
 
-		$general = $event->getParam('general');
-		if (is_array($general))
+	/**
+	 * Input params: product, context
+	 * Output param: productData
+	 * @param \Change\Events\Event $event
+	 */
+	public function  onDefaultGetProductData(\Change\Events\Event $event)
+	{
+		if (!$event->getParam('productData'))
 		{
-			$productPresentation->setGeneral($general);
-		}
-		elseif ($productId)
-		{
-			$productPresentation->addGeneral($this->getGeneralInfo($productId, $event->getParam('urlManager')));
+			$productDataComposer = new \Rbs\Catalog\Product\ProductDataComposer($event);
+			$event->setParam('productData', $productDataComposer->toArray());
 		}
 	}
 
 	/**
+	 * Context:
+	 *  - *dataSetNames, *visualFormats, *URLFormats, pagination
+	 *  - website, websiteUrlManager, section, page, detailed
+	 *  - *data
+	 *     - listId
+	 *     - conditionId
+	 *     - sortBy
+	 *     - showUnavailable
+	 *     - billingAreaId
+	 *     - webStoreId
+	 *     - zone
+	 * @api
+	 * @param array $context
+	 * @return array
+	 */
+	public function getProductsData(array $context)
+	{
+		$em = $this->getEventManager();
+		$eventArgs = $em->prepareArgs(['context' => $context]);
+		$this->getEventManager()->trigger('getProductsData', $this, $eventArgs);
+
+		$productsData = [];
+		$pagination = ['offset' => 0, 'limit' => 100, 'count' => 0];
+		if (isset($eventArgs['productsData']) && is_array($eventArgs['productsData']))
+		{
+			if (isset($eventArgs['pagination']) && is_array($eventArgs['pagination']))
+			{
+				$pagination = $eventArgs['pagination'];
+			}
+
+			foreach ($eventArgs['productsData'] as $productData)
+			{
+				if (is_object($productData))
+				{
+					$callable = [$productData, 'toArray'];
+					if (is_callable($callable))
+					{
+						$productData = call_user_func($callable);
+					}
+				}
+
+				if (is_array($productData) && count($productData))
+				{
+					$productsData[] = $productData;
+				}
+			}
+		}
+		return ['pagination' => $pagination, 'items' => $productsData];
+	}
+
+	/**
+	 * Input params: list, context
+	 * Output param: productsData, pagination
 	 * @param \Change\Events\Event $event
 	 */
-	public function onVariantGetProductPresentation(\Change\Events\Event $event)
+	public function onDefaultGetProductsData(\Change\Events\Event $event)
 	{
-		$productPresentation = $event->getParam('productPresentation');
-		if (!($productPresentation instanceof \Rbs\Catalog\Product\ProductPresentation))
+		/** @var $context array */
+		$context = $event->getParam('context');
+		$products = $event->getParam('products');
+		if (!is_array($context) || $products !== null)
 		{
-			$product = $event->getParam('product');
-			if (is_numeric($product))
-			{
-				$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($product);
-			}
-			if ($product instanceof \Rbs\Catalog\Documents\Product && $product->getVariantGroupId())
-			{
-				$productPresentation = new \Rbs\Catalog\Product\ProductVariantPresentation();
-				$event->setParam('productPresentation', $productPresentation);
-			}
+			return;
+		}
+		$list = (isset($context['data']) && isset($context['data']['listId'])) ? intval($context['data']['listId']) : null;
+		if (is_numeric($list))
+		{
+			$list = $this->getDocumentManager()->getDocumentInstance($list);
+		}
+
+		if ($list instanceof \Rbs\Catalog\Documents\ProductList)
+		{
+			$applicationServices = $event->getApplicationServices();
+
+			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+			$commerceServices = $event->getServices('commerceServices');
+
+			$productArrayResolver = new \Rbs\Catalog\Product\ProductArrayResolver($list, $context,
+				$applicationServices->getDocumentManager(),
+				$commerceServices->getStockManager(), $applicationServices->getDbProvider());
+
+			$event->setParam('products', $productArrayResolver->getProductArray());
+			$event->setParam('pagination', ['offset' => $productArrayResolver->getOffset(),
+				'limit' => $productArrayResolver->getLimit(),
+				'count' => $productArrayResolver->getTotalCount()]);
 		}
 	}
 
 	/**
+	 * Input params: list, context
+	 * Output param: productsData, pagination
 	 * @param \Change\Events\Event $event
 	 */
-	public function onSetGetProductPresentation(\Change\Events\Event $event)
+	public function  onDefaultGetProductsArrayData(\Change\Events\Event $event)
 	{
-		$productPresentation = $event->getParam('productPresentation');
-		if (!($productPresentation instanceof \Rbs\Catalog\Product\ProductPresentation))
+		$products = $event->getParam('products');
+		$context = $event->getParam('context');
+		$productsData = $event->getParam('productsData');
+		if ($productsData === null && is_array($context) && is_array($products) && count($products))
 		{
-			$product = $event->getParam('product');
-			if (is_numeric($product))
+			$productsData = [];
+			foreach ($products as $product)
 			{
-				$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($product);
+				$productData = $this->getProductData($product, $context);
+				if (is_array($productData) && count($productData));
+				{
+					$productsData[] = $productData;
+				}
 			}
-			if ($product instanceof \Rbs\Catalog\Documents\Product && $product->getProductSetId())
-			{
-				$productPresentation = new \Rbs\Catalog\Product\ProductSetPresentation();
-				$event->setParam('productPresentation', $productPresentation);
-			}
+			$event->setParam('productsData', $productsData);
 		}
 	}
 
@@ -1916,5 +1010,206 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 				throw $this->getTransactionManager()->rollBack($e);
 			}
 		}
+	}
+
+	protected $cachedVariantProductsData = [];
+
+	/**
+	 * @param \Rbs\Catalog\Documents\VariantGroup|\Rbs\Catalog\Documents\Product|integer $product
+	 * @return array
+	 */
+	public function getVariantProductsData($product)
+	{
+		if (is_numeric($product))
+		{
+			$product = $this->getDocumentManager()->getDocumentInstance($product);
+		}
+		if ($product instanceof \Rbs\Catalog\Documents\Product)
+		{
+			$product = $product->getVariantGroup();
+		}
+
+		if ($product instanceof \Rbs\Catalog\Documents\VariantGroup)
+		{
+			if (isset($this->cachedVariantProductsData[$product->getId()]))
+			{
+				return $this->cachedVariantProductsData[$product->getId()];
+			}
+			$variantProducts = $product->getVariantProducts();
+
+			/** @var \Rbs\Catalog\Documents\Attribute[] $axesAttributes */
+			$axesAttributes = $product->getAxesAttributes()->toArray();
+			$productsData = [];
+			if (count($axesAttributes) && count($variantProducts))
+			{
+				foreach ($variantProducts as $variantProduct)
+				{
+					$productData = ['id' => $variantProduct->getId(), 'published' => $variantProduct->published()];
+					$axesValues = [];
+					$indexedValues = [];
+					foreach ($this->getAttributeManager()->getProductAxesValue($variantProduct, $axesAttributes) as $axisValue)
+					{
+						$indexedValues[$axisValue['id']] = $axisValue['value'];
+					}
+					foreach ($axesAttributes as $axesAttribute)
+					{
+						$value = isset($indexedValues[$axesAttribute->getId()]) ? $indexedValues[$axesAttribute->getId()] : null;
+						if ($value === null) {
+							break;
+						}
+						$axesValues[] = $value;
+					}
+					$productData['axesValues'] = $axesValues;
+					$productsData[] = $productData;
+				}
+				usort($productsData, function ($vPDA, $vPDB) {
+					$axA = $vPDA['axesValues'];
+					$axB = $vPDB['axesValues'];
+					if ($axA == $axB) {return 0;}
+					$cmp = min(count($axA), count($axB));
+					for ($i = 0; $i < $cmp; $i++) {
+						if ($axA[$i] != $axB[$i]) {
+							return $axA[$i] < $axB[$i] ? -1 : 1;
+						}
+					}
+					return (count($axA) < count($axB)) ? -1 : 1;
+				});
+			}
+			$this->cachedVariantProductsData[$product->getId()] = $productsData;
+			return $productsData;
+		}
+		return [];
+	}
+
+	/**
+	 * @api
+	 * @param integer|\Rbs\Catalog\Documents\Product $product
+	 * @param array|null $variantProductsData @see \Rbs\Catalog\CatalogManager::getVariantProductsData()
+	 * @return array
+	 */
+	public function getVariantAncestorIds($product, array $variantProductsData = null)
+	{
+		$ancestorIds = [];
+		if ($variantProductsData === null)
+		{
+			$variantProductsData = $this->getVariantProductsData($product);
+		}
+		if (count($variantProductsData))
+		{
+			if ($product instanceof \Rbs\Catalog\Documents\Product)
+			{
+				$product = $product->getId();
+			}
+			if (is_numeric($product))
+			{
+				foreach ($variantProductsData as $index => $vPD)
+				{
+					if ($vPD['id'] == $product)
+					{
+						if (($countAxes = count($vPD['axesValues'])) > 1)
+						{
+							$ancestorsData = array_slice($variantProductsData, 0, $index);
+							$axesValues = [];
+							for ($i = 1; $i < $countAxes; $i++)
+							{
+								$axesValues[] = $vPD['axesValues'][$i-1];
+								$ancestorIds = array_reduce($ancestorsData, function($ancestorIds, $data) use ($axesValues) {
+									if ($axesValues == $data['axesValues'])
+									{
+										$ancestorIds[] = $data['id'];
+									}
+									return $ancestorIds;
+								}, $ancestorIds);
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+		return $ancestorIds;
+	}
+
+	/**
+	 * @api
+	 * @param integer|\Rbs\Catalog\Documents\Product $product
+	 * @param array|null $variantProductsData @see \Rbs\Catalog\CatalogManager::getVariantProductsData()
+	 * @return array
+	 */
+	public function getVariantDescendantIds($product, array $variantProductsData = null)
+	{
+		$descendantIds = [];
+		if ($variantProductsData === null)
+		{
+			$variantProductsData = $this->getVariantProductsData($product);
+		}
+		if (($countVariants = count($variantProductsData)) > 0)
+		{
+			$productId = ($product instanceof \Rbs\Catalog\Documents\Product) ? $product->getId() : $product;
+			if (is_numeric($productId))
+			{
+				for ($index = 0; $index < $countVariants; $index++) {
+					$vPD = $variantProductsData[$index];
+					if ($vPD['id'] == $productId)
+					{
+						$countAxes = count($vPD['axesValues']);
+						for($i = $index + 1; $i < $countVariants; $i++)
+						{
+							$cPD = $variantProductsData[$i];
+							if (count($cPD['axesValues']) > $countAxes &&
+								array_slice($cPD['axesValues'], 0 ,$countAxes) == $vPD['axesValues'])
+							{
+								$descendantIds[] = $cPD['id'];
+							}
+							else
+							{
+								break;
+							}
+						}
+						return $descendantIds;
+					}
+				}
+				foreach ($variantProductsData as $vPD)
+				{
+					$descendantIds[] = $vPD['id'];
+				}
+			}
+		}
+		return $descendantIds;
+	}
+
+	/**
+	 * @api
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
+	 * @return \Rbs\Media\Documents\Image[]
+	 */
+	public function getProductVisuals($product)
+	{
+		if (is_numeric($product))
+		{
+			$product = $this->getDocumentManager()->getDocumentInstance($product);
+		}
+		if (!($product instanceof \Rbs\Catalog\Documents\Product))
+		{
+			return [];
+		}
+		$visuals = $product->getVisualsCount() ? $product->getVisuals()->toArray() : [];
+		if (!count($visuals) && $product->getVariant())
+		{
+			$ancestorProductIds = array_reverse($this->getVariantAncestorIds($product));
+			if (count($ancestorProductIds))
+			{
+				foreach ($ancestorProductIds as $ancestorProductId)
+				{
+					$ancestorProduct = $this->getDocumentManager()->getDocumentInstance($ancestorProductId);
+					if ($ancestorProduct instanceof \Rbs\Catalog\Documents\Product &&
+						$ancestorProduct->getVisualsCount() && $ancestorProduct->published())
+					{
+						return $ancestorProduct->getVisuals()->toArray();
+					}
+				}
+			}
+		}
+		return $visuals;
 	}
 }

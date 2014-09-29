@@ -13,4 +13,15 @@ namespace Rbs\Geo\Documents;
  */
 class Zone extends \Compilation\Rbs\Geo\Documents\Zone
 {
+	/**
+	 * @return null|string
+	 */
+	public function getTitle()
+	{
+		$title = $this->getCurrentLocalization()->getTitle();
+		if (\Change\Stdlib\String::isEmpty($title) && $this->getRefLCID() != $this->getCurrentLCID()) {
+			$title = $this->getRefLocalization()->getTitle();
+		}
+		return \Change\Stdlib\String::isEmpty($title) ? $this->getCode() : $title;
+	}
 }

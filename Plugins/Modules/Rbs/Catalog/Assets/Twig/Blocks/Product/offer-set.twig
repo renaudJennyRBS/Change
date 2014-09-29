@@ -1,49 +1,67 @@
 <ul class="grid-list grid-list-1 grid-list-bordered grid-list-align-top product-list">
-	{% for subProduct in productPresentation.subProductPresentations %}
+	{% for subProductData in productData.productSet.products %}
+		{% set subProductURL = subProductData.common.URL['contextual'] | default(subProductData.common.URL['canonical']) %}
 		<li>
 			<div class="grid-list-cell">
+				{% block visual %}
+					<div class="product-visual">
+						<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: subProductData.common.title}) }}"
+								href="{{ productURL }}">
+							{% set visualData = subProductData.common.visuals[0] %}
+							{% if visualData %}
+								<img alt="{{ visualData.alt }}" src="{{ visualData.detailThumbnail }}" />
+							{% else %}
+								<div class="text-center text-muted">
+									<span class="glyphicon glyphicon-camera" style="font-size: 100px"></span>
+								</div>
+							{% endif %}
+						</a>
+					</div>
+				{% endblock %}
 				<div class="product-label">
-					<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: subProduct.general.title}) }}"
-						href="{{ subProduct.general.url }}">{{ subProduct.general.title }}</a>
+					<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: subProductData.common.title}) }}"
+						href="{{ subProductURL }}">{{ subProductData.common.title }}</a>
 				</div>
 				<div class="product-availability">
-					{{ subProduct.stock.thresholdTitle }}
+					{{ subProductData.stock.thresholdTitle }}
 				</div>
 				{% if parameters.webStoreId %}
 					{% block prices %}
-						{% if subProduct.prices.price %}
-							{% if parameters.displayPrices %}
+						{% if subProductData.price.currencyCode %}
+							{% if parameters.displayPricesWithoutTax %}
 								<div class="product-price price">
-									{% if not subProduct.general.hasOwnSku and subProduct.prices.price %}
+									{% if subProductData.price.hasDifferentPrices %}
 										{{ i18n('m.rbs.catalog.front.from') }}
 									{% endif %}
-									{{ subProduct.prices.formattedPrice }}
+									{{ formatPrice(subProductData.price.valueWithoutTax, subProductData.price.currencyCode) }}
 									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
 										{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
 									</abbr>
-									{% if subProduct.prices.priceWithoutDiscount %}
+									{% if subProductData.price.baseValueWithoutTax %}
 										<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-											{{- subProduct.prices.formattedPriceWithoutDiscount -}}
+											{{- formatPrice(subProductData.price.baseValueWithoutTax, subProductData.price.currencyCode) -}}
 										</del>
 									{% endif %}
 								</div>
 							{% endif %}
 							{% if parameters.displayPricesWithTax %}
 								<div class="product-price price">
-									{% if not subProduct.general.hasOwnSku and subProduct.prices.price %}
+									{% if subProductData.price.hasDifferentPrices %}
 										{{ i18n('m.rbs.catalog.front.from') }}
 									{% endif %}
-									{{ subProduct.prices.formattedPriceWithTax }}
-									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">
-										{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}
-									</abbr>
-									{% if subProduct.prices.priceWithoutDiscountWithTax %}
+									{{ formatPrice(subProductData.price.valueWithTax, subProductData.price.currencyCode) }}
+									{% if subProductData.price.baseValueWithTax %}
 										<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-											{{- subProduct.prices.formattedPriceWithoutDiscountWithTax -}}
+											{{- formatPrice(subProductData.price.baseValueWithTax, subProductData.price.currencyCode ) -}}
 										</del>
 									{% endif %}
 								</div>
 							{% endif %}
+							<div class="product-add">
+								<div data-rbs-catalog-add-set-item-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}"
+										data-product-data="productData.productSet.products[{{ loop.index0 }}]" >
+								</div>
+							</div>
 						{% endif %}
 					{% endblock %}
 				{% endif %}

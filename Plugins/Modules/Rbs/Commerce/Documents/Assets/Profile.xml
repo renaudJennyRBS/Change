@@ -3,10 +3,7 @@
 		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
 	<properties>
 		<property name="user" type="Document" document-type="Rbs_User_User"/>
-		<property name="lastCartIdentifier" type="String" />
 		<property name="defaultWebStore" type="Document" document-type="Rbs_Store_WebStore" />
-		<property name="defaultZone" type="String" />
-		<property name="defaultBillingArea" type="Document" document-type="Rbs_Price_BillingArea" />
 		<property name="defaultBillingAddress" type="Document" document-type="Rbs_Geo_Address" />
 		<property name="defaultShippingAddress" type="Document" document-type="Rbs_Geo_Address" />
 	</properties>

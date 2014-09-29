@@ -95,5 +95,8 @@
 	"this_product_added_to_cart":{
 		"message":"Ce produit a été ajouté au panier !",
 		"description":"Used in ProductAddedToCart block."
+	},
+	"no_visual": {
+		"message":"Visuel non disponible."
 	}
 }

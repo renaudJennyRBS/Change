@@ -17,6 +17,8 @@ use Change\Presentation\Blocks\Standard\Block;
  */
 class ShortCart extends Block
 {
+	use Traits\ContextParameters;
+
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -27,35 +29,20 @@ class ShortCart extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('cartIdentifier');
-		$parameters->addParameterMeta('displayPrices');
-		$parameters->addParameterMeta('displayPricesWithTax');
-
+		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		if ($parameters->getParameter('cartIdentifier') === null)
+		$cartIdentifier = $commerceServices->getContext()->getCartIdentifier();
+		if ($cartIdentifier)
 		{
-			$parameters->setParameterValue('cartIdentifier', $commerceServices->getContext()->getCartIdentifier());
-		}
-
-		if ($parameters->getParameter('cartIdentifier') !== null)
-		{
-			$cart = $commerceServices->getCartManager()->getCartByIdentifier($parameters->getParameter('cartIdentifier'));
-			if (!$cart)
+			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
+			if ($cart)
 			{
-				$parameters->setParameterValue('cartIdentifier', null);
-			}
-			elseif ($parameters->getParameter('displayPrices') === null)
-			{
-				$documentManager = $event->getApplicationServices()->getDocumentManager();
-				$webStore = $documentManager->getDocumentInstance($cart->getWebStoreId());
-				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
-				{
-					$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
-					$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
-				}
+				/** @var \Rbs\Store\Documents\WebStore $webStore */
+				$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
+				$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(), $parameters);
 			}
 		}
 
@@ -71,17 +58,6 @@ class ShortCart extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$cartIdentifier = $parameters->getParameter('cartIdentifier');
-		if ($cartIdentifier)
-		{
-			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-			$commerceServices = $event->getServices('commerceServices');
-			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
-			if ($cart && !$cart->isEmpty())
-			{
-				$attributes['cart'] = $cart;
-			}
-		}
 		return 'short-cart.twig';
 	}
 }

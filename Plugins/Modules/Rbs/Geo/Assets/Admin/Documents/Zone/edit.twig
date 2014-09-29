@@ -14,24 +14,7 @@
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
 
-				<rbs-field-text property="label" required="true"
-					label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'label'), ['ucf']) }}">
-				</rbs-field-text>
-
-				<rbs-field-text property="code"
-					label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'code'), ['ucf']) }}">
-				</rbs-field-text>
-
-				<rbs-field-picker property="country" required="true" accepted-model="Rbs_Geo_Country"
-					label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'country'), ['ucf']) }}"
-					selector-title="{{ i18nAttr('m.rbs.geo.admin.zone_country_picker_title', ['ucf']) }}">
-				</rbs-field-picker>
-
-				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Geo_Zone', 'addressFilterData'), ['ucf']) }}">
-					<div data-rbs-document-filter-container="" data-filter="document.addressFilterData">
-						<div data-rbs-geo-address-filter-definitions=""></div>
-					</div>
-				</rbs-field>
+				{% include '@Rbs_Geo/Documents/Zone/properties.twig' %}
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="systeminfo"

@@ -245,7 +245,7 @@ class UpdateProductAvailability
 			if (!$variantProduct->getSkuId())
 			{
 				$skuIs = [];
-				$pIds = $catalogManager->getProductDescendantIds($variantProduct, false);
+				$pIds = $catalogManager->getVariantDescendantIds($variantProduct);
 				foreach ($pIds as $pid)
 				{
 					if (isset($skuIdsByProduct[$pid]))

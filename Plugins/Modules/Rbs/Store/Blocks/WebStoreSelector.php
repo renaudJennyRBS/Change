@@ -37,19 +37,20 @@ class WebStoreSelector extends Block
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		$webStore = $commerceServices->getContext()->getWebStore();
+		$context = $commerceServices->getContext();
+		$webStore = $context->getWebStore();
 		if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 		{
 			$parameters->setParameterValue('webStoreId', $webStore->getId());
 		}
 
-		$billingArea = $commerceServices->getContext()->getBillingArea();
+		$billingArea = $context->getBillingArea();
 		if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
 		{
 			$parameters->setParameterValue('billingAreaId', $billingArea->getId());
 		}
 
-		$zone = $commerceServices->getContext()->getZone();
+		$zone = $context->getZone();
 		if ($zone)
 		{
 			$parameters->setParameterValue('zone', $zone);
@@ -65,41 +66,12 @@ class WebStoreSelector extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
+		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+		$context = $commerceServices->getContext();
 		$parameters = $event->getBlockParameters();
-		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		$data = array();
-		foreach ($parameters->getParameter('availableWebStoreIds') as $webStoreId)
-		{
-			$webStore = $documentManager->getDocumentInstance($webStoreId);
-			if ($webStore instanceof \Rbs\Store\Documents\WebStore)
-			{
-				$storeData = [
-					'id' => $webStore->getId(),
-					'title' => $webStore->getCurrentLocalization()->getTitle(),
-					'billingAreas' => []
-				];
-				foreach ($webStore->getBillingAreas() as $billingArea)
-				{
-					$zones = array();
-					foreach ($billingArea->getTaxes() as $tax)
-					{
-						$zones = array_merge($zones, $tax->getZoneCodes());
-					}
-					$zones = array_unique($zones);
-					$zones = array_values($zones);
-
-					/** @var $billingArea \Rbs\Price\Documents\BillingArea */
-					$storeData['billingAreas'][] = [
-						'id' => $billingArea->getId(),
-						'title' => $billingArea->getCurrentLocalization()->getTitle(),
-						'zones' => $zones
-					];
-				}
-				$data[] = $storeData;
-			}
-		}
-		$attributes['webStoreData'] = $data;
-
+		$webStoreData = $context->getConfigurationData(['detailed' => true, 'website' => $event->getParam('website'), 'data' =>['availableWebStoreIds' => $parameters->getParameter('availableWebStoreIds')]]);
+		$attributes['webStoreData'] = $webStoreData;
 		return 'webStoreSelector-horizontal.twig';
 	}
 }

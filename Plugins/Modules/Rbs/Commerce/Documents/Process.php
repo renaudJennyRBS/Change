@@ -17,6 +17,11 @@ use Zend\Http\Response as HttpResponse;
  */
 class Process extends \Compilation\Rbs\Commerce\Documents\Process
 {
+	const TAX_BEHAVIOR_NO_TAX = 0;
+	const TAX_BEHAVIOR_UNIQUE = 1;
+	const TAX_BEHAVIOR_BEFORE_PROCESS = 2;
+	const TAX_BEHAVIOR_DURING_PROCESS = 3;
+
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);

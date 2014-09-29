@@ -128,16 +128,10 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$eventManager->attach('validCart', [$this, 'onDefaultValidCart'], 5);
-
-		$eventManager->attach('normalize', [$this, 'onDefaultNormalize'], 20);
-		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeModifiers'], 15);
-		$eventManager->attach('normalize', [$this, 'onDefaultNormalizeCreditNotes'], 10);
-		$eventManager->attach('normalize', [$this, 'onDefaultNormalizePresentation'], 5);
-
 		$eventManager->attach('getNewCart', [$this, 'onDefaultGetNewCart'], 5);
 		$eventManager->attach('saveCart', [$this, 'onDefaultSaveCart'], 5);
 		$eventManager->attach('getCartByIdentifier', [$this, 'onDefaultGetCartByIdentifier'], 5);
+		$eventManager->attach('getLastCartIdentifier', [$this, 'onDefaultGetLastCartIdentifier'], 5);
 		$eventManager->attach('mergeCart', [$this, 'onDefaultMergeCart'], 5);
 		$eventManager->attach('getUnlockedCart', [$this, 'onDefaultGetUnlockedCart'], 5);
 		$eventManager->attach('cloneCartContentForUser', [$this, 'onDefaultCloneCartContentForUser'], 5);
@@ -147,6 +141,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('affectUser', [$this, 'onDefaultAffectUser'], 5);
 		$eventManager->attach('deleteCart', [$this, 'onDefaultDeleteCart'], 5);
 		$eventManager->attach('getProcessingCartsByUser', [$this, 'onDefaultGetProcessingCartsByUser'], 5);
+		$eventManager->attach('getCartData', [$this, 'onDefaultGetCartData'], 5);
 	}
 
 	/**
@@ -260,7 +255,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if (!$cart->isLocked())
 		{
-			$this->validCart($cart);
+			$this->validCart($cart, 'save');
 			$em = $this->getEventManager();
 			$args = $em->prepareArgs(array('cart' => $cart));
 			$this->getEventManager()->trigger('saveCart', $this, $args);
@@ -293,9 +288,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$qb->assign($fb->column('owner_id'), $fb->integerParameter('ownerId'));
 				$qb->assign($fb->column('transaction_id'), $fb->integerParameter('transactionId'));
 				$qb->assign($fb->column('line_count'), $fb->integerParameter('lineCount'));
-				$qb->assign($fb->column('total_amount'), $fb->decimalParameter('totalAmount'));
+				$qb->assign($fb->column('total_amount_without_taxes'), $fb->decimalParameter('totalAmountWithoutTaxes'));
 				$qb->assign($fb->column('total_amount_with_taxes'), $fb->decimalParameter('totalAmountWithTaxes'));
-				$qb->assign($fb->column('payment_amount_with_taxes'), $fb->decimalParameter('paymentAmountWithTaxes'));
+				$qb->assign($fb->column('payment_amount'), $fb->decimalParameter('paymentAmount'));
 				$qb->assign($fb->column('currency_code'), $fb->parameter('currencyCode'));
 				$qb->assign($fb->column('email'), $fb->parameter('email'));
 				$qb->where(
@@ -314,9 +309,9 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$uq->bindParameter('transactionId', $cart->getTransactionId());
 
 				$uq->bindParameter('lineCount', count($cart->getLines()));
-				$uq->bindParameter('totalAmount', $cart->getLinesAmount());
+				$uq->bindParameter('totalAmountWithoutTaxes', $cart->getTotalAmountWithoutTaxes());
 				$uq->bindParameter('totalAmountWithTaxes', $cart->getLinesAmountWithTaxes());
-				$uq->bindParameter('paymentAmountWithTaxes', $cart->getPaymentAmountWithTaxes());
+				$uq->bindParameter('paymentAmount', $cart->getPaymentAmount());
 				$uq->bindParameter('currencyCode', $cart->getCurrencyCode());
 				$uq->bindParameter('email', $cart->getEmail());
 
@@ -335,6 +330,73 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @param \Change\User\UserInterface|integer $user
+	 * @param \Rbs\Store\Documents\WebStore|integer $webStore
+	 * @param array $options
+	 * @return string|null
+	 */
+	public function getLastCartIdentifier($user, $webStore, array $options = [])
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['user' => $user, 'webStore' => $webStore, 'options' => $options]);
+		$em->trigger('getLastCartIdentifier', $this, $args);
+		if (isset($args['cartIdentifier']) && is_string($args['cartIdentifier']))
+		{
+			return $args['cartIdentifier'];
+		}
+		return null;
+	}
+
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetLastCartIdentifier(\Change\Events\Event $event)
+	{
+		$user = $event->getParam('user');
+		if ($user instanceof \Change\User\UserInterface) {
+			$user = $user->getId();
+		}
+		if (!is_numeric($user) || $user <= 0) {
+			return;
+		}
+
+		$webStore = $event->getParam('webStore');
+		if ($webStore instanceof \Rbs\Store\Documents\WebStore) {
+			$webStore = $webStore->getId();
+		}
+		if (!is_numeric($webStore)) {
+			return;
+		}
+
+		$dbProvider = $event->getApplicationServices()->getDbProvider();
+		$qb = $dbProvider->getNewQueryBuilder('getLastCartIdentifier');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('identifier'), $fb->column('owner_id'), $fb->column('store_id')
+				, $fb->column('user_id'), $fb->column('transaction_id'),
+				$fb->column('locked'), $fb->column('processing'), $fb->column('last_update'));
+			$qb->from($fb->table('rbs_commerce_dat_cart'));
+			$qb->where(
+				$fb->logicAnd(
+					$fb->eq($fb->column('user_id'), $fb->integerParameter('userId')),
+					$fb->eq($fb->column('store_id'), $fb->integerParameter('storeId')),
+					$fb->eq($fb->column('processing'), $fb->booleanParameter('processing'))
+
+				));
+			$qb->orderDesc($fb->column('last_update'));
+		}
+		$sq = $qb->query();
+		$sq->bindParameter('userId', $user);
+		$sq->bindParameter('storeId', $webStore);
+		$sq->bindParameter('processing', false);
+		$cartIdentifier = $sq->getFirstResult($sq->getRowsConverter()
+			->addStrCol('identifier')->singleColumn('identifier'));
+		$event->setParam('cartIdentifier', $cartIdentifier);
+	}
+
+	/**
 	 * @param string $cartIdentifier
 	 * @return \Rbs\Commerce\Cart\Cart|null
 	 */
@@ -342,7 +404,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('cartIdentifier' => $cartIdentifier));
-		$this->getEventManager()->trigger('getCartByIdentifier', $this, $args);
+		$em->trigger('getCartByIdentifier', $this, $args);
 		if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Cart\Cart)
 		{
 			return $args['cart'];
@@ -406,6 +468,66 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$cart->lastUpdate($cartInfo['last_update']);
 				$event->setParam('cart', $cart);
 			}
+		}
+	}
+
+
+	/**
+	 * Default context:
+	 *  - *dataSetNames, *visualFormats, *URLFormats
+	 *  - website, websiteUrlManager, section, page, detailed
+	 *  - *data
+	 *     - billingAreaId
+	 *     - webStoreId
+	 *     - zone
+	 * @api
+	 * @param \Rbs\Commerce\Cart\Cart|string $cart
+	 * @param array $context
+	 * @return array
+	 */
+	public function getCartData($cart, array $context)
+	{
+		$em = $this->getEventManager();
+		if (is_string($cart))
+		{
+			$cart = $this->getCartByIdentifier($cart);
+		}
+
+		if ($cart instanceof \Rbs\Commerce\Cart\Cart)
+		{
+			$eventArgs = $em->prepareArgs(['cart' => $cart, 'context' => $context]);
+			$em->trigger('getCartData', $this, $eventArgs);
+			if (isset($eventArgs['cartData']))
+			{
+				$productData = $eventArgs['cartData'];
+				if (is_object($productData))
+				{
+					$callable = [$productData, 'toArray'];
+					if (is_callable($callable))
+					{
+						$productData = call_user_func($callable);
+					}
+				}
+				if (is_array($productData))
+				{
+					return $productData;
+				}
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * Input params: cart, context
+	 * Output param: cartData
+	 * @param \Change\Events\Event $event
+	 */
+	public function  onDefaultGetCartData(\Change\Events\Event $event)
+	{
+		if (!$event->getParam('cartData'))
+		{
+			$cartDataComposer = new \Rbs\Commerce\Cart\CartDataComposer($event);
+			$event->setParam('cartData', $cartDataComposer->toArray());
 		}
 	}
 
@@ -543,7 +665,15 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$newCart = $this->getNewCart($webStore, $cart->getBillingArea(), $cart->getZone());
 			$newCart->getContext()->set('fromCart', $cart->getIdentifier());
 			$newCart->setUserId($user->getId());
-			$newCart->setOwnerId($user->getId());
+			if (!$user->authenticated())
+			{
+				$newCart->setUserId(0);
+			}
+			else
+			{
+				$newCart->setUserId($user->getId());
+			}
+
 			foreach ($cart->getLines() as $line)
 			{
 				$this->addLine($newCart, $newCart->getNewLine($line->toArray()));
@@ -557,19 +687,21 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Commerce\Cart\Cart $cart
+	 * @param string $for [save] | lock
 	 * @return boolean
 	 */
-	public function validCart(\Rbs\Commerce\Cart\Cart $cart)
+	public function validCart(\Rbs\Commerce\Cart\Cart $cart, $for = 'save')
 	{
 		try
 		{
 			$cart->setErrors(array());
 
 			$em = $this->getEventManager();
-			$args = $em->prepareArgs(['cart' => $cart, 'errors' => new \ArrayObject()]);
+			$args = $em->prepareArgs(['cart' => $cart, 'errors' => new \ArrayObject(), 'for' => $for]);
 
-			$this->getEventManager()->trigger('validCart', $this, $args);
+			$em->trigger('validCart', $this, $args);
 			if (isset($args['errors']) && (is_array($args['errors']) || $args['errors'] instanceof \Traversable))
 			{
 				foreach ($args['errors'] as $error)
@@ -585,71 +717,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		return !$cart->hasError();
 	}
 
-	/**
-	 * Event Params: cart, errors, lockForOwnerId, commerceServices
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultValidCart(\Change\Events\Event $event)
-	{
-		$commerceServices = $event->getServices('commerceServices');
-		$cart = $event->getParam('cart');
-		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $commerceServices instanceof \Rbs\Commerce\CommerceServices)
-		{
-			$i18nManager = $event->getApplicationServices()->getI18nManager();
-
-			/* @var $errors \ArrayObject */
-			$errors = $event->getParam('errors');
-
-			if (!$cart->getWebStoreId())
-			{
-				$message = $i18nManager->trans('m.rbs.commerce.front.cart_without_webstore', array('ucf'));
-				$err = new CartError($message, null);
-				$errors[] = $err;
-				return;
-			}
-
-			foreach ($cart->getLines() as $line)
-			{
-				if (!$line->getQuantity())
-				{
-					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_quantity', array('ucf'),
-						array('number' => $line->getIndex() + 1));
-					$err = new CartError($message, $line->getKey());
-					$errors[] = $err;
-				}
-				elseif (count($line->getItems()) === 0)
-				{
-					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_sku', array('ucf'),
-						array('number' => $line->getIndex() + 1));
-					$err = new CartError($message, $line->getKey());
-					$errors[] = $err;
-				}
-				elseif ($line->getUnitAmount() === null)
-				{
-					$message = $i18nManager->trans('m.rbs.commerce.front.line_without_price', array('ucf'),
-						array('number' => $line->getIndex() + 1));
-					$err = new CartError($message, $line->getKey());
-					$errors[] = $err;
-				}
-			}
-
-			$reservations = $commerceServices->getCartManager()->getReservations($cart);
-			if (count($reservations))
-			{
-				$unreserved = $commerceServices->getStockManager()->setReservations($cart->getIdentifier(), $reservations);
-				if (count($unreserved))
-				{
-					$message = $i18nManager->trans('m.rbs.commerce.front.cart_reservation_error', array('ucf'));
-					$err = new CartError($message);
-					$errors[] = $err;
-				}
-			}
-			else
-			{
-				$commerceServices->getStockManager()->cleanupReservations($cart->getIdentifier());
-			}
-		}
-	}
 
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
@@ -661,7 +728,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			try
 			{
-				if ($this->validCart($cart))
+				if ($this->validCart($cart, 'lock'))
 				{
 					$em = $this->getEventManager();
 					if (!$cart->getOwnerId())
@@ -671,10 +738,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 						if (isset($args['ownerId']) && $args['ownerId'])
 						{
 							$cart->setOwnerId($args['ownerId']);
-						}
-						else
-						{
-							$cart->setOwnerId($cart->getUserId());
 						}
 					}
 					$args = $em->prepareArgs(array('cart' => $cart));
@@ -1151,345 +1214,105 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultNormalize(\Change\Events\Event $event)
-	{
-		$cart = $event->getParam('cart');
-		if ($cart instanceof Cart)
-		{
-			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
-			if ($webStore instanceof \Rbs\Store\Documents\Webstore)
-			{
-				$cart->setPricesValueWithTax($webStore->getPricesValueWithTax());
-			}
-
-			foreach ($cart->getLines() as $index => $line)
-			{
-				$line->setIndex($index);
-				$this->refreshCartLine($cart, $line);
-			}
-		}
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultNormalizeModifiers(\Change\Events\Event $event)
-	{
-		$cart = $event->getParam('cart');
-		if ($cart instanceof Cart)
-		{
-			$cart->removeAllFees();
-			$cart->removeAllDiscounts();
-
-			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
-			$commerceServices = $event->getServices('commerceServices');
-
-			$priceManager = $commerceServices->getPriceManager();
-			$this->buildTotalAmount($cart, $priceManager);
-
-			$processManager = $commerceServices->getProcessManager();
-			$process = $processManager->getOrderProcessByCart($cart);
-			if ($process)
-			{
-				$coupons = $cart->removeAllCoupons();
-				foreach ($coupons as $oldCoupon)
-				{
-					$couponCode = $oldCoupon->getCode();
-					$q = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Discount_Coupon');
-					$q->andPredicates($q->activated(), $q->eq('code', $couponCode), $q->eq('orderProcess', $process));
-
-					/** @var $couponDocument \Rbs\Discount\Documents\Coupon */
-					foreach ($q->getDocuments() as $couponDocument)
-					{
-						if ($couponDocument->isCompatibleWith($cart))
-						{
-							$coupon = new \Rbs\Commerce\Process\BaseCoupon();
-							$coupon->setCode($couponCode);
-							$coupon->setTitle($couponDocument->getCurrentLocalization()->getTitle());
-							$coupon->getOptions()->set('id', $couponDocument->getId());
-							$cart->appendCoupon($coupon);
-							break;
-						}
-					}
-				}
-
-				$documents = $process->getAvailableModifiers();
-				foreach ($documents as $document)
-				{
-					if ($document instanceof \Rbs\Commerce\Documents\Fee)
-					{
-						$modifier = $document->getValidModifier($cart);
-						if ($modifier) {
-							$modifier->apply();
-							$this->buildTotalAmount($cart, $priceManager);
-						}
-					}
-					elseif ($document instanceof \Rbs\Discount\Documents\Discount)
-					{
-						$modifier = $document->getValidModifier($cart);
-						if ($modifier) {
-							$modifier->apply();
-							$this->buildTotalAmount($cart, $priceManager);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultNormalizeCreditNotes(\Change\Events\Event $event)
-	{
-		$cart = $event->getParam('cart');
-		if ($cart instanceof Cart)
-		{
-			$cartIdentifier = $cart->getIdentifier();
-			$toSave = [];
-			$documentManager = $event->getApplicationServices()->getDocumentManager();
-			$removedCreditNotes = $cart->removeAllCreditNotes();
-
-			foreach ($removedCreditNotes as $removedCreditNote)
-			{
-				$creditNoteDocument = $documentManager->getDocumentInstance($removedCreditNote->getId());
-				if ($creditNoteDocument instanceof \Rbs\Order\Documents\CreditNote)
-				{
-					$creditNoteDocument->removeUsageByTargetIdentifier($cartIdentifier);
-					$toSave[$creditNoteDocument->getId()] = $creditNoteDocument;
-				}
-			}
-
-			$paymentAmountWithTaxes = $cart->getTotalAmountWithTaxes();
-			$cart->setPaymentAmountWithTaxes($paymentAmountWithTaxes);
-			$ownerId = $cart->getOwnerId();
-			if (!$ownerId)
-			{
-				$ownerId = $cart->getUserId();
-			}
-
-			if (!$ownerId)
-			{
-				if (count($toSave))
-				{
-					$tm = $event->getApplicationServices()->getTransactionManager();
-					try
-					{
-						$tm->begin();
-
-						/** @var $document \Rbs\Order\Documents\CreditNote */
-						foreach ($toSave as $document)
-						{
-							if (count($document->getModifiedPropertyNames()))
-							{
-								$document->save();
-							}
-						}
-
-						$tm->commit();
-					}
-					catch (\Exception $e)
-					{
-						$event->getApplication()->getLogging()->exception($e);
-						$tm->rollBack($e);
-					}
-				}
-				return;
-			}
-
-			$query = $documentManager->getNewQuery('Rbs_Order_CreditNote');
-			$query->andPredicates($query->eq('ownerId', $ownerId), $query->eq('currencyCode', $cart->getCurrencyCode()),
-				$query->gt('amountNotApplied', 0));
-
-			/** @var $document \Rbs\Order\Documents\CreditNote */
-			foreach ($query->getDocuments() as $document)
-			{
-				if (!isset($toSave[$document->getId()]))
-				{
-					$toSave[$document->getId()] = $document;
-				}
-			}
-
-			if (count($toSave))
-			{
-				ksort($toSave);
-				$tm = $event->getApplicationServices()->getTransactionManager();
-				try
-				{
-					$tm->begin();
-
-					foreach ($toSave as $document)
-					{
-						$baseCreditNote = null;
-						$amountNotApplied = $document->getAmountNotApplied();
-						if ($paymentAmountWithTaxes > 0 && $amountNotApplied > 0)
-						{
-							if ($paymentAmountWithTaxes > $amountNotApplied)
-							{
-								$amount = -$amountNotApplied;
-								$paymentAmountWithTaxes += $amount;
-							}
-							else
-							{
-								$amount = -$paymentAmountWithTaxes;
-								$paymentAmountWithTaxes = 0;
-							}
-							$document->setUsageByTargetIdentifier($cartIdentifier, $amount);
-							$baseCreditNote = new \Rbs\Commerce\Process\BaseCreditNote();
-							$baseCreditNote->setId($document->getId());
-							$baseCreditNote->setAmount($amount);
-							$baseCreditNote->setTitle($document->getCode());
-						}
-
-						if (count($document->getModifiedPropertyNames()))
-						{
-							$document->save();
-						}
-
-						if ($baseCreditNote)
-						{
-							$cart->appendCreditNote($baseCreditNote);
-							$cart->setPaymentAmountWithTaxes($paymentAmountWithTaxes);
-						}
-					}
-					$tm->commit();
-				}
-				catch (\Exception $e)
-				{
-					$event->getApplication()->getLogging()->exception($e);
-					$tm->rollBack($e);
-				}
-			}
-		}
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultNormalizePresentation(\Change\Events\Event $event)
-	{
-		$cart = $event->getParam('cart');
-		if ($cart instanceof Cart)
-		{
-			/** @var $line \Rbs\Commerce\Cart\CartLine */
-			foreach ($cart->getLines() as $line)
-			{
-				$options = $line->getOptions();
-				$productId = $options->get('productId');
-				$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($productId);
-				if ($product instanceof \Rbs\Catalog\Documents\Product)
-				{
-					// Get Visual information
-					$visual = $product->getFirstVisual();
-					if ($visual instanceof \Rbs\Media\Documents\Image)
-					{
-						$options->set('visualId', $visual->getId());
-						$options->set('visualSrc', $visual->getPublicURL());
-
-						$formats = $event->getApplication()->getConfiguration('Rbs/Commerce/Cart/VisualFormats');
-						if (is_array($formats) && count($formats))
-						{
-							$thumbnailSrcArray = array();
-							foreach ($formats as $name => $format)
-							{
-								if (is_array($format))
-								{
-									$width = isset($format['Width']) ? $format['Width'] : null;
-									$height = isset($format['Height']) ? $format['Height'] : null;
-									$thumbnailSrcArray[$name] = $visual->getPublicURL($width, $height);
-								}
-							}
-							if (count($thumbnailSrcArray))
-							{
-								$options->set('visualThumbnailSrc', $thumbnailSrcArray);
-							}
-						}
-					}
-					// If is a product variant, get axes
-					if ($product->getVariant())
-					{
-						$axesInfo = array();
-
-						$commerceServices = $event->getServices('commerceServices');
-						if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
-						{
-
-							$catalogManager = $commerceServices->getCatalogManager();
-							$infos = $catalogManager->getVariantsConfiguration($product);
-
-							foreach($infos['axes']['products'] as $axesProduct)
-							{
-								if ($axesProduct['id'] == $product->getId())
-								{
-									foreach ($infos['axesNames'] as $key => $value)
-									{
-										$axesInfo[] = ['name' => $value, 'value' => $axesProduct['values'][$key]['value']];
-									}
-									break;
-								}
-							}
-						}
-
-						if (count($axesInfo) > 0)
-						{
-							$options->set('axesInfo', $axesInfo);
-						}
-					}
-				}
-			}
-		}
-	}
-
-
-	/**
 	 * @api
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param \Rbs\Price\PriceManager $priceManager
 	 */
 	public function buildTotalAmount(\Rbs\Commerce\Cart\Cart $cart, \Rbs\Price\PriceManager $priceManager)
 	{
+		$currencyCode =  $cart->getCurrencyCode();
+		if (!$currencyCode) {
+			return;
+		}
+		$precision = $priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
+
 		//Lines Amount
 		$this->refreshLinesAmount($cart, $priceManager);
+		$zone = $cart->getZone();
+		$priceWithTax = $cart->getPricesValueWithTax();
 
 		//Add fees and discounts
-		$totalAmount = $cart->getLinesAmount();
+		$totalAmountWithoutTaxes = $cart->getLinesAmountWithoutTaxes();
 		$totalAmountWithTaxes = $cart->getLinesAmountWithTaxes();
-		$totalTaxes = $cart->getLinesTaxes();
+		$totalTaxes = $zone ? $cart->getLinesTaxes() : null;
 		foreach ($cart->getFees() as $fee)
 		{
-			$totalAmount += $fee->getAmount();
-			$totalAmountWithTaxes += $fee->getAmountWithTaxes();
-			$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $fee->getTaxes());
+			if ($zone)
+			{
+				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $fee->getTaxes());
+				$totalAmountWithoutTaxes += $fee->getAmountWithoutTaxes();
+				$totalAmountWithTaxes += $fee->getAmountWithTaxes();
+			}
+			else
+			{
+				if ($priceWithTax)
+				{
+					$totalAmountWithTaxes += $fee->getAmountWithTaxes();
+				}
+				else
+				{
+					$totalAmountWithoutTaxes += $fee->getAmountWithoutTaxes();
+				}
+			}
 		}
 
 		foreach ($cart->getDiscounts() as $discount)
 		{
-			$totalAmount += $discount->getAmount();
-			$totalAmountWithTaxes += $discount->getAmountWithTaxes();
-			$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $discount->getTaxes());
+			if ($zone)
+			{
+				$totalAmountWithoutTaxes += $discount->getAmountWithoutTaxes();
+				$totalAmountWithTaxes += $discount->getAmountWithTaxes();
+				$totalTaxes = $priceManager->addTaxesApplication($totalTaxes, $discount->getTaxes());
+			}
+			else
+			{
+				if ($priceWithTax)
+				{
+					$totalAmountWithTaxes += $discount->getAmountWithTaxes();
+				}
+				else
+				{
+					$totalAmountWithoutTaxes += $discount->getAmountWithoutTaxes();
+				}
+			}
 		}
 
-		$cart->setTotalAmount($totalAmount);
+		$totalAmountWithoutTaxes = $priceManager->roundValue($totalAmountWithoutTaxes, $precision);
+		$totalAmountWithTaxes = $priceManager->roundValue($totalAmountWithTaxes, $precision);
+
+		$cart->setTotalAmountWithoutTaxes($totalAmountWithoutTaxes);
 		$cart->setTotalAmountWithTaxes($totalAmountWithTaxes);
-		$cart->setTotalTaxes($totalTaxes);
+
+		if ($zone)
+		{
+			foreach ($totalTaxes as $tax)
+			{
+				$tax->setValue($priceManager->roundValue($tax->getValue(), $precision));
+			}
+			$cart->setTotalTaxes($totalTaxes);
+		}
+		else
+		{
+			$cart->setTotalTaxes([]);
+		}
 
 		//Add Credit notes
-		$paymentAmount = $totalAmountWithTaxes;
+		$paymentAmount = ($zone || $priceWithTax) ? $totalAmountWithTaxes : $totalAmountWithoutTaxes;
+
 		foreach ($cart->getCreditNotes() as $creditNote)
 		{
-			$paymentAmount += $creditNote->getAmount();
+			$paymentAmount += $priceManager->roundValue($creditNote->getAmount(), $precision);
 		}
 
-		$cart->setPaymentAmountWithTaxes($paymentAmount);
+		$cart->setPaymentAmount($paymentAmount);
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param \Rbs\Commerce\Cart\CartLine $line
 	 */
-	protected function refreshCartLine(\Rbs\Commerce\Cart\Cart $cart, \Rbs\Commerce\Cart\CartLine $line)
+	public function refreshCartLine(\Rbs\Commerce\Cart\Cart $cart, \Rbs\Commerce\Cart\CartLine $line)
 	{
 		$webStore = $this->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
 		$billingArea = $cart->getBillingArea();
@@ -1529,24 +1352,35 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function refreshLinesAmount($cart, $priceManager)
 	{
-		/* @var $linesTaxes \Rbs\Price\Tax\TaxApplication[] */
-		$linesTaxes = [];
-		$linesAmount = 0.0;
-		$linesAmountWithTaxes = 0.0;
-
 		$currencyCode = $cart->getCurrencyCode();
+		if (!$currencyCode) {
+			return;
+		}
+		$precision = $priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
 		$zone = $cart->getZone();
-		$taxes = $cart->getTaxes();
-		if (!$currencyCode || !$zone || count($taxes) == 0)
+		$pricesValueWithTax = $cart->getPricesValueWithTax();
+		if ($zone)
 		{
-			$taxes = null;
+			/* @var $linesTaxes \Rbs\Price\Tax\TaxApplication[] */
+			$linesTaxes = [];
+			$linesAmountWithoutTaxes = 0.0;
+			$linesAmountWithTaxes = 0.0;
+		}
+		else
+		{
+			$linesTaxes = null;
+			$linesAmountWithTaxes = $pricesValueWithTax ? 0.0 : null;
+			$linesAmountWithoutTaxes = $pricesValueWithTax ? null : 0.0;
 		}
 
+		$taxes = $cart->getTaxes();
 		foreach ($cart->getLines() as $line)
 		{
-			$lineTaxes = [];
-			$amount = null;
+			$lineTaxes = $zone ? [] : null;
+
+			$amountWithoutTaxes = null;
 			$amountWithTaxes = null;
+
 			$basedAmount = null;
 			$basedAmountWithTaxes = null;
 
@@ -1564,7 +1398,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 							$lineItemBasedValue  = $price->getBasePriceValue() * $lineQuantity;
 						}
 
-						if ($taxes !== null)
+						if ($zone)
 						{
 							$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
 							if (count($taxArray))
@@ -1572,16 +1406,17 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 								$lineTaxes = $priceManager->addTaxesApplication($lineTaxes, $taxArray);
 							}
 
-							if ($price->isWithTax())
+							if ($pricesValueWithTax)
 							{
 								$amountWithTaxes += $lineItemValue;
-								$amount += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+								$amountWithoutTaxes += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
+
 								$basedAmountWithTaxes += $lineItemBasedValue;
 								$basedAmount += $priceManager->getValueWithoutTax($lineItemBasedValue, $taxArray);
 							}
 							else
 							{
-								$amount += $lineItemValue;
+								$amountWithoutTaxes += $lineItemValue;
 								$amountWithTaxes = $priceManager->getValueWithTax($lineItemValue, $taxArray);
 								$basedAmount += $lineItemBasedValue;
 								$basedAmountWithTaxes += $priceManager->getValueWithTax($lineItemBasedValue, $taxArray);
@@ -1589,30 +1424,47 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 						}
 						else
 						{
-							$amountWithTaxes += $lineItemValue;
-							$amount += $lineItemValue;
-							$basedAmount += $lineItemBasedValue;
-							$basedAmountWithTaxes += $lineItemBasedValue;
+							if ($pricesValueWithTax)
+							{
+								$amountWithTaxes += $lineItemValue;
+								$basedAmountWithTaxes += $lineItemBasedValue;
+							}
+							else
+							{
+								$amountWithoutTaxes += $lineItemValue;
+								$basedAmount += $lineItemBasedValue;
+							}
 						}
 					}
 				}
 			}
 
 			$line->setTaxes($lineTaxes);
-			$line->setAmountWithTaxes($amountWithTaxes);
-			$line->setAmount($amount);
-			if ($amount != $basedAmount)
+			$amountWithTaxes = $priceManager->roundValue($amountWithTaxes, $precision);
+			if ($amountWithTaxes !== null)
 			{
-				$line->setBasedAmountWithTaxes($basedAmountWithTaxes);
-				$line->setBasedAmount($basedAmount);
+				$linesAmountWithTaxes += $amountWithTaxes;
 			}
-			$linesAmount += $amount;
-			$linesAmountWithTaxes += $amountWithTaxes;
-			$linesTaxes = $priceManager->addTaxesApplication($linesTaxes, $lineTaxes);
+			$amountWithoutTaxes = $priceManager->roundValue($amountWithoutTaxes, $precision);
+			if ($amountWithoutTaxes !== null)
+			{
+				$linesAmountWithoutTaxes += $amountWithoutTaxes;
+			}
+			$line->setAmountWithTaxes($amountWithTaxes);
+			$line->setAmountWithoutTaxes($amountWithoutTaxes);
+
+			$line->setBasedAmountWithTaxes($priceManager->roundValue($basedAmountWithTaxes, $precision));
+			$line->setBasedAmountWithoutTaxes($priceManager->roundValue($basedAmount, $precision));
+			if ($lineTaxes !== null)
+			{
+				$linesTaxes = $priceManager->addTaxesApplication($linesTaxes, $lineTaxes);
+			}
 		}
 
-		$cart->setLinesTaxes($linesTaxes);
-		$cart->setLinesAmount($linesAmount);
+		if (is_array($linesTaxes)) {
+			$cart->setLinesTaxes($linesTaxes);
+		}
+		$cart->setLinesAmountWithoutTaxes($linesAmountWithoutTaxes);
 		$cart->setLinesAmountWithTaxes($linesAmountWithTaxes);
 	}
 

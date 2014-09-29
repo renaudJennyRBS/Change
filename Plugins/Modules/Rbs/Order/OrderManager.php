@@ -49,6 +49,8 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getOrderPresentation', [$this, 'onArrayGetOrderPresentation'], 5);
 		$eventManager->attach('getOrderStatusInfo', [$this, 'onDefaultGetOrderStatusInfo'], 5);
 		$eventManager->attach('getAvailableCreditNotesInfo', [$this, 'onDefaultGetAvailableCreditNotesInfo'], 5);
+
+		$eventManager->attach('getOrderData', [$this, 'onDefaultGetOrderData'], 5);
 	}
 
 	/**
@@ -740,6 +742,63 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			}
 
 			$event->setParam('creditNotesInfo', $results);
+		}
+	}
+
+
+	/**
+	 * Default context:
+	 *  - *dataSetNames, *visualFormats, *URLFormats
+	 *  - website, websiteUrlManager, section, page, detailed
+	 *  - *data
+	 * @api
+	 * @param \Rbs\Commerce\Cart\Cart|string $order
+	 * @param array $context
+	 * @return array
+	 */
+	public function getOrderData($order, array $context)
+	{
+		$em = $this->getEventManager();
+		if (is_numeric($order))
+		{
+			$order = $this->getDocumentManager()->getDocumentInstance($order);
+		}
+
+		if ($order instanceof \Rbs\Order\Documents\Order)
+		{
+			$eventArgs = $em->prepareArgs(['order' => $order, 'context' => $context]);
+			$em->trigger('getOrderData', $this, $eventArgs);
+			if (isset($eventArgs['orderData']))
+			{
+				$orderData = $eventArgs['orderData'];
+				if (is_object($orderData))
+				{
+					$callable = [$orderData, 'toArray'];
+					if (is_callable($callable))
+					{
+						$orderData = call_user_func($callable);
+					}
+				}
+				if (is_array($orderData))
+				{
+					return $orderData;
+				}
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * Input params: order, context
+	 * Output param: orderData
+	 * @param \Change\Events\Event $event
+	 */
+	public function  onDefaultGetOrderData(\Change\Events\Event $event)
+	{
+		if (!$event->getParam('orderData'))
+		{
+			$orderDataComposer = new \Rbs\Order\OrderDataComposer($event);
+			$event->setParam('orderData', $orderDataComposer->toArray());
 		}
 	}
 }

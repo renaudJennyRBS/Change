@@ -23,6 +23,9 @@
 	"process_sendmailshipmentfinalized":{
 		"message":"mail d'expédition finalisée"
 	},
+	"process_taxbehavior":{
+		"message":"gestion des taxes"
+	},
 	"fee":{
 		"message":"frais"
 	},

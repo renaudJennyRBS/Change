@@ -2,290 +2,97 @@
 	"use strict";
 	var app = angular.module('RbsChangeApp');
 
-	/**
-	 * @param {*} value
-	 * @param {boolean} makeClone
-	 * @returns {Object}
-	 */
-	function getObject(value, makeClone) {
-		if (!angular.isObject(value) || angular.isArray(value)) {
-			return {};
-		}
-		return makeClone ? angular.copy(value) : value;
-	}
+	function rbsCommerceCart($rootScope, $compile, AjaxAPI) {
+		var cacheCartDataKey = 'cartData';
 
-	/**
-	 * @param {Object} $http
-	 * @param {Object} scope
-	 * @param {Object} postData
-	 * @param {Function=} successCallback
-	 * @param {Function=} errorCallback
-	 */
-	function updateCart($http, scope, postData, successCallback, errorCallback) {
-		$http.post('Action/Rbs/Commerce/UpdateCart', postData)
-			.success(function(data) {
-				scope.cart = data;
-				if (angular.isFunction(successCallback)) {
-					successCallback(data);
-				}
-			})
-			.error(function(data, status, headers) {
-				console.log('UpdateCart error', data, status, headers);
-				if (angular.isFunction(errorCallback)) {
-					errorCallback(data, status, headers);
-				}
-			});
-	}
-
-	/**
-	 * @param {Object} referenceAddress
-	 * @param {Array} addresses
-	 * @returns {boolean}
-	 */
-	function hasInvalidAddresses(referenceAddress, addresses) {
-		var countryCode = referenceAddress.countryCode;
-		for (var i = 0; i < addresses.length; i++) {
-			if (addresses[i].fieldValues.countryCode != countryCode) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @param {Object} referenceAddress
-	 * @param {Array} addressToCheck
-	 * @returns {boolean}
-	 */
-	function isValidAddress(referenceAddress, addressToCheck) {
-		return referenceAddress.countryCode != addressToCheck['fieldValues'].countryCode;
-	}
-
-	/**
-	 * @param {Object} existingAddress
-	 * @param {Object} addressToUse
-	 */
-	function applyAddress(existingAddress, addressToUse) {
-		angular.forEach(addressToUse.fieldValues, function(value, key) {
-			existingAddress[key] = addressToUse.fieldValues[key];
-		});
-		angular.forEach(existingAddress, function(value, key) {
-			if (!addressToUse.fieldValues.hasOwnProperty(key)) {
-				delete(existingAddress[key]);
-			}
-		});
-	}
-
-	function rbsCommerceCartData() {
 		return {
 			restrict: 'A',
-			template: '<div></div>',
-			replace: true,
-			require: 'ngModel',
-			scope: false,
+			templateUrl: '/rbsCommerceCart.tpl',
+			scope: {},
+			controller : ['$scope', '$element', function(scope, elem) {
+				var self = this;
+				var modifications = {};
 
-			link: function(scope, elm, attributes, ngModel) {
-				var cart;
-				if (attributes.hasOwnProperty('cart')) {
-					cart = angular.fromJson(attributes.cart);
-				}
-				if (!angular.isObject(cart)) {
-					cart = {};
-				}
-				ngModel.$setViewValue(cart);
-			}
-		}
-	}
+				scope.loading = false;
 
-	app.directive('rbsCommerceCartData', rbsCommerceCartData);
-
-	function rbsCommerceCartLine() {
-		return {
-			restrict: 'AE',
-			templateUrl: '/simpleLine.static.tpl',
-			link: function(scope) {
-				scope.originalQuantities[scope.index] = scope.line.quantity;
-				var i, j;
-
-				if (scope.cart.modifiedQuantities == null || scope.cart.modifiedQuantities == undefined) {
-					scope.cart.modifiedQuantities = [];
-				}
-
-				if (scope.cart.modifiedQuantities.length != scope.cart.lines.length) {
-					for (i = 0; i < scope.cart.lines.length; i++) {
-						scope.cart.modifiedQuantities[i] = false;
-					}
-				}
-
-				scope.isQuantityEdited = function() {
-					var bool = scope.originalQuantities[scope.index] != scope.line.quantity;
-					scope.cart.modifiedQuantities[scope.index] = bool;
-					return bool;
+				this.loadCartData = function() {
+					scope.loading = true;
+					var request = AjaxAPI.getData('Rbs/Commerce/Cart', null, {detailed: true, visualFormats: scope.parameters['imageFormats']});
+					request.success(function(data, status, headers, config) {
+						var cartData = data.dataSets;
+						if (cartData && !angular.isArray(cartData)) {
+							self.setCartData(cartData);
+						}
+						scope.loading = false;
+					}).error(function(data, status, headers, config) {
+						console.log('loadCartData error', data, status);
+						scope.loading = false;
+					});
+					return request;
 				};
 
-				scope.oneOtherQuantityEdited = function() {
-					for (j = 0; j < scope.cart.modifiedQuantities.length; j++) {
-						if (j != scope.index && scope.cart.modifiedQuantities[j] == true) {
-							return true;
+				this.updateCartData = function(actions) {
+					scope.loading = true;
+					var request = AjaxAPI.putData('Rbs/Commerce/Cart', actions, {detailed: true, visualFormats: scope.parameters['imageFormats']});
+					request.success(function(data, status, headers, config) {
+						var cartData = data.dataSets;
+						if (cartData && !angular.isArray(cartData)) {
+							self.setCartData(cartData);
 						}
-					}
-					return false;
+						scope.loading = false;
+					}).error(function(data, status, headers, config) {
+						console.log('updateCartData error', data, status);
+						scope.loading = false;
+					});
+					return request;
 				};
-			}
-		}
-	}
 
-	app.directive('rbsCommerceCartLine', rbsCommerceCartLine);
+				this.updateLineQuantity = function(key, newQuantity) {
+					var actions = {
+						'updateLinesQuantity': [
+							{key: key, quantity: newQuantity}
+						]
+					};
+					this.updateCartData(actions);
+				};
 
-	function rbsCommerceProcessMenu() {
-		return {
-			restrict: 'AE',
-			templateUrl: '/menu.static.tpl',
-			link: function(scope) {
-				/*jQuery('body').scrollspy({ target: '.process-sidebar' });
-				 scope.$watch('currentStep', function() {
-				 jQuery('body').each(function() { $(this).scrollspy('refresh'); });
-				 });*/
-			}
-		}
-	}
+				this.showPrices = function() {
+					return (scope.parameters && (scope.parameters.displayPricesWithTax || scope.parameters.displayPricesWithoutTax))
 
-	app.directive('rbsCommerceProcessMenu', rbsCommerceProcessMenu);
+				};
 
-	function rbsCommerceAuthenticationStep() {
-		return {
-			restrict: 'AE',
-			scope: true,
-			templateUrl: '/authentication-step.static.tpl',
+				this.getCurrencyCode = function() {
+					return scope.currencyCode;
+				};
 
-			link: function(scope, element, attributes) {
-				if (!scope.information.hasOwnProperty('realm')) {
-					scope.information.realm = attributes.realm;
-					if (attributes.login) {
-						scope.information.login = attributes.login;
-						scope.information.guest = false;
-
-						if (scope.confirmed == true) {
-							scope.setUserConfirmed();
+				this.parameters = function(name) {
+					if (scope.parameters) {
+						if (angular.isUndefined(name)) {
+							return scope.parameters;
+						} else {
+							return scope.parameters[name];
 						}
 					}
-					else {
-						scope.information.guest = true;
+					return null;
+				};
+
+				this.getCartData = function() {
+					return scope.cartData = cartData;
+				};
+
+				this.setCartData = function(cartData) {
+					scope.cartData = cartData;
+					if (this.showPrices()) {
+						scope.currencyCode = cartData.common.currencyCode;
+					} else {
+						scope.currencyCode = null;
 					}
-				}
-			}
-		}
-	}
+					modifications = {};
+					$rootScope.$broadcast('rbsRefreshCart', {'cart': cartData });
+				};
 
-	app.directive('rbsCommerceAuthenticationStep', rbsCommerceAuthenticationStep);
-
-	function rbsCommerceShippingModeSelector($http, $compile, $sce) {
-		return {
-			restrict: 'AE',
-			scope: {
-				delivery: '=',
-				zoneCode: '=',
-				cart: '=',
-				addresses: '=',
-				saveAddress: '='
-			},
-			templateUrl: '/shipping-mode-selector.static.tpl',
-
-			link: function(scope, element, attributes) {
-				scope.display = { readonly: attributes.readonly };
-				scope.deliveryIndex = attributes.deliveryIndex;
-				scope.hasLogin = attributes.hasOwnProperty('login') && attributes.login != '';
-				scope.addressModes = null;
-				scope.pickupModes = null;
-				scope.isShippingAddressValid = { value: true };
-
-				scope.delivery.isShippingAddressValid = { value: true };
-
-				var useCartAddress = true, i;
-				if (!scope.delivery.addressReference.hasOwnProperty('__addressFieldsId')) {
-					if (scope.addresses && scope.addresses.length) {
-						for(i = 0; i < scope.addresses.length; i++) {
-							if (scope.addresses[i].default.shipping) {
-								applyAddress(scope.delivery.addressReference, scope.addresses[i]);
-								useCartAddress = false;
-								break;
-							}
-						}
-
-						if (useCartAddress) {
-							for (i = 0; i < scope.addresses.length; i++) {
-								if (scope.addresses[i].default.default == true) {
-									applyAddress(scope.delivery.addressReference, scope.addresses[i]);
-									useCartAddress = false;
-									break;
-								}
-							}
-						}
-					}
-					if (useCartAddress) {
-						scope.delivery.addressReference = angular.copy(scope.cart.address);
-					}
-				}
-
-				if (!scope.shippingAddress) {
-					scope.shippingAddress = angular.copy(scope.delivery.addressReference);
-				}
-
-				attributes.$observe('readonly', function(newValue) {
-					scope.display.readonly = (newValue == 'true');
-				});
-
-				scope.$watchCollection('addressModes', function() {
-					updateSelectedMode();
-				});
-
-				scope.$watchCollection('pickupModes', function() {
-					updateSelectedMode();
-				});
-
-				function updateSelectedMode() {
-					if (scope.addressModes != null && scope.pickupModes != null) {
-						var i;
-						var modeFound = false;
-						if (scope.delivery.modeId !== null) {
-							for (i = 0; i < scope.addressModes.length; i++) {
-								if (scope.addressModes[i].id == scope.delivery.modeId) {
-									scope.selectAddressMode(i);
-									modeFound = true;
-									break;
-								}
-							}
-							for (i = 0; i < scope.pickupModes.length; i++) {
-								if (scope.pickupModes[i].id == scope.delivery.modeId) {
-									scope.selectPickupMode(i);
-									modeFound = true;
-									break;
-								}
-							}
-						}
-						if (!modeFound) {
-							scope.currentMode = null;
-							scope.delivery.modeId = null;
-							scope.delivery.modeTitle = null;
-							scope.delivery.address = null;
-							scope.delivery.isConfigured = false;
-							// Need to update cart to delete mode id ? Currently it's impossible to valid cart in status
-							if (scope.cart.shippingModes[scope.deliveryIndex].id != null &&
-								scope.cart.shippingModes[scope.deliveryIndex].id > 0) {
-								scope.cart.shippingModes[scope.deliveryIndex].id = null;
-								scope.cart.shippingModes[scope.deliveryIndex].title = null;
-								var postData = { shippingModes: scope.cart.shippingModes };
-								updateCart($http, scope, postData);
-							}
-						}
-					}
-				}
-
-				function setupConfigurationZone() {
-					var mode = scope.currentMode;
-
-					var linesContainer = element.find('.shipping-configuration-zone');
-					var collection = linesContainer.children();
+				this.replaceChildren = function(parentNode, scope, html) {
+					var collection = parentNode.children();
 					collection.each(function() {
 						var isolateScope = angular.element(this).isolateScope();
 						if (isolateScope) {
@@ -293,773 +100,136 @@
 						}
 					});
 					collection.remove();
-
-					var html = '<div';
-					if (mode.directiveName) {
-						if (scope.display.readonly)
-						{
-							mode.directiveName +='-readonly';
-						}
-						html += ' ' + mode.directiveName + '="" data-delivery="delivery"';
-					}
-					html += '></div>';
 					$compile(html)(scope, function (clone) {
-						linesContainer.append(clone);
+						parentNode.append(clone);
 					});
-				}
-
-				function loadCompatibleShippingModes(address, hasAddress) {
-					$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes',
-						{ lines: scope.lines, address: address, deliveryIndex: scope.deliveryIndex, hasAddress: hasAddress})
-						.success(function(data) {
-							if (hasAddress) {
-								scope.addressModes = data;
-							}
-							else {
-								scope.pickupModes = data;
-							}
-						})
-						.error(function(data, status, headers) {
-							console.log('rbsCommerceShippingModeSelector - GetCompatibleShippingModes error', data, status,
-								headers);
-						});
-				}
-
-				loadCompatibleShippingModes(scope.shippingAddress, true);
-				loadCompatibleShippingModes(scope.shippingAddress, false);
-
-				scope.selectAddressMode = function(index) {
-					var mode = scope.addressModes[index];
-					scope.currentMode = mode;
-					scope.delivery.modeId = mode.id;
-					scope.delivery.modeTitle = mode.title;
-					scope.delivery.address = scope.delivery.addressReference;
-					scope.delivery.isConfigured = true;
-					setupConfigurationZone();
 				};
 
-				scope.selectPickupMode = function(index) {
-					var mode = scope.pickupModes[index];
-					scope.currentMode = mode;
-					scope.delivery.modeId = mode.id;
-					scope.delivery.modeTitle = mode.title;
-					scope.delivery.address = null;
-					scope.delivery.isConfigured = false;
-					setupConfigurationZone();
+				this.redrawLines = function() {
+					var linesContainer = elem.find('[data-role="cart-lines"]');
+					var directiveName = angular.isFunction(this.getLineDirectiveName) ? this.getLineDirectiveName : function(line) {
+						return 'rbs-commerce-cart-line-default';
+					};
+					var lines = scope.cartData.lines;
+					var html = [];
+					angular.forEach(lines, function(line, idx){
+						html.push('<tr data-line="cartData.lines['+ idx +']" ' + directiveName(line) + '=""></tr>');
+					});
+					this.replaceChildren(linesContainer, scope, html.join(''));
 				};
 
-				scope.trustHtml = function(html) {
-					return $sce.trustAsHtml(html);
+				this.hasModifications = function() {
+					var modified = false;
+					angular.forEach(modifications, function(modification, key) {
+						if (modification) {
+							modified = true;
+						}
+					});
+					return modified;
 				};
 
-				scope.openEditShippingAddressForm = function() {
-					scope.editShippingAddress = true;
-					scope.shippingAddress.__name = '';
-					scope.isShippingAddressValid.value = true;
-					scope.delivery.underConfiguration = true;
-				};
-
-				scope.cancelShippingAddressForm = function() {
-					scope.editShippingAddress = false;
-					scope.shippingAddress = angular.copy(scope.delivery.addressReference);
-					scope.delivery.underConfiguration = false;
-				};
-
-				scope.loadShippingAddressInForm = function(address, goToNextStep) {
-					scope.shippingAddress = address;
-					if (goToNextStep)
-					{
-						scope.validShippingAddressForm();
+				this.setModification = function(key, modified) {
+					if (modified) {
+						modifications[key] = true;
+					} else {
+						delete modifications[key];
 					}
 				};
 
-				scope.addressCannotBeUsed = false;
+				scope.$watch('cartData', function(cartData, oldCartData) {
+						if (cartData) {
+							self.redrawLines();
+							scope.acceptTermsAndConditions = scope.cartData.context.acceptTermsAndConditions;
+						}
+					}
+				);
 
-				scope.addressCanBeUsed = function(address) {
-					/*
-					var bool = (address.countryCode == scope.shippingAddress.countryCode);
-					if (!bool) {
-						scope.addressCannotBeUsed = true;
+				var cacheKey = elem.attr('data-cache-key');
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+
+
+				var cartData = AjaxAPI.globalVar(cacheCartDataKey);
+
+				if (!cartData) {
+					this.loadCartData();
+				} else {
+					this.setCartData(cartData);
+				}
+			}],
+
+			link: function(scope, elem, attrs, controller) {
+				scope.showPrices = controller.showPrices();
+
+				scope.$watch('acceptTermsAndConditions', function(newValue, oldValue) {
+					if (newValue !== oldValue && angular.isDefined(newValue)) {
+						var actions = {
+							'updateContext': {
+								'acceptTermsAndConditions' : (newValue == true)
+							}
+						};
+						controller.updateCartData(actions);
+					}
+				});
+
+				scope.hasModifications = function () {
+					return controller.hasModifications();
+				};
+
+				scope.canOrder = function () {
+					var cartData = scope.cartData;
+					if (!cartData
+						|| !cartData.lines || !cartData.lines.length
+						|| !cartData.process || !cartData.process.orderProcessId || !cartData.process.validTaxBehavior
+						|| (cartData.common.errors && cartData.common.errors.length)
+						|| !cartData.context.acceptTermsAndConditions) {
 						return false;
 					}
-					*/
-					return true;
-				};
-
-				scope.hasAddressCannotBeUsed = function() {
-					return scope.addressCannotBeUsed;
-				};
-
-				scope.validShippingAddressForm = function() {
-					var callback = function() {
-						scope.delivery.underConfiguration = false;
-						scope.editShippingAddress = false;
-						scope.shippingAddress = angular.copy(scope.cart.shippingModes[scope.deliveryIndex].addressReference);
-						scope.delivery.addressReference = angular.copy(scope.shippingAddress);
-						scope.addressModes = loadCompatibleShippingModes(scope.shippingAddress, true);
-					};
-
-					var address = angular.copy(scope.shippingAddress);
-
-					if (scope.cart.userId && address.__name) {
-						scope.saveAddress(address, function(address) {
-							scope.cart.shippingModes[scope.deliveryIndex].addressReference = address;
-							updateCart($http, scope, {shippingModes: scope.cart.shippingModes}, callback);
-						});
-					} else {
-						scope.cart.shippingModes[scope.deliveryIndex].addressReference = address;
-						updateCart($http, scope, {shippingModes: scope.cart.shippingModes}, callback);
-					}
-				};
+					return !scope.hasModifications();
+				}
 			}
 		}
 	}
+	rbsCommerceCart.$inject = ['$rootScope', '$compile', 'RbsChange.AjaxAPI'];
+	app.directive('rbsCommerceCart', rbsCommerceCart);
 
-	rbsCommerceShippingModeSelector.$inject = ['$http', '$compile', '$sce'];
-	app.directive('rbsCommerceShippingModeSelector', rbsCommerceShippingModeSelector);
-
-	// A trivial directive for shipping mode without any configuration.
-	function rbsCommerceShippingModeConfigurationNone() {
+	function rbsCommerceCartLineDefault() {
 		return {
-			restrict: 'AE',
-			scope: false,
-			link: function(scope) {
-				scope.delivery.address = null;
-				scope.delivery.isConfigured = true;
-			}
-		}
-	}
-
-	app.directive('rbsCommerceShippingModeConfigurationNone', rbsCommerceShippingModeConfigurationNone);
-
-	// A directive to configure a shipping mode by selecting an address.
-	function rbsCommerceShippingModeConfigurationAddressReadonly() {
-		return {
-			restrict: 'AE',
-			scope: false,
-			templateUrl: '/shipping-mode-configuration-address.static.tpl',
-			link: function(scope) {
-			}
-		}
-	}
-
-	app.directive('rbsCommerceShippingModeConfigurationAddressReadonly', rbsCommerceShippingModeConfigurationAddressReadonly);
-
-	function rbsCommercePaymentConnectorSelector($http, $compile, $sce, $window) {
-		return {
-			restrict: 'AE',
-			scope: {
-				payment: '=',
-				cart: '='
-			},
-			templateUrl: '/payment-connector-selector.static.tpl',
-
-			link: function(scope, element) {
-				scope.connectors = [];
-				scope.selectedConnector = null;
-
-				var postParam = {transactionId: scope.payment.transaction.id};
-
-				if ($window.__change.navigationContext)
-				{
-					postParam.themeName = $window.__change.navigationContext.themeName;
+			restrict: 'A',
+			templateUrl: '/rbsCommerceCartLineDefault.tpl',
+			require: '^rbsCommerceCart',
+			replace: true,
+			scope: {line: "="},
+			link: function(scope, elem, attrs, cartController) {
+				scope.showPrices = cartController.showPrices();
+				scope.currencyCode = cartController.getCurrencyCode();
+				scope.parameters = cartController.parameters();
+				scope.quantity = scope.line.quantity;
+				if (!scope.line.unitBasedAmountWithTaxes && scope.line.basedAmountWithTaxes) {
+					scope.line.unitBasedAmountWithTaxes = (scope.line.basedAmountWithTaxes / scope.quantity);
+				}
+				if (!scope.line.unitBasedAmountWithoutTaxes && scope.line.basedAmountWithoutTaxes) {
+					scope.line.unitBasedAmountWithoutTaxes = (scope.line.basedAmountWithoutTaxes / scope.quantity);
 				}
 
-				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors', postParam)
-					.success(function(data) {
-						scope.connectors = data;
-						scope.payment.connectorId = null;
-						if (scope.connectors.length == 1) {
-							scope.selectConnector(0);
-						}
-					})
-					.error(function(data, status, headers) {
-						scope.payment.connectorId = null;
-						console.log('GetCompatiblePaymentConnectors error', data, status, headers);
-					});
-
-				scope.selectConnector = function(index) {
-					var connector = scope.connectors[index];
-					if (connector.id != scope.payment.connectorId) {
-						scope.selectedConnector = connector;
-						scope.payment.connectorId = connector.id;
-
-						var html = '<div class="configuration-zone"';
-						if (connector.directiveName) {
-							html += ' ' + connector.directiveName + '=""></div>';
-						}
-						else if (connector.html) {
-							html += '>' + connector.html + '</div>';
-						}
-						else {
-							html += '></div>';
-						}
-						element.find('.configuration-zone').replaceWith(html);
-						$compile(element.find('.configuration-zone'))(scope);
-					}
+				scope.updateQuantity = function() {
+					cartController.updateLineQuantity(scope.line.key, scope.quantity);
 				};
 
-				scope.trustHtml = function(html) {
-					return $sce.trustAsHtml(html);
+				scope.remove = function() {
+					cartController.updateLineQuantity(scope.line.key, 0);
+				};
+
+				scope.$watch('quantity', function(quantity) {
+					cartController.setModification('line_' + scope.line.key, quantity != scope.line.quantity)
+				});
+
+				scope.disabledQuantity = function() {
+					return (scope.quantity == scope.line.quantity && cartController.hasModifications());
 				};
 			}
 		}
 	}
 
-	rbsCommercePaymentConnectorSelector.$inject = ['$http', '$compile', '$sce', '$window'];
-	app.directive('rbsCommercePaymentConnectorSelector', rbsCommercePaymentConnectorSelector);
-
-	/**
-	 * Cart controller.
-	 */
-	function rbsCommerceCartController(scope, $http, $rootScope) {
-		scope.readonlyCart = false;
-		scope.cart = null;
-		scope.loading = false;
-		scope.acceptTermsAndConditions = false;
-		scope.originalQuantities = {};
-
-		function setCart(data) {
-			scope.loading = false;
-			scope.cart = data;
-			scope.acceptTermsAndConditions = scope.cart.context.acceptTermsAndConditions;
-			scope.originalQuantities = {};
-		}
-
-		function loadCurrentCart() {
-			scope.loading = true;
-			$http.post('Action/Rbs/Commerce/GetCurrentCart', { refresh: false })
-				.success(function(data) {
-					setCart(data);
-				})
-				.error(function(data, status, headers) {
-					console.log('GetCurrentCart error', data, status, headers);
-					setCart({});
-				}
-			);
-		}
-
-		scope.deleteLine = function(index) {
-			if (scope.cart.lines.length > index) {
-				scope.loading = true;
-				var line = scope.cart.lines[index];
-				updateCart($http, scope, {
-					lineQuantities: [
-						{ key: line.key, quantity: 0 }
-					]
-				}, function(data) {
-					$rootScope.$broadcast('rbsRefreshCart', { 'cart': data });
-					setCart(data);
-				});
-			}
-		};
-
-		scope.updateLine = function(index) {
-			if (scope.cart.lines[index].quantity != scope.originalQuantities.index) {
-				scope.loading = true;
-				var line = scope.cart.lines[index];
-				updateCart($http, scope, {
-					lineQuantities: [
-						{ key: line.key, quantity: line.quantity }
-					]
-				}, function(data) {
-					$rootScope.$broadcast('rbsRefreshCart', { 'cart': data });
-					setCart(data);
-				});
-			}
-		};
-
-		scope.canOrder = function() {
-			if (!scope.cart || !scope.cart.lines || scope.cart.lines.count < 1 || !scope.cart.orderProcess
-				|| scope.cart.errors.length || !scope.acceptTermsAndConditions) {
-				return false;
-			}
-			var result = true;
-			angular.forEach(scope.cart.lines, function(line, index) {
-				if (line.quantity != scope.originalQuantities[index]) {
-					result = false;
-				}
-			});
-			return result;
-		};
-
-		loadCurrentCart();
-
-		scope.$watch('acceptTermsAndConditions', function(newValue) {
-			if (scope.cart && newValue !== scope.cart.context.acceptTermsAndConditions) {
-				scope.loading = true;
-				updateCart($http, scope, { acceptTermsAndConditions: newValue }, function(data) {
-					$rootScope.$broadcast('rbsRefreshCart', { 'cart': data });
-					setCart(data);
-				})
-			}
-		})
-	}
-
-	rbsCommerceCartController.$inject = ['$scope', '$http', '$rootScope'];
-	app.controller('rbsCommerceCartController', rbsCommerceCartController);
-
-	/**
-	 * Order process controller.
-	 */
-	function rbsCommerceOrderProcessController(scope, $http, $rootScope) {
-		scope.readonlyCart = true;
-		scope.cart = null;
-		scope.loading = false;
-		scope.originalQuantities = {};
-		scope.information = { errors: [], authenticated: false, email: null };
-		scope.shipping = { errors: [], deliveries: [] };
-		scope.shippingZonesCode = [];
-		scope.payment = { errors: [], newCouponCode: null, transaction: null };
-		scope.currentStep = null;
-		scope.steps = ['cart', 'information', 'shipping', 'payment', 'confirm'];
-
-		$http.get('Action/Rbs/Commerce/GetShippingZonesCode')
-			.success(function(data) {
-				scope.shippingZonesCode = data;
-			})
-			.error(function(data, status, headers) {
-				console.log('GetShippingZones error', data, status, headers);
-			}
-		);
-
-		function setCart(data) {
-			scope.loading = false;
-			scope.cart = data;
-		}
-
-		function loadCurrentCart() {
-			scope.loading = true;
-			$http.post('Action/Rbs/Commerce/GetCurrentCart', { refresh: false })
-				.success(function(data) {
-					setCart(data);
-					scope.setCurrentStep('information');
-				})
-				.error(function(data, status, headers) {
-					console.log('GetCurrentCart error', data, status, headers);
-					setCart({});
-				}
-			);
-		}
-
-		function loadAddresses() {
-			$http.get('Action/Rbs/Geo/GetAddresses')
-				.success(function(data) {
-					scope.addresses = data;
-				})
-				.error(function(data, status, headers) {
-					console.log('GetAddresses error', data, status, headers);
-				}
-			);
-		}
-
-		loadAddresses();
-
-		scope.init = function(accessorId, confirmed) {
-			scope.accessorId = accessorId;
-			scope.confirmed = angular.fromJson(confirmed);
-		};
-
-		scope.clearErrors = function(stepName) {
-			scope[stepName].errors = [];
-		};
-
-		scope.addError = function(stepName, message) {
-			scope[stepName].errors.push(message);
-		};
-
-		scope.isStepEnabled = function(stepName) {
-			for (var i = 0; i < scope.steps.length; i++) {
-				if (scope.steps[i] == stepName) {
-					return true;
-				}
-				if (scope.steps[i] == scope.currentStep) {
-					return false;
-				}
-			}
-			return false;
-		};
-
-		scope.isStepChecked = function(stepName) {
-			for (var i = 0; i < scope.steps.length; i++) {
-				if (scope.steps[i] == scope.currentStep) {
-					return false;
-				}
-				if (scope.steps[i] == stepName) {
-					return true;
-				}
-			}
-			return false;
-		};
-
-		scope.setCurrentStep = function(stepName) {
-			scope.currentStep = stepName;
-			var methodName = 'prepare' + stepName.charAt(0).toUpperCase() + stepName.slice(1) + 'Step';
-			if (scope.hasOwnProperty(methodName)) {
-				scope[methodName]();
-			}
-		};
-
-		scope.isCurrentStep = function(stepName) {
-			return scope.currentStep == stepName;
-		};
-
-		scope.getNextStep = function() {
-			var currentIndex = 0;
-			for (var i = 0; i < scope.steps.length; i++) {
-				if (scope.steps[i] == scope.currentStep) {
-					currentIndex = i;
-					break;
-				}
-			}
-			if (currentIndex < scope.steps.length - 2) {
-				currentIndex++;
-			}
-			return scope.steps[currentIndex];
-		};
-
-		scope.hasInvalidAddresses = hasInvalidAddresses;
-		scope.isValidAddress = isValidAddress;
-		scope.applyAddress = applyAddress;
-
-		scope.prepareCartStep = function() {
-			scope.setCurrentStep(scope.getNextStep());
-		};
-
-		/**
-		 * Information step
-		 */
-		scope.prepareInformationStep = function() {
-			scope.payment.transaction = null;
-			scope.information.userId = scope.cart.userId;
-			scope.information.email = scope.cart.email;
-			scope.information.confirmEmail = scope.cart.email;
-			scope.information.address = getObject(scope.cart.address, true);
-
-			var i, useDefault = false;
-			if (!scope.information.address.hasOwnProperty('__addressFieldsId') && scope.addresses) {
-				for (i = 0; i < scope.addresses.length; i++) {
-					if (scope.addresses[i].default.billing == true) {
-						applyAddress(scope.information.address, scope.addresses[i]);
-						useDefault = true;
-						break;
-					}
-				}
-				if (!useDefault) {
-					for (i = 0; i < scope.addresses.length; i++) {
-						if (scope.addresses[i].default.default == true) {
-							applyAddress(scope.information.address, scope.addresses[i]);
-							useDefault = true;
-							break;
-						}
-					}
-				}
-			}
-
-			if (!scope.information.hasOwnProperty('isAddressValid')) {
-				scope.information.isAddressValid = false;
-			}
-			if (!scope.information.hasOwnProperty('name')) {
-				scope.information.name = '';
-			}
-		};
-
-		scope.setUserConfirmed = function() {
-			scope.information.userId = scope.accessorId;
-			var postData = { userId: scope.information.userId };
-			updateCart($http, scope, postData, scope.setAuthenticated);
-		};
-
-		scope.canAuthenticate = function() {
-			return scope.information.login && scope.information.password;
-		};
-
-		scope.authenticate = function() {
-			scope.clearErrors('information');
-			var postData = {
-				realm: scope.information.realm,
-				login: scope.information.login,
-				password: scope.information.password
-			};
-			$http.post('Action/Rbs/User/Login', postData)
-				.success(function(data) {
-					if (data.hasOwnProperty('accessorId')) {
-						var params = { 'accessorId': data['accessorId'], 'accessorName': data['name'] };
-						$rootScope.$broadcast('rbsUserConnected', params);
-
-						scope.information.guest = false;
-						scope.information.userId = data['accessorId'];
-						scope.confirmed = true;
-
-						loadAddresses();
-
-						var postData = { userId: scope.information.userId };
-						updateCart($http, scope, postData, scope.setAuthenticated);
-					}
-					else if (data.hasOwnProperty('errors')) {
-						for (var i = 0; i < data.errors.length; i++) {
-							scope.addError('information', data.errors[i]);
-						}
-					}
-					delete scope.information.password;
-				})
-				.error(function(data) {
-					for (var i = 0; i < data.errors.length; i++) {
-						scope.addError('information', data.errors[i]);
-					}
-					delete scope.information.password;
-				});
-		};
-
-		scope.logout = function() {
-			scope.clearErrors('information');
-			$http.post('Action/Rbs/User/Logout', { keepCart: true })
-				.success(function() {
-					scope.addresses = {};
-					window.location.reload();
-				})
-				.error(function(data, status, headers) { console.log('Logout error', data, status, headers); });
-		};
-
-		scope.canSetEmail = function() {
-			return scope.information.email && scope.information.email == scope.information.confirmEmail;
-		};
-
-		scope.setEmail = function() {
-			scope.clearErrors('information');
-
-			var postData = {
-				email: scope.information.email,
-				userId: 0
-			};
-
-			$http.post('Action/Rbs/User/CheckEmailAvailability', postData)
-				.success(function() {
-					scope.information.login = scope.information.password = null;
-					updateCart($http, scope, postData, scope.setAuthenticated);
-				})
-				.error(function(data) {
-					for (var i = 0; i < data.errors.length; i++) {
-						scope.addError('information', data.errors[i]);
-					}
-				});
-		};
-
-
-		scope.setAuthenticated = function() {
-			scope.information.authenticated = true;
-			scope.prepareInformationStep();
-
-			if (scope.cart.locked) {
-				for (var i = 1; i < scope.steps.length; i++) {
-					scope.setCurrentStep(scope.steps[i]);
-					if (scope.steps[i] == 'payment') {
-						break;
-					}
-				}
-			}
-		};
-
-		scope.unsetAuthenticated = function() {
-			scope.information.authenticated = false;
-			scope.prepareInformationStep();
-		};
-
-		scope.isAuthenticated = function() {
-			return scope.information.authenticated;
-		};
-
-		scope.isInformationStepComplete = function() {
-			return scope.information.email && scope.information.isAddressValid;
-		};
-
-		scope.finalizeInformationStep = function() {
-
-			var callback = function() {
-				scope.setCurrentStep(scope.getNextStep());
-			};
-
-			var address = scope.information.address;
-			if (scope.information.login && address.__name) {
-				scope.saveAddress(address, function(address) {
-					updateCart($http, scope, {address: address}, callback);
-				});
-			} else {
-				updateCart($http, scope, {address: address}, callback);
-			}
-		};
-
-		scope.clearAddress = function() {
-			scope.information.address.__name = '';
-			angular.forEach(scope.information.address, function(value, key) {
-				if (key != 'countryCode' && key != '__addressFieldsId') {
-					scope.information.address[key] = null;
-				}
-			});
-		};
-
-		scope.saveAddress = function(address, successAddCallback) {
-			var postData = {
-				name: address.__name,
-				fieldValues: address
-			};
-			$http.post('Action/Rbs/Geo/AddAddress', postData)
-				.success(function(data) {
-					scope.addresses = angular.copy(data);
-					var maxId = 0;
-					for (var i = 0; i < data.length; i++) {
-						if (data[i].fieldValues.__id && data[i].fieldValues.__id > maxId) {
-							maxId = data[i].fieldValues.__id;
-						}
-					}
-					if (maxId) {
-						address.__id = maxId;
-						delete address.__name;
-					}
-					if (angular.isFunction(successAddCallback)) {
-						successAddCallback(address);
-					}
-				})
-				.error(function(data, status, headers) {
-					console.log('Add Address error', data, status, headers);
-				});
-		};
-
-		/**
-		 * Shipping step
-		 */
-		scope.prepareShippingStep = function() {
-			scope.payment.transaction = null;
-			scope.shipping.deliveries = [];
-			scope.setShippingDeliveries();
-
-			if (scope.shipping.deliveries.length == 0) {
-				// TODO: handle forced shipping modes.
-				var defaultDelivery = { lines: [], address: {}, addressReference: {}, options: {} };
-				for (var i = 0; i < scope.cart.lines.length; i++) {
-					defaultDelivery.lines.push(scope.cart.lines[i]);
-				}
-				scope.shipping.deliveries.push(defaultDelivery);
-
-				scope.cart.shippingModes[0] = {};
-			}
-		};
-
-		scope.isShippingStepComplete = function() {
-			for (var i = 0; i < scope.shipping.deliveries.length; i++) {
-				if (!scope.shipping.deliveries[i].isConfigured || scope.shipping.deliveries[i].underConfiguration) {
-					return false;
-				}
-			}
-			return true;
-		};
-
-		scope.setShippingDeliveries = function() {
-			var i, j, k;
-			scope.shipping.deliveries = [];
-			if ('shippingModes' in scope.cart && angular.isArray(scope.cart.shippingModes)) {
-				for (i = 0; i < scope.cart.shippingModes.length; i++) {
-					var cartDelivery = scope.cart.shippingModes[i];
-					var delivery = {
-						modeId: cartDelivery.id,
-						modeTitle: cartDelivery.title,
-						lines: [],
-						address: getObject(cartDelivery.address, true),
-						addressReference: getObject(cartDelivery.addressReference, true),
-						options: getObject(cartDelivery.options, true)
-					};
-
-
-					if (cartDelivery.lineKeys) {
-						for (j = 0; j < cartDelivery.lineKeys.length; j++) {
-							var key = cartDelivery.lineKeys[j];
-							for (k = 0; k < scope.cart.lines.length; k++) {
-								if (key == scope.cart.lines[k].key) {
-									delivery.lines.push(scope.cart.lines[k]);
-								}
-							}
-						}
-					}
-
-					scope.shipping.deliveries.push(delivery);
-				}
-			}
-		};
-
-		scope.finalizeShippingStep = function() {
-			scope.cart.shippingModes = [];
-			for (var i = 0; i < scope.shipping.deliveries.length; i++) {
-				var delivery = scope.shipping.deliveries[i];
-				var lineKeys = [];
-				for (var j = 0; j < delivery.lines.length; j++) {
-					lineKeys.push(delivery.lines[j].key);
-				}
-
-				scope.cart.shippingModes.push({
-					id: delivery.modeId,
-					title: delivery.modeTitle,
-					lineKeys: lineKeys,
-					address: delivery.address,
-					addressReference: delivery.addressReference,
-					options: delivery.options
-				});
-			}
-
-			var postData = { shippingModes: scope.cart.shippingModes };
-			updateCart($http, scope, postData, function() {
-				scope.setShippingDeliveries();
-				scope.setCurrentStep(scope.getNextStep());
-			});
-		};
-
-		/**
-		 * Payment step
-		 */
-		scope.preparePaymentStep = function() {
-			scope.payment.transaction = null;
-			scope.payment.coupons = scope.cart.coupons;
-		};
-
-		scope.addCoupon = function() {
-			scope.payment.coupons.push({ 'code': scope.payment.newCouponCode });
-			scope.payment.newCouponCode = null;
-			updateCart($http, scope, { coupons: scope.payment.coupons }, function() { scope.setCurrentStep('payment'); });
-		};
-
-		scope.removeCoupon = function(index) {
-			scope.payment.coupons.splice(index, 1);
-			updateCart($http, scope, { coupons: scope.payment.coupons }, function() { scope.setCurrentStep('payment'); });
-		};
-
-		scope.hasTransaction = function() {
-			return scope.payment.transaction;
-		};
-
-		scope.getTransaction = function() {
-			scope.clearErrors('payment');
-			$http.get('Action/Rbs/Commerce/GetTransaction')
-				.success(function(transaction) {
-					if (angular.isObject(transaction)) {
-						scope.payment.transaction = transaction;
-					}
-					else {
-						scope.addError('payment', transaction);
-					}
-				})
-				.error(function(data, status, headers) { console.log('GetTransaction error', data, status, headers); });
-		};
-
-		scope.showLinesAmount = function() {
-			return scope.cart && (scope.cart.fees.length > 0 || scope.cart.discounts.length > 0);
-		};
-
-		scope.showTotalAmount = function() {
-			return scope.cart && (scope.cart.creditNotes.length > 0);
-		};
-
-		loadCurrentCart();
-	}
-
-	rbsCommerceOrderProcessController.$inject = ['$scope', '$http', '$rootScope'];
-	app.controller('rbsCommerceOrderProcessController', rbsCommerceOrderProcessController);
+	rbsCommerceCartLineDefault.$inject = [];
+	app.directive('rbsCommerceCartLineDefault', rbsCommerceCartLineDefault);
 })();

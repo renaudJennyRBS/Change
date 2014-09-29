@@ -37,8 +37,6 @@ class EditAccount extends \Change\Http\Web\Actions\AbstractAjaxAction
 			if ($currentUser->getId() != null)
 			{
 				$profile = $profileManager->loadProfile($currentUser, $key);
-				$event->getApplicationServices()->getLogging()->fatal(get_class($profile));
-				$event->getApplicationServices()->getLogging()->fatal($profile->getName());
 				if (isset($data['firstName']))
 				{
 					$profile->setPropertyValue('firstName', $data['firstName']);

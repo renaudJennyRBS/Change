@@ -1,6 +1,6 @@
-{% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
-{% set listFormat = {'maxWidth': 160, 'maxHeight' : 120}  %}
-{% set pictogramFormat = {'maxWidth': 60, 'maxHeight' : 45}  %}
+{% block productDirectives %}
+	{% include 'Rbs_Catalog/product-directives.twig' %}
+{% endblock %}
 
 {% if unauthorized %}
 	<p>{{ i18n('m.rbs.wishlist.front.wishlist_detail_unauthorized') }}</p>
@@ -65,10 +65,11 @@
 			</div>
 		{% endif %}
 		{% if rows | length > 0 %}
+			{% block productList %}
 			<div class="row product-list">
 				{% for row in rows %}
 					<div class="col-sm-6 col-lg-4">
-						{% include 'Rbs_Catalog/product-list-item.twig' %}
+						{% include 'Rbs_Catalog/product-list-item.twig' with {'productData': row} %}
 						<div class="product-list-selector">
 							<label>
 								<input type="checkbox" data-ng-model="selectedProducts.{{ row.id }}" />
@@ -80,6 +81,7 @@
 					{% if loop.index % 2 == 0 %}<div class="clearfix visible-sm-block visible-md-block standard-margin"></div>{% endif %}
 				{% endfor %}
 			</div>
+			{% endblock %}
 		{% else %}
 			<p>{{ i18n('m.rbs.wishlist.front.wishlist_no_products_in_wishlist', ['ucf']) }}</p>
 		{% endif %}
@@ -123,5 +125,3 @@
 		<div class="hidden" data-ng-init="wishlistListUrl = '{{ functionURL('Rbs_Wishlist_WishlistList') }}'"
 	</div>
 {% endif %}
-
-{% include 'Rbs_Catalog/product-added-to-cart-popin.twig' %}

@@ -8,7 +8,7 @@
 	"webstore_pricesvaluewithtax":{
 		"message":"saisie TTC des prix"
 	},
-	"webstore_displayprices":{
+	"webstore_displaypriceswithouttax":{
 		"message":"afficher les prix HT"
 	},
 	"webstore_displaypriceswithtax":{
@@ -16,5 +16,8 @@
 	},
 	"webstore_orderprocess":{
 		"message":"processus de commande"
+	},
+	"webstore_favoritewebsiteid":{
+		"message":"site web favoris"
 	}
 }

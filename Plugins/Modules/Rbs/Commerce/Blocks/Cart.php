@@ -17,6 +17,8 @@ use Change\Presentation\Blocks\Standard\Block;
  */
 class Cart extends Block
 {
+	use Traits\ContextParameters;
+
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -28,38 +30,30 @@ class Cart extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('cartIdentifier');
-		$parameters->addParameterMeta('displayPrices');
-		$parameters->addParameterMeta('displayPricesWithTax');
-
+		$parameters->addParameterMeta('imageFormats', 'cartItem,detailThumbnail');
+		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		if ($parameters->getParameter('cartIdentifier') === null)
+		$cartIdentifier = $commerceServices->getContext()->getCartIdentifier();
+		if ($cartIdentifier !== null)
 		{
-			$parameters->setParameterValue('cartIdentifier', $commerceServices->getContext()->getCartIdentifier());
-		}
-
-		if ($parameters->getParameter('cartIdentifier') !== null)
-		{
-			$cart = $commerceServices->getCartManager()->getCartByIdentifier($parameters->getParameter('cartIdentifier'));
+			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
 			if (!$cart)
 			{
-				$parameters->setParameterValue('cartIdentifier', null);
+				$cartIdentifier = null;
 			}
-			elseif ($parameters->getParameter('displayPrices') === null)
+			else
 			{
 				$documentManager = $event->getApplicationServices()->getDocumentManager();
+				/** @var \Rbs\Store\Documents\WebStore $webStore */
 				$webStore = $documentManager->getDocumentInstance($cart->getWebStoreId());
-				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
-				{
-					$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
-					$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
-				}
+				$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(), $parameters );
 			}
 		}
-
+		$parameters->setParameterValue('cartIdentifier', $cartIdentifier);
 		return $parameters;
 	}
 
@@ -77,13 +71,28 @@ class Cart extends Block
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
-			if ($cart && !$cart->isEmpty())
-			{
-				$attributes['cart'] = $cart;
-				return 'cart.twig';
-			}
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+			$context->setWebsite($event->getParam('website'));
+			$cartData = $commerceServices->getCartManager()->getCartData($cartIdentifier, $context->toArray());
+			$attributes['cartData'] = $cartData;
 		}
-		return 'cart-undefined.twig';
+		return 'cart.twig';
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param Parameters $parameters
+	 * @return \Change\Http\Ajax\V1\Context
+	 */
+	protected function populateContext($application, $documentManager, $parameters)
+	{
+		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
+		$context->setDetailed(true);
+		$context->setVisualFormats($parameters->getParameter('imageFormats'));
+		$context->setURLFormats(['canonical']);
+		$context->setDetailed(true);
+		return $context;
 	}
 }

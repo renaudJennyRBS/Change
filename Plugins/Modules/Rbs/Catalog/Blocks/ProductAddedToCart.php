@@ -8,11 +8,15 @@
  */
 namespace Rbs\Catalog\Blocks;
 
+use Change\Presentation\Blocks\Parameters;
+
 /**
  * @name \Rbs\Catalog\Blocks\ProductAddedToCart
  */
 class ProductAddedToCart extends \Change\Presentation\Blocks\Standard\Block
 {
+	use \Rbs\Commerce\Blocks\Traits\ContextParameters;
+
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -24,31 +28,23 @@ class ProductAddedToCart extends \Change\Presentation\Blocks\Standard\Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		$parameters->addParameterMeta('webStoreId');
-		$parameters->addParameterMeta('displayPrices');
-		$parameters->addParameterMeta('displayPricesWithTax');
-
+		$parameters->addParameterMeta('imageFormats', 'listItem');
 		$parameters->setLayoutParameters($event->getBlockLayout());
+
+		$this->initCommerceContextParameters($parameters);
 		$this->setParameterValueForDetailBlock($parameters, $event);
+
+		$parameters->addParameterMeta('pageId', null);
+
+		$page = $event->getParam('page');
+		if ($page instanceof \Rbs\Website\Documents\Page)
+		{
+			$parameters->setParameterValue('pageId', $page->getId());
+		}
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		$webStore = $commerceServices->getContext()->getWebStore();
-		if ($webStore)
-		{
-			$parameters->setParameterValue('webStoreId', $webStore->getId());
-			if ($parameters->getParameter('displayPrices') === null)
-			{
-				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
-				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
-			}
-		}
-		else
-		{
-			$parameters->setParameterValue('webStoreId', 0);
-			$parameters->setParameterValue('displayPrices', false);
-			$parameters->setParameterValue('displayPricesWithTax', false);
-		}
+		$this->setCommerceContextParameters($commerceServices->getContext(), $parameters);
 		return $parameters;
 	}
 
@@ -79,19 +75,35 @@ class ProductAddedToCart extends \Change\Presentation\Blocks\Standard\Block
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
+			$catalogManager = $commerceServices->getCatalogManager();
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
-			/* @var $product \Rbs\Catalog\Documents\Product */
-			$product = $documentManager->getDocumentInstance($productId);
-			if ($product instanceof \Rbs\Catalog\Documents\Product)
-			{
-				$options = [ 'urlManager' => $event->getUrlManager() ];
-				$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
-				$productPresentation->evaluate();
-				$attributes['productPresentation'] = $productPresentation;
-				return 'product-added-to-cart.twig';
-			}
+			$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+			$productData = $catalogManager->getProductData($productId, $context->toArray());
+
+			$attributes['productData'] = $productData;
+			return 'product-added-to-cart.twig';
+
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param Parameters $parameters
+	 * @return \Change\Http\Ajax\V1\Context
+	 */
+	protected function populateContext($application, $documentManager, $parameters)
+	{
+		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
+		$context->setDetailed(false);
+		$context->setVisualFormats($parameters->getParameter('imageFormats'));
+		$context->setPage($parameters->getParameter('pageId'));
+
+		$context->addData('webStoreId', $parameters->getParameter('webStoreId'));
+		$context->addData('billingAreaId', $parameters->getParameter('billingAreaId'));
+		$context->addData('zone', $parameters->getParameter('zone'));
+		return $context;
 	}
 } 

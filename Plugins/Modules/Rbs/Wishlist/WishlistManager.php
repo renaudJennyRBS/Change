@@ -264,7 +264,7 @@ class WishlistManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		catch (\Exception $e)
 		{
-			$applicationServices->getLogging()->fatal($e);
+			$applicationServices->getLogging()->exception($e);
 			$applicationServices->getDocumentManager()->popLCID();
 		}
 		return null;

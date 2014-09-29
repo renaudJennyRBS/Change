@@ -28,6 +28,7 @@ class SelectWebStore extends \Change\Http\Web\Actions\AbstractAjaxAction
 		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
+
 			/** @var $webStore \Rbs\Store\Documents\WebStore */
 			$webStore = isset($data['webStoreId']) ? $documentManager->getDocumentInstance($data['webStoreId']) : null;
 			/** @var $billingArea \Rbs\Price\Documents\BillingArea */
@@ -61,7 +62,12 @@ class SelectWebStore extends \Change\Http\Web\Actions\AbstractAjaxAction
 				}
 
 				$context->save();
-
+				$cartManager = $commerceServices->getCartManager();
+				$cartIdentifier = $context->getCartIdentifier();
+				if ($cartIdentifier)
+				{
+					$this->updateCart($cartManager, $cartIdentifier, $webStore, $billingArea, $zone);
+				}
 				$event->setResult($this->getNewAjaxResult());
 				return;
 			}
@@ -73,6 +79,10 @@ class SelectWebStore extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_409);
 		$event->setResult($result);
 	}
+
+
+
+
 	/**
 	 * @param \Rbs\Store\Documents\WebStore $webStore
 	 * @param \Rbs\Price\Documents\BillingArea $billingArea
@@ -89,5 +99,32 @@ class SelectWebStore extends \Change\Http\Web\Actions\AbstractAjaxAction
 			return false;
 		}
 		return in_array($billingArea->getId(), $webStore->getBillingAreas()->getIds());
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\CartManager $cartManager
+	 * @param string $cartIdentifier
+	 * @param \Rbs\Store\Documents\WebStore|null $webStore
+	 * @param \Rbs\Price\Documents\BillingArea|null $billingArea
+	 * @param string|null $zone
+	 */
+	protected function updateCart($cartManager, $cartIdentifier, $webStore, $billingArea, $zone)
+	{
+		$cart = $cartManager->getCartByIdentifier($cartIdentifier);
+		if ($cart && !$cart->isLocked())
+		{
+			if ($webStore && $webStore->getId() != $cart->getWebStoreId())
+			{
+				$cart->setWebStoreId($webStore->getId());
+			}
+
+			if ($zone && $cart->getZone() != $zone)
+			{
+				$cart->setZone($zone);
+				$cart->setBillingArea($billingArea);
+				$cartManager->normalize($cart);
+				$cartManager->saveCart($cart);
+			}
+		}
 	}
 }

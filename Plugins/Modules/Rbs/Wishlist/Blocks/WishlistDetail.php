@@ -35,6 +35,16 @@ class WishlistDetail extends Block
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
 
+		$parameters->addParameterMeta('displayPricesWithoutTax');
+		$parameters->addParameterMeta('displayPricesWithTax');
+		$parameters->addParameterMeta('imageFormats', 'listItem,pictogram');
+
+		$parameters->addParameterMeta('userId');
+
+		$parameters->addParameterMeta('webStoreId');
+		$parameters->addParameterMeta('billingAreaId');
+		$parameters->addParameterMeta('zone');
+
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		if ($user->authenticated())
 		{
@@ -49,16 +59,30 @@ class WishlistDetail extends Block
 		if ($webStore)
 		{
 			$parameters->setParameterValue('webStoreId', $webStore->getId());
-			if ($parameters->getParameter('displayPrices') === null)
+			if ($parameters->getParameter('displayPricesWithoutTax') === null)
 			{
-				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+				$parameters->setParameterValue('displayPricesWithoutTax', $webStore->getDisplayPricesWithoutTax());
 				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
+			}
+
+			$billingArea = $commerceServices->getContext()->getBillingArea();
+			if ($billingArea)
+			{
+				$parameters->setParameterValue('billingAreaId', $billingArea->getId());
+			}
+
+			$zone = $commerceServices->getContext()->getZone();
+			if ($zone)
+			{
+				$parameters->setParameterValue('zone', $zone);
 			}
 		}
 		else
 		{
 			$parameters->setParameterValue('webStoreId', 0);
-			$parameters->setParameterValue('displayPrices', false);
+			$parameters->setParameterValue('billingAreaId', 0);
+			$parameters->setParameterValue('zone', null);
+			$parameters->setParameterValue('displayPricesWithoutTax', false);
 			$parameters->setParameterValue('displayPricesWithTax', false);
 		}
 
@@ -87,8 +111,9 @@ class WishlistDetail extends Block
 	{
 		$parameters = $event->getBlockParameters();
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		/* @var $wishlist \Rbs\Wishlist\Documents\Wishlist */
-		$wishlist = $documentManager->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
+
+		/* @var $wishList \Rbs\Wishlist\Documents\Wishlist */
+		$wishList = $documentManager->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
 
 		$commerceServices = $event->getServices('commerceServices');
 		if (!$commerceServices instanceof \Rbs\Commerce\CommerceServices)
@@ -96,40 +121,51 @@ class WishlistDetail extends Block
 			return null;
 		}
 
-		$isUserWishlist = $wishlist->getUserId() == $parameters->getParameterValue('userId');
-		if (!$wishlist->getPublic() && !$isUserWishlist)
+		$isUserWishList = $wishList->getUserId() == $parameters->getParameterValue('userId');
+		if (!$wishList->getPublic() && !$isUserWishList)
 		{
 			$attributes['unauthorized'] = true;
 			return 'wishlist-detail.twig';
 		}
 
-		if ($wishlist)
+		if ($wishList)
 		{
-			$rows = array();
-			foreach ($wishlist->getProducts() as $product)
+			$urlManager = $event->getUrlManager();
+			$context = new \Change\Http\Ajax\V1\Context($event->getApplication(), $documentManager);
+			if ($urlManager instanceof \Change\Http\Web\UrlManager)
 			{
-				$url = $event->getUrlManager()->getCanonicalByDocument($product)->normalize()->toString();
-				$row = array('id' => $product->getId(), 'url' => $url);
+				$context->setWebsiteUrlManager($urlManager);
+				$context->setWebsite($urlManager->getWebsite());
+				$context->setURLFormats('canonical');
+			}
 
-				$options = [ 'urlManager' => $event->getUrlManager() ];
-				$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($product, $options);
-				if ($productPresentation)
+			$context->setDetailed(false);
+			$context->setVisualFormats($parameters->getParameter('imageFormats'));
+			$context->addData('webStoreId', $parameters->getParameter('webStoreId'));
+			$context->addData('billingAreaId', $parameters->getParameter('billingAreaId'));
+			$context->addData('zone', $parameters->getParameter('zone'));
+
+			$catalogManager = $commerceServices->getCatalogManager();
+			$contextArray = $context->toArray();
+
+			$rows = array();
+			foreach ($wishList->getProducts() as $product)
+			{
+				$productData = $catalogManager->getProductData($product, $contextArray);
+				if ($productData)
 				{
-					$productPresentation->evaluate();
-					$row['productPresentation'] = $productPresentation;
+					$rows[] = $productData;
 				}
-
-				$rows[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($documentManager);
 			}
 			$attributes['rows'] = $rows;
-			$attributes['productCountWarning'] = $this->getProductCountWarning($wishlist);
-			$attributes['isUserWishlist'] = $isUserWishlist;
+			$attributes['productCountWarning'] = $this->getProductCountWarning($wishList);
+			$attributes['isUserWishlist'] = $isUserWishList;
 			$attributes['data'] = [
-				'userId' => $wishlist->getUserId(),
-				'wishlistId' => $wishlist->getId(),
-				'title' => $wishlist->getTitle(),
-				'productIds' => $wishlist->getProductsIds(),
-				'public' => $wishlist
+				'userId' => $wishList->getUserId(),
+				'wishlistId' => $wishList->getId(),
+				'title' => $wishList->getTitle(),
+				'productIds' => $wishList->getProductsIds(),
+				'public' => $wishList
 			];
 			return 'wishlist-detail.twig';
 		}

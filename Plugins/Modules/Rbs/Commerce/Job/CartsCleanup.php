@@ -14,7 +14,7 @@ class CartsCleanup
 {
 	public function execute(\Change\Job\Event $event)
 	{
-		$reportedAtSecondes = 20 * 60;
+		$reportedAtSeconds = 20 * 60;
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -22,25 +22,14 @@ class CartsCleanup
 		{
 			$cartManager = $commerceServices->getCartManager();
 			$ttl = $commerceServices->getCartManager()->getCleanupTTL();
-			$reportedAtSecondes = max(60, intval($ttl / 3));
+			$reportedAtSeconds = max(60, intval($ttl / 3));
 
 
 			$lastUpdate = (new \DateTime())->sub(new \DateInterval('PT' . $ttl . 'S'));
 
 			$dbProvider = $event->getApplicationServices()->getDbProvider();
 
-
-			$upqb = $dbProvider->getNewQueryBuilder();
-			$fb = $upqb->getFragmentBuilder();
-			$profileTable = $fb->getDocumentTable('Rbs_Commerce_Profile');
-
-			$upqb->select($fb->getDocumentColumn('id'))
-				->from($profileTable)
-				->where(
-					$fb->eq($fb->column('lastcartidentifier'), $fb->column('identifier', 'rbs_commerce_dat_cart'))
-				);
-			$storedCart = $upqb->query();
-
+			//Remove cart
 			$qb = $dbProvider->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->select($fb->column('identifier'));
@@ -48,13 +37,14 @@ class CartsCleanup
 			$qb->where($fb->logicAnd(
 					$fb->lte($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate')),
 					$fb->eq($fb->column('processing'), $fb->booleanParameter('processing')),
-					$fb->notExists($storedCart)
+					$fb->eq($fb->column('user_id'), $fb->integerParameter('userId'))
 				)
 			);
 
 			$sq = $qb->query();
 			$sq->bindParameter('lastUpdate', $lastUpdate);
 			$sq->bindParameter('processing', false);
+			$sq->bindParameter('userId', 0);
 
 			$identifiers = $sq->getResults($sq->getRowsConverter()->addStrCol('identifier')->singleColumn('identifier'));
 			foreach ($identifiers as $identifier)
@@ -66,19 +56,15 @@ class CartsCleanup
 				}
 			}
 
+			//Remove reservations of autheticated user
 			$qb = $dbProvider->getNewQueryBuilder();
 			$fb = $qb->getFragmentBuilder();
 			$qb->select($fb->column('identifier'));
 			$qb->from($fb->table('rbs_commerce_dat_cart'));
-			$qb->innerJoin($profileTable,
-				$fb->logicAnd(
-					$fb->eq($fb->column('lastcartidentifier', $profileTable), $fb->column('identifier', 'rbs_commerce_dat_cart'))
-				));
 			$qb->innerJoin($fb->table('rbs_stock_dat_res'),
 				$fb->logicAnd(
 					$fb->eq($fb->column('target', 'rbs_stock_dat_res'), $fb->column('identifier', 'rbs_commerce_dat_cart'))
 				));
-
 			$qb->where(
 				$fb->logicAnd(
 					$fb->lte($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate')),
@@ -106,7 +92,7 @@ class CartsCleanup
 		}
 
 		$reportedAt = new \DateTime();
-		$reportedAt->add(new \DateInterval('PT' . $reportedAtSecondes . 'S'));
+		$reportedAt->add(new \DateInterval('PT' . $reportedAtSeconds . 'S'));
 		$event->reported($reportedAt);
 	}
 } 

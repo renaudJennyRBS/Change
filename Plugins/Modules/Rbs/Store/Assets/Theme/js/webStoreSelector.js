@@ -2,51 +2,87 @@
 	"use strict";
 	var app = angular.module('RbsChangeApp');
 
-	function rbsStoreWebStoreSelectorInit($http) {
+	function rbsStoreWebStoreSelectorInit(AjaxAPI) {
 		return {
+			templateUrl: '/rbsStoreWebStoreSelectorInit.tpl',
 			restrict : 'A',
+			scope: {},
 			link : function (scope, elm, attrs) {
-				scope.selection = { webStoreId: parseInt(attrs.webStoreId, 10), billingAreaId: parseInt(attrs.billingAreaId, 10), zone: attrs.zone };
-				scope.webStoreData = angular.fromJson(attrs.webStoreData);
+				var cacheKey = attrs['cacheKey'];
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
 
-				scope.billingAreaData = {};
-				scope.zoneData = null;
+				var data = AjaxAPI.globalVar(cacheKey);
+				scope.webStoreData = data.webStores;
+				scope.originalSelection = angular.copy(data.common);
+				scope.selection = data.common;
 
-				scope.$watch('selection.webStoreId', function() {
-					if (scope.selection.webStoreId)
-					{
-						for (var i = 0; i < scope.webStoreData.length; i++)
-						{
-							var store = scope.webStoreData[i];
-							if (store.id == scope.selection.webStoreId)
-							{
-								scope.billingAreaData = store.billingAreas;
+				function buildSelection(selection) {
+					scope.billingAreaData = [];
+					scope.zoneData = [];
+					if (selection) {
+						if (scope.webStoreData.length == 1) {
+							selection.webStoreId = scope.webStoreData[0].common.id;
+						}
+
+						if (selection.webStoreId) {
+							var validWebStoreId = false;
+							for (var i = 0; i < scope.webStoreData.length; i++) {
+								var store = scope.webStoreData[i];
+								if (store.common.id == selection.webStoreId) {
+									validWebStoreId = true;
+									scope.billingAreaData = store.billingAreas;
+									if (store.billingAreas.length == 1) {
+										selection.billingAreaId = store.billingAreas[0].common.id;
+									}
+									if (selection.billingAreaId) {
+										var validBillingAreaId = false;
+										for (var j = 0; j < store.billingAreas.length; j++) {
+											var area = store.billingAreas[j];
+											if (area.common.id == selection.billingAreaId) {
+												validBillingAreaId = true;
+												scope.zoneData = area.zones;
+												if (area.zones.length == 1) {
+													selection.zone = area.zones[0];
+												}
+												var validZone = false;
+												for (var k = 0; k < area.zones.length; k++) {
+													if (selection.zone == area.zones[k].common.code) {
+														validZone = true;
+													}
+												}
+												if (!validZone) {
+													selection.zone = null;
+												}
+											}
+										}
+										if (!validBillingAreaId) {
+											selection.billingAreaId = 0;
+										}
+									}
+								}
+							}
+							if (!validWebStoreId) {
+								selection.webStoreId = 0;
 							}
 						}
 					}
-				});
+				}
 
-				scope.$watch('selection.billingAreaId', function() {
-					if (scope.selection.billingAreaId)
-					{
-						for (var i = 0; i < scope.billingAreaData.length; i++)
-						{
-							var area = scope.billingAreaData[i];
-							if (area.id == scope.selection.billingAreaId)
-							{
-								scope.zoneData = area.zones;
-							}
-						}
-					}
-				});
+				buildSelection(scope.selection, true);
+
+				scope.$watch('selection', function(selection) {
+					buildSelection(selection, false);
+				}, true);
 
 				scope.canSubmit = function() {
-					return (scope.selection.webStoreId !== null && scope.selection.billingAreaId !== null && scope.selection.zone !== null);
+					return (scope.selection.webStoreId != scope.originalSelection.webStoreId ||
+					scope.selection.billingAreaId != scope.originalSelection.billingAreaId ||
+					scope.selection.zone != scope.originalSelection.zone);
 				};
 
 				scope.submit = function() {
-					$http.post('Action/Rbs/Store/SelectWebStore', scope.selection )
-						.success (function() {
+					AjaxAPI.putData('Rbs/Commerce/Context', scope.selection)
+						.success (function(data) {
 							window.location.reload();
 						})
 						.error(function(data, status, headers) {
@@ -54,28 +90,20 @@
 						});
 				};
 
-				if (scope.webStoreData.length == 1) {
-					scope.selection.webStoreId = scope.webStoreData[0].id;
-
-					if (scope.webStoreData[0].billingAreas.length == 1) {
-						scope.selection.billingAreaId = scope.webStoreData[0].billingAreas[0].id;
-
-						if (scope.webStoreData[0].billingAreas[0].zones.length == 1)
-						{
-							scope.selection.zone = scope.webStoreData[0].billingAreas[0].zones[0];
-						}
-
-						if (scope.selection.webStoreId != attrs.webStoreId
-							|| scope.selection.billingAreaId != attrs.billingAreaId
-							|| scope.selection.zone != attrs.zone)
-						{
-							scope.submit();
-						}
+				scope.show = scope.webStoreData.length > 1;
+				angular.forEach(scope.webStoreData, function(store) {
+					if (store.billingAreas.length > 1) {
+						scope.show = true;
 					}
-				}
+					angular.forEach(store.billingAreas, function(billingArea) {
+						if (billingArea.zones.length > 1) {
+							scope.show = true;
+						}
+					})
+				})
 			}
 		}
 	}
-	rbsStoreWebStoreSelectorInit.$inject = ['$http'];
+	rbsStoreWebStoreSelectorInit.$inject = ['RbsChange.AjaxAPI'];
 	app.directive('rbsStoreWebStoreSelectorInit', rbsStoreWebStoreSelectorInit);
 })();

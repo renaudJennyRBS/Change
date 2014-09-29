@@ -91,7 +91,7 @@ class Cart implements \Serializable
 	/**
 	 * @var float|null
 	 */
-	protected $linesAmount;
+	protected $linesAmountWithoutTaxes;
 
 	/**
 	 * @var \Rbs\Price\Tax\TaxApplication[]
@@ -136,7 +136,7 @@ class Cart implements \Serializable
 	/**
 	 * @var float|null
 	 */
-	protected $totalAmount;
+	protected $totalAmountWithoutTaxes;
 
 	/**
 	 * @var \Rbs\Price\Tax\TaxApplication[]
@@ -156,7 +156,7 @@ class Cart implements \Serializable
 	/**
 	 * @var float|null
 	 */
-	protected $paymentAmountWithTaxes;
+	protected $paymentAmount;
 
 	/**
 	 * @var array|null
@@ -665,6 +665,7 @@ class Cart implements \Serializable
 		return $line;
 	}
 
+
 	/**
 	 * @return \Rbs\Price\Tax\TaxInterface[]
 	 */
@@ -679,21 +680,21 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @param float|null $linesAmount
+	 * @param float|null $linesAmountWithoutTaxes
 	 * @return $this
 	 */
-	public function setLinesAmount($linesAmount)
+	public function setLinesAmountWithoutTaxes($linesAmountWithoutTaxes)
 	{
-		$this->linesAmount = $linesAmount;
+		$this->linesAmountWithoutTaxes = $linesAmountWithoutTaxes;
 		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getLinesAmount()
+	public function getLinesAmountWithoutTaxes()
 	{
-		return $this->linesAmount;
+		return $this->linesAmountWithoutTaxes;
 	}
 
 	/**
@@ -733,22 +734,24 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @param float|null $totalAmount
+	 * @param float|null $totalAmountWithoutTaxes
 	 * @return $this
 	 */
-	public function setTotalAmount($totalAmount)
+	public function setTotalAmountWithoutTaxes($totalAmountWithoutTaxes)
 	{
-		$this->totalAmount = $totalAmount;
+		$this->totalAmountWithoutTaxes = $totalAmountWithoutTaxes;
 		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getTotalAmount()
+	public function getTotalAmountWithoutTaxes()
 	{
-		return $this->totalAmount;
+		return $this->totalAmountWithoutTaxes;
 	}
+
+
 
 	/**
 	 * @param \Rbs\Price\Tax\TaxApplication[] $totalTaxes
@@ -787,35 +790,46 @@ class Cart implements \Serializable
 	}
 
 	/**
-	 * @param float|null $paymentAmountWithTaxes
+	 * @param float|null $paymentAmount
 	 * @return $this
 	 */
-	public function setPaymentAmountWithTaxes($paymentAmountWithTaxes)
+	public function setPaymentAmount($paymentAmount)
 	{
-		$this->paymentAmountWithTaxes = $paymentAmountWithTaxes;
+		$this->paymentAmount = $paymentAmount;
 		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getPaymentAmountWithTaxes()
+	public function getPaymentAmount()
 	{
-		return $this->paymentAmountWithTaxes;
+		return $this->paymentAmount;
 	}
 
 	/**
-	 * @param \Rbs\Commerce\Process\ShippingModeInterface[] $shippingModes
+	 * @param  \Rbs\Commerce\Process\BaseShippingMode[] $shippingModes
 	 * @return $this
 	 */
-	public function setShippingModes($shippingModes)
+	public function setShippingModes(array $shippingModes)
 	{
-		$this->shippingModes = $shippingModes;
+		$this->shippingModes = [];
+		foreach ($shippingModes as $shippingMode)
+		{
+			if ($shippingMode instanceof \Rbs\Commerce\Process\BaseShippingMode)
+			{
+				$this->shippingModes[] = $shippingMode;
+			}
+			elseif (is_array($shippingMode))
+			{
+				$this->shippingModes[] = new \Rbs\Commerce\Process\BaseShippingMode($shippingMode);
+			}
+		}
 		return $this;
 	}
 
 	/**
-	 * @return \Rbs\Commerce\Process\ShippingModeInterface[]
+	 * @return \Rbs\Commerce\Process\BaseShippingMode[]
 	 */
 	public function getShippingModes()
 	{
@@ -928,7 +942,8 @@ class Cart implements \Serializable
 				case 'context': $this->context = $v; break;
 				case 'errors': $this->errors = $v; break;
 				case 'lines': $this->lines = $v; break;
-				case 'linesAmount': $this->linesAmount = $v; break;
+				case 'linesAmount':
+				case 'linesAmountWithoutTaxes': $this->linesAmountWithoutTaxes = $v; break;
 				case 'linesTaxes': $this->linesTaxes = $v; break;
 				case 'linesAmountWithTaxes': $this->linesAmountWithTaxes = $v; break;
 				case 'email': $this->email = $v; break;
@@ -937,11 +952,12 @@ class Cart implements \Serializable
 				case 'coupons': $this->coupons = $v; break;
 				case 'fees': $this->fees = $v; break;
 				case 'discounts': $this->discounts = $v; break;
-				case 'totalAmount': $this->totalAmount = $v; break;
+				case 'totalAmount':
+				case 'totalAmountWithoutTaxes': $this->totalAmountWithoutTaxes = $v; break;
 				case 'totalTaxes': $this->totalTaxes = $v; break;
 				case 'totalAmountWithTaxes': $this->totalAmountWithTaxes = $v; break;
 				case 'creditNotes': $this->creditNotes = $v; break;
-				case 'paymentAmountWithTaxes': $this->paymentAmountWithTaxes = $v; break;
+				case 'paymentAmount': $this->paymentAmount = $v; break;
 			}
 		}
 
@@ -1134,7 +1150,7 @@ class Cart implements \Serializable
 			'zone' => $this->zone,
 
 			'lines' => [],
-			'linesAmount' => $this->linesAmount,
+			'linesAmountWithoutTaxes' => $this->linesAmountWithoutTaxes,
 			'linesTaxes' => [],
 			'linesAmountWithTaxes' => $this->linesAmountWithTaxes,
 
@@ -1145,12 +1161,12 @@ class Cart implements \Serializable
 			'fees' => [],
 			'discounts' => [],
 
-			'totalAmount' => $this->totalAmount,
+			'totalAmountWithoutTaxes' => $this->totalAmountWithoutTaxes,
 			'totalTaxes' => [],
 			'totalAmountWithTaxes' => $this->totalAmountWithTaxes,
 
 			'creditNotes' => [],
-			'paymentAmountWithTaxes' => $this->getPaymentAmountWithTaxes(),
+			'paymentAmount' => $this->getPaymentAmount(),
 
 			'userId' => $this->userId,
 			'ownerId' => $this->ownerId,
@@ -1211,5 +1227,55 @@ class Cart implements \Serializable
 		}
 
 		return $array;
+	}
+
+
+	/**
+	 * @deprecated
+	 */
+	public function setLinesAmount($linesAmount)
+	{
+		return $this->setLinesAmountWithoutTaxes($linesAmount);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function getLinesAmount()
+	{
+		return $this->getLinesAmountWithoutTaxes();
+	}
+
+
+	/**
+	 * @deprecated
+	 */
+	public function setTotalAmount($totalAmount)
+	{
+		return $this->setTotalAmountWithoutTaxes($totalAmount);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function getTotalAmount()
+	{
+		return $this->getTotalAmountWithoutTaxes();
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function setPaymentAmountWithTaxes($paymentAmount)
+	{
+		return $this->setPaymentAmount($paymentAmount);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function getPaymentAmountWithTaxes()
+	{
+		return $this->getPaymentAmount();
 	}
 }

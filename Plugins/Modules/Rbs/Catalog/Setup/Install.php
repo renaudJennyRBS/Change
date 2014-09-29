@@ -15,6 +15,21 @@ class Install extends \Change\Plugins\InstallBase
 {
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
+	 * @param \Change\Application $application
+	 * @param \Change\Configuration\EditableConfiguration $configuration
+	 * @throws \RuntimeException
+	 */
+	public function executeApplication($plugin, $application, $configuration)
+	{
+		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/listItem', '160x120');
+		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/pictogram', '60x45');
+		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/detail', '540x405');
+		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/detailThumbnail', '80x60');
+		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/attribute', '160x120');
+	}
+
+	/**
+	 * @param \Change\Plugins\Plugin $plugin
 	 * @param \Change\Db\InterfaceSchemaManager $schemaManager
 	 * @throws \RuntimeException
 	 */

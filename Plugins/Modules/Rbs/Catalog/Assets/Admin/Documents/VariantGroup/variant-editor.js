@@ -204,13 +204,13 @@
 
 					scope.valueAlreadyExists = function(index) {
 						var form = angular.element(elm.find('.axis-column:nth-child(' + (index + 1) +
-							') [ng-form]')).controller('form');
+							') [data-ng-form]')).controller('form');
 						return form.axisValueToAdd.$error.valueExists;
 					};
 
 					scope.isInvalid = function(index) {
 						var form = angular.element(elm.find('.axis-column:nth-child(' + (index + 1) +
-							') [ng-form]')).controller('form');
+							') [data-ng-form]')).controller('form');
 						return form.$invalid;
 					};
 

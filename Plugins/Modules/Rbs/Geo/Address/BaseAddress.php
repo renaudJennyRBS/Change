@@ -110,7 +110,30 @@ class BaseAddress implements AddressInterface
 		{
 			foreach ($array as $addressField => $addressValue)
 			{
-				$this->setFieldValue($addressField, $addressValue);
+				if (is_array($addressValue)) {
+					if ($addressField === 'lines') {
+						$this->setFieldValue('__lines', $addressValue);
+					} elseif ($addressField === 'common') {
+						foreach ($addressValue as $sysField => $sysValue)
+						{
+							$this->setFieldValue('__' . $sysField, $sysValue);
+						}
+					} elseif ($addressField === 'fields') {
+						foreach ($addressValue as $fieldName => $fieldValue)
+						{
+							$this->setFieldValue($fieldName, $fieldValue);
+						}
+					}
+					elseif ($addressField === 'default')
+					{
+						$this->setFieldValue('__default', $addressValue);
+					} else {
+						$this->setFieldValue($addressField, $addressValue);
+					}
+				}
+				else {
+					$this->setFieldValue($addressField, $addressValue);
+				}
 			}
 		}
 	}
@@ -119,6 +142,36 @@ class BaseAddress implements AddressInterface
 	 * @return array
 	 */
 	public function toArray()
+	{
+		$array = [];
+		foreach ($this->getFields() as $name => $value)
+		{
+			switch($name)
+			{
+				case '__lines':
+					$array['lines'] = is_array($value) ? $value : [];
+					break;
+				case '__default':
+					$array['default'] = is_array($value) ? $value : [];
+					break;
+				default:
+					if (strpos($name, '__') === 0)
+					{
+						$array['common'][substr($name, 2)] = $value;
+					}
+					else
+					{
+						$array['fields'][$name] = $value;
+					}
+			}
+		}
+		return $array;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function toFlatArray()
 	{
 		return $this->getFields();
 	}

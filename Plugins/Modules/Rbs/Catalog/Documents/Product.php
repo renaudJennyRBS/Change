@@ -55,10 +55,25 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 
 				if ($document->getVariantGroup())
 				{
-					/* @var $commerceServices \Rbs\Commerce\CommerceServices */
-					$commerceServices = $event->getServices('commerceServices');
-					$catalogManager = $commerceServices->getCatalogManager();
-					$documentResult->setProperty('variantInfo', $catalogManager->getVariantInfo($document));
+					/** @var \Rbs\Catalog\Documents\Attribute[] $axesAttributes */
+					$axesAttributes = $document->getVariantGroup()->getAxesAttributes()->toArray();
+					$variantInfo = [];
+					$variantInfo['isRoot'] = $document->hasVariants();
+					$variantInfo['depth'] = count($axesAttributes);
+					if (!$variantInfo['isRoot'])
+					{
+						$variantInfo['isFinal'] = true;
+						$variantInfo['level'] = $variantInfo['depth'];
+						for ($i = 0; $i < count($axesAttributes); $i++) {
+							$v = $axesAttributes[$i]->getValue($document);
+							if ($v === null) {
+								$variantInfo['isFinal'] = false;
+								$variantInfo['level'] = $i;
+								break;
+							}
+						}
+					}
+					$documentResult->setProperty('variantInfo', $variantInfo);
 				}
 			}
 		}
@@ -318,6 +333,9 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 		return null;
 	}
 
+
+
+
 	/**
 	 * @return \Change\Documents\DocumentArrayProperty|\Rbs\Website\Documents\Section[]
 	 */
@@ -364,4 +382,8 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			}
 		}
 	}
+
+
+
+
 }

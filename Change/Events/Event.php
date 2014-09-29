@@ -48,4 +48,20 @@ class Event extends \Zend\EventManager\Event
 		}
 		return null;
 	}
+
+	/**
+	 * @return array
+	 */
+	public function paramsToArray()
+	{
+		$array = [];
+		foreach ($this->getParams() as $name => $value)
+		{
+			if ($name !== 'services' && $name !== 'application')
+			{
+				$array[$name] = $value;
+			}
+		}
+		return $array;
+	}
 } 

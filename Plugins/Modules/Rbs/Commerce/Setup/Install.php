@@ -28,9 +28,7 @@ class Install extends \Change\Plugins\InstallBase
 	 */
 	public function executeApplication($plugin, $application, $configuration)
 	{
-
 		$configuration->addPersistentEntry('Change/Events/ListenerAggregateClasses/Rbs_Commerce', '\Rbs\Commerce\Events\SharedListeners');
-
 		$configuration->addPersistentEntry('Change/Events/AuthenticationManager/Rbs_Commerce', '\Rbs\Commerce\Events\AuthenticationManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Commerce', '\Rbs\Commerce\Events\BlockManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/CollectionManager/Rbs_Commerce', '\Rbs\Commerce\Events\CollectionManager\Listeners');
@@ -38,11 +36,13 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Change/Events/Http/Admin/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Admin\Listeners');
 		$configuration->addPersistentEntry('Change/Events/Http/Rest/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Rest\Listeners');
 		$configuration->addPersistentEntry('Change/Events/Http/Web/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Web\Listeners');
+		$configuration->addPersistentEntry('Change/Events/Http/Ajax/Rbs_Commerce', '\Rbs\Commerce\Events\Http\Ajax\Listeners');
 		$configuration->addPersistentEntry('Change/Events/JobManager/Rbs_Commerce', '\Rbs\Commerce\Events\JobManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/ModelManager/Rbs_Commerce', '\Rbs\Commerce\Events\ModelManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/PageManager/Rbs_Commerce', '\Rbs\Commerce\Events\PageManager\Listeners');
 		$configuration->addPersistentEntry('Change/Events/ProfileManager/Rbs_Commerce', '\Rbs\Commerce\Events\ProfileManager\Listeners');
 
+		$configuration->addPersistentEntry('Rbs/Commerce/Events/CartManager/Rbs_Commerce', '\Rbs\Commerce\Cart\Listeners');
 		$configuration->addPersistentEntry('Rbs/Commerce/Events/ProcessManager/Rbs_Commerce', '\Rbs\Commerce\Events\ProcessManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Commerce/Events/PriceManager/Rbs_Commerce', '\Rbs\Commerce\Events\PriceManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Geo/Events/GeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\GeoManager\Listeners');
@@ -50,6 +50,8 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Rbs/Payment/Events/PaymentManager/Rbs_Commerce', '\Rbs\Commerce\Events\PaymentManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Admin/Events/AdminManager/Rbs_Commerce', '\Rbs\Commerce\Events\AdminManager\Listeners');
+
+		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/cartItem', '160x120');
 
 		$configuration->addPersistentEntry('Rbs/Commerce/Cart/CleanupTTL', 60 * 60);
 	}

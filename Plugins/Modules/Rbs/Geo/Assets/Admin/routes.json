@@ -130,6 +130,16 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Generic/Zone/:id/translate/:LCID": {
+		"model": "Rbs_Geo_Zone",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Geo/Zone/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Generic/Zone/new": {
 		"model": "Rbs_Geo_Zone",
 		"name": "new",
@@ -158,5 +168,6 @@
 	"/Rbs/Geo/TerritorialUnit/new": false,
 	"/Rbs/Geo/Zone/": false,
 	"/Rbs/Geo/Zone/:id": false,
+	"/Rbs/Geo/Zone/:id/translate/:LCID": false,
 	"/Rbs/Geo/Zone/new": false
 }

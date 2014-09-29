@@ -177,44 +177,44 @@ class Cart
 					$linesTaxes = array();
 					foreach ($cart->getLinesTaxes() as $tax)
 					{
-						$taxInfos = $tax->toArray();
-						$taxInfos['title'] = $pm->taxTitle($tax);
-						$taxInfos['formattedRate'] = $pm->formatRate($taxInfos['rate']);
-						$taxInfos['formattedValue'] = $pm->formatValue($taxInfos['value'], $currency);
-						$linesTaxes[] = $taxInfos;
+						$taxInfo = $tax->toArray();
+						$taxInfo['title'] = $pm->taxTitle($tax);
+						$taxInfo['formattedRate'] = $pm->formatRate($taxInfo['rate']);
+						$taxInfo['formattedValue'] = $pm->formatValue($taxInfo['value'], $currency);
+						$linesTaxes[] = $taxInfo;
 					}
 
 					$totalTaxes = array();
 					foreach ($cart->getTotalTaxes() as $tax)
 					{
-						$taxInfos = $tax->toArray();
-						$taxInfos['title'] = $pm->taxTitle($tax);
-						$taxInfos['formattedRate'] = $pm->formatRate($taxInfos['rate']);
-						$taxInfos['formattedValue'] = $pm->formatValue($taxInfos['value'], $currency);
-						$totalTaxes[] = $taxInfos;
+						$taxInfo = $tax->toArray();
+						$taxInfo['title'] = $pm->taxTitle($tax);
+						$taxInfo['formattedRate'] = $pm->formatRate($taxInfo['rate']);
+						$taxInfo['formattedValue'] = $pm->formatValue($taxInfo['value'], $currency);
+						$totalTaxes[] = $taxInfo;
 					}
 
 					$cart->getContext()
-						->set('formattedLinesAmount', $pm->formatValue($cart->getLinesAmount(), $currency))
+						->set('formattedLinesAmountWithoutTaxes', $pm->formatValue($cart->getLinesAmountWithoutTaxes(), $currency))
 						->set('formattedLinesTaxes', $linesTaxes)
 						->set('formattedLinesAmountWithTaxes', $pm->formatValue($cart->getLinesAmountWithTaxes(), $currency))
-						->set('formattedTotalAmount', $pm->formatValue($cart->getTotalAmount(), $currency))
+						->set('formattedTotalAmountWithoutTaxes', $pm->formatValue($cart->getTotalAmountWithoutTaxes(), $currency))
 						->set('formattedTotalTaxes', $totalTaxes)
 						->set('formattedTotalAmountWithTaxes', $pm->formatValue($cart->getTotalAmountWithTaxes(), $currency))
-						->set('formattedPaymentAmountWithTaxes', $pm->formatValue($cart->getPaymentAmountWithTaxes(), $currency));
+						->set('formattedPaymentAmount', $pm->formatValue($cart->getPaymentAmount(), $currency));
 
 					$articleCount = 0;
 					foreach ($cart->getLines() as $line)
 					{
 						$articleCount += $line->getQuantity();
 						$options = $line->getOptions();
-						$options->set('formattedAmount', $pm->formatValue($line->getAmount(), $currency))
+						$options->set('formattedAmountWithoutTaxes', $pm->formatValue($line->getAmountWithoutTaxes(), $currency))
 							->set('formattedAmountWithTaxes', $pm->formatValue($line->getAmountWithTaxes(), $currency))
-							->set('formattedBasedAmount', $pm->formatValue($line->getBasedAmount(), $currency))
+							->set('formattedBasedAmountWithoutTaxes', $pm->formatValue($line->getBasedAmountWithoutTaxes(), $currency))
 							->set('formattedBasedAmountWithTaxes', $pm->formatValue($line->getBasedAmountWithTaxes(), $currency))
-							->set('formattedUnitAmount', $pm->formatValue($line->getUnitAmount(), $currency))
+							->set('formattedUnitAmount', $pm->formatValue($line->getUnitAmountWithoutTaxes(), $currency))
 							->set('formattedUnitAmountWithTaxes', $pm->formatValue($line->getUnitAmountWithTaxes(), $currency))
-							->set('formattedUnitBasedAmount', $pm->formatValue($line->getUnitBasedAmount(), $currency))
+							->set('formattedUnitBasedAmountWithoutTaxes', $pm->formatValue($line->getUnitBasedAmountWithoutTaxes(), $currency))
 							->set('formattedUnitBasedAmountWithTaxes', $pm->formatValue($line->getUnitBasedAmountWithTaxes(), $currency));
 
 						$productId = $options->get('productId');
@@ -245,7 +245,7 @@ class Cart
 					foreach ($cart->getDiscounts() as $discount)
 					{
 						$options = $discount->getOptions();
-						$options->set('formattedAmount', $pm->formatValue($discount->getAmount(), $currency))
+						$options->set('formattedAmount', $pm->formatValue($discount->getAmountWithoutTaxes(), $currency))
 							->set('formattedAmountWithTaxes', $pm->formatValue($discount->getAmountWithTaxes(), $currency));
 						if ($discount->getId())
 						{
@@ -261,7 +261,7 @@ class Cart
 					{
 
 						$options = $fee->getOptions();
-						$options->set('formattedAmount', $pm->formatValue($fee->getAmount(), $currency))
+						$options->set('formattedAmountWithoutTaxes', $pm->formatValue($fee->getAmountWithoutTaxes(), $currency))
 							->set('formattedAmountWithTaxes', $pm->formatValue($fee->getAmountWithTaxes(), $currency));
 						$id = $options->get('feeId');
 						if ($id)

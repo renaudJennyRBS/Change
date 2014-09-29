@@ -17,7 +17,7 @@ class AtosSipsConnector extends \Compilation\Rbs\Payment\Documents\AtosSipsConne
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach('httpInfos', [$this, 'onDefaultHttpInfos'], 5);
+		$eventManager->attach('getPaymentData', [$this, 'onDefaultGetPaymentData'], 5);
 		$eventManager->attach([Event::EVENT_CREATE, Event::EVENT_UPDATE], [$this, 'onUpdateServerFile'], 5);
 	}
 
@@ -67,51 +67,51 @@ class AtosSipsConnector extends \Compilation\Rbs\Payment\Documents\AtosSipsConne
 	/**
 	 * @param Event $event
 	 */
-	public function onDefaultHttpInfos(Event $event)
+	public function onDefaultGetPaymentData(Event $event)
 	{
-		$httpEvent = $event->getParam('httpEvent');
+		$paymentData = ['directiveName' => 'rbs-commerce-payment-connector-html', 'html' => ''];
+		$context = $event->getParam('context', []);
+		/** @var \Rbs\Payment\Documents\Transaction $transaction */
+		$transaction = $context['data']['transaction'];
+		$paymentData['amount'] = $transaction->getAmount();
+		
+		$website = $context['website'];
 
 		/** @var $sipsConnector AtosSipsConnector */
 		$sipsConnector = $event->getDocument();
-		if ($httpEvent instanceof \Change\Http\Web\Event)
+
+		if ($transaction instanceof \Rbs\Payment\Documents\Transaction && $website instanceof \Rbs\Website\Documents\Website)
 		{
-			$transactionId = $httpEvent->getRequest()->getPost('transactionId', $httpEvent->getRequest()->getQuery('transactionId'));
-			$transaction = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($transactionId);
-			if ($transaction instanceof Transaction)
+			$urlManager = $website->getUrlManager($website->getLCID());
+
+			$requestForm = new \Rbs\Payment\AtosSips\Request();
+			$requestForm->setMerchantId($sipsConnector->getMerchantId());
+
+			$requestForm->setMerchantCountry($sipsConnector->getMerchantCountry());
+			$requestForm->setPathfile($sipsConnector->getPathFileAbsolutePath());
+			$requestForm->setBinPathFile($sipsConnector->getRequestBinaryPath());
+			list($amount, $currencyCode) = (new \Rbs\Payment\AtosSips\CurrencyConverter())->toParams($transaction->getAmount(), $transaction->getCurrencyCode());
+			$requestForm->setAmount($amount);
+			$requestForm->setCurrencyCode($currencyCode);
+			$requestForm->setTransactionId(str_pad(strval($transaction->getId() % 1000000), 6, '0', STR_PAD_LEFT));
+
+			$requestForm->setReturnContext($transaction->getId());
+			$requestForm->setNormalReturnUrl($urlManager->getAjaxURL('Rbs_Payment', 'AtosConnectorReturn', ['connectorId' => $sipsConnector->getId()]));
+			$requestForm->setAutomaticResponseUrl($urlManager->getAjaxURL('Rbs_Payment', 'AtosConnectorReturn', ['connectorId' => $sipsConnector->getId(), 'automatic' => 1]));
+			$requestForm->setCancelReturnUrl($urlManager->getAjaxURL('Rbs_Payment', 'AtosConnectorReturn', ['connectorId' => $sipsConnector->getId()]));
+
+			list ($stat, $error, $buffer) = $requestForm->encodeRequest();
+			if (intval($stat) === 0)
 			{
-				$urlManager = $httpEvent->getUrlManager();
-
-				$httpInfos = $event->getParam('httpInfos', []);
-				$requestForm = new \Rbs\Payment\AtosSips\Request();
-				$requestForm->setMerchantId($sipsConnector->getMerchantId());
-
-
-				$requestForm->setMerchantCountry($sipsConnector->getMerchantCountry());
-				$requestForm->setPathfile($sipsConnector->getPathFileAbsolutePath());
-				$requestForm->setBinPathFile($sipsConnector->getRequestBinaryPath());
-				list($amount, $currencyCode) = (new \Rbs\Payment\AtosSips\CurrencyConverter())->toParams($transaction->getAmount(), $transaction->getCurrencyCode());
-				$requestForm->setAmount($amount);
-				$requestForm->setCurrencyCode($currencyCode);
-				$requestForm->setTransactionId(str_pad(strval($transaction->getId() % 1000000), 6, '0', STR_PAD_LEFT));
-
-				$requestForm->setReturnContext($transaction->getId());
-				$requestForm->setNormalReturnUrl($urlManager->getAjaxURL('Rbs_Payment', 'AtosConnectorReturn', ['connectorId' => $sipsConnector->getId()]));
-				$requestForm->setAutomaticResponseUrl($urlManager->getAjaxURL('Rbs_Payment', 'AtosConnectorReturn', ['connectorId' => $sipsConnector->getId(), 'automatic' => 1]));
-				$requestForm->setCancelReturnUrl($urlManager->getAjaxURL('Rbs_Payment', 'AtosConnectorReturn', ['connectorId' => $sipsConnector->getId()]));
-
-				list ($stat, $error, $buffer) = $requestForm->encodeRequest();
-				if (intval($stat) === 0)
-				{
-					$httpInfos['html'] = $buffer;
-				}
-				else
-				{
-					$httpInfos['html'] = $error . ' ' . $buffer;
-				}
-				$event->setParam('httpInfos', $httpInfos);
+				$paymentData['html'] = $buffer;
 			}
+			else
+			{
+				$paymentData['error'] = true;
+				$paymentData['html'] = $error . ' ' . $buffer;
+			}
+			$event->setParam('paymentData', $paymentData);
 		}
-
 	}
 
 	/**
