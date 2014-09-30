@@ -28,36 +28,38 @@ class GetAddresses extends \Change\Http\Web\Actions\AbstractAjaxAction
 		}
 
 		$geoManager = $genericServices->getGeoManager();
-		$defaultAddress = $geoManager->getDefaultAddress();
-		$defaultFieldValues = ($defaultAddress instanceof \Rbs\Geo\Address\AddressInterface) ? $defaultAddress->toArray() : null;
+		$defaultFor = $geoManager->getDefaultForNames();
+
+		$defaultFieldValuesFor = [];
+		foreach ($geoManager->getDefaultAddresses($defaultFor) as $for => $defaultAddress)
+		{
+			$defaultFieldValuesFor[$for] = ($defaultAddress instanceof \Rbs\Geo\Address\AddressInterface) ? $defaultAddress->toArray() : null;
+		}
 		$addresses = [];
 		/* @var $address \Rbs\Geo\Address\AddressInterface */
 		foreach ($geoManager->getAddresses() as $address)
 		{
 			$fieldValues = $address->toArray();
-			$addressInfos = array(
+			$addressInfo = array(
 				'fieldValues' => $address->toArray(),
 				'lines' => $address->getLines()
 			);
 
 			if (method_exists($address, 'getName'))
 			{
-				$addressInfos['name'] = $address->getName();
+				$addressInfo['name'] = $address->getName();
 			}
 			else
 			{
-				$addressInfos['name'] = '-';
+				$addressInfo['name'] = '-';
 			}
 
-			if ($defaultFieldValues && $defaultFieldValues == $fieldValues)
+			foreach ($defaultFieldValuesFor as $for => $defaultFieldValues)
 			{
-				$addressInfos['default'] = true;
-				array_unshift($addresses, $addressInfos);
+				$addressInfo['default'][$for] = ($defaultFieldValues == $fieldValues);
 			}
-			else
-			{
-				$addresses[] = $addressInfos;
-			}
+
+			$addresses[] = $addressInfo;
 		}
 
 		$result = $this->getNewAjaxResult($addresses);

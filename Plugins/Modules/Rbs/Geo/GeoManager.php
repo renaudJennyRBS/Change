@@ -31,6 +31,7 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
+		$eventManager->attach('getDefaultForNames', [$this, 'onDefaultGetDefaultForNames'], 5);
 		$eventManager->attach(static::EVENT_COUNTRIES_BY_ZONE_CODE, [$this, 'onDefaultGetCountriesByZoneCode'], 5);
 		$eventManager->attach(static::EVENT_FORMAT_ADDRESS, [$this, 'onDefaultFormatAddress'], 5);
 		$eventManager->attach('getAddresses', [$this, 'onDefaultGetAddresses'], 5);
@@ -163,8 +164,8 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return;
 		}
-
-		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$applicationServices = $event->getApplicationServices();
+		$documentManager = $applicationServices->getDocumentManager();
 		$fields = $address->getFields();
 		if (!is_array($fields) || !count($fields))
 		{
@@ -191,11 +192,26 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 				$country = $dqb->getFirstDocument();
 				if ($country instanceof \Rbs\Geo\Documents\Country)
 				{
-					$i18n = $event->getApplicationServices()->getI18nManager();
+					$i18n = $applicationServices->getI18nManager();
 					$fields['country'] = $i18n->trans($country->getI18nTitleKey());
 				}
 			}
-
+			$collectionManager = $applicationServices->getCollectionManager();
+			foreach ($addressFields->getFields() as $fieldDefinition)
+			{
+				$fieldCode = $fieldDefinition->getCode();
+				if ($fieldDefinition->getCollectionCode() && isset($fields[$fieldCode])) {
+					$collection = $collectionManager->getCollection($fieldDefinition->getCollectionCode());
+					if ($collection)
+					{
+						$value = $collection->getItemByValue($fields[$fieldCode]);
+						if ($value)
+						{
+							$fields[$fieldCode] = $value->getTitle();
+						}
+					}
+				}
+			}
 			$event->setParam('lines', $this->formatFieldsByLayout($fields, $addressFields->getFieldsLayout()));
 		}
 	}
@@ -205,7 +221,7 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param array $layout
 	 * @return array
 	 */
-	public function formatFieldsByLayout(array $fields, array $layout)
+	protected function formatFieldsByLayout(array $fields, array $layout)
 	{
 		$lines =  array();
 		foreach ($layout as $lineLayout)
@@ -323,16 +339,45 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * get default for names
+	 * ex: ['default', 'shipping', 'billing']
+	 * @api
+	 * @return string[]
+	 */
+	public function getDefaultForNames()
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['names' => []]);
+		$this->getEventManager()->trigger('getDefaultForNames', $this, $args);
+		return is_array($args['names']) ? $args['names'] : [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetDefaultForNames($event)
+	{
+		$names = $event->getParam('names');
+		if (is_array($names) && !in_array('default', $names))
+		{
+			$names[] = 'default';
+			$event->setParam('names', $names);
+		}
+	}
+
+	/**
 	 * Address creation from front office.
 	 * @api
 	 * @param array $fieldValues
 	 * @param string $addressName
+	 * @param string|array $defaultFor //billing, shipping, default
 	 * @return boolean
 	 */
-	public function addAddress($fieldValues, $addressName)
+	public function addAddress($fieldValues, $addressName, $defaultFor = [])
 	{
 		$eventManager = $this->getEventManager();
-		$args = $eventManager->prepareArgs(['fieldValues' => $fieldValues, 'addressName' => $addressName]);
+		$args = $eventManager->prepareArgs(['fieldValues' => $fieldValues,
+			'addressName' => $addressName, 'defaultFor' => $defaultFor]);
 		$this->getEventManager()->trigger('addAddress', $this, $args);
 		return (isset($args['done']) && $args['done'] === true);
 	}
@@ -369,13 +414,7 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			$address->save();
 
 			$tm->commit();
-
-			// Check if an default address is set
-			$defaultAddress = $this->getDefaultAddress();
-			if ($defaultAddress == null)
-			{
-				$this->setDefaultAddress($address);
-			}
+			$this->setDefaultAddress($address, $event->getParam('defaultFor'));
 		}
 		catch (\Exception $e)
 		{
@@ -432,7 +471,15 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		try
 		{
 			$tm->begin();
-
+			$addressFieldsId = isset($fieldValues['__addressFieldsId']) ? intval($fieldValues['__addressFieldsId']) : 0;
+			if ($addressFieldsId)
+			{
+				$addressFields = $documentManager->getDocumentInstance($addressFieldsId);
+				if ($addressFields instanceof \Rbs\Geo\Documents\AddressFields)
+				{
+					$address->setAddressFields($addressFields);
+				}
+			}
 			$address->setFieldValues($fieldValues);
 			$addressName = $event->getParam('addressName');
 			if ($addressName)
@@ -455,12 +502,17 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	 * Set default address from front office.
 	 * @api
 	 * @param mixed $address
+	 * @param string|array $defaultFor
 	 * @return boolean
 	 */
-	public function setDefaultAddress($address)
+	public function setDefaultAddress($address, $defaultFor = [])
 	{
 		$eventManager = $this->getEventManager();
-		$args = $eventManager->prepareArgs(['address' => $address]);
+		if (is_string($defaultFor))
+		{
+			$defaultFor = [$defaultFor];
+		}
+		$args = $eventManager->prepareArgs(['address' => $address, 'defaultFor' => $defaultFor]);
 		$this->getEventManager()->trigger('setDefaultAddress', $this, $args);
 		return (isset($args['done']) && $args['done'] === true);
 	}
@@ -471,18 +523,22 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onDefaultSetDefaultAddress($event)
 	{
-		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$applicationServices = $event->getApplicationServices();
+		$documentManager = $applicationServices->getDocumentManager();
+		$defaultFor = $event->getParam('defaultFor');
+
 		$address = $event->getParam('address');
 		if (is_numeric($address))
 		{
 			$address = $documentManager->getDocumentInstance(intval($address));
 		}
+
 		if (!($address instanceof \Rbs\Geo\Documents\Address))
 		{
 			return;
 		}
 
-		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+		$user = $applicationServices->getAuthenticationManager()->getCurrentUser();
 		if (!$user->authenticated())
 		{
 			return;
@@ -495,13 +551,16 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		// If the addressId represents an address document and there is an authenticated user, set the default address meta.
-		$tm = $event->getApplicationServices()->getTransactionManager();
+		$tm = $applicationServices->getTransactionManager();
 		try
 		{
 			$tm->begin();
+			if (is_array($defaultFor) && in_array('default', $defaultFor))
+			{
+				$userDocument->setMeta('Rbs_Geo_DefaultAddressId', $address->getId());
+			}
 
-			$userDocument->setMeta('Rbs_Geo_DefaultAddressId', $address->getId());
-			$userProfile = $event->getApplicationServices()->getProfileManager()->loadProfile($user, 'Rbs_User');
+			$userProfile = $applicationServices->getProfileManager()->loadProfile($user, 'Rbs_User');
 			if ($userProfile instanceof \Rbs\User\Profile\Profile)
 			{
 				$addressFieldsValue = $address->getFields();
@@ -517,7 +576,7 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				if ($update)
 				{
-					$event->getApplicationServices()->getProfileManager()->saveProfile($user, $userProfile);
+					$applicationServices->getProfileManager()->saveProfile($user, $userProfile);
 				}
 			}
 			$userDocument->saveMetas();
@@ -527,19 +586,48 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			throw $tm->rollBack($e);
 		}
-
 		$event->setParam('done', true);
+	}
+
+	/**
+	 * Get default addresses for front office.
+	 * @api
+	 * @param string|array $defaultFor
+	 * @return \Rbs\Geo\Address\AddressInterface[]|null
+	 */
+	public function getDefaultAddresses($defaultFor = [])
+	{
+		if (is_string($defaultFor))
+		{
+			$defaultFor = [$defaultFor];
+		}
+		$addresses = [];
+		if (is_array($defaultFor) && count($defaultFor))
+		{
+			foreach ($defaultFor as $for)
+			{
+				$address = $this->getDefaultAddress([$for]);
+				$addresses[$for] = $address;
+			}
+		}
+		return $addresses;
 	}
 
 	/**
 	 * Get default address for front office.
 	 * @api
+	 * @param string|array $defaultFor
 	 * @return \Rbs\Geo\Address\AddressInterface|null
 	 */
-	public function getDefaultAddress()
+	public function getDefaultAddress($defaultFor = [])
 	{
+		if (is_string($defaultFor))
+		{
+			$defaultFor = [$defaultFor];
+		}
+
 		$eventManager = $this->getEventManager();
-		$args = $eventManager->prepareArgs([]);
+		$args = $eventManager->prepareArgs(['defaultFor' => $defaultFor]);
 		$this->getEventManager()->trigger('getDefaultAddress', $this, $args);
 		if (isset($args['defaultAddress']) && $args['defaultAddress'] instanceof \Rbs\Geo\Address\AddressInterface)
 		{
@@ -558,6 +646,11 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return;
 		}
+		$defaultFor = $event->getParam('defaultFor');
+		if (!is_array($defaultFor) || !in_array('default', $defaultFor))
+		{
+			return;
+		}
 
 		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
 		if (!$user->authenticated())
@@ -571,7 +664,6 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return;
 		}
-
 		$address = $documentManager->getDocumentInstance($user->getMeta('Rbs_Geo_DefaultAddressId'));
 		if ($address instanceof \Rbs\Geo\Documents\Address)
 		{

@@ -37,7 +37,8 @@ class AddAddress extends \Change\Http\Web\Actions\AbstractAjaxAction
 		}
 		$addressName = isset($arguments['name']) ? $arguments['name'] : null;
 
-		$success = $genericServices->getGeoManager()->addAddress($fieldValues, $addressName);
+		$defaultFor = isset($arguments['defaultFor']) ? $arguments['defaultFor'] : null;
+		$success = $genericServices->getGeoManager()->addAddress($fieldValues, $addressName, $defaultFor);
 		if (!$success)
 		{
 			throw new \RuntimeException('Address creation failed', 999999);

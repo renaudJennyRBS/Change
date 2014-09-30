@@ -162,7 +162,8 @@ class Loader
 					if ($documentProfile instanceof \Rbs\Commerce\Documents\Profile)
 					{
 						$profile->setLastCartIdentifier($documentProfile->getLastCartIdentifier());
-						$profile->setDefaultAddressId($documentProfile->getDefaultAddressId());
+						$profile->setDefaultBillingAddressId($documentProfile->getDefaultBillingAddressId());
+						$profile->setDefaultShippingAddressId($documentProfile->getDefaultShippingAddressId());
 						$profile->setDefaultWebStoreId($documentProfile->getDefaultWebStoreId());
 						$profile->setDefaultBillingAreaId($documentProfile->getDefaultBillingAreaId());
 						$profile->setDefaultZone($documentProfile->getDefaultZone());
@@ -217,8 +218,11 @@ class Loader
 						$documentProfile->setDefaultBillingArea(($billingArea instanceof
 							\Rbs\Price\Documents\BillingArea) ? $billingArea : null);
 
-						$address = $documentManager->getDocumentInstance($profile->getDefaultAddressId());
-						$documentProfile->setDefaultAddress(($address instanceof \Rbs\Geo\Documents\Address) ? $address : null);
+						$address = $documentManager->getDocumentInstance($profile->getDefaultBillingAddressId());
+						$documentProfile->setDefaultBillingAddress(($address instanceof \Rbs\Geo\Documents\Address) ? $address : null);
+
+						$address = $documentManager->getDocumentInstance($profile->getDefaultShippingAddressId());
+						$documentProfile->setDefaultShippingAddress(($address instanceof \Rbs\Geo\Documents\Address) ? $address : null);
 
 						$documentProfile->save();
 					}

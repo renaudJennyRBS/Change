@@ -28,7 +28,8 @@ class Profile extends AbstractProfile
 	 */
 	public function getPropertyNames()
 	{
-		return array('lastCartIdentifier', 'defaultWebStoreId', 'defaultZone', 'defaultBillingAreaId', 'defaultAddressId');
+		return array('lastCartIdentifier', 'defaultWebStoreId', 'defaultZone', 'defaultBillingAreaId',
+			'defaultBillingAddressId', 'defaultShippingAddressId');
 	}
 
 	/**
@@ -139,20 +140,38 @@ class Profile extends AbstractProfile
 	}
 
 	/**
-	 * @param integer $defaultAddressId
+	 * @param integer $defaultBillingAddressId
 	 * @return $this
 	 */
-	public function setDefaultAddressId($defaultAddressId)
+	public function setDefaultBillingAddressId($defaultBillingAddressId)
 	{
-		$this->properties['defaultAddressId'] = $defaultAddressId;
+		$this->properties['defaultBillingAddressId'] = $defaultBillingAddressId;
 		return $this;
 	}
 
 	/**
 	 * @return integer
 	 */
-	public function getDefaultAddressId()
+	public function getDefaultBillingAddressId()
 	{
-		return isset($this->properties['defaultAddressId']) ? $this->properties['defaultAddressId'] : null;
+		return isset($this->properties['defaultBillingAddressId']) ? $this->properties['defaultBillingAddressId'] : null;
+	}
+
+	/**
+	 * @param integer $defaultShippingAddressId
+	 * @return $this
+	 */
+	public function setDefaultShippingAddressId($defaultShippingAddressId)
+	{
+		$this->properties['defaultShippingAddressId'] = $defaultShippingAddressId;
+		return $this;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getDefaultShippingAddressId()
+	{
+		return isset($this->properties['defaultShippingAddressId']) ? $this->properties['defaultShippingAddressId'] : null;
 	}
 }

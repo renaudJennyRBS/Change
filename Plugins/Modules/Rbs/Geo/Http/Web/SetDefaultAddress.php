@@ -35,12 +35,12 @@ class SetDefaultAddress extends \Change\Http\Web\Actions\AbstractAjaxAction
 			throw new \RuntimeException('No address id specified', 999999);
 		}
 
-		$success = $genericServices->getGeoManager()->setDefaultAddress($arguments['id']);
+		$defaultFor = isset($arguments['defaultFor']) ? $arguments['defaultFor'] : 'default';
+		$success = $genericServices->getGeoManager()->setDefaultAddress($arguments['id'], $defaultFor);
 		if (!$success)
 		{
 			throw new \RuntimeException('Setting default address failed', 999999);
 		}
-
 		(new GetAddresses())->execute($event);
 	}
 }

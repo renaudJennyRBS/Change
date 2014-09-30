@@ -147,35 +147,35 @@ class Install extends \Change\Plugins\InstallBase
 
 					if (isset($model['countryCode']))
 					{
-						$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
-						$query->andPredicates($query->eq('code', $model['countryCode']));
-						/* @var $country \Rbs\geo\Documents\Country */
-						$country = $query->getFirstDocument();
-						if ($country)
+						if ($model['countryCode'] === true)
 						{
-							$country->setAddressFields($fields);
-							$country->update();
-							if ($model['countryCode'] == 'FR')
+							$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
+							$query->andPredicates($query->isNull('addressFields'));
+
+							/* @var $country \Rbs\geo\Documents\Country */
+							foreach ($query->getDocuments() as $country)
 							{
-								$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Zone');
-								$query->andPredicates($query->eq('code', 'FRC'));
-								$FRCZone = $query->getFirstDocument();
-								if (!$FRCZone)
-								{
-									/** @var $FRCZone \Rbs\Geo\Documents\Zone */
-									$FRCZone = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_Zone');
-									$FRCZone->setCode('FRC');
-									$FRCZone->setLabel('France continentale');
-									$FRCZone->setCountry($country);
-									$FRCZone->setAddressFilterData(json_decode('{"name":"group","parameters":{"all":0,"configured":0},"operator":"AND","filters":[{"name":"countryCode","parameters":{"fieldName":"countryCode","operator":"eq","value":"FR"}},{"name":"zipCode","parameters":{"fieldName":"zipCode","operator":"match","value":"^((0[1-9])|([1345678][0-9])|(9[0-5])|(2[1-9]))[0-9]{3}$"}}]}', true));
-									$FRCZone->save();
-								}
+								$country->setAddressFields($fields);
+								$country->update();
+							}
+						}
+						else
+						{
+							$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Country');
+							$query->andPredicates($query->eq('code', $model['countryCode']));
+
+							/* @var $country \Rbs\geo\Documents\Country */
+							$country = $query->getFirstDocument();
+							if ($country)
+							{
+								$country->setAddressFields($fields);
+								$country->update();
+								$this->addDefaultZone($applicationServices, $country);
 							}
 						}
 					}
 				}
 			}
-
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -184,11 +184,39 @@ class Install extends \Change\Plugins\InstallBase
 		}
 	}
 
+
+
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
 	 */
 	public function finalize($plugin)
 	{
 		$plugin->setConfigurationEntry('locked', true);
+	}
+
+	/**
+	 * @param \Change\Services\ApplicationServices  $applicationServices
+	 * @param \Rbs\geo\Documents\Country $country
+	 */
+	protected function addDefaultZone($applicationServices, $country)
+	{
+		if ($country && $country->getCode() === 'FR')
+		{
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Geo_Zone');
+			$query->andPredicates($query->eq('code', 'FRC'));
+			$FRCZone = $query->getFirstDocument();
+
+			if (!$FRCZone)
+			{
+				/** @var $FRCZone \Rbs\Geo\Documents\Zone */
+				$FRCZone = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Geo_Zone');
+				$FRCZone->setCode('FRC');
+				$FRCZone->setLabel('France continentale');
+				$FRCZone->setCountry($country);
+				$FRCZone->setAddressFilterData(json_decode('{"name":"group","parameters":{"all":0,"configured":0},"operator":"AND","filters":[{"name":"countryCode","parameters":{"fieldName":"countryCode","operator":"eq","value":"FR"}},{"name":"zipCode","parameters":{"fieldName":"zipCode","operator":"match","value":"^((0[1-9])|([1345678][0-9])|(9[0-5])|(2[1-9]))[0-9]{3}$"}}]}',
+					true));
+				$FRCZone->save();
+			}
+		}
 	}
 }

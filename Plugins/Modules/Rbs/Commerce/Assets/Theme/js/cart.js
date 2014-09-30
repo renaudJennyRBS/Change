@@ -201,9 +201,32 @@
 
 				scope.delivery.isShippingAddressValid = { value: true };
 
+				var useCartAddress = true, i;
 				if (!scope.delivery.addressReference.hasOwnProperty('__addressFieldsId')) {
-					scope.delivery.addressReference = angular.copy(scope.cart.address);
+					if (scope.addresses && scope.addresses.length) {
+						for(i = 0; i < scope.addresses.length; i++) {
+							if (scope.addresses[i].default.shipping) {
+								applyAddress(scope.delivery.addressReference, scope.addresses[i]);
+								useCartAddress = false;
+								break;
+							}
+						}
+
+						if (useCartAddress) {
+							for (i = 0; i < scope.addresses.length; i++) {
+								if (scope.addresses[i].default.default == true) {
+									applyAddress(scope.delivery.addressReference, scope.addresses[i]);
+									useCartAddress = false;
+									break;
+								}
+							}
+						}
+					}
+					if (useCartAddress) {
+						scope.delivery.addressReference = angular.copy(scope.cart.address);
+					}
 				}
+
 				if (!scope.shippingAddress) {
 					scope.shippingAddress = angular.copy(scope.delivery.addressReference);
 				}
@@ -269,11 +292,11 @@
 					$compile(element.find('.configuration-zone'))(scope);
 				}
 
-				function loadCompatibleShippingModes(needAddress) {
+				function loadCompatibleShippingModes(address, hasAddress) {
 					$http.post('Action/Rbs/Commerce/GetCompatibleShippingModes',
-						{ lines: scope.lines, needAddress: needAddress, deliveryIndex: scope.deliveryIndex })
+						{ lines: scope.lines, address: address, deliveryIndex: scope.deliveryIndex, hasAddress: hasAddress})
 						.success(function(data) {
-							if (needAddress) {
+							if (hasAddress) {
 								scope.addressModes = data;
 							}
 							else {
@@ -286,8 +309,8 @@
 						});
 				}
 
-				loadCompatibleShippingModes(true);
-				loadCompatibleShippingModes(false);
+				loadCompatibleShippingModes(scope.shippingAddress, true);
+				loadCompatibleShippingModes(scope.shippingAddress, false);
 
 				scope.selectAddressMode = function(index) {
 					var mode = scope.addressModes[index];
@@ -331,12 +354,15 @@
 				};
 
 				scope.addressCannotBeUsed = false;
+
 				scope.addressCanBeUsed = function(address) {
+					/*
 					var bool = (address.countryCode == scope.shippingAddress.countryCode);
 					if (!bool) {
 						scope.addressCannotBeUsed = true;
 						return false;
 					}
+					*/
 					return true;
 				};
 
@@ -350,7 +376,7 @@
 						scope.editShippingAddress = false;
 						scope.shippingAddress = angular.copy(scope.cart.shippingModes[scope.deliveryIndex].addressReference);
 						scope.delivery.addressReference = angular.copy(scope.shippingAddress);
-						scope.addressModes = loadCompatibleShippingModes(true);
+						scope.addressModes = loadCompatibleShippingModes(scope.shippingAddress, true);
 					};
 
 					var address = angular.copy(scope.shippingAddress);
@@ -683,10 +709,22 @@
 			scope.information.confirmEmail = scope.cart.email;
 			scope.information.address = getObject(scope.cart.address, true);
 
+			var i, useDefault = false;
 			if (!scope.information.address.hasOwnProperty('__addressFieldsId') && scope.addresses) {
-				for (var i = 0; i < scope.addresses.length; i++) {
-					if (scope.addresses[i].default == true) {
+				for (i = 0; i < scope.addresses.length; i++) {
+					if (scope.addresses[i].default.billing == true) {
 						applyAddress(scope.information.address, scope.addresses[i]);
+						useDefault = true;
+						break;
+					}
+				}
+				if (!useDefault) {
+					for (i = 0; i < scope.addresses.length; i++) {
+						if (scope.addresses[i].default.default == true) {
+							applyAddress(scope.information.address, scope.addresses[i]);
+							useDefault = true;
+							break;
+						}
 					}
 				}
 			}
@@ -877,8 +915,6 @@
 				scope.shipping.deliveries.push(defaultDelivery);
 
 				scope.cart.shippingModes[0] = {};
-				/*var deliveryTemp = { lines: [ scope.cart.lines[0] ] };
-				 scope.shipping.deliveries.push(deliveryTemp);*/
 			}
 		};
 

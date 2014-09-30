@@ -148,5 +148,8 @@
 	},
 	"has_credit_note":{
 		"message":"utilise des avoirs"
+	},
+	"template_manage_addresses_label":{
+		"message":"Distinguer livraison et facturation"
 	}
 }

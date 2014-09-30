@@ -38,13 +38,13 @@
 	"button_new_address":{
 		"message":"ajouter une nouvelle adresse"
 	},
-	"button_set_default":{
-		"message":"adresse par défaut"
-	},
 	"address_name":{
 		"message":"nom de l'adresse"
 	},
 	"by_default":{
 		"message":"par défaut"
+	},
+	"button_set_default":{
+		"message":"utiliser par défaut"
 	}
 }

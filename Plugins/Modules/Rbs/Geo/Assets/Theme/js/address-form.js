@@ -107,6 +107,7 @@
 						}
 						scope.fieldsDef = [];
 						var fieldValues = ngModel.$viewValue;
+						fieldValues.__addressFieldsId = addressFields.definition;
 						var field;
 						for (var i = 0; i < fieldsDef.length; i++) {
 							field = fieldsDef[i];
@@ -120,7 +121,7 @@
 									v = field.defaultValue;
 									fieldValues[field.name] = v;
 								}
-								fieldValues.__addressFieldsId = addressFields.definition;
+
 							}
 						}
 					}

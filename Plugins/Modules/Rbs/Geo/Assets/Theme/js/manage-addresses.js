@@ -32,8 +32,8 @@
 			scope.data.editedAddress = null;
 		};
 
-		scope.setDefaultAddress = function (address) {
-			$http.post('Action/Rbs/Geo/SetDefaultAddress', { id: address.fieldValues['__id'] })
+		scope.setDefaultAddress = function (address, defaultFor) {
+			$http.post('Action/Rbs/Geo/SetDefaultAddress', { id: address.fieldValues['__id'], defaultFor: defaultFor })
 				.success(function(data) {
 					scope.data.addresses = data;
 				})
