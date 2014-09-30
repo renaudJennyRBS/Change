@@ -7,6 +7,7 @@
 		<property name="defaultWebStore" type="Document" document-type="Rbs_Store_WebStore" />
 		<property name="defaultZone" type="String" />
 		<property name="defaultBillingArea" type="Document" document-type="Rbs_Price_BillingArea" />
-		<property name="defaultAddress" type="Document" document-type="Rbs_Geo_Address" />
+		<property name="defaultBillingAddress" type="Document" document-type="Rbs_Geo_Address" />
+		<property name="defaultShippingAddress" type="Document" document-type="Rbs_Geo_Address" />
 	</properties>
 </document>

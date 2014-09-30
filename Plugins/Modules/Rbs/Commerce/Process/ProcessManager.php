@@ -178,7 +178,16 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		$cart = $event->getParam('cart');
 		$orderProcess = $event->getParam('orderProcess');
 		$options = $event->getParam('options');
-		$needAddress = isset($options['needAddress']) ? $options['needAddress'] : null;
+		$hasAddress = isset($options['hasAddress']) ? $options['hasAddress'] : false;
+		if (isset($options['address']) && is_array($options['address']))
+		{
+			$checkAddress = new \Rbs\Geo\Address\BaseAddress($options['address']);
+		}
+		else
+		{
+			$checkAddress = null;
+		}
+
 		$deliveryIndex = isset($options['deliveryIndex']) ? $options['deliveryIndex'] : null;
 
 		/* @var $genericServices \Rbs\Generic\GenericServices */
@@ -190,10 +199,11 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			$shippingModes = [];
 			foreach ($orderProcess->getShippingModes() as $shippingMode)
 			{
-				if ($needAddress !== null && $shippingMode->getHasAddress() !== $needAddress )
+				if ($hasAddress != $shippingMode->getHasAddress())
 				{
 					continue;
 				}
+
 				if (!$shippingMode->isCompatibleWith($cart))
 				{
 					continue;
@@ -201,13 +211,17 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 
 				if ($shippingMode->getDeliveryZonesCount())
 				{
-					$address = $cart->getAddress();
+					$address = $checkAddress ? $checkAddress : $cart->getAddress();
 					$cartShippingModes = $cart->getShippingModes();
 					if ($deliveryIndex !== null && isset($cartShippingModes[$deliveryIndex]))
 					{
 						$cartShippingMode = $cartShippingModes[$deliveryIndex];
-						$address = $cartShippingMode->getAddressReference();
+						if (!$checkAddress)
+						{
+							$address = $cartShippingMode->getAddressReference();
+						}
 					}
+
 					if ($address instanceof \Rbs\Geo\Address\AddressInterface && $geoManager)
 					{
 						foreach ($shippingMode->getDeliveryZones() as $zone)

@@ -9,18 +9,27 @@
 			<h2>{{ i18n('m.rbs.geo.front.address_list_title', ['ucf']) }}</h2>
 			<div class="row">
 				<div data-ng-repeat-start="address in data.addresses" class="col-md-6 col-lg-4">
-					<h3>(= address.name =) <small data-ng-if="address.default">({{ i18n('m.rbs.geo.front.by_default') }})</small></h3>
+					<h3>(= address.name =)</h3>
 					<address>
 						<strong>(= address.lines[0] =)</strong>
 						<div data-ng-repeat="line in address.lines track by $index" data-ng-if="!$first">(= line =)</div>
 					</address>
+					{% block defaultAddresses %}
+					<p>
+						<div data-ng-show="address.default.default">
+							<span class="glyphicon glyphicon-heart"></span>
+							{{ i18n('m.rbs.geo.front.by_default', ['ucf']) }}
+						</div>
+						<button data-ng-hide="address.default.default" class="btn btn-sm btn-default"
+								data-ng-click="setDefaultAddress(address, 'default')">
+							<span class="glyphicon glyphicon-heart-empty text-muted"></span>
+							{{ i18n('m.rbs.geo.front.button_set_default', ['ucf']) }}
+						</button>
+					</p>
+					{% endblock %}
 					<p data-ng-if="address.fieldValues.__id">
 						<button type="button" class="btn btn-sm btn-default" data-ng-click="openEditAddressForm(address)">
 							{{ i18n('m.rbs.geo.front.button_edit', ['ucf']) }}
-						</button>
-						<button data-ng-if="!address.default" type="button" class="btn btn-sm btn-default"
-							data-ng-click="setDefaultAddress(address)">
-							{{ i18n('m.rbs.geo.front.button_set_default', ['ucf']) }}
 						</button>
 						<button type="button" class="btn btn-sm btn-danger btn-icon" data-ng-click="deleteAddress(address)"
 							title="{{ i18nAttr('m.rbs.geo.front.button_delete', ['ucf']) }}">

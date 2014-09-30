@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -17,8 +16,28 @@ class Address
 	 * @param \Change\Events\Event $event
 	 * @throws \Exception
 	 */
+	public function onDefaultForNames($event)
+	{
+		$names = $event->getParam('names');
+		if (is_array($names))
+		{
+			$names += ['billing', 'shipping'];
+			$event->setParam('names', $names);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
 	public function onSetDefaultAddress($event)
 	{
+		$defaultFor = $event->getParam('defaultFor');
+		if (!is_array($defaultFor) || (!in_array('billing', $defaultFor) && !in_array('shipping', $defaultFor)))
+		{
+			return;
+		}
+
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$address = $event->getParam('address');
 		if (is_numeric($address))
@@ -48,8 +67,14 @@ class Address
 		try
 		{
 			$tm->begin();
-
-			$profile->setDefaultAddressId($address->getId());
+			if (in_array('billing', $defaultFor))
+			{
+				$profile->setDefaultBillingAddressId($address->getId());
+			}
+			if (in_array('shipping', $defaultFor))
+			{
+				$profile->setDefaultShippingAddressId($address->getId());
+			}
 			$profileManager->saveProfile($user, $profile);
 
 			$tm->commit();
@@ -73,23 +98,48 @@ class Address
 			return;
 		}
 
-		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+		$defaultFor = $event->getParam('defaultFor');
+		if (!is_array($defaultFor) || (!in_array('billing', $defaultFor) && !in_array('shipping', $defaultFor)))
+		{
+			return;
+		}
+		$applicationServices = $event->getApplicationServices();
+
+		$user = $applicationServices->getAuthenticationManager()->getCurrentUser();
 		if (!$user->authenticated())
 		{
 			return;
 		}
 
-		$profileManager = $event->getApplicationServices()->getProfileManager();
+		$profileManager = $applicationServices->getProfileManager();
 		$profile = $profileManager->loadProfile($user, 'Rbs_Commerce');
 		if (!($profile instanceof \Rbs\Commerce\Std\Profile))
 		{
 			return;
 		}
 
-		$address = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($profile->getDefaultAddressId());
-		if ($address instanceof \Rbs\Geo\Documents\Address)
+		foreach ($defaultFor as $for)
 		{
-			$event->setParam('defaultAddress', $address);
+			if ($for === 'billing')
+			{
+				$address = $applicationServices->getDocumentManager()
+					->getDocumentInstance($profile->getDefaultBillingAddressId());
+				if ($address instanceof \Rbs\Geo\Documents\Address)
+				{
+					$event->setParam('defaultAddress', $address);
+					break;
+				}
+			}
+			elseif ($for === 'shipping')
+			{
+				$address = $applicationServices->getDocumentManager()
+					->getDocumentInstance($profile->getDefaultShippingAddressId());
+				if ($address instanceof \Rbs\Geo\Documents\Address)
+				{
+					$event->setParam('defaultAddress', $address);
+					break;
+				}
+			}
 		}
 	}
-} 
+}

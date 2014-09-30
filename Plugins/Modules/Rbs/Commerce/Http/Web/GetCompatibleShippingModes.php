@@ -19,7 +19,7 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 	 */
 	public function execute(\Change\Http\Web\Event $event)
 	{
-		$modesInfos = [];
+		$modesInfo = [];
 		$commerceServices = $event->getServices('commerceServices');
 		if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
 		{
@@ -41,7 +41,7 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 						/* @var $shippingMode \Rbs\Shipping\Documents\Mode */
 						foreach ($shippingModes as $shippingMode)
 						{
-							$modeInfos = array(
+							$modeInfo = array(
 								'id' => $shippingMode->getId(),
 								'title' => $shippingMode->getCurrentLocalization()->getTitle(),
 								'description' => $richTextManager->render($shippingMode->getCurrentLocalization()
@@ -52,8 +52,8 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 							$visual = $shippingMode->getVisual();
 							if ($visual)
 							{
-								$modeInfos['visualId'] = $visual->getId();
-								$modeInfos['visualUrl'] = $visual->getPublicURL(160, 90); // TODO: get size as a parameter?
+								$modeInfo['visualId'] = $visual->getId();
+								$modeInfo['visualUrl'] = $visual->getPublicURL(160, 90); // TODO: get size as a parameter?
 							}
 
 							$webStore = $event->getApplicationServices()->getDocumentManager()
@@ -76,32 +76,32 @@ class GetCompatibleShippingModes extends \Change\Http\Web\Actions\AbstractAjaxAc
 										$feesValue = $commerceServices->getPriceManager()
 											->getValueWithTax($feesValue, $taxes);
 									}
-									$modeInfos['feeId'] = $fee->getId();
-									$modeInfos['feesValue'] = $commerceServices->getPriceManager()
+									$modeInfo['feeId'] = $fee->getId();
+									$modeInfo['feesValue'] = $commerceServices->getPriceManager()
 										->formatValue($feesValue, $billingArea->getCurrencyCode());
 								}
 							}
 
-							if (!isset($modeInfos['feesValue']))
+							if (!isset($modeInfo['feesValue']))
 							{
-								$modeInfos['feesValue'] = $event->getApplicationServices()->getI18nManager()
+								$modeInfo['feesValue'] = $event->getApplicationServices()->getI18nManager()
 									->trans('m.rbs.commerce.front.free_shipping_fee', ['ucf']);
 							}
 
 							$evt = new \Change\Documents\Events\Event('httpInfos', $shippingMode, ['httpEvent' => $event,
-								'httpInfos' => $modeInfos, 'cart' => $cart, 'fee' => $fee]);
+								'httpInfos' => $modeInfo, 'cart' => $cart, 'fee' => $fee]);
 							$shippingMode->getEventManager()->trigger($evt);
 							$httpInfos = $evt->getParam('httpInfos');
 							if (is_array($httpInfos) && count($httpInfos))
 							{
-								$modesInfos[] = $httpInfos;
+								$modesInfo[] = $httpInfos;
 							}
 						}
 					}
 				}
 			}
 		}
-		$result = $this->getNewAjaxResult($modesInfos);
+		$result = $this->getNewAjaxResult($modesInfo);
 		$event->setResult($result);
 	}
 }

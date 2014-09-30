@@ -282,5 +282,17 @@
 	},
 	"must_accept_terms_and_conditions":{
 		"message":"Vous devez accepter les conditions générales de vente avant de pouvoir passer commande."
+	},
+	"by_shipping_default":{
+		"message":"livraison par défaut"
+	},
+	"button_set_shipping_default":{
+		"message":"utiliser pour la livraison"
+	},
+	"by_billing_default":{
+		"message": "facturation par défaut"
+	},
+	"button_set_billing_default":{
+		"message":"utiliser pour la facturation"
 	}
 }

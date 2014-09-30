@@ -28,6 +28,12 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (Event $event)
 		{
+			(new \Rbs\Commerce\Events\GeoManager\Address())->onDefaultForNames($event);
+		};
+		$events->attach('getDefaultForNames', $callback, 10);
+
+		$callback = function (Event $event)
+		{
 			(new \Rbs\Commerce\Events\GeoManager\Address())->onSetDefaultAddress($event);
 		};
 		$events->attach('setDefaultAddress', $callback, 10);

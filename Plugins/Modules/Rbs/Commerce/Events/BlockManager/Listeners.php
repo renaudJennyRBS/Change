@@ -9,6 +9,7 @@
 namespace Rbs\Commerce\Events\BlockManager;
 
 use Change\Presentation\Blocks\Standard\RegisterByBlockName;
+use Change\Presentation\Blocks\Standard\UpdateBlockInformation;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
@@ -44,6 +45,9 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Wishlist_WishlistButton', true, $events);
 		new RegisterByBlockName('Rbs_Wishlist_WishlistDetail', true, $events);
 		new RegisterByBlockName('Rbs_Wishlist_WishlistList', true, $events);
+
+		new UpdateBlockInformation('Rbs_Geo_ManageAddresses', $events,
+			function($event) {(new Update())->onUpdateRbsGeoManageAddressesInformation($event);});
 	}
 
 	/**
