@@ -33,11 +33,9 @@
 
 
 
-	app.service('RbsChange.User', ['RbsChange.REST', 'OAuthService', '$location', '$rootScope', '$cookies', '$http', '$q', function (REST, OAuthService, $location, $rootScope, $cookies, $http, $q)
+	app.service('RbsChange.User', ['RbsChange.REST', 'RbsChange.Events', 'OAuthService', '$location', '$rootScope', '$cookies', '$http', '$q', function (REST, Events, OAuthService, $location, $rootScope, $cookies, $http, $q)
 	{
 		var	user = {'profile':{}},
-			loaded = false,
-			loading = false,
 			self = this,
 			readyQ = $q.defer();
 
@@ -54,36 +52,19 @@
 		 * Load current user from the server.
 		 */
 		this.load = function () {
-			if (loading) {
-				return;
-			}
-
-			loading = true;
 			var promise = REST.call(REST.getBaseUrl('admin/currentUser'));
 			promise.then(
-
-				// Success
+				// Success.
 				function (result) {
-					loading = false;
-					loaded = true;
 					angular.extend(user, result.properties);
 					REST.setLanguage(user.profile.LCID);
 					$cookies.LCID = user.profile.LCID;
 					$rootScope.user = user;
 					readyQ.resolve(user);
 				},
-
-				// Error
+				// Error.
 				function (error) {
-					loading = false;
-					loaded = false;
-					if (error.status == 401 || error.status == 403)
-					{
-						OAuthService.logout();
-						self.startAuthentication();
-					}
-					else
-					{
+					if (error.status != 401) {
 						console.error(error);
 					}
 				}
@@ -139,9 +120,12 @@
 			}
 
 			OAuthService.logout();
-			this.load();
+			this.startAuthentication();
 		};
 
+		$rootScope.$on(Events.Logout, function() {
+			self.logout();
+		});
 
 		this.init = function () {
 			$rootScope.user = this.get();
@@ -154,8 +138,5 @@
 				return false;
 			}
 		};
-
 	}]);
-
-
 })();

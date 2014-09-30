@@ -89,7 +89,7 @@
 				<span class="help-block">
 					{{ i18n('m.rbs.price.admin.price_target_section_help', ['ucf']) | raw }}
 				</span>
-				<rbs-field-picker property="targetId" select-model="true"
+				<rbs-field-picker property="targetId" select-model="{editable: true, abstract: false}"
 						label="{{ i18nAttr(propertyKey('Rbs_Price_Price', 'targetId'), ['ucf']) }}"
 						selector-title="{{ i18nAttr('m.rbs.price.admin.targetid_picker_title', ['ucf']) }}">
 				</rbs-field-picker>

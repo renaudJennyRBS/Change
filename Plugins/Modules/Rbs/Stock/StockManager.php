@@ -953,7 +953,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @api
 	 * @param \Rbs\Stock\Documents\Sku $sku
-	 * @param integer|\Rbs\Store\Documents\WebStore $store
+	 * @param integer|\Rbs\Store\Documents\WebStore|null $store
 	 * @param integer $level
 	 * @return string
 	 */

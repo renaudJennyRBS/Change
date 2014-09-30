@@ -9,7 +9,7 @@
 namespace Rbs\Catalog\Product;
 
 /**
- * @name \Rbs\Catalog\Product\VariantProductPresentation
+ * @name \Rbs\Catalog\Product\ProductVariantPresentation
  */
 class ProductVariantPresentation extends ProductPresentation
 {
@@ -25,7 +25,8 @@ class ProductVariantPresentation extends ProductPresentation
 	{
 		if ($this->variantsConfiguration === null)
 		{
-			$this->variantsConfiguration = $this->catalogManager->getVariantsConfiguration($this->productId, true);
+			$configuration = $this->catalogManager->getVariantsConfiguration($this->productId, true);
+			$this->variantsConfiguration = $this->catalogManager->addStockDataInVariantsConfiguration($configuration, $this->webStore);
 		}
 		return $this->variantsConfiguration;
 	}

@@ -23,6 +23,44 @@
 		scope.sectionId = attrs.sectionId;
 	}
 
+	function rbsCatalogAxisOptionClass ($parse) {
+		return {
+			require: 'select',
+			link: function(scope, elem, attrs) {
+				// Get the source for the items array that populates the select.
+				var optionsSourceStr = attrs.ngOptions.split(' ').pop();
+				// Use $parse to get a function from the options-class attribute
+				// that you can use to evaluate later.
+				var getOptionsClass = $parse(attrs.rbsCatalogAxisOptionClass);
+
+				scope.$watchCollection(optionsSourceStr, function(items) {
+					angular.forEach(items, function(item, index) {
+						// Evaluate against the item to get a mapping object for
+						// for your classes.
+						var classes = getOptionsClass(item);
+						// Also get the option you're going to need. This can be found
+						// by looking for the option with the appropriate index in the
+						// value attribute.
+						var option = elem.find('option[value=' + index + ']');
+
+						// Now loop through the key/value pairs in the mapping object
+						// and apply the classes that evaluated to be truthy.
+						angular.forEach(classes, function(add, className) {
+							if (add) {
+								angular.element(option).addClass(className);
+							}
+							else {
+								angular.element(option).removeClass(className);
+							}
+						});
+					});
+				});
+			}
+		};
+	}
+
+	app.directive('rbsCatalogAxisOptionClass', ['$parse', rbsCatalogAxisOptionClass]);
+
 	function rbsCatalogSimpleProductData() {
 		return {
 			restrict: 'A',
@@ -403,7 +441,7 @@
 		}
 
 		function buildSelectAxisValues(index, parentAxesValue, products, axes) {
-			var values = [], value, axisId;
+			var values = [], value, axisId, stockData, lastAxis = (axes.length - 1 == index);
 			angular.forEach(products, function(product) {
 				if (eqAxesValues(parentAxesValue, product.values)) {
 					value = product.values[index].value;
@@ -419,7 +457,12 @@
 								}
 							}
 						}
-						values.push({id: axisId, value: value, title: title, index: index})
+						var axisValue = {id: axisId, value: value, title: title, index: index, lastAxis: lastAxis};
+						stockData = lastAxis ? product.stockData : null;
+						if (angular.isObject(stockData) && stockData.hasOwnProperty('hasStock')) {
+							angular.extend(axisValue, stockData);
+						}
+						values.push(axisValue);
 					}
 				}
 			});

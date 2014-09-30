@@ -72,7 +72,7 @@
 				<div data-ng-if="!isContentEditable()">
 					<address class="no-bottom-margin">
 						<strong>(= document.address.__lines[0] =)</strong>
-						<div data-ng-repeat="line in document.address.__lines" data-ng-if="!$first">(= line =)</div>
+						<div data-ng-repeat="line in document.address.__lines track by $index" data-ng-if="!$first">(= line =)</div>
 					</address>
 				</div>
 			</div>

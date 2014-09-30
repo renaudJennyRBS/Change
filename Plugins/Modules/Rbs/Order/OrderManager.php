@@ -407,7 +407,24 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				foreach ($query->getDocuments() as $shipment)
 				{
 					/* @var $shipment \Rbs\Order\Documents\Shipment */
-					$shipmentPresentations[] = new \Rbs\Order\Presentation\ShipmentPresentation($shipment);
+					$shipmentPresentation = new \Rbs\Order\Presentation\ShipmentPresentation($shipment);
+
+					// Handle tracking URL.
+					$modeId = $shipment->getContext()->get('shippingModeId');
+					$trackingCode = $shipment->getTrackingCode();
+					if ($modeId && $trackingCode)
+					{
+						$mode = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($modeId);
+						if ($mode instanceof \Rbs\Shipping\Documents\Mode)
+						{
+							$urlTemplate = $mode->getTrackingUrlTemplate();
+							if ($urlTemplate)
+							{
+								$shipmentPresentation->setTrackingUrl(str_replace('{CODE}', $trackingCode, $urlTemplate));
+							}
+						}
+					}
+					$shipmentPresentations[] = $shipmentPresentation;
 				}
 				$orderPresentation->setShipments($shipmentPresentations);
 			}
