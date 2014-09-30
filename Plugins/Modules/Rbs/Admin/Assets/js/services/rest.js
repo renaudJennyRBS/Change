@@ -43,8 +43,9 @@
 			'RbsChange.UrlManager',
 			'localStorageService',
 			'RbsChange.DocumentCache',
+			'RbsChange.Events',
 
-			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, localStorageService, DocumentCache)
+			function ($http, $location, $q, $timeout, $rootScope, Utils, ArrayUtils, UrlManager, localStorageService, DocumentCache, Events)
 			{
 				var absoluteUrl,
 				    language = 'fr_FR',
@@ -422,6 +423,10 @@
 				 * @param reason
 				 */
 				function rejectQ (q, reason) {
+					if (reason.hasOwnProperty('status') && reason.status == 401) {
+						console.log(401);
+						$rootScope.$emit(Events.Logout);
+					}
 					q.reject(reason);
 				}
 
@@ -1404,7 +1409,8 @@
 						).success(function (data) {
 							resolveQ(q, data);
 						})
-						.error(function (data) {
+						.error(function (data, status) {
+							data.httpStatus = status;
 							rejectQ(q, data);
 						});
 

@@ -29,6 +29,9 @@
 	 */
 	app.constant('RbsChange.Events', {
 
+		// Raised to provoke a trigger.
+		'Logout'                         : 'Change:Logout',
+
 		// Raised when an Editor has finished loading its document.
 		// Single argument is the edited document.
 		'EditorLoaded'                   : 'Change:Editor.Loaded',
@@ -298,7 +301,7 @@
 	 * This Controller is bound to the <body/> tag and is, thus, the "root Controller".
 	 * Mostly, it deals with user authentication and settings.
 	 */
-	app.controller('Change.RootController', ['$rootScope', 'RbsChange.User', '$location', function ($rootScope, User, $location) {
+	app.controller('Change.RootController', ['$rootScope', 'RbsChange.User', '$location', 'RbsChange.Events', function ($rootScope, User, $location, Events) {
 
 		if ($location.path() !== '/authenticate') {
 			if (User.init()) {
@@ -314,7 +317,7 @@
 		});
 
 		$rootScope.logout = function () {
-			User.logout();
+			$rootScope.$emit(Events.Logout);
 		};
 	}]);
 
