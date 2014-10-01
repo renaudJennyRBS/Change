@@ -73,9 +73,15 @@ class GetHtmlBlockParameters
 				else
 				{
 					$filePath = $workspace->composePath($plugin->getAssetsPath(), 'Admin', 'Blocks', $shortBlockName . '.twig');
-					if (!is_readable($filePath))
+					if (is_readable($filePath))
 					{
-						$filePath = $workspace->pluginsModulesPath('Rbs', 'Admin', 'Assets', 'block-parameters.twig');
+						$moduleName = $plugin->getName();
+						$pathName = $workspace->composePath('Blocks', $shortBlockName . '.twig');
+					}
+					else
+					{
+						$moduleName = 'Rbs_Admin';
+						$pathName = 'block-parameters.twig';
 					}
 
 					$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
@@ -91,9 +97,9 @@ class GetHtmlBlockParameters
 					}
 
 					$attributes = array('information' => $information);
-					$renderer = function () use ($filePath, $manager, $attributes)
+					$renderer = function () use ($moduleName, $pathName, $manager, $attributes)
 					{
-						return $manager->renderTemplateFile($filePath, $attributes);
+						return $manager->renderModuleTemplateFile($moduleName, $pathName, $attributes);
 					};
 					$result->setRenderer($renderer);
 					$event->setResult($result);
