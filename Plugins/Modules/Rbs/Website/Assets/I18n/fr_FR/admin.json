@@ -209,6 +209,9 @@
 	"menu_documentid":{
 		"message":"document racine"
 	},
+	"menu_offset":{
+		"message":"position de la racine"
+	},
 	"menu_maxlevel":{
 		"message":"profondeur maximale"
 	},

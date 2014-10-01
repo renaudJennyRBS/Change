@@ -28,7 +28,26 @@ class MenuInformation extends Information
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.menu', $ucf));
 		$this->addInformationMeta('contextual', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_contextual', $ucf));
-		$this->addInformationMetaForDetailBlock(array('Rbs_Website_Topic', 'Rbs_Website_Website', 'Rbs_Website_Menu'), $i18nManager);
+		$this->addInformationMetaForDetailBlock(array('Rbs_Website_Topic', 'Rbs_Website_Website', 'Rbs_Website_Menu'), $i18nManager)
+			->setNormalizeCallback(function ($parametersValues) {
+				$contextual = isset($parametersValues['contextual']) ? $parametersValues['contextual'] : false;
+				if ($contextual)
+				{
+					return null;
+				}
+				$propertyName = \Change\Presentation\Blocks\Standard\Block::DOCUMENT_TO_DISPLAY_PROPERTY_NAME;
+				return isset($parametersValues[$propertyName]) ? intval($parametersValues[$propertyName]) : 0;
+			});
+		$this->addInformationMeta('offset', Property::TYPE_INTEGER, true, 0)
+			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_offset', $ucf))
+			->setNormalizeCallback(function ($parametersValues) {
+				$contextual = isset($parametersValues['contextual']) ? $parametersValues['contextual'] : false;
+				if (!$contextual)
+				{
+					return null;
+				}
+				return isset($parametersValues['offset']) ? intval($parametersValues['offset']) : 0;
+			});
 		$this->addInformationMeta('maxLevel', Property::TYPE_INTEGER, true, 1)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_maxlevel', $ucf));
 		$this->addInformationMeta('showTitle', Property::TYPE_BOOLEAN, true, false)

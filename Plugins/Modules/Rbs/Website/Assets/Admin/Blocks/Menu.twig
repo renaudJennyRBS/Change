@@ -1,0 +1,26 @@
+{% extends '@Rbs_Admin/block-parameters.twig' %}
+
+{% block blockParameters %}
+	{% set param = information.getParameterInformation('contextual') %}
+	{{ render.param(param, information.name ~ "_" ~ param.name) }}
+
+	<div data-ng-hide="blockParameters.contextual">
+		{% set param = information.getParameterInformation('toDisplayDocumentId') %}
+		{{ render.param(param, information.name ~ "_" ~ param.name) }}
+	</div>
+
+	<div data-ng-show="blockParameters.contextual">
+		{% set param = information.getParameterInformation('offset') %}
+		{{ render.param(param, information.name ~ "_" ~ param.name) }}
+	</div>
+
+	{% set param = information.getParameterInformation('maxLevel') %}
+	{{ render.param(param, information.name ~ "_" ~ param.name) }}
+
+	{% set param = information.getParameterInformation('showTitle') %}
+	{{ render.param(param, information.name ~ "_" ~ param.name) }}
+
+	{% if templates|length != 0 %}
+		<hr />
+	{% endif %}
+{% endblock %}
