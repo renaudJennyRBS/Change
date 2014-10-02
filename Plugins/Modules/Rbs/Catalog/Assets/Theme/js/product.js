@@ -441,7 +441,7 @@
 		}
 
 		function buildSelectAxisValues(index, parentAxesValue, products, axes) {
-			var values = [], value, axisId, stockData, lastAxis = (axes.length - 1 == index);
+			var values = [], value, axisId, lastAxis = (axes.length - 1 == index);
 			angular.forEach(products, function(product) {
 				if (eqAxesValues(parentAxesValue, product.values)) {
 					value = product.values[index].value;
@@ -458,7 +458,7 @@
 							}
 						}
 						var axisValue = {id: axisId, value: value, title: title, index: index, lastAxis: lastAxis};
-						stockData = lastAxis ? product.stockData : null;
+						var stockData = lastAxis ? product.stockData : null;
 						if (angular.isObject(stockData) && stockData.hasOwnProperty('hasStock')) {
 							angular.extend(axisValue, stockData);
 						}
@@ -487,6 +487,8 @@
 			}
 			return true;
 		}
+		// Expose this function to extended controllers.
+		scope.eqAxesValues = eqAxesValues;
 
 		function getIndexOfValue(array, value) {
 			var e, ev;

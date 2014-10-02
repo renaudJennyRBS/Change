@@ -1,65 +1,73 @@
+{% macro param(param, inputId) %}
+	<div class="form-group">
+		<label class="control-label (= labelClass =)" for="{{ inputId }}">{{ param.label }}</label>
+		<div class="controls (= controlsClass =)">
+			{% if param.collectionCode %}
+				<select id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" class="form-control" data-rbs-items-from-collection="{{ param.collectionCode }}"></select>
+			{% elseif param.type == 'Integer' %}
+				<input type="number" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" />
+			{% elseif param.type == 'String' %}
+				<input type="text" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" />
+			{% elseif param.type == 'Email' %}
+				<input type="email" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" />
+			{% elseif param.type == 'Url' %}
+				<input type="url" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" />
+			{% elseif param.type == 'Boolean' %}
+				<rbs-switch id="{{ inputId }}" ng-model="blockParameters.{{ param.name }}"></rbs-switch>
+			{% elseif param.type == 'LongString' %}
+				<textarea class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}"></textarea>
+			{% elseif param.type == 'RichText' %}
+				<rbs-rich-text-input{% if param.required %} required="required"{% endif %} id="{{ inputId }}" ng-model="blockParameters.{{ param.name }}"></rbs-rich-text-input>
+			{% elseif param.type == 'Document' or param.type == 'DocumentId' %}
+				<rbs-document-picker-single property-label="{{ param.label }}" value-ids="true" hide-buttons-label="true"
+					ng-model="blockParameters.{{ param.name }}"
+					{% if param.allowedModelsNames is defined %}
+						{% if param.allowedModelsNames|length == 1 %}accepted-model="{{ param.allowedModelsNames[0] }}"{% elseif param.allowedModelsNames|length > 1 %}select-model="{ name: {{ param.allowedModelsNames|json_encode }}}"{% endif %}
+					{% endif %}></rbs-document-picker-single>
+			{% elseif param.type == 'DocumentArray' or param.type == 'DocumentIdArray' %}
+				<rbs-document-picker-multiple property-label="{{ param.label }}" value-ids="true" hide-buttons-label="true"
+					ng-model="blockParameters.{{ param.name }}"
+					{% if param.allowedModelsNames is defined %}
+						{% if param.allowedModelsNames|length == 1 %}accepted-model="{{ param.allowedModelsNames[0] }}"{% elseif param.allowedModelsNames|length > 1 %}select-model="{ name: {{ param.allowedModelsNames|json_encode }}}"{% endif %}
+					{% endif %}></rbs-document-picker-multiple>
+			{% endif %}
+		</div>
+	</div>
+{% endmacro %}
+
+{% import _self as render %}
+
 <div>
-{% set hasParameter = false %}
-{% for param in information.parametersInformation %}
-	{% if param.name != 'TTL' and param.name != 'fullyQualifiedTemplateName' and not param.hidden %}
-		{% set inputId = information.name ~ "_" ~ param.name %}
-		{% set hasParameter = true %}
+	{% set hasParameter = false %}
+	{% set templates = information.templatesInformation %}
+	{% block blockParameters %}
+		{% for param in information.parametersInformation %}
+			{% if param.name != 'TTL' and param.name != 'fullyQualifiedTemplateName' and not param.hidden %}
+				{% set hasParameter = true %}
+				{{ render.param(param, information.name ~ "_" ~ param.name) }}
+			{% endif %}
+		{% endfor %}
+		{% if templates|length != 0 %}
+			{% if hasParameter %}
+				<hr />
+			{% endif %}
+		{% endif %}
+	{% endblock %}
+
+	{% if templates|length != 0 %}
+		{% set inputId = information.name ~ "_fullyQualifiedTemplateName" %}
 		<div class="form-group">
-			<label class="control-label (= labelClass =)" for="{{ inputId }}">{{ param.label }}</label>
+			<label class="control-label (= labelClass =)" for="{{ inputId }}">{{ i18n('m.rbs.admin.admin.block_render_template', ['ucf']) }}</label>
 			<div class="controls (= controlsClass =)">
-				{% if param.collectionCode %}
-					<select id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" class="form-control" data-rbs-items-from-collection="{{ param.collectionCode }}"></select>
-				{% elseif param.type == 'Integer' %}
-					<input type="number" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" />
-				{% elseif param.type == 'String' %}
-					<input type="text" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" />
-				{% elseif param.type == 'Email' %}
-					<input type="email" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" />
-				{% elseif param.type == 'Url' %}
-					<input type="url" class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" />
-				{% elseif param.type == 'Boolean' %}
-					<rbs-switch id="{{ inputId }}" ng-model="blockParameters.{{ param.name }}"></rbs-switch>
-				{% elseif param.type == 'LongString' %}
-					<textarea class="form-control"{% if param.required %} required="required"{% endif %} id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}"></textarea>
-				{% elseif param.type == 'RichText' %}
-					<rbs-rich-text-input{% if param.required %} required="required"{% endif %} id="{{ inputId }}" ng-model="blockParameters.{{ param.name }}"></rbs-rich-text-input>
-				{% elseif param.type == 'Document' or param.type == 'DocumentId' %}
-					<rbs-document-picker-single property-label="{{ param.label }}" value-ids="true" hide-buttons-label="true"
-							ng-model="blockParameters.{{ param.name }}"
-						{% if param.allowedModelsNames is defined %}
-							{% if param.allowedModelsNames|length == 1 %}accepted-model="{{ param.allowedModelsNames[0] }}"{% elseif param.allowedModelsNames|length > 1 %}select-model="{ name: {{ param.allowedModelsNames|json_encode }}}"{% endif %}
-						{% endif %}></rbs-document-picker-single>
-				{% elseif param.type == 'DocumentArray' or param.type == 'DocumentIdArray' %}
-					<rbs-document-picker-multiple property-label="{{ param.label }}" value-ids="true" hide-buttons-label="true"
-							ng-model="blockParameters.{{ param.name }}"
-						{% if param.allowedModelsNames is defined %}
-							{% if param.allowedModelsNames|length == 1 %}accepted-model="{{ param.allowedModelsNames[0] }}"{% elseif param.allowedModelsNames|length > 1 %}select-model="{ name: {{ param.allowedModelsNames|json_encode }}}"{% endif %}
-						{% endif %}></rbs-document-picker-multiple>
-				{% endif %}
+				<select id="{{ inputId }}" name="fullyQualifiedTemplateName" data-ng-model="blockParameters.fullyQualifiedTemplateName" class="form-control">
+					<option value="">{{ i18n('m.rbs.admin.admin.default_template', ['ucf']) }}</option>
+					{% for template in templates %}
+						<option value="{{ template.fullyQualifiedTemplateName }}">{{ template.label }}</option>
+					{% endfor %}
+				</select>
 			</div>
 		</div>
-	{% endif %}
-{% endfor %}
-
-{% set templates = information.templatesInformation %}
-{% if templates|length != 0 %}
-	{% if hasParameter %}
-		<hr />
-	{% endif %}
-
-	{% set inputId = information.name ~ "_fullyQualifiedTemplateName" %}
-	<div class="form-group">
-		<label class="control-label (= labelClass =)" for="{{ inputId }}">{{ i18n('m.rbs.admin.admin.block_render_template', ['ucf']) }}</label>
-		<div class="controls (= controlsClass =)">
-			<select id="{{ inputId }}" name="fullyQualifiedTemplateName" data-ng-model="blockParameters.fullyQualifiedTemplateName" class="form-control">
-				<option value="">{{ i18n('m.rbs.admin.admin.default_template', ['ucf']) }}</option>
-{% for template in templates %}
-				<option value="{{ template.fullyQualifiedTemplateName }}">{{ template.label }}</option>
-{% endfor %}
-			</select>
+		<div data-role="templateBlockParametersContainer">
 		</div>
-	</div>
-	<div data-role="templateBlockParametersContainer">
-	</div>
-{% endif %}
+	{% endif %}
 </div>

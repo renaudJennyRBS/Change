@@ -32,6 +32,7 @@ class Menu extends Block
 		$parameters->addParameterMeta('showTitle', false);
 		$parameters->addParameterMeta('contextual', false);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
+		$parameters->addParameterMeta('offset', 0);
 		$parameters->addParameterMeta('maxLevel', 1);
 		$parameters->addParameterMeta('pageId');
 		$parameters->addParameterMeta('sectionId');
@@ -46,9 +47,41 @@ class Menu extends Block
 			$parameters->setParameterValue('websiteId', $page->getSection()->getWebsite()->getId());
 		}
 
-		if (!$parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME) && $parameters->getParameter('contextual'))
+		if ($parameters->getParameter('contextual'))
 		{
-			$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $parameters->getParameter('sectionId'));
+			$rootId = null;
+			$sectionId = $parameters->getParameterValue('sectionId');
+			$section = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($sectionId);
+			if ($section instanceof \Rbs\Website\Documents\Section)
+			{
+				$node = $event->getApplicationServices()->getTreeManager()->getNodeByDocument($section);
+				if ($node)
+				{
+					$ancestorIds = $node->getAncestorIds();
+					$offset = $parameters->getParameterValue('offset');
+					if ($offset == 0)
+					{
+						$rootId = $sectionId;
+					}
+					if ($offset > 0)
+					{
+						$rootId = count($ancestorIds) > $offset ? $ancestorIds[$offset + 1] : null;
+					}
+					elseif ($offset < 0)
+					{
+						if ($section instanceof \Rbs\Website\Documents\Website)
+						{
+							$rootId = $sectionId;
+						}
+						else
+						{
+							$index = count($ancestorIds) + $offset;
+							$rootId = ($index > 0) ? $ancestorIds[$index] : $ancestorIds[1];
+						}
+					}
+				}
+			}
+			$parameters->setParameterValue(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, $rootId);
 		}
 		else
 		{
@@ -109,7 +142,8 @@ class Menu extends Block
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 			$treeManager = $event->getApplicationServices()->getTreeManager();
 			$menuComposer = new \Rbs\Website\Menu\MenuComposer($event->getUrlManager(), $i18nManager, $dm, $treeManager);
-			$attributes['root'] = $menuComposer->getMenuEntry($website, $doc, $parameters->getMaxLevel(), $page, $path);
+			$maxLevel = $parameters->getParameterValue('maxLevel');
+			$attributes['root'] = $menuComposer->getMenuEntry($website, $doc, $maxLevel, $page, $path);
 			$attributes['uniqueId'] = uniqid();
 			return $this->getDefaultTemplateName();
 		}
