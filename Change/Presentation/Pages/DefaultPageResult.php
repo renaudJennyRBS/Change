@@ -28,7 +28,10 @@ class DefaultPageResult
 		$applicationServices = $event->getApplicationServices();
 
 		$result = $event->getPageResult();
-		$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+		if (!$result->getHttpStatusCode())
+		{
+			$result->setHttpStatusCode(\Zend\Http\Response::STATUS_CODE_200);
+		}
 		$themeManager = $applicationServices->getThemeManager();
 		$themeManager->setCurrent($pageTemplate->getTheme());
 		$section = $page->getSection();
