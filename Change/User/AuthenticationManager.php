@@ -136,5 +136,6 @@ class AuthenticationManager implements \Zend\EventManager\EventsCapableInterface
 		$args = $em->prepareArgs(['user' => $this->getCurrentUser(), 'options' => $options]);
 		$this->getEventManager()->trigger(static::EVENT_LOGOUT, $this, $args);
 		$this->setCurrentUser(null);
+		$this->setConfirmed(false);
 	}
 }

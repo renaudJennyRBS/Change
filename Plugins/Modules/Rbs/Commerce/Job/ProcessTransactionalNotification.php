@@ -57,10 +57,10 @@ class ProcessTransactionalNotification
 			if ($order != null)
 			{
 				// Send mail to confirm the order creation
-				$webstore = $order->getWebStoreIdInstance();
-				if ($webstore)
+				$webStore = $order->getWebStoreIdInstance();
+				if ($webStore)
 				{
-					$orderProcess = $webstore->getOrderProcess();
+					$orderProcess = $webStore->getOrderProcess();
 					if ($orderProcess)
 					{
 						if ($orderProcess->getSendMailShipmentPreparation())
@@ -109,7 +109,8 @@ class ProcessTransactionalNotification
 										try
 										{
 											$mailManager->send('rbs_commerce_order_shipment_under_preparation', $website, $LCID, $userEmail,
-												["website" => $website->getTitle(), "fullname" => $fullName, "orderCode" => $order->getCode(), "orderId" => $order->getId(), "shipmentCode" => $this->getCode(), "shipmentId" => $this->getId()]);
+												["website" => $website->getTitle(), "fullname" => $fullName, "orderCode" => $order->getCode(), "orderId" => $order->getId(),
+													"shipmentCode" => $shipment->getCode(), "shipmentId" => $shipment->getId()]);
 										}
 										catch (\RuntimeException $e)
 										{
@@ -146,10 +147,10 @@ class ProcessTransactionalNotification
 			if ($order != null)
 			{
 				// Send mail to confirm the order creation
-				$webstore = $order->getWebStoreIdInstance();
-				if ($webstore)
+				$webStore = $order->getWebStoreIdInstance();
+				if ($webStore)
 				{
-					$orderProcess = $webstore->getOrderProcess();
+					$orderProcess = $webStore->getOrderProcess();
 					if ($orderProcess)
 					{
 						if ($orderProcess->getSendMailShipmentFinalized())
@@ -200,8 +201,9 @@ class ProcessTransactionalNotification
 										try
 										{
 											$mailManager->send('rbs_commerce_order_shipment_sent', $website, $LCID, $userEmail,
-												["website" => $website->getTitle(), "fullname" => $fullName, "orderCode" => $order->getCode(), "orderId" => $order->getId(), "shipmentCode" => $this->getCode(), "shipmentId" => $this->getId()],
-												$this->getShippingDate());
+												["website" => $website->getTitle(), "fullname" => $fullName, "orderCode" => $order->getCode(), "orderId" => $order->getId(), "shipmentCode" => $shipment->getCode(),
+													"shipmentId" => $shipment->getId()],
+												$shipment->getShippingDate());
 										}
 										catch (\RuntimeException $e)
 										{
@@ -322,10 +324,10 @@ class ProcessTransactionalNotification
 		if ($order instanceof \Rbs\Order\Documents\Order)
 		{
 			// Send mail to confirm the order creation
-			$webstore = $order->getWebStoreIdInstance();
-			if ($webstore)
+			$webStore = $order->getWebStoreIdInstance();
+			if ($webStore)
 			{
-				$orderProcess = $webstore->getOrderProcess();
+				$orderProcess = $webStore->getOrderProcess();
 				if ($orderProcess)
 				{
 					if ($orderProcess->getSendMailOrderCanceled())
@@ -392,7 +394,8 @@ class ProcessTransactionalNotification
 											}
 
 											$mailManager->send('rbs_commerce_order_canceled', $website, $LCID, $userEmail,
-												["website" => $website->getTitle(), "fullname" => $fullName, "total" => $total, "orderCode" => $order->getCode(), "orderId" => $order->getId()]);
+												["website" => $website->getTitle(), "fullname" => $fullName, "total" => $total,
+													"orderCode" => $order->getCode(), "orderId" => $order->getId()]);
 										}
 										catch (\RuntimeException $e)
 										{
