@@ -351,6 +351,7 @@
 
 				scope.loadShippingAddressInForm = function(address, addressName) {
 					scope.shippingAddress = address;
+					scope.validShippingAddressForm();
 				};
 
 				scope.addressCannotBeUsed = false;
