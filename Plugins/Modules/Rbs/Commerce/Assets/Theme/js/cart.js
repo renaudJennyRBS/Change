@@ -349,8 +349,12 @@
 					scope.delivery.underConfiguration = false;
 				};
 
-				scope.loadShippingAddressInForm = function(address, addressName) {
+				scope.loadShippingAddressInForm = function(address, goToNextStep) {
 					scope.shippingAddress = address;
+					if (goToNextStep)
+					{
+						scope.validShippingAddressForm();
+					}
 				};
 
 				scope.addressCannotBeUsed = false;
@@ -438,7 +442,14 @@
 				scope.connectors = [];
 				scope.selectedConnector = null;
 
-				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors', { transactionId: scope.payment.transaction.id })
+				var postParam = {transactionId: scope.payment.transaction.id};
+
+				if ($window.__change.navigationContext)
+				{
+					postParam.themeName = $window.__change.navigationContext.themeName;
+				}
+
+				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors', postParam)
 					.success(function(data) {
 						scope.connectors = data;
 						scope.payment.connectorId = null;

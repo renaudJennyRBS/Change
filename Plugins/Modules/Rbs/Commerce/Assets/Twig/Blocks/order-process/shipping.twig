@@ -50,7 +50,7 @@
 					</address>
 					<p>
 						<button type="button" class="btn btn-sm btn-primary"
-							data-ng-click="loadShippingAddressInForm(address.fieldValues)"
+							data-ng-click="loadShippingAddressInForm(address.fieldValues, true)"
 							data-ng-disabled="!addressCanBeUsed(address.fieldValues)">
 							{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
 						</button> <span data-ng-if="!addressCanBeUsed(address.fieldValues)">*</span>
