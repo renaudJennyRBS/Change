@@ -438,7 +438,8 @@
 				scope.connectors = [];
 				scope.selectedConnector = null;
 
-				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors', { transactionId: scope.payment.transaction.id })
+				$http.post('Action/Rbs/Commerce/GetCompatiblePaymentConnectors', { transactionId: scope.payment.transaction.id,
+					themeName: $window.__change.navigationContext.themeName})
 					.success(function(data) {
 						scope.connectors = data;
 						scope.payment.connectorId = null;
