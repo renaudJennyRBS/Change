@@ -27,12 +27,13 @@ class WebStoreSelector extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
+		$parameters->addParameterMeta('availableWebStoreIds', []);
+		$parameters->setLayoutParameters($event->getBlockLayout());
+
 		$parameters->addParameterMeta('webStoreId');
-		$parameters->addParameterMeta('availableWebStoreIds', array());
 		$parameters->addParameterMeta('billingAreaId');
 		$parameters->addParameterMeta('zone');
 
-		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');

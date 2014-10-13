@@ -42,7 +42,8 @@ class DefaultPageResult
 			'websiteId' => $websiteId,
 			'sectionId' => $section ? $section->getId() : null,
 			'pageIdentifier' => $page->getIdentifier(),
-			'themeName' => $pageTemplate->getTheme()->getName()
+			'themeName' => $pageTemplate->getTheme()->getName(),
+			'LCID' => $applicationServices->getI18nManager()->getLCID()
 		];
 		$result->setNavigationContext($navigationContext);
 
@@ -81,21 +82,22 @@ class DefaultPageResult
 					$monitoring['blocks'][$block->getId()] = $bm;
 				}
 			}
-
+			$jsonParameters = [];
 			$blockResults = array();
-			foreach ($blockInputs as $infos)
+			foreach ($blockInputs as $blockInfo)
 			{
 				/** @var $blockLayout \Change\Presentation\Layout\Block */
 				/** @var $parameters \Change\Presentation\Blocks\Parameters */
-				list($blockLayout, $parameters) = $infos;
-				if ($bm = ($monitoring ? $monitoring['blocks'][$blockLayout->getId()] : null))
+				list($blockLayout, $parameters) = $blockInfo;
+				$blockId = $blockLayout->getId();
+				if ($bm = ($monitoring ? $monitoring['blocks'][$blockId] : null))
 				{
 					$bm['r'] = ['d' => microtime(true), 'm' => memory_get_usage()];
 				}
 				$blockResult = $blockManager->getResult($blockLayout, $parameters, $pageManager->getHttpWebEvent());
 				if (isset($blockResult))
 				{
-					$blockResults[$blockLayout->getId()] = $blockResult;
+					$blockResults[$blockId] = $blockResult;
 				}
 				if ($monitoring)
 				{
@@ -103,10 +105,13 @@ class DefaultPageResult
 					$bm['r']['m'] = memory_get_usage() - $bm['r']['m'];
 					$bm['r']['t'] = $parameters->getTTL();
 					$bm['r']['c'] = $parameters->getParameterValue('_cached') === true;
-					$monitoring['blocks'][$blockLayout->getId()] = $bm;
+					$monitoring['blocks'][$blockId] = $bm;
 				}
+				$blockParamArray = $parameters->toArray();
+				$jsonParameters[$blockId] = $blockParamArray;
 			}
 			$result->setBlockResults($blockResults);
+			$result->setJsonObject('blockParameters', $jsonParameters);
 		}
 		
 		$application = $event->getApplication();
