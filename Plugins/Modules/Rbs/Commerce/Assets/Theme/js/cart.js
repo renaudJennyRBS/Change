@@ -429,7 +429,7 @@
 
 	app.directive('rbsCommerceShippingModeConfigurationAddress', rbsCommerceShippingModeConfigurationAddress);
 
-	function rbsCommercePaymentConnectorSelector($http, $compile, $sce) {
+	function rbsCommercePaymentConnectorSelector($http, $compile, $sce, $window) {
 		return {
 			restrict: 'AE',
 			scope: {
@@ -490,7 +490,7 @@
 		}
 	}
 
-	rbsCommercePaymentConnectorSelector.$inject = ['$http', '$compile', '$sce'];
+	rbsCommercePaymentConnectorSelector.$inject = ['$http', '$compile', '$sce', '$window'];
 	app.directive('rbsCommercePaymentConnectorSelector', rbsCommercePaymentConnectorSelector);
 
 	/**
