@@ -297,13 +297,17 @@ class UrlManager extends \Change\Http\UrlManager
 			$LCID = $this->getLCID();
 		}
 
-		$website =  $this->getWebsite();
-
-		if ($website instanceof AbstractDocument)
+		$section = $this->getSection();
+		if (!$section instanceof AbstractDocument)
 		{
-			$em = $website->getEventManager();
+			$section = $this->getWebsite();
+		}
+
+		if ($section instanceof AbstractDocument)
+		{
+			$em = $section->getEventManager();
 			$args = array('functionCode' => $functionCode);
-			$event = new \Change\Documents\Events\Event('getPageByFunction', $website, $args);
+			$event = new \Change\Documents\Events\Event('getPageByFunction', $section, $args);
 			$em->trigger($event);
 			$page = $event->getParam('page');
 			if ($page instanceof AbstractDocument)
