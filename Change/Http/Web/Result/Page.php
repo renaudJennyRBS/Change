@@ -246,7 +246,7 @@ class Page extends Result
 	}
 
 	/**
-	 * @return array|null(
+	 * @return array|null
 	 */
 	public function getJsonObjects()
 	{
