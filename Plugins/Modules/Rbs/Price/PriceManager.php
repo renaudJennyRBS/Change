@@ -442,7 +442,7 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 			if ($rate > 0)
 			{
 				$taxApplication = new \Rbs\Price\Tax\TaxApplication($tax, $category, $zone, $rate);
-				if (true || $tax->getRounding() == \Rbs\Price\Tax\TaxInterface::ROUNDING_UNIT)
+				if ($tax->getRounding() == \Rbs\Price\Tax\TaxInterface::ROUNDING_UNIT)
 				{
 					$valueToRound = $isWithTax ? $value - ($value / (1 + $rate)) : $value * $rate;
 					$taxApplication->setValue($this->roundValue($valueToRound, $precision) * $quantity);
