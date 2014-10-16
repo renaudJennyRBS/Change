@@ -255,9 +255,12 @@ class Controller extends \Change\Http\Controller
 				$page = new \Change\Presentation\Themes\DefaultPage($event->getApplicationServices()
 					->getThemeManager(), $functionCode);
 			}
-
 			$event->setParam('page', $page);
+
 			$this->doSendResult($event);
+
+			$event->setParam('page', null);
+
 			return $event->getResult();
 		}
 		catch (\Exception $e)

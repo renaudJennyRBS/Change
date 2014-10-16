@@ -306,7 +306,7 @@ class Parameters
 		$array = [];
 		foreach ($this->parametersMeta as $parameterMeta)
 		{
-			$array[$parameterMeta->getName()] = $this->getParameter($parameterMeta->getName());
+			$array[$this->ucLower($parameterMeta->getName())] = $parameterMeta->getDefaultValue();
 		}
 		return array_merge($array, $this->parameters);
 	}

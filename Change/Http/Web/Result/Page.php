@@ -51,6 +51,11 @@ class Page extends Result
 	protected $navigationContext;
 
 	/**
+	 * @var array
+	 */
+	protected $jsonObjects = [];
+
+	/**
 	 * @var \Change\Http\Web\Result\BlockResult[]
 	 */
 	protected $blockResults;
@@ -190,8 +195,7 @@ class Page extends Result
 	 */
 	public function setMonitoring($monitoring)
 	{
-		$this->monitoring = $monitoring;
-		return $this;
+		return $this->setJsonObject('monitoring', $monitoring);
 	}
 
 	/**
@@ -199,16 +203,9 @@ class Page extends Result
 	 */
 	public function getMonitoring()
 	{
-		return $this->monitoring;
+		return $this->getJsonObject('monitoring');
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getNavigationContext()
-	{
-		return $this->navigationContext;
-	}
 
 	/**
 	 * @param array $navigationContext
@@ -216,8 +213,44 @@ class Page extends Result
 	 */
 	public function setNavigationContext($navigationContext)
 	{
-		$this->navigationContext = $navigationContext;
+		return $this->setJsonObject('navigationContext', $navigationContext);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getNavigationContext()
+	{
+		return $this->getJsonObject('navigationContext');
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param $array
+	 * @return $this
+	 */
+	public function setJsonObject($name, $array)
+	{
+		$this->jsonObjects[$name] = $array;
 		return $this;
+	}
+
+	/**
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function getJsonObject($name)
+	{
+		return isset($this->jsonObjects[$name]) ? null : $this->jsonObjects[$name];
+	}
+
+	/**
+	 * @return array|null
+	 */
+	public function getJsonObjects()
+	{
+		return count($this->jsonObjects) ? $this->jsonObjects : null;
 	}
 
 	/**
