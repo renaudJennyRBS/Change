@@ -65,7 +65,7 @@ class Menu extends Block
 					}
 					if ($offset > 0)
 					{
-						$rootId = count($ancestorIds) > $offset ? $ancestorIds[$offset + 1] : null;
+						$rootId = count($ancestorIds) > $offset + 1 ? $ancestorIds[$offset + 1] : null;
 					}
 					elseif ($offset < 0)
 					{
