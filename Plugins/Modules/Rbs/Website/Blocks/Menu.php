@@ -65,7 +65,7 @@ class Menu extends Block
 					}
 					if ($offset > 0)
 					{
-						$rootId = count($ancestorIds) > $offset ? $ancestorIds[$offset + 1] : null;
+						$rootId = count($ancestorIds) > $offset + 1 ? $ancestorIds[$offset + 1] : null;
 					}
 					elseif ($offset < 0)
 					{
@@ -142,7 +142,7 @@ class Menu extends Block
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 			$treeManager = $event->getApplicationServices()->getTreeManager();
 			$menuComposer = new \Rbs\Website\Menu\MenuComposer($event->getUrlManager(), $i18nManager, $dm, $treeManager);
-			$maxLevel = $parameters->getParameterValue('maxLevel');
+			$maxLevel = $parameters->getParameter('maxLevel');
 			$attributes['root'] = $menuComposer->getMenuEntry($website, $doc, $maxLevel, $page, $path);
 			$attributes['uniqueId'] = uniqid();
 			return $this->getDefaultTemplateName();

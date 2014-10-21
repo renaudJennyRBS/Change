@@ -30,7 +30,7 @@ class CollectionArray implements CollectionInterface
 		$this->code = $code;
 		foreach ($items as $value => $label)
 		{
-			$this->items[] = new BaseItem($value, $label);
+			$this->addItem($value, $label);
 		}
 	}
 
@@ -64,5 +64,41 @@ class CollectionArray implements CollectionInterface
 	public function getCode()
 	{
 		return $this->code;
+	}
+
+	/**
+	 * @param string $value
+	 * @param string|array|\Change\I18n\I18nString $label
+	 * @return $this
+	 */
+	public function addItem($value, $label)
+	{
+		foreach ($this->items as $key => $item)
+		{
+			if ($item->getValue() === $value)
+			{
+				$this->items[$key] = new BaseItem($value, $label);
+				return $this;
+			}
+		}
+		$this->items[] = new BaseItem($value, $label);
+		return $this;
+	}
+
+	/**
+	 * @param $value
+	 * @return $this
+	 */
+	public function removeItemByValue($value)
+	{
+		foreach ($this->items as $index => $item)
+		{
+			if ($item->getValue() === $value)
+			{
+				unset($this->items[$index]);
+			}
+		}
+		$this->items = array_values($this->items);
+		return $this;
 	}
 }

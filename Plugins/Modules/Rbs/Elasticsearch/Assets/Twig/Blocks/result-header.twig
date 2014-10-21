@@ -1,11 +1,11 @@
 <div data-ng-controller="RbsElasticsearchResultController">
 	{% if parameters.searchText %}
 		{% if resultCounts.total == 0 %}
-			<p>{{ i18n('m.rbs.elasticsearch.front.no_result_for_search', ['ucf'], {TEXT: parameters.searchText })|raw }}</p>
+			<p>{{ i18n('m.rbs.elasticsearch.front.no_result_for_search', ['ucf'], {TEXT: parameters.searchText|e('html') })|raw }}</p>
 		{% elseif resultCounts.total == 1 %}
-			<p>{{ i18n('m.rbs.elasticsearch.front.one_result_for_search', ['ucf'], {TEXT: parameters.searchText })|raw }}</p>
+			<p>{{ i18n('m.rbs.elasticsearch.front.one_result_for_search', ['ucf'], {TEXT: parameters.searchText|e('html') })|raw }}</p>
 		{% else %}
-			<p>{{ i18n('m.rbs.elasticsearch.front.several_results_for_search', ['ucf'], {TOTAL: resultCounts.total, TEXT: parameters.searchText })|raw }}</p>
+			<p>{{ i18n('m.rbs.elasticsearch.front.several_results_for_search', ['ucf'], {TOTAL: resultCounts.total, TEXT: parameters.searchText|e('html') })|raw }}</p>
 		{% endif %}
 		<ul class="nav nav-tabs" role="tablist">
 			<li{% if isProductPage %} class="active"{% endif %}>

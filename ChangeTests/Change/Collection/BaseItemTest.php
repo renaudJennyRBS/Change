@@ -4,7 +4,7 @@ namespace ChangeTests\Change\Collection;
 use Change\Collection\BaseItem;
 
 /**
- * @name \ChangeTests\Change\Collection\CollectionManagerTest
+ * @name \ChangeTests\Change\Collection\BaseItemTest
  */
 class BaseItemTest extends \ChangeTests\Change\TestAssets\TestCase
 {
