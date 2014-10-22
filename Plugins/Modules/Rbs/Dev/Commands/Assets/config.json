@@ -120,7 +120,8 @@
 				"shortcut": "t"
 			},
 			"all": {
-				"description": "generate all views"
+				"description": "generate all views",
+				"shortcut": "a"
 			}
 		},
 		"arguments": {
