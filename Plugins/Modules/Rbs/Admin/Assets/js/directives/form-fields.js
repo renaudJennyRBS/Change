@@ -313,8 +313,9 @@
 
 			compile : function (tElement, tAttrs)
 			{
-				var $lbl = tElement.find('label').first(),
-					fieldId = 'rbs_field_' + (++fieldIdCounter),
+				var propertyName = tAttrs.property,
+					$lbl = tElement.find('label').first(),
+					fieldId = 'rbs_field_' + (propertyName ? propertyName.replace(/[^a-z0-9]/ig, '_') + '_' : '') + (++fieldIdCounter),
 					required = (tAttrs.required === 'true');
 				$lbl.html(tAttrs.label);
 				$lbl.attr('for', fieldId);
@@ -323,7 +324,10 @@
 				{
 					transcludeFn(function (clone) {
 						iElement.find('.controls').append(clone);
-						var $input = iElement.find('.controls [ng-model]').attr('id', fieldId);
+						var $input = iElement.find('.controls [ng-model], .controls [data-ng-model]').attr('id', fieldId);
+						if (propertyName) {
+							$input.attr('input-id', fieldId).attr('name', propertyName);
+						}
 						if (required) {
 							iElement.addClass('required');
 							$input.attr('required', 'required');
