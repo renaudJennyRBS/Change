@@ -36,6 +36,11 @@ class ShipmentPresentation
 	/**
 	 * @var string
 	 */
+	protected $shippingModeTitle;
+
+	/**
+	 * @var string
+	 */
 	protected $trackingCode;
 
 	/**
@@ -57,6 +62,16 @@ class ShipmentPresentation
 	 * @var string|null
 	 */
 	protected $trackingUrl;
+
+	/**
+	 * @var \DateTime|null
+	 */
+	protected $shippingDate;
+
+	/**
+	 * @var boolean
+	 */
+	protected $prepared;
 
 	/**
 	 * @param \Rbs\Order\Documents\Shipment|array $shipment
@@ -87,6 +102,8 @@ class ShipmentPresentation
 		// TODO: add an object to represent shipment line?
 		$this->setLines($shipment->getData());
 		$this->setAddress($shipment->getAddress());
+		$this->setShippingDate($shipment->getShippingDate());
+		$this->setPrepared($shipment->getPrepared());
 	}
 
 	/**
@@ -110,6 +127,10 @@ class ShipmentPresentation
 		{
 			$this->setShippingModeCode($array['shippingModeCode']);
 		}
+		if (isset($array['shippingModeTitle']))
+		{
+			$this->setShippingModeCode($array['shippingModeTitle']);
+		}
 		if (isset($array['trackingCode']))
 		{
 			$this->setTrackingCode($array['trackingCode']);
@@ -118,13 +139,17 @@ class ShipmentPresentation
 		{
 			$this->setTrackingUrl($array['trackingUrl']);
 		}
-		if (isset($array['processingDate']))
+		if (isset($array['carrierStatus']))
 		{
 			$this->setCarrierStatus($array['carrierStatus']);
 		}
 		if (isset($array['address']))
 		{
 			$this->setAddress($array['address']);
+		}
+		if (isset($array['shippingDate']))
+		{
+			$this->setShippingDate($array['shippingDate']);
 		}
 	}
 
@@ -295,5 +320,59 @@ class ShipmentPresentation
 	public function getAddress()
 	{
 		return $this->address;
+	}
+
+	/**
+	 * @return \DateTime|null
+	 */
+	public function getShippingDate()
+	{
+		return $this->shippingDate;
+	}
+
+	/**
+	 * @param \DateTime|null $shippingDate
+	 * @return $this
+	 */
+	public function setShippingDate($shippingDate)
+	{
+		$this->shippingDate = $shippingDate;
+		return $this;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getPrepared()
+	{
+		return $this->prepared;
+	}
+
+	/**
+	 * @param boolean $prepared
+	 * @return $this
+	 */
+	public function setPrepared($prepared)
+	{
+		$this->prepared = $prepared;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getShippingModeTitle()
+	{
+		return $this->shippingModeTitle;
+	}
+
+	/**
+	 * @param string $shippingModeTitle
+	 * @return $this
+	 */
+	public function setShippingModeTitle($shippingModeTitle)
+	{
+		$this->shippingModeTitle = $shippingModeTitle;
+		return $this;
 	}
 }

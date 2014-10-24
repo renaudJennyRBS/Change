@@ -14,6 +14,11 @@ namespace Rbs\Order\Presentation;
 class OrderPresentation
 {
 	/**
+	 * @var array
+	 */
+	protected $context;
+
+	/**
 	 * @var string
 	 */
 	protected $code;
@@ -188,6 +193,7 @@ class OrderPresentation
 		$this->setDiscounts($order->getDiscounts());
 		$this->setTotalTaxes($order->getTotalTaxes());
 		$this->setCreditNotes($order->getCreditNotes());
+		$this->setContext($order->getContext()->toArray());
 	}
 
 	/**
@@ -227,6 +233,7 @@ class OrderPresentation
 		$this->setDiscounts($cart->getDiscounts());
 		$this->setTotalTaxes($cart->getTotalTaxes());
 		$this->setCreditNotes($cart->getCreditNotes());
+		$this->setContext($cart->getContext()->toArray());
 	}
 
 	/**
@@ -338,6 +345,10 @@ class OrderPresentation
 		if (isset($array['transactions']))
 		{
 			$this->setTransactions($array['transactions']);
+		}
+		if (isset($array['context']))
+		{
+			$this->setContext($array['context']);
 		}
 	}
 
@@ -878,5 +889,23 @@ class OrderPresentation
 	public function getShipments()
 	{
 		return $this->shipments;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getContext()
+	{
+		return $this->context;
+	}
+
+	/**
+	 * @param array $context
+	 * @return $this
+	 */
+	public function setContext($context)
+	{
+		$this->context = $context;
+		return $this;
 	}
 }
