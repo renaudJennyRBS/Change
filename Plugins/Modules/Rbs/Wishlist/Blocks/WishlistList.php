@@ -100,7 +100,10 @@ class WishlistList extends Block
 				if ($wishlist->getProductsCount())
 				{
 					$firstVisual = $wishlist->getProducts()[0]->getFirstVisual();
-					$visual = ['alt' => $firstVisual->getCurrentLocalization()->getAlt(), 'docId' => $firstVisual->getId()];
+					if ($firstVisual)
+					{
+						$visual = ['alt' => $firstVisual->getCurrentLocalization()->getAlt(), 'docId' => $firstVisual->getId()];
+					}
 				}
 				$attributes['wishlists'][] = [
 					'id' => $wishlist->getId(),
