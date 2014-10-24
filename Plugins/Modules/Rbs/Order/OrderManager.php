@@ -417,6 +417,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 						$mode = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($modeId);
 						if ($mode instanceof \Rbs\Shipping\Documents\Mode)
 						{
+							$shipmentPresentation->setShippingModeTitle($mode->getCurrentLocalization()->getTitle());
 							$urlTemplate = $mode->getTrackingUrlTemplate();
 							if ($urlTemplate)
 							{
@@ -462,6 +463,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 					/* @var $transaction \Rbs\Payment\Documents\Transaction */
 					$transactionPresentations[] = new \Rbs\Order\Presentation\TransactionPresentation($transaction);
 				}
+				$orderPresentation->setTransactions($transactionPresentations);
 			}
 		}
 	}
