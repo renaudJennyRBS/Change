@@ -1,22 +1,24 @@
 {
-	"Login" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_User/js/user.js"
-		]
-	},
-	"AccountShort" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_User/js/user.js"
-		]
-	},
-	"ManageAutoLoginToken" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_User/js/user.js"
-		]
-	},
-	"EditAccount" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_User/js/user.js"
-		]
+	"blocks" : {
+		"Login": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_User/js/user.js"
+			]
+		},
+		"AccountShort": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_User/js/user.js"
+			]
+		},
+		"ManageAutoLoginToken": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_User/js/user.js"
+			]
+		},
+		"EditAccount": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_User/js/user.js"
+			]
+		}
 	}
 }

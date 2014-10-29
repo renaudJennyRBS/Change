@@ -196,27 +196,22 @@ class Theme extends \Compilation\Rbs\Theme\Documents\Theme implements \Change\Pr
 	}
 
 	/**
-	 * @param array $baseConfiguration
 	 * @return array
 	 */
-	public function getAssetConfiguration(array $baseConfiguration = null)
+	public function getAssetConfiguration()
 	{
-		$configuration = is_array($baseConfiguration) ? $baseConfiguration : [];
-
-		//TODO test with parent theme
-		if ($this->getParentTheme())
-		{
-			$parentTheme = $this->getParentTheme();
-			$parentTheme->setThemeManager($this->getThemeManager());
-			$configuration = array_merge($configuration, $parentTheme->getAssetConfiguration($configuration));
-		}
 		$resource = $this->getResourceFilePath('assets.json');
 		if (file_exists($resource))
 		{
-			$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($resource), true));
+			$resourceConfig = json_decode(\Change\Stdlib\File::read($resource), true);
+			if (is_array($resourceConfig))
+			{
+				return $resourceConfig;
+			}
+			$this->getApplication()->getLogging()->error("Invalid JSON file : " . $resource);
 		}
 
-		return $configuration;
+		return [];
 	}
 
 	/**

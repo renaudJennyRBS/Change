@@ -248,21 +248,28 @@ class DefaultTheme implements Theme
 	}
 
 	/**
-	 * @param array $baseConfiguration
 	 * @return array
 	 * @throws \RuntimeException
 	 */
-	public function getAssetConfiguration(array $baseConfiguration = null)
+	public function getAssetConfiguration()
 	{
 		//first get themes configuration
-		$configuration = is_array($baseConfiguration) ? $baseConfiguration : [];
+		$types = ['templates' => [], 'blocks' => [], 'blocksExtend' => [], 'jsCollections' => []];
 		$resource = $this->getResourceFilePath('assets.json');
-		$configuration = array_merge($configuration, json_decode(\Change\Stdlib\File::read($resource), true));
+		$configuration = json_decode(\Change\Stdlib\File::read($resource), true);
+
+		if (!is_array($configuration))
+		{
+			$this->getApplication()->getLogging()->error("Invalid JSON file : " . $resource);
+			$configuration = [];
+		}
+
+		$configuration += $types;
 
 		//Now find all modules configuration file
 		$pluginManager = $this->getPluginManager();
 		$plugins = $pluginManager->getInstalledPlugins();
-		$extendConfiguration = [];
+
 		foreach ($plugins as $plugin)
 		{
 			if ($plugin->isModule() && $plugin->isAvailable())
@@ -270,44 +277,31 @@ class DefaultTheme implements Theme
 				$configurationPath = $this->getWorkspace()->composePath($plugin->getThemeAssetsPath(), 'assets.json');
 				if (file_exists($configurationPath))
 				{
-					$blockConfigurations = [];
-					foreach (json_decode(\Change\Stdlib\File::read($configurationPath), true) as $blockName => $blockConfiguration)
+					$config = json_decode(\Change\Stdlib\File::read($configurationPath), true);
+					if (!is_array($config))
 					{
-						if (count(explode('_', $blockName)) === 3)
-						{
-							if (isset($blockConfiguration['jsAssets']) && is_array($blockConfiguration['jsAssets']))
-							{
-								foreach ($blockConfiguration['jsAssets'] as $jsAsset)
-								{
-									$extendConfiguration[$blockName]['jsAssets'][] = $jsAsset;
-								}
-							}
+						$this->getApplication()->getLogging()->error("Invalid JSON file : " . $configurationPath);
+						$config = [];
+					}
 
-							if (isset($blockConfiguration['cssAssets']) && is_array($blockConfiguration['cssAssets']))
-							{
-								foreach ($blockConfiguration['cssAssets'] as $cssAsset)
-								{
-									$extendConfiguration[$blockName]['cssAssets'][] = $cssAsset;
-								}
-							}
+					$config += $types;
+
+					$blockConfigurations = [];
+					foreach ($config['blocks'] as $blockName => $blockConfiguration)
+					{
+						$pluginName = $plugin->getName();
+						if (count(explode('_', $blockName)) === 3 && preg_match('/^'.$pluginName.'/', $blockName))
+						{
+							$blockConfigurations[$blockName] = $blockConfiguration;
 						}
 						else
 						{
-							$blockConfigurations[$plugin->getName() . '_' . $blockName] = $blockConfiguration;
+							$blockConfigurations[$pluginName . '_' . $blockName] = $blockConfiguration;
 						}
 					}
-					$configuration = array_merge($configuration, $blockConfigurations);
-				}
-			}
-		}
+					$config['blocks'] = $blockConfigurations;
 
-		foreach ($extendConfiguration as $blockName => $blockConfiguration)
-		{
-			foreach ($blockConfiguration as $assetKey => $assets)
-			{
-				foreach ($assets as $asset)
-				{
-					$configuration[$blockName][$assetKey][] = $asset;
+					$configuration = $this->getThemeManager()->appendConfiguration($configuration, $config);
 				}
 			}
 		}

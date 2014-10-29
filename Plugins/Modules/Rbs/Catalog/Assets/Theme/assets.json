@@ -1,12 +1,14 @@
 {
-	"Product" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
-		]
-	},
-	"ProductList" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
-		]
+	"blocks" : {
+		"Product": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+			]
+		},
+		"ProductList": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+			]
+		}
 	}
 }

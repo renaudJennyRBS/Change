@@ -1,18 +1,20 @@
 {
-	"WishlistButton" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistButton.js"
-		]
-	},
-	"WishlistDetail": {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistDetail.js",
-			"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
-		]
-	},
-	"WishlistList": {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistList.js"
-		]
+	"blocks" : {
+		"WishlistButton": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistButton.js"
+			]
+		},
+		"WishlistDetail": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistDetail.js",
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+			]
+		},
+		"WishlistList": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistList.js"
+			]
+		}
 	}
 }
