@@ -74,10 +74,9 @@ interface Theme
 	public function getAssetBasePath();
 
 	/**
-	 * @param array $baseConfiguration
 	 * @return array
 	 */
-	public function getAssetConfiguration(array $baseConfiguration = null);
+	public function getAssetConfiguration();
 
 	/**
 	 * @param string $resourcePath

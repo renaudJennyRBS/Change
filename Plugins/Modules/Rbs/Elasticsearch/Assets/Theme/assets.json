@@ -1,17 +1,19 @@
 {
-	"ShortSearch" : {
-		"jsAssets" : ["Theme/Rbs/Base/Rbs_Elasticsearch/js/suggest.js"]
-	},
-	"ResultHeader" : {
-		"jsAssets" : ["Theme/Rbs/Base/Rbs_Elasticsearch/js/result.js"]
-	},
-	"Facets" : {
-		"jsAssets" : ["Theme/Rbs/Base/Rbs_Elasticsearch/js/facets.js"]
-	},
-	"StoreFacets" : {
-		"jsAssets" : ["Theme/Rbs/Base/Rbs_Elasticsearch/js/facets.js"]
-	},
-	"StoreResult" : {
-		"jsAssets" : ["Theme/Rbs/Base/Rbs_Catalog/js/product.js"]
+	"blocks" : {
+		"ShortSearch": {
+			"jsAssets": ["Theme/Rbs/Base/Rbs_Elasticsearch/js/suggest.js"]
+		},
+		"ResultHeader": {
+			"jsAssets": ["Theme/Rbs/Base/Rbs_Elasticsearch/js/result.js"]
+		},
+		"Facets": {
+			"jsAssets": ["Theme/Rbs/Base/Rbs_Elasticsearch/js/facets.js"]
+		},
+		"StoreFacets": {
+			"jsAssets": ["Theme/Rbs/Base/Rbs_Elasticsearch/js/facets.js"]
+		},
+		"StoreResult": {
+			"jsAssets": ["Theme/Rbs/Base/Rbs_Catalog/js/product.js"]
+		}
 	}
 }

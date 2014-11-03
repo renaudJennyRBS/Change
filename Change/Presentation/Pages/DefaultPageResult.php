@@ -119,7 +119,7 @@ class DefaultPageResult
 		$logging = $application->getLogging();
 		$developmentMode = $application->inDevelopmentMode();
 
-		$this->addResourceParts($result, $blocks, $themeManager, $logging, $developmentMode);
+		$this->addResourceParts($result, $blocks, $pageTemplate->getCode(), $themeManager, $logging, $developmentMode);
 
 		$cachePath = $workspace->cachePath('twig', 'page', $result->getIdentifier() . '.twig');
 		if ($developmentMode)
@@ -164,11 +164,12 @@ class DefaultPageResult
 	/**
 	 * @param \Change\Http\Web\Result\Page $result
 	 * @param \Change\Presentation\Layout\Block[] $blocks
+	 * @param string $pageTemplateCode
 	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
 	 * @param \Change\Logging\Logging $logging
 	 * @param boolean $developmentMode
 	 */
-	public function addResourceParts(\Change\Http\Web\Result\Page $result, array $blocks,
+	public function addResourceParts(\Change\Http\Web\Result\Page $result, array $blocks, $pageTemplateCode,
 		\Change\Presentation\Themes\ThemeManager $themeManager,
 		\Change\Logging\Logging $logging = null, $developmentMode = false)
 	{
@@ -179,11 +180,7 @@ class DefaultPageResult
 			$blockNames[$blockName] = $blockName;
 		}
 
-		$configuration = $themeManager->getDefault()->getAssetConfiguration();
-		if ($themeManager->getCurrent() !== $themeManager->getDefault())
-		{
-			$configuration = $themeManager->getCurrent()->getAssetConfiguration($configuration);
-		}
+		$configuration = $themeManager->getAssetConfiguration($themeManager->getCurrent());
 
 		$asseticManager = $themeManager->getAsseticManager($configuration);
 
@@ -192,7 +189,7 @@ class DefaultPageResult
 			(new \Assetic\AssetWriter($themeManager->getAssetRootPath()))->writeManagerAssets($asseticManager);
 		}
 
-		$cssNames = $themeManager->getCssAssetNames($configuration, $blockNames);
+		$cssNames = $themeManager->getCssAssetNames($configuration, $blockNames, $pageTemplateCode);
 		foreach($cssNames as $cssName)
 		{
 			try
@@ -210,7 +207,7 @@ class DefaultPageResult
 			}
 		}
 
-		$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames);
+		$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames, $pageTemplateCode);
 		foreach ($jsNames as $jsName)
 		{
 			try

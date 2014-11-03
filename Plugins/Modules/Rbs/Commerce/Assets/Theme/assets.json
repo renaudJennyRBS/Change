@@ -1,25 +1,31 @@
 {
-	"Cart" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_Commerce/js/cart.js",
-			"Theme/Rbs/Base/Rbs_Commerce/js/shipping-fees-evaluation.js"
-		]
-	},
-	"OrderProcess" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_Website/js/animations.js",
-			"Theme/Rbs/Base/Rbs_Geo/js/address-form.js",
-			"Theme/Rbs/Base/Rbs_Commerce/js/cart.js",
-			"Theme/Rbs/Base/Rbs_Commerce/js/process-menu.js",
-			"Theme/Rbs/Base/Rbs_User/js/user.js"
-		],
-		"cssAssets" : [
-			"Theme/Rbs/Base/Rbs_Commerce/css/process-menu.css"
-		]
-	},
-	"ShortCart" : {
-		"jsAssets" : [
-			"Theme/Rbs/Base/Rbs_Commerce/js/short-cart.js"
-		]
+	"blocks" : {
+		"Cart": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Commerce/js/cart.js",
+				"Theme/Rbs/Base/Rbs_Commerce/js/shipping-fees-evaluation.js"
+			]
+		},
+		"OrderProcess": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Website/js/animations.js",
+				"Theme/Rbs/Base/Rbs_Geo/js/address-form.js",
+				"Theme/Rbs/Base/Rbs_Commerce/js/cart.js",
+				"Theme/Rbs/Base/Rbs_Commerce/js/process-menu.js",
+				"Theme/Rbs/Base/Rbs_User/js/user.js"
+			],
+			"cssAssets": [
+				"Theme/Rbs/Base/Rbs_Commerce/css/process-menu.css"
+			],
+			"jsCollections": [
+				"shippingMode",
+				"paymentMode"
+			]
+		},
+		"ShortCart": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Commerce/js/short-cart.js"
+			]
+		}
 	}
 }

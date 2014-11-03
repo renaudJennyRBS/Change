@@ -1,14 +1,12 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 namespace Change\Presentation\Themes;
 
-use Change\Events\EventsCapableTrait;
 use Change\Presentation\Interfaces\Theme;
 use Change\Events\Event;
 
@@ -25,6 +23,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_MAIL_TEMPLATE_LOADING = 'mail.template.loading';
 
 	const EVENT_MANAGER_IDENTIFIER = 'Presentation.Themes';
+	const EVENT_GET_ASSET_CONFIGURATION = 'getAssetConfiguration';
 
 	/**
 	 * @var Theme
@@ -41,8 +40,6 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $themes = array();
 
-
-
 	/**
 	 * @return \Change\Configuration\Configuration
 	 */
@@ -50,7 +47,6 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		return $this->getApplication()->getConfiguration();
 	}
-
 
 	/**
 	 * @return \Change\Workspace
@@ -82,6 +78,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		$eventManager->attach(static::EVENT_LOADING, array($this, 'onLoading'), 5);
+		$eventManager->attach(static::EVENT_GET_ASSET_CONFIGURATION, [$this, 'onDefaultGetAssetConfiguration'], 10);
+		$eventManager->attach(static::EVENT_GET_ASSET_CONFIGURATION, [$this, 'onDefaultCompileGetAssetConfiguration'], 5);
 	}
 
 	/**
@@ -359,7 +357,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 									{
 										$filter->setFormatter('classic');
 									}
-									else {
+									else
+									{
 										$filter->setFormatter('compressed');
 									}
 									$asset->ensureFilter($filter);
@@ -393,7 +392,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$assetRootPath = $this->getAssetRootPath();
-		$themePath =  str_replace('_', '/', $theme->getName());
+		$themePath = str_replace('_', '/', $theme->getName());
 		$filePath = $this->getApplication()->getWorkspace()->composePath($assetRootPath, 'Theme', $themePath, $themeResourcePath);
 		$resource = new \Change\Presentation\Themes\FileResource($filePath);
 		if ($resource->isValid())
@@ -406,12 +405,20 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param array $configuration
 	 * @param string[] $blockNames
+	 * @param string $pageTemplateCode
 	 * @return \Assetic\Asset\AssetCollection
 	 */
-	public function getJsAssetNames($configuration, $blockNames)
+	public function getJsAssetNames($configuration, $blockNames, $pageTemplateCode)
 	{
 		$names = [];
-		if (isset($configuration['*']['jsAssets']) && is_array($configuration['*']['jsAssets']))
+		if ($pageTemplateCode && isset($configuration['*'.$pageTemplateCode.'*']['jsAssets']) && is_array($configuration['*'.$pageTemplateCode.'*']['jsAssets']))
+		{
+			foreach ($configuration['*'.$pageTemplateCode.'*']['jsAssets'] as $themeJsAsset)
+			{
+				$names[] = $this->normalizeAssetName($themeJsAsset);
+			}
+		}
+		else if (isset($configuration['*']['jsAssets']) && is_array($configuration['*']['jsAssets']))
 		{
 			foreach ($configuration['*']['jsAssets'] as $themeJsAsset)
 			{
@@ -419,10 +426,11 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-
 		foreach (array_keys($blockNames) as $blockName)
 		{
-			if (isset($configuration[$blockName]['jsAssets']) && is_array($configuration[$blockName]['jsAssets']))
+			if (isset($configuration[$blockName]['jsAssets'])
+				&& is_array($configuration[$blockName]['jsAssets'])
+			)
 			{
 				foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
 				{
@@ -436,12 +444,20 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @param array $configuration
 	 * @param string[] $blockNames
+	 * @param string $pageTemplateCode
 	 * @return \Assetic\Asset\AssetCollection
 	 */
-	public function getCssAssetNames($configuration, $blockNames)
+	public function getCssAssetNames($configuration, $blockNames, $pageTemplateCode)
 	{
 		$names = [];
-		if (isset($configuration['*']['cssAssets']) && is_array($configuration['*']['cssAssets']))
+		if ($pageTemplateCode && isset($configuration['*'.$pageTemplateCode.'*']['cssAssets']) && is_array($configuration['*'.$pageTemplateCode.'*']['cssAssets']))
+		{
+			foreach ($configuration['*'.$pageTemplateCode.'*']['cssAssets'] as $themeCssAsset)
+			{
+				$names[] = $this->normalizeAssetName($themeCssAsset);
+			}
+		}
+		else if (isset($configuration['*']['cssAssets']) && is_array($configuration['*']['cssAssets']))
 		{
 			foreach ($configuration['*']['cssAssets'] as $themeCssAsset)
 			{
@@ -449,12 +465,13 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-
 		foreach (array_keys($blockNames) as $blockName)
 		{
 			if (isset($configuration[$blockName]))
 			{
-				if (isset($configuration[$blockName]['cssAssets']) && is_array($configuration[$blockName]['cssAssets']))
+				if (isset($configuration[$blockName]['cssAssets'])
+					&& is_array($configuration[$blockName]['cssAssets'])
+				)
 				{
 					foreach ($configuration[$blockName]['cssAssets'] as $blockCssAsset)
 					{
@@ -464,6 +481,142 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 		return array_unique($names);
+	}
+
+	/**
+	 * @param \Change\Presentation\Interfaces\Theme $theme
+	 * @return array|mixed
+	 */
+	public function getAssetConfiguration($theme)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('theme' => $theme));
+		$this->getEventManager()->trigger(static::EVENT_GET_ASSET_CONFIGURATION, $this, $args);
+		if (isset($args['configuration']))
+		{
+			return $args['configuration'];
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetAssetConfiguration($event)
+	{
+		$theme = $event->getParam('theme');
+		if ($theme instanceof \Change\Presentation\Interfaces\Theme)
+		{
+			$defaultTheme = $this->getDefault();
+			$configurationRules = $defaultTheme->getAssetConfiguration();
+
+			$types = ['templates' => [], 'blocks' => [], 'blocksExtend' => [], 'jsCollections' => []];
+			$configurationRules += $types;
+
+			if ($theme === $defaultTheme)
+			{
+				$event->setParam('configurationRules', $configurationRules);
+			}
+			else
+			{
+				$rules = [];
+
+				while ($theme)
+				{
+					$rules[] = $theme->getAssetConfiguration() + $types;
+					$theme = $theme->getParentTheme();
+				}
+
+				foreach (array_reverse($rules) as $rule)
+				{
+					$configurationRules = $this->appendConfiguration($configurationRules, $rule);
+				}
+
+				$event->setParam('configurationRules', $configurationRules);
+			}
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultCompileGetAssetConfiguration($event)
+	{
+		$configurationRules = $event->getParam('configurationRules');
+
+		$configuration = [];
+		foreach ($configurationRules['templates'] as $templateName => $templateConfiguration)
+		{
+			if ($templateName != '*')
+			{
+				$templateName = '*' . $templateName . '*';
+			}
+			$configuration[$templateName] = $templateConfiguration;
+		}
+
+		foreach ($configurationRules['blocksExtend'] as $extendBlockName => $extendBlockConfiguration)
+		{
+			if (isset($configurationRules['blocks'][$extendBlockName]))
+			{
+				$configurationRules['blocks'][$extendBlockName] = array_merge_recursive($configurationRules['blocks'][$extendBlockName],
+					$extendBlockConfiguration);
+			}
+		}
+
+		foreach ($configurationRules['blocks'] as $blockName => $blockConfiguration)
+		{
+			if (isset($blockConfiguration['jsCollections']))
+			{
+				foreach ($blockConfiguration['jsCollections'] as $jsCollection)
+				{
+					if (isset($configurationRules['jsCollections'][$jsCollection]))
+					{
+						$jsAssets = [];
+						if (isset($blockConfiguration['jsAssets']))
+						{
+							$jsAssets = $blockConfiguration['jsAssets'];
+						}
+
+						foreach ($configurationRules['jsCollections'][$jsCollection] as $jsCollectionFile)
+						{
+							$jsAssets[] = $jsCollectionFile;
+						}
+						$blockConfiguration['jsAssets'] = $jsAssets;
+					}
+				}
+			}
+
+			$jsAssets = [];
+			$cssAssets = [];
+			if (isset($blockConfiguration['jsAssets']))
+			{
+				$jsAssets = $blockConfiguration['jsAssets'];
+			}
+			if (isset($blockConfiguration['cssAssets']))
+			{
+				$cssAssets = $blockConfiguration['cssAssets'];
+			}
+
+			$configuration[$blockName] = ['jsAssets' => $jsAssets, 'cssAssets' => $cssAssets];
+		}
+
+		$event->setParam('configuration', $configuration);
+	}
+
+	/**
+	 * @param array $parentRules
+	 * @param array $rule
+	 * @return array
+	 */
+	public function appendConfiguration($parentRules, $rule)
+	{
+		$parentRules['templates'] = array_merge($parentRules['templates'], $rule['templates']);
+		$parentRules['blocks'] = array_merge($parentRules['blocks'], $rule['blocks']);
+		$parentRules['jsCollections'] = array_merge_recursive($parentRules['jsCollections'], $rule['jsCollections']);
+		$parentRules['blocksExtend'] = array_merge_recursive($parentRules['blocksExtend'], $rule['blocksExtend']);
+
+		return $parentRules;
 	}
 
 	/**
