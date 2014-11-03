@@ -546,8 +546,20 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		$configurationRules = $event->getParam('configurationRules');
 
 		$configuration = [];
+		$LCID = $event->getApplicationServices()->getI18nManager()->getLCID();
+		$i18nFiles = null;
+		if (isset($configurationRules['templates']['i18n_' . $LCID]))
+		{
+			$i18nFiles = $configurationRules['templates']['i18n_' . $LCID];
+		}
+
 		foreach ($configurationRules['templates'] as $templateName => $templateConfiguration)
 		{
+			if ($i18nFiles && strpos($templateName, 'i18n_') !== 0)
+			{
+				$templateConfiguration = array_merge_recursive($templateConfiguration, $i18nFiles);
+			}
+
 			if ($templateName != '*')
 			{
 				$templateName = '*' . $templateName . '*';
