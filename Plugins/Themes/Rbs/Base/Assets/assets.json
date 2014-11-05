@@ -19,7 +19,8 @@
 
 		"i18n_fr_FR": {
 			"jsAssets": [
-				"Theme/Rbs/Base/js/angular-1.2.23/i18n/angular-locale_fr-fr.js"
+				"Theme/Rbs/Base/js/angular-1.2.23/i18n/angular-locale_fr-fr.js",
+				"Theme/Rbs/Base/js/i18n/fr_FR.js"
 			]
 		},
 

@@ -19,6 +19,30 @@ function rbsAnchorDirective () {
 	}
 }
 
+app.filter('rbsDate', ['RbsChange.AjaxAPI', '$filter', function (AjaxAPI, $filter) {
+	var i18n = AjaxAPI.globalVar('i18n');
+
+	function filter(input, format) {
+		if (angular.isUndefined(format)) {
+			format = i18n.dateFormat;
+		}
+		return $filter('date')(input, format);
+	}
+	return filter;
+}]);
+
+app.filter('rbsDateTime', ['RbsChange.AjaxAPI', '$filter', function (AjaxAPI, $filter) {
+	var i18n = AjaxAPI.globalVar('i18n');
+
+	function filter(input, format) {
+		if (angular.isUndefined(format)) {
+			format = i18n.dateTimeFormat;
+		}
+		return $filter('date')(input, format);
+	}
+	return filter;
+}]);
+
 app.provider('RbsChange.AjaxAPI', function AjaxAPIProvider () {
 	var apiURL = '/ajax.V1.php/', LCID = 'fr_FR',
 		defaultParams = {websiteId: null, sectionId: null, pageId: null, data : {}},
