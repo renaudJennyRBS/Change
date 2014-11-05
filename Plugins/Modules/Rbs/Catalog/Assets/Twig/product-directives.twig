@@ -1,5 +1,4 @@
 {% block addToCart %}
-
 <div class="modal fade" id="addToCartConfirmationModal-{{ blockId }}" tabindex="-1" role="dialog"
 		aria-labelledby="addToCartConfirmationModalLabel-{{ blockId }}" aria-hidden="true">
 	<div class="modal-dialog">
@@ -84,7 +83,7 @@
 	</button>
 </script>
 
-{% endblock %}
+{% endblock addToCart %}
 
 {% block pictograms %}
 <script type="text/ng-template" id="/rbsCatalogProductPictograms.tpl">
@@ -98,7 +97,7 @@
 		{% endspaceless %}
 	</div>
 </script>
-{% endblock %}
+{% endblock pictograms %}
 
 {% block attributes %}
 <script type="text/ng-template" id="/rbsCatalogAttributeValue.tpl">
@@ -140,7 +139,8 @@
 	<div class="panel-group" id="block-(= blockId =)-attribute-group-accordion">
 		<div class="panel" data-ng-repeat="section in sections track by $index">
 			<div class="panel-heading">
-				<a class="accordion-toggle" data-toggle="collapse" data-parent="#block-(= blockId =)-attribute-group-accordion" href="#block-(= blockId =)-attribute-group-(= $index =)">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#block-(= blockId =)-attribute-group-accordion"
+					data-ng-href="#block-(= blockId =)-attribute-group-(= $index =)">
 					<span data-ng-show="section" data-ng-bind="section"></span>
 					<span data-ng-hide="section">{{ i18n('m.rbs.catalog.front.main_attributes', ['ucf']) }}</span>
 				</a>
@@ -150,7 +150,8 @@
 					<dl class="dl-horizontal" data-ng-repeat="attribute in sectionsAttributes[section] track by $index">
 						<dt>
 							<span data-ng-bind="attribute.title"></span>
-							<div class="small" data-ng-if="attribute.description" data-ng-bind-html="trustHtml(attribute.description)"></div>
+							<span class="small" data-ng-if="attribute.description"
+								data-ng-bind-html="trustHtml(attribute.description)"></span>
 						</dt>
 						<dd data-rbs-catalog-attribute-value="" data-attribute="attribute"></dd>
 					</dl>
@@ -164,7 +165,7 @@
 	<dl class="dl-horizontal">
 		<dt  data-ng-repeat-start="attribute in flatRows track by $index">
 			<span data-ng-bind="attribute.title"></span>
-			<div class="small" data-ng-if="attribute.description" data-ng-bind-html="trustHtml(attribute.description)"></div>
+			<span class="small" data-ng-if="attribute.description" data-ng-bind-html="trustHtml(attribute.description)"></span>
 		</dt>
 		<dd data-ng-repeat-end="" data-rbs-catalog-attribute-value="" data-attribute="attribute"></dd>
 	</dl>
@@ -173,7 +174,7 @@
 <script type="text/ng-template" id="/rbsCatalogAttributesTabs.tpl">
 	<ul id="block-(= blockId =)-attribute-group-tabs" class="nav nav-tabs">
 		<li data-ng-repeat="section in sections track by $index" data-ng-class="{active: $first}">
-			<a href="#block-(= blockId =)-attribute-group-tab-(= $index =)" data-toggle="tab">
+			<a data-ng-href="#block-(= blockId =)-attribute-group-tab-(= $index =)" data-toggle="tab">
 				<span data-ng-show="section" data-ng-bind="section"></span>
 				<span data-ng-hide="section">{{ i18n('m.rbs.catalog.front.main_attributes', ['ucf']) }}</span>
 			</a>
@@ -185,14 +186,15 @@
 			<dl class="dl-horizontal" data-ng-repeat="attribute in sectionsAttributes[section] track by $index">
 				<dt>
 					<span data-ng-bind="attribute.title"></span>
-				<div class="small" data-ng-if="attribute.description" data-ng-bind-html="trustHtml(attribute.description)"></div>
+					<span class="small" data-ng-if="attribute.description"
+						data-ng-bind-html="trustHtml(attribute.description)"></span>
 				</dt>
 				<dd data-rbs-catalog-attribute-value="" data-attribute="attribute"></dd>
 			</dl>
 		</div>
 	</div>
 </script>
-{% endblock %}
+{% endblock attributes %}
 
 {% block stock %}
 <script type="text/ng-template" id="/rbsCatalogProductAvailability.tpl">
@@ -201,7 +203,7 @@
 		<h4 itemprop="availability" data-ng-bind="productData.stock.thresholdTitle"></h4>
 	</div>
 </script>
-{% endblock %}
+{% endblock stock %}
 
 {% block price %}
 <script type="text/ng-template" id="/rbsCatalogProductPrice.tpl">
@@ -241,4 +243,28 @@
 		</ul>
 	</div>
 </script>
-{% endblock %}
+{% endblock price %}
+
+{% block variantSelector %}
+	<script type="text/ng-template" id="/rbsCatalogVariantSelector.tpl">
+		<div class="form-horizontal">
+			<div class="form-group" data-ng-repeat="axis in rootProductData.variants.axes">
+				<label for="selectedVariant_{{ blockId }}_(= $index =)" class="col-sm-4 col-md-3 control-label">
+					(= axis.title =)
+				</label>
+				<div class="col-sm-8 col-md-9">
+					<select id="selectedVariant_{{ blockId }}_(= $index =)" data-ng-show="axesItems[$index].length != 1"
+						data-ng-cloak="" class="form-control" data-ng-model="selectedAxesValues[$index]"
+						data-ng-options="axisItem.value as axisItem.title for axisItem in axesItems[$index]"
+						data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
+						data-ng-change="variantChanged($index)" data-ng-disabled="$index > 0 && !selectedAxesValues[$index - 1]">
+						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
+					</select>
+					<div data-ng-show="axesItems[$index].length == 1" data-ng-cloak="" class="form-control-static">
+						(= axesItems[$index][0].title =)
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>
+{% endblock variantSelector %}
