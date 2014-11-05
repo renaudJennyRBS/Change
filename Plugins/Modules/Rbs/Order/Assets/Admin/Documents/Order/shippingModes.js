@@ -10,6 +10,7 @@
 				'shippingModes': "=",
 				'lines': "=",
 				'orderId': "@",
+				'orderProcessingStatus': "@",
 				'isOrderEditable': "="
 			},
 
@@ -113,7 +114,7 @@
 				});
 
 				function loadShippingModeStatus(shippingId) {
-					if (scope.orderId) {
+					if (scope.orderId && scope.orderProcessingStatus == 'processing') {
 						var params = {
 							orderId: scope.orderId,
 							shippingModeId: shippingId
