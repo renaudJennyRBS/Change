@@ -178,6 +178,13 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 
 			$context = $this->getContext()->toArray();
 			$restResult->setProperty('context', (count($context)) ? $context : null);
+
+			$lines = [];
+			foreach ($this->getLines() as $line)
+			{
+				$lines[] = $line->toArray();
+			}
+			$restResult->setProperty('lines', $lines);
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
@@ -202,6 +209,11 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 			case 'context':
 				$this->setContext($value);
 				break;
+
+			case 'lines':
+				$this->setLines($value);
+				break;
+
 			default:
 				return parent::processRestData($name, $value, $event);
 		}
@@ -226,5 +238,51 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 		$jobManager = $event->getApplicationServices()->getJobManager();
 		$argument = ['notificationName' => 'rbs_commerce_order_shipment_sent', 'targetId' => $this->getId()];
 		$jobManager->createNewJob('Rbs_Notification_ProcessTransactionalNotification', $argument);
+	}
+
+	/**
+	 * @var \Rbs\Order\Shipment\Line[]|null
+	 */
+	protected $lines = null;
+
+	/**
+	 * @return \Rbs\Order\Shipment\Line[]
+	 */
+	public function getLines()
+	{
+		if ($this->lines === null)
+		{
+			$this->lines = [];
+			$data = $this->getData();
+			if (is_array($data))
+			{
+				foreach ($data as $lineData)
+				{
+					$this->lines[] = new \Rbs\Order\Shipment\Line($lineData);
+				}
+			}
+		}
+		return $this->lines;
+	}
+
+	/**
+	 * @param \Rbs\Order\Shipment\Line[]|array[] $lines
+	 * @return $this
+	 */
+	public function setLines($lines)
+	{
+		$this->lines = [];
+		$data = [];
+		if (is_array($lines))
+		{
+			foreach ($lines as $line)
+			{
+				$l = new \Rbs\Order\Shipment\Line($line);
+				$this->lines[] = $l;
+				$data[] = $l->toArray();
+			}
+		}
+		$this->setData(count($data) ? $data : null);
+		return $this;
 	}
 }

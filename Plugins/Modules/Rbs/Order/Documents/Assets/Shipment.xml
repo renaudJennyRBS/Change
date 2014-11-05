@@ -13,7 +13,7 @@
 		<property name="trackingCode" type="String" />
 		<property name="carrierStatus" type="String" />
 		<property name="itemCount" type="Integer" />
-		<property name="data" type="JSON" />
+		<property name="data" type="JSON" internal="true" />
 		<property name="address" type="JSON" />
 		<property name="shippingDate" type="DateTime" />
 	</properties>
