@@ -53,7 +53,7 @@ class Order
 	}
 
 	/**
-	 * Default actionPath: Rbs/Commerce/Order/
+	 * Default actionPath: Rbs/Order/Order/
 	 *
 	 * @param \Change\Http\Event $event
 	 */

@@ -218,7 +218,9 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onProcessingGetByUser(\Change\Events\Event $event)
 	{
-		if ($event->getParam('paginator') || $event->getParam('processingStatus') != \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
+		if ($event->getParam('paginator')
+			|| $event->getParam('processingStatus') != \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING
+		)
 		{
 			return;
 		}
@@ -252,14 +254,16 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$orderPresentations[] = $this->getOrderPresentation($cart);
 			}
 
-			usort($orderPresentations, function (\Rbs\Order\Presentation\OrderPresentation $a, \Rbs\Order\Presentation\OrderPresentation $b)
-			{
-				if ($a->getDate() == $b->getDate())
+			usort($orderPresentations,
+				function (\Rbs\Order\Presentation\OrderPresentation $a, \Rbs\Order\Presentation\OrderPresentation $b)
 				{
-					return 0;
+					if ($a->getDate() == $b->getDate())
+					{
+						return 0;
+					}
+					return ($a->getDate() > $b->getDate()) ? -1 : 1;
 				}
-				return ($a->getDate() > $b->getDate()) ? -1 : 1;
-			});
+			);
 
 			$totalCount = count($orderPresentations);
 			$itemsPerPage = $event->getParam('itemsPerPage', null);
@@ -489,7 +493,8 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * Options:
 	 *  - userId
-	 *  - orderId
+	 *  - ownerIds
+	 *  - order
 	 *  - cartIdentifier
 	 * @api
 	 * @param array $options
@@ -519,7 +524,12 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$userId = $event->getParam('userId');
-		if ($userId && ($order->getAuthorId() == $userId || $order->getOwnerId() == $userId))
+		$ownerIds = $event->getParam('ownerIds');
+		if (!is_array($ownerIds) || !count($ownerIds))
+		{
+			$ownerIds = [$userId];
+		}
+		if ($userId && ($order->getAuthorId() == $userId || in_array($order->getOwnerId(), $ownerIds)))
 		{
 			$event->setParam('canViewOrder', true);
 			return;
@@ -544,7 +554,12 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$userId = $event->getParam('userId');
-		if ($userId && ($cart->getUserId() == $userId || $cart->getOwnerId() == $userId))
+		$ownerIds = $event->getParam('ownerIds');
+		if (!is_array($ownerIds) || !count($ownerIds))
+		{
+			$ownerIds = [$userId];
+		}
+		if ($userId && ($cart->getUserId() == $userId || in_array($cart->getOwnerId(), $ownerIds)))
 		{
 			$event->setParam('canViewOrder', true);
 			return;
@@ -575,7 +590,8 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		if ($order instanceof \Rbs\Commerce\Cart\Cart) {
+		if ($order instanceof \Rbs\Commerce\Cart\Cart)
+		{
 			$statusInfo = ['code' => 'PAYMENT_VALIDATING',
 				'title' => $i18nManager->trans('m.rbs.order.front.payment_validating', ['ucf'])];
 			$event->setParam('statusInfo', $statusInfo);
@@ -648,14 +664,16 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 						}
 					}
 				}
-				if ($code === null) {
+				if ($code === null)
+				{
 					$code = 'PROCESS_WAITING';
 				}
 
 				if ($code)
 				{
 					$statusInfo = ['code' => $code, 'title' => $code];
-					switch ($code) {
+					switch ($code)
+					{
 						case 'PROCESS_WAITING':
 							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.process_waiting', ['ucf']);
 							break;
@@ -745,14 +763,13 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
-
 	/**
 	 * Default context:
 	 *  - *dataSetNames, *visualFormats, *URLFormats
 	 *  - website, websiteUrlManager, section, page, detailed
 	 *  - *data
 	 * @api
-	 * @param \Rbs\Commerce\Cart\Cart|string $order
+	 * @param \Rbs\Order\Documents\Order|integer $order
 	 * @param array $context
 	 * @return array
 	 */
@@ -793,7 +810,7 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 * Output param: orderData
 	 * @param \Change\Events\Event $event
 	 */
-	public function  onDefaultGetOrderData(\Change\Events\Event $event)
+	public function onDefaultGetOrderData(\Change\Events\Event $event)
 	{
 		if (!$event->getParam('orderData'))
 		{

@@ -897,33 +897,6 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 			$stockManager = $commerceServices->getStockManager();
 			$priceManager = $commerceServices->getPriceManager();
 
-			/*
-				$cart->removeAllFees();
-				$cart->removeAllDiscounts();
-
-				$processManager = $commerceServices->getProcessManager();
-				$process = $processManager->getOrderProcessByCart($cart);
-				if ($process)
-				{
-					$documents = $process->getAvailableModifiers();
-					foreach ($documents as $document)
-					{
-						if ($document instanceof \Rbs\Commerce\Documents\Fee) {
-							$modifier = $document->getValidModifier($cart);
-							if ($modifier) {
-								$modifier->apply();
-							}
-						}
-						elseif ($document instanceof \Rbs\Discount\Documents\Discount) {
-							$modifier = $document->getValidModifier($cart);
-							if ($modifier) {
-								$modifier->apply();
-							}
-						}
-					}
-				}
-			*/
-
 			// Add fees and discounts.
 			$totalAmountWithoutTaxes = $order->getLinesAmountWithoutTaxes();
 			$totalAmountWithTaxes = $order->getLinesAmountWithTaxes();
