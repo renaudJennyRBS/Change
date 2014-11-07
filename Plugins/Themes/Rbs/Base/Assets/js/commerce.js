@@ -147,5 +147,4 @@
 		}
 		return filter;
 	}]);
-
 })(window.jQuery);

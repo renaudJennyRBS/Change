@@ -92,7 +92,6 @@ class Cart extends Block
 		$context->setDetailed(true);
 		$context->setVisualFormats($parameters->getParameter('imageFormats'));
 		$context->setURLFormats(['canonical']);
-		$context->setDetailed(true);
 		return $context;
 	}
 }
