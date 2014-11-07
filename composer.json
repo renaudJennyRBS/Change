@@ -45,6 +45,7 @@
 		"rbs/payment": "self.version",
 		"rbs/plugins": "self.version",
 		"rbs/price": "self.version",
+		"rbs/productreturn": "self.version",
 		"rbs/review": "self.version",
 		"rbs/seo": "self.version",
 		"rbs/shipping": "self.version",

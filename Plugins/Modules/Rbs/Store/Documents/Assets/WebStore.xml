@@ -10,5 +10,6 @@
 		<property name="pricesValueWithTax" type="Boolean" default-value="false" />
 		<property name="favoriteWebsiteId" type="DocumentId" document-type="Rbs_Website_Website" />
 		<property name="orderProcess" type="Document" document-type="Rbs_Commerce_Process" />
+		<property name="returnProcess" type="Document" document-type="Rbs_Productreturn_Process" />
 	</properties>
 </document>

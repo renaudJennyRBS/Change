@@ -123,6 +123,11 @@
 	vertical-align: middle;
 }
 
+/* Separator remover on table-stripped to group lines */
+table.table-striped tr.no-top-border td {
+	border-top: 0;
+}
+
 /* Class list-inline on dl */
 .list-inline > dt,
 .list-inline > dd {

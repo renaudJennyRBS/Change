@@ -57,6 +57,16 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.order.admin.order_list_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.order.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_Productreturn_ReturnList', 'document' => false,
+			'block' => 'Rbs_Productreturn_ReturnList',
+			'label' => $i18nManager->trans('m.rbs.productreturn.admin.return_list_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.productreturn.admin.module_name', $ucf)];
+
+		$functions[] = ['code' => 'Rbs_Productreturn_ReturnProcess', 'document' => false,
+			'block' => 'Rbs_Productreturn_ReturnProcess',
+			'label' => $i18nManager->trans('m.rbs.productreturn.admin.return_process_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.productreturn.admin.module_name', $ucf)];
+
 		$functions[] = ['code' => 'Rbs_Payment_CreateAccountForTransaction', 'document' => false,
 			'block' => 'Rbs_Payment_CreateAccountForTransaction',
 			'label' => $i18nManager->trans('m.rbs.payment.admin.create_account_for_transaction_function', $ucf),

@@ -1,0 +1,15 @@
+{
+	"blocks": {
+		"ReturnProcess": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js",
+				"Theme/Rbs/Base/Rbs_Productreturn/js/return-process.js"
+			]
+		},
+		"ReturnList": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Productreturn/js/return-list.js"
+			]
+		}
+	}
+}

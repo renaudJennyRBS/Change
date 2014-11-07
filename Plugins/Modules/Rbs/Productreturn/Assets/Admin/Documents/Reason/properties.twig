@@ -1,0 +1,45 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<hr />
+
+<rbs-field property="timeLimitAfterReceipt"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'timeLimitAfterReceipt'), ['ucf']) }}">
+	<div class="input-group">
+		<input data-ng-model="document.timeLimitAfterReceipt" type="number" class="form-control" data-ng-pattern="/^\-?[0-9]+$/" />
+		<span class="input-group-addon">{{ i18n('m.rbs.productreturn.admin.unit_days') }}</span>
+	</div>
+</rbs-field>
+
+<rbs-field property="extraTimeAfterShipping"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'extraTimeAfterShipping'), ['ucf']) }}">
+	<div class="input-group">
+		<input data-ng-model="document.extraTimeAfterShipping" type="number" class="form-control" data-ng-pattern="/^\-?[0-9]+$/" />
+		<span class="input-group-addon">{{ i18n('m.rbs.productreturn.admin.unit_days') }}</span>
+	</div>
+	<div class="help-block">{{ i18nAttr('m.rbs.productreturn.admin.reason_extraTimeAfterShipping_help', ['ucf']) }}</div>
+</rbs-field>
+
+<rbs-field-rich-text property="timeoutMessage"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'timeoutMessage'), ['ucf']) }}">
+</rbs-field-rich-text>
+
+<hr />
+
+<rbs-field-picker-multiple property="processingModes"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'processingModes'), ['ucf']) }}"
+	accepted-model="Rbs_Productreturn_ProcessingMode">
+</rbs-field-picker-multiple>
+
+<rbs-field-boolean property="requirePrecisions"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'requirePrecisions'), ['ucf']) }}">
+</rbs-field-boolean>
+
+<rbs-field-boolean property="requireAttachedFile"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'requireAttachedFile'), ['ucf']) }}">
+</rbs-field-boolean>
+
+<rbs-field-boolean property="automaticValidation"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'automaticValidation'), ['ucf']) }}">
+</rbs-field-boolean>

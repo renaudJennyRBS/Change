@@ -1,0 +1,131 @@
+{% block returnHeader %}
+	<h2>
+		{% if return.common.cancellable %}
+			<span class="pull-right">
+				<button class="btn btn-default" type="button" data-ng-click="cancelReturn({{ return.common.id }})">
+					{{ i18n('m.rbs.productreturn.front.cancel_request', ['ucf']) }}
+				</button>
+			</span>
+		{% endif %}
+		{{ i18n('m.rbs.productreturn.front.return_title', ['ucf'], {'code': return.common.code}) }}
+	</h2>
+	{% if showOrderLink and return.order.common.id %}
+		<p>
+			<a href="{{ functionURL('Rbs_Order_OrderDetail', {'orderId': return.order.common.id}) }}">
+				{{ i18n('m.rbs.productreturn.front.for_order_link', ['ucf'], {'code': return.order.common.code, 'date': return.order.common.date | transDateTime}) }}
+			</a>
+		</p>
+	{% endif %}
+	<dl class="dl-horizontal">
+		<dt>{{ i18n('m.rbs.productreturn.front.request_date', ['ucf']) }}</dt>
+		<dd>{{ return.common.date | transDateTime }}</dd>
+		<dt>{{ i18n('m.rbs.productreturn.front.status', ['ucf']) }}</dt>
+		<dd>{{ return.common.statusInfos.title }}</dd>
+	</dl>
+{% endblock returnHeader %}
+
+{% block returnInstructions %}
+	{% if return.common.statusInfos.code == 'VALIDATION' %}
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ i18n('m.rbs.productreturn.front.return_instructions', ['ucf']) }}</div>
+			<div class="panel-body">
+				{{ i18n('m.rbs.productreturn.front.wait_for_validation', ['ucf']) }}
+			</div>
+		</div>
+	{% elseif return.common.statusInfos.code == 'RECEPTION' %}
+		<div class="panel panel-primary">
+			<div class="panel-heading">{{ i18n('m.rbs.productreturn.front.return_instructions', ['ucf']) }}</div>
+			<div class="panel-body">
+				{{ return.returnMode.instructions }}
+			</div>
+			{% if return.returnMode.sheetURL %}
+				<div class="panel-body">
+					<button class="btn btn-default" type="button"
+						data-ng-click="printUrl('{{ return.returnMode.sheetURL }}')">
+						{{ i18n('m.rbs.productreturn.front.print_the_return_sheet', ['ucf']) }}
+					</button>
+				</div>
+			{% endif %}
+			{% if return.returnMode.stickerURL %}
+				<div class="panel-body">
+					<button class="btn btn-default" type="button"
+						data-ng-click="printUrl('{{ return.returnMode.stickerURL }}')">
+						{{ i18n('m.rbs.productreturn.front.print_the_return_sticker', ['ucf']) }}
+					</button>
+				</div>
+			{% endif %}
+		</div>
+	{% endif %}
+{% endblock returnInstructions %}
+
+{% block returnLines %}
+	<div class="table-responsive return-lines">
+		<table class="table table-striped table-vertical-middle">
+			<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.productreturn.front.reason', ['ucf']) }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for line in return.lines %}
+					{% block returnLine %}
+						<tr>
+							<td>
+								{% if line.product %}
+									<a title="{{ line.product.common.title }}" href="{{ line.product.common.URL.canonical }}">
+										{% if line.product.common.visuals|length %}
+											<img alt="{{ line.product.common.visuals[0].alt }}"
+												src="{{ line.product.common.visuals[0].cartItem }}" />
+										{% else %}
+											<div class="text-left text-muted">
+												<span class="glyphicon glyphicon-camera" style="font-size: 80px"></span>
+											</div>
+										{% endif %}
+									</a>
+								{% else %}
+									<div class="text-left text-muted">
+										<span class="glyphicon glyphicon-camera" style="font-size: 80px"></span>
+									</div>
+								{% endif %}
+							</td>
+							<td>
+								{% if line.product %}
+									<ul class="list-unstyled{% if not (line.options.orderLineOptions.axesInfo | length) %} no-bottom-margin{% endif %}">
+										<li>{{ line.product.common.title }}</li>
+										{% if line.product.common.reference %}
+											<li>{{ line.product.common.reference }}</li>
+										{% endif %}
+									</ul>
+									{% if line.options.orderLineOptions.axesInfo | length %}
+										<dl class="dl-inline-items no-bottom-margin">
+											{% for axisInfo in line.options.orderLineOptions.axesInfo %}
+												<dt>{{ axisInfo.name }}</dt>
+												<dd>{{ axisInfo.value }}</dd>
+											{% endfor %}
+										</dl>
+									{% endif %}
+								{% else %}
+									{{ line.designation }}
+								{% endif %}
+							</td>
+							<td class="form-inline">
+								{{ line.quantity }}
+							</td>
+							<td>
+								<strong>{{ line.options.reasonTitle }}</strong>
+								{% if line.reasonPrecisions %}
+									<br />
+									{{ i18n('m.rbs.productreturn.front.precisions', ['ucf', 'lab']) }}
+									{{ line.reasonPrecisions }}
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock returnLine %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock returnLines %}

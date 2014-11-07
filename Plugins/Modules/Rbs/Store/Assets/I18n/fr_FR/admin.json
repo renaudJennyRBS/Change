@@ -26,6 +26,9 @@
 	"store_select_favoritewebsiteid":{
 		"message":"selectionner le site web favoris"
 	},
+	"store_select_returnProcess":{
+		"message":"selectionner un processus de retour"
+	},
 	"web_store_selector_label":{
 		"message":"sélecteur de boutique et zone de tarification"
 	},

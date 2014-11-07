@@ -19,5 +19,8 @@
 	},
 	"webstore_favoritewebsiteid":{
 		"message":"site web favoris"
+	},
+	"webstore_returnProcess":{
+		"message":"processus de retour"
 	}
 }

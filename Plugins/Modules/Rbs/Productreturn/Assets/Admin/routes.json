@@ -1,0 +1,168 @@
+{
+	"/Rbs/Commerce/ProcessingMode/": {
+		"model": "Rbs_Productreturn_ProcessingMode",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/ProcessingMode/list.twig",
+			"labelKey": "m.rbs.productreturn.admin.processingmode_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ProcessingMode/:id": {
+		"model": "Rbs_Productreturn_ProcessingMode",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/ProcessingMode/edit.twig",
+			"labelKey": "m.rbs.productreturn.documents.processingmode | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ProcessingMode/:id/translate/:LCID": {
+		"model": "Rbs_Productreturn_ProcessingMode",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/ProcessingMode/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ProcessingMode/new": {
+		"model": "Rbs_Productreturn_ProcessingMode",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/ProcessingMode/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Reason/": {
+		"model": "Rbs_Productreturn_Reason",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/Reason/list.twig",
+			"labelKey": "m.rbs.productreturn.admin.reason_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Reason/:id": {
+		"model": "Rbs_Productreturn_Reason",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/Reason/edit.twig",
+			"labelKey": "m.rbs.productreturn.documents.reason | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Reason/:id/translate/:LCID": {
+		"model": "Rbs_Productreturn_Reason",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/Reason/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Reason/new": {
+		"model": "Rbs_Productreturn_Reason",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/Reason/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ReturnMode/": {
+		"model": "Rbs_Productreturn_ReturnMode",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/ReturnMode/list.twig",
+			"labelKey": "m.rbs.productreturn.admin.returnMode_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ReturnModeStatic/": {
+		"model": "Rbs_Productreturn_ReturnModeStatic",
+		"name": "list",
+		"rule": {
+			"redirectTo": "/Rbs/Commerce/ReturnMode/",
+			"labelKey": "m.rbs.productreturn.admin.returnMode_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ReturnModeStatic/:id": {
+		"model": "Rbs_Productreturn_ReturnModeStatic",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/ReturnModeStatic/edit.twig",
+			"labelKey": "m.rbs.productreturn.documents.returnmodestatic | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ReturnModeStatic/:id/translate/:LCID": {
+		"model": "Rbs_Productreturn_ReturnModeStatic",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/ReturnModeStatic/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ReturnModeStatic/new": {
+		"model": "Rbs_Productreturn_ReturnModeStatic",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/ReturnModeStatic/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ReturnProcess/": {
+		"model": "Rbs_Productreturn_Process",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/Process/list.twig",
+			"labelKey": "m.rbs.productreturn.admin.process_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ReturnProcess/:id": {
+		"model": "Rbs_Productreturn_Process",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/Process/edit.twig",
+			"labelKey": "m.rbs.productreturn.documents.process | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/ReturnProcess/new": {
+		"model": "Rbs_Productreturn_Process",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Productreturn/Process/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Productreturn/": false,
+	"/Rbs/Productreturn/Process/": false,
+	"/Rbs/Productreturn/Process/:id": false,
+	"/Rbs/Productreturn/Process/new": false,
+	"/Rbs/Productreturn/ProcessingMode/": false,
+	"/Rbs/Productreturn/ProcessingMode/:id": false,
+	"/Rbs/Productreturn/ProcessingMode/:id/translate/:LCID": false,
+	"/Rbs/Productreturn/ProcessingMode/new": false,
+	"/Rbs/Productreturn/Reason/": false,
+	"/Rbs/Productreturn/Reason/:id": false,
+	"/Rbs/Productreturn/Reason/:id/translate/:LCID": false,
+	"/Rbs/Productreturn/Reason/new": false,
+	"/Rbs/Productreturn/ReturnModeStatic/:id": false,
+	"/Rbs/Productreturn/ReturnModeStatic/:id/translate/:LCID": false,
+	"/Rbs/Productreturn/ReturnModeStatic/new": false
+}

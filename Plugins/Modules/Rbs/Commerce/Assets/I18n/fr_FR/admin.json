@@ -72,10 +72,13 @@
 		"message":"conditions générales de vente"
 	},
 	"store_settings":{
-		"message":"réglagles des boutiques"
+		"message":"réglages des boutiques"
+	},
+	"product_return_settings":{
+		"message":"réglages des retours"
 	},
 	"pricing_settings":{
-		"message":"réglagles de la facturation"
+		"message":"réglages de la facturation"
 	},
 	"section_name":{
 		"message":"E-commerce"

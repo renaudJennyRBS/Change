@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+	editable="true" localized="true" activable="true">
+	<properties>
+		<property name="title" type="String" localized="true" />
+		<property name="automaticValidation" type="Boolean" default-value="false" />
+		<property name="timeLimitAfterReceipt" type="Integer" />
+		<property name="extraTimeAfterShipping" type="Integer" />
+		<property name="timeoutMessage" type="RichText" localized="true" />
+		<property name="processingModes" type="DocumentArray" document-type="Rbs_Productreturn_ProcessingMode" />
+		<property name="requirePrecisions" type="Boolean" default-value="false" />
+		<property name="requireAttachedFile" type="Boolean" default-value="false" />
+	</properties>
+</document>

@@ -1,0 +1,110 @@
+{
+	"make_a_return": {
+		"message": "effectuer un retour"
+	},
+	"follow_a_return": {
+		"message": "suivre un retour"
+	},
+	"return_request": {
+		"message": "demande de retour"
+	},
+	"return_product": {
+		"message": "retourner ce produit"
+	},
+	"quantity_to_return": {
+		"message": "quantité à retourner"
+	},
+	"return_reason": {
+		"message": "motif du retour"
+	},
+	"reason": {
+		"message": "motif"
+	},
+	"precisions": {
+		"message": "précisions"
+	},
+	"attached_file": {
+		"message": "joindre un fichier"
+	},
+	"cancel_returning_this_product": {
+		"message": "annuler le retour de ce produit"
+	},
+	"validate_returning_this_product": {
+		"message": "valider ce produit et poursuivre"
+	},
+	"remaining_quatity": {
+		"message": "quantité restante"
+	},
+	"return_remaining_quantity_for_other_reason": {
+		"message": "retourner la quantité restante pour un autre motif"
+	},
+	"preferred_processing_mode": {
+		"message": "je souhaite un"
+	},
+	"you_want": {
+		"message": "vous souhaitez"
+	},
+	"reshipment": {
+		"message": "livraison de votre échange"
+	},
+	"select_variant": {
+		"message": "sélectionnez une autre variante du modèle commandé"
+	},
+	"replacing_variant": {
+		"message": "variante de remplacement"
+	},
+	"expedition_of": {
+		"message": "expédition du"
+	},
+	"send_return_request": {
+		"message": "envoyer la demande de retour"
+	},
+	"status_canceled": {
+		"message": "annulé"
+	},
+	"status_validation": {
+		"message": "en attente de validation par nos services"
+	},
+	"status_reception": {
+		"message": "en attente de réception du colis par nos services"
+	},
+	"status_refused": {
+		"message": "reffusé"
+	},
+	"status_finalized": {
+		"message": "traité"
+	},
+	"status_edition": {
+		"message": "en cours de création"
+	},
+	"return_title": {
+		"message": "retour n°$code$"
+	},
+	"for_order_link": {
+		"message": "pour la commande n°$code$ du $date$"
+	},
+	"cancel_request": {
+		"message": "annuler la demande"
+	},
+	"request_date": {
+		"message": "date de la demande"
+	},
+	"status": {
+		"message": "statut"
+	},
+	"return_instructions": {
+		"message": "procédure pour renvoyer votre colis"
+	},
+	"wait_for_validation": {
+		"message": "Merci d'attendre la validation par nos services pour retourner votre colis."
+	},
+	"please_wait_ongoing_treatment": {
+		"message": "traitement en cours, merci de patienter"
+	},
+	"print_the_return_sheet": {
+		"message": "imprimer le bon de retour à mettre dans le colis"
+	},
+	"print_the_return_sticker": {
+		"message": "imprimer l'étiquette de retour à coller sur le colis"
+	}
+}

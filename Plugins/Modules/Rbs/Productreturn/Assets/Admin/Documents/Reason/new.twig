@@ -1,0 +1,42 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Productreturn_Reason">
+	<div class="col-md-12">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Productreturn_Reason'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-productreturn-reason-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field property="refLCID" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'refLCID'), ['ucf']) }}">
+					<select class="form-control" data-ng-model="document.refLCID"
+						data-rbs-items-from-collection="Rbs_Generic_Collection_Languages" data-ucfirst="true">
+					</select>
+				</rbs-field>
+
+				<hr />
+
+				{% include '@Rbs_Productreturn/Documents/Reason/properties.twig' %}
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="activation"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+				data-rbs-document-activation-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

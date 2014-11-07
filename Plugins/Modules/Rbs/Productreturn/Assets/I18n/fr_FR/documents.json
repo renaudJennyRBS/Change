@@ -1,0 +1,59 @@
+{
+	"process":{
+		"message":"processus de retour"
+	},
+	"reason":{
+		"message":"motif"
+	},
+	"reason_automaticValidation":{
+		"message":"validation automatique"
+	},
+	"reason_timeLimitAfterReceipt":{
+		"message":"délai après réception"
+	},
+	"reason_extraTimeAfterShipping":{
+		"message":"délai supplémentaire après expédition"
+	},
+	"reason_timeoutMessage":{
+		"message":"message de délai dépassé"
+	},
+	"reason_processingModes":{
+		"message":"modes de traitement"
+	},
+	"reason_requirePrecisions":{
+		"message":"nécessite des précisions"
+	},
+	"reason_requireAttachedFile":{
+		"message":"nécessite une pièce jointe"
+	},
+	"processingMode":{
+		"message":"mode de traitement"
+	},
+	"processingMode_impliesReshipment":{
+		"message":"implique une réexpédition"
+	},
+	"processingMode_allowVariantSelection":{
+		"message":"choix d'une autre variante"
+	},
+	"returnMode":{
+		"message":"mode de retour"
+	},
+	"returnMode_instructions":{
+		"message":"procédure de retour"
+	},
+	"returnModeStatic":{
+		"message":"mode de retour à étiquette constante"
+	},
+	"returnModeStatic_sticker":{
+		"message":"étiquette à coller sur le colis"
+	},
+	"process_reasons":{
+		"message":"motifs"
+	},
+	"process_returnModes":{
+		"message":"modes de retour"
+	},
+	"process_reshippingModes":{
+		"message":"modes réexpédition"
+	}
+}

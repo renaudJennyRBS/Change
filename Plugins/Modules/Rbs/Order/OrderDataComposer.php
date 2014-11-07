@@ -12,65 +12,12 @@ namespace Rbs\Order;
  */
 class OrderDataComposer
 {
+	use \Change\Http\Ajax\V1\Traits\DataComposer;
+
 	/**
 	 * @var \Rbs\Order\Documents\Order
 	 */
 	protected $order;
-
-	/**
-	 * @var array
-	 */
-	protected $dataSetNames;
-
-	/**
-	 * @var array
-	 */
-	protected $visualFormats;
-
-	/**
-	 * @var array
-	 */
-	protected $URLFormats;
-
-	/**
-	 * @var boolean
-	 */
-	protected $detailed;
-
-	/**
-	 * @var array
-	 */
-	protected $data;
-
-	/**
-	 * @var \Rbs\Website\Documents\Website
-	 */
-	protected $website;
-
-	/**
-	 * @var \Change\Http\Web\UrlManager
-	 */
-	protected $websiteUrlManager;
-
-	/**
-	 * @var \Rbs\Website\Documents\Section
-	 */
-	protected $section;
-
-	/**
-	 * @var \Change\Documents\DocumentManager
-	 */
-	protected $documentManager;
-
-	/**
-	 * @var \Change\I18n\I18nManager
-	 */
-	protected $i18nManager;
-
-	/**
-	 * @var \Change\Presentation\RichText\RichTextManager
-	 */
-	protected $richTextManager;
 
 	/**
 	 * @var \Rbs\Order\OrderManager
@@ -93,37 +40,25 @@ class OrderDataComposer
 	protected $processManager;
 
 	/**
+	 * @var \Rbs\ProductReturn\ReturnManager
+	 */
+	protected $returnManager;
+
+	/**
 	 * @var null|array
 	 */
 	protected $dataSets = null;
 
-
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	function __construct(\Change\Events\Event $event)
 	{
 		$this->order = $event->getParam('order');
 
 		$context = $event->getParam('context');
-		if (!is_array($context))
-		{
-			$context = [];
-		}
-
-		//Set default context values
-		$context += ['visualFormats' => [], 'URLFormats' => [], 'dataSetNames' => [], 'data' => [],
-			'website' => null, 'websiteUrlManager' => null, 'section' => null, 'detailed' => false];
-
-		$this->visualFormats = $context['visualFormats'];
-		$this->URLFormats = $context['URLFormats'];
-		$this->dataSetNames = $context['dataSetNames'];
-		$this->detailed = $context['detailed'];
-		$this->website = $context['website'];
-		$this->websiteUrlManager = $context['websiteUrlManager'];
-		$this->section = $context['section'];
-		$this->data = $context['data'];
-
-		$this->documentManager = $event->getApplicationServices()->getDocumentManager();
-		$this->i18nManager = $event->getApplicationServices()->getI18nManager();
-		$this->richTextManager = $event->getApplicationServices()->getRichTextManager();
+		$this->setContext(is_array($context) ? $context : []);
+		$this->setServices($event->getApplicationServices());
 
 		/** @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -132,8 +67,12 @@ class OrderDataComposer
 		$this->catalogManager = $commerceServices->getCatalogManager();
 		$this->priceManager = $commerceServices->getPriceManager();
 		$this->processManager = $commerceServices->getProcessManager();
+		$this->returnManager = $commerceServices->getReturnManager();
 	}
 
+	/**
+	 * @return array
+	 */
 	public function toArray()
 	{
 		if ($this->dataSets === null)
@@ -154,49 +93,71 @@ class OrderDataComposer
 		$order = $this->order;
 
 		$this->dataSets['common'] = [
-			'id' =>$order->getId(),
-			'identifier' =>$order->getIdentifier(),
+			'id' => $order->getId(),
+			'identifier' => $order->getIdentifier(),
+			'code' => $order->getCode(),
 			'userId' => $order->getAuthorId(),
 			'ownerId' => $order->getOwnerId(),
 			'currencyCode' => $order->getCurrencyCode(),
 			'webStoreId' => $order->getWebStoreId(),
 			'zone' => $order->getZone(),
-		 	'lastUpdate' => $this->i18nManager->transDateTime($order->getModificationDate())
+			'date' => $this->formatDate($order->getCreationDate()),
+			'lastUpdate' => $this->formatDate($order->getModificationDate()),
+			'statusInfos' => $this->orderManager->getOrderStatusInfo($order)
 		];
 
 		$this->generateAmountsDataSet();
 
 		$this->dataSets['context'] = $order->getContext()->toArray();
 		$billingArea = $order->getBillingAreaIdInstance();
-		if ($billingArea) {
+		if ($billingArea)
+		{
 			$this->dataSets['common']['billingAreaId'] = $billingArea->getId();
 		}
 
-		if ($this->detailed || array_key_exists('taxes', $this->dataSetNames))
+		if ($this->detailed || $this->hasDataSet('taxes'))
 		{
 			$this->generateTaxesDataSet();
 		}
 
 		$this->generateLinesDataSet();
 
-		if ($this->detailed || array_key_exists('discounts', $this->dataSetNames))
+		if ($this->detailed || $this->hasDataSet('discounts'))
 		{
 			$this->generateDiscountsDataSet();
 		}
 
-		if ($this->detailed || array_key_exists('fees', $this->dataSetNames))
+		if ($this->detailed || $this->hasDataSet('fees'))
 		{
 			$this->generateFeesDataSet();
 		}
 
-		if ($this->detailed || array_key_exists('creditNotes', $this->dataSetNames))
+		if ($this->detailed || $this->hasDataSet('creditNotes'))
 		{
 			$this->generateCreditNotesDataSet();
 		}
 
-		if ($this->detailed || array_key_exists('process', $this->dataSetNames))
+		if ($this->detailed || $this->hasDataSet('process'))
 		{
 			$this->generateProcessDataSet();
+		}
+
+		if ($this->hasDataSet('shipments'))
+		{
+			$this->generateFullShipmentsDataSet();
+		}
+		else
+		{
+			$this->generateMinimalShipmentsDataSet();
+		}
+
+		if ($this->hasDataSet('returns'))
+		{
+			$this->generateFullReturnsDataSet();
+		}
+		else
+		{
+			$this->generateMinimalReturnsDataSet();
 		}
 	}
 
@@ -221,13 +182,15 @@ class OrderDataComposer
 				$taxDefinition = isset($taxes[$tax->getTaxCode()]) ? $taxes[$tax->getTaxCode()] : null;
 				if ($taxDefinition)
 				{
-					if (!isset($this->dataSets['taxesInfo'][$taxDefinition->getCode()])) {
+					if (!isset($this->dataSets['taxesInfo'][$taxDefinition->getCode()]))
+					{
 						$this->dataSets['taxesInfo'][$taxDefinition->getCode()] = [
 							'title' => $this->priceManager->taxTitle($taxDefinition),
 							'zone' => $tax->getZone(),
 							'rates' => []];
 					}
-					$this->dataSets['taxesInfo'][$taxDefinition->getCode()]['rates'][$tax->getCategory()] = $taxDefinition->getRate($tax->getCategory(), $tax->getZone());
+					$this->dataSets['taxesInfo'][$taxDefinition->getCode()]['rates'][$tax->getCategory()] = $taxDefinition->getRate($tax->getCategory(),
+						$tax->getZone());
 				}
 			}
 			foreach ($this->order->getLinesTaxes() as $tax)
@@ -279,10 +242,12 @@ class OrderDataComposer
 				'lineKeys' => $discount->getLineKeys()
 			];
 
-			if ($discount->getOptions()->count()) {
+			if ($discount->getOptions()->count())
+			{
 				$discountData['options'] = $discount->getOptions()->toArray();
 			}
-			if (($amountWithoutTaxes = $discount->getAmountWithoutTaxes())) {
+			if (($amountWithoutTaxes = $discount->getAmountWithoutTaxes()))
+			{
 				$discountData['amountWithoutTaxes'] = $amountWithoutTaxes;
 				$totalAmountWithoutTaxes += $amountWithoutTaxes;
 			}
@@ -301,7 +266,8 @@ class OrderDataComposer
 			$this->dataSets['discounts'][] = $discountData;
 		}
 
-		if (count($this->dataSets['discounts'])) {
+		if (count($this->dataSets['discounts']))
+		{
 			$this->dataSets['amounts']['discountsAmountWithoutTaxes'] = $totalAmountWithoutTaxes;
 			$this->dataSets['amounts']['discountsAmountWithTaxes'] = $totalAmountWithTaxes;
 		}
@@ -320,7 +286,8 @@ class OrderDataComposer
 			$this->dataSets['fees'][] = $feeData;
 		}
 
-		if (count($this->dataSets['fees'])) {
+		if (count($this->dataSets['fees']))
+		{
 			$this->dataSets['amounts']['feesAmountWithoutTaxes'] = $totalAmountWithoutTaxes;
 			$this->dataSets['amounts']['feesAmountWithTaxes'] = $totalAmountWithTaxes;
 		}
@@ -346,13 +313,15 @@ class OrderDataComposer
 			$this->dataSets['creditNotes'][] = $creditNoteData;
 		}
 
-		if (count($this->dataSets['creditNotes'])) {
+		if (count($this->dataSets['creditNotes']))
+		{
 			$this->dataSets['amounts']['creditNotesAmountWithoutTaxes'] = $amountWithoutTaxes;
 			$this->dataSets['amounts']['creditNotesAmountWithTaxes'] = $amountWithoutTaxes;
 		}
 	}
 
-	protected function generateAmountsDataSet() {
+	protected function generateAmountsDataSet()
+	{
 		$order = $this->order;
 		$amounts = isset($this->dataSets['amounts']) ? $this->dataSets['amounts'] : [];
 		$amounts += [
@@ -364,7 +333,6 @@ class OrderDataComposer
 		];
 		$this->dataSets['amounts'] = $amounts;
 	}
-
 
 	/**
 	 * @param integer $index
@@ -451,4 +419,128 @@ class OrderDataComposer
 			$this->dataSets['process']['shippingModes'][] = $shippingMode->toArray();
 		}
 	}
-} 
+
+	protected function generateMinimalShipmentsDataSet()
+	{
+		$this->dataSets['shipments'] = [];
+		$query = $this->documentManager->getNewQuery('Rbs_Order_Shipment');
+		$query->andPredicates($query->eq('orderId', $this->order->getId()), $query->eq('prepared', true));
+		foreach ($query->getDocumentIds() as $id)
+		{
+			$this->dataSets['shipments'][] = ['common' => ['id' => $id]];
+		}
+	}
+
+	protected function generateFullShipmentsDataSet()
+	{
+		$this->dataSets['shipments'] = [];
+		$productContext = $this->getProductLineContext();
+		$query = $this->documentManager->getNewQuery('Rbs_Order_Shipment');
+		$query->andPredicates($query->eq('orderId', $this->order->getId()), $query->eq('prepared', true));
+		foreach ($query->getDocuments() as $shipment)
+		{
+			/** @var \Rbs\Order\Documents\Shipment $shipment */
+			$this->dataSets['shipments'][] = $this->generateShipmentData($shipment, $productContext);
+		}
+	}
+
+	/**
+	 * @param \Rbs\Order\Documents\Shipment $shipment
+	 * @param array $productContext
+	 * @return array
+	 */
+	protected function generateShipmentData($shipment, $productContext = null)
+	{
+		$data = [
+			'common' => [
+				'id' => $shipment->getId(),
+				'code' => $shipment->getCode(),
+				'parcelCode' => $shipment->getParcelCode(),
+				'shippingModeCode' => $shipment->getShippingModeCode(),
+				'trackingCode' => $shipment->getTrackingCode(),
+				'carrierStatus' => $shipment->getCarrierStatus()
+			]
+		];
+
+		if ($shipment->getShippingDate())
+		{
+			$data['common']['shippingDate'] = $this->formatDate($shipment->getShippingDate());
+		}
+
+		// Handle tracking URL.
+		$modeId = $shipment->getContext()->get('shippingModeId');
+		$trackingCode = $shipment->getTrackingCode();
+		if ($modeId && $trackingCode)
+		{
+			$mode = $this->documentManager->getDocumentInstance($modeId);
+			if ($mode instanceof \Rbs\Shipping\Documents\Mode)
+			{
+				$urlTemplate = $mode->getTrackingUrlTemplate();
+				if ($urlTemplate)
+				{
+					$data['common']['trackingUrl'] = str_replace('{CODE}', $trackingCode, $urlTemplate);
+				}
+			}
+		}
+
+		$data['context'] = $shipment->getContext()->toArray();
+
+		$data['lines'] = [];
+		foreach ($shipment->getLines() as $line)
+		{
+			$lineData = $line->toArray();
+
+			// The product data are set only if the line is not linked to an order line because order lines already contain them.
+			if ($productContext && !isset($lineData['options']['lineKey']) && isset($lineData['options']['productId']))
+			{
+				$productData = $this->catalogManager->getProductData($lineData['options']['productId'], $productContext);
+				if (count($productData))
+				{
+					$lineData['product'] = $productData;
+				}
+			}
+
+			$data['lines'][] = $lineData;
+		}
+
+		$data['address'] = $shipment->getAddress(); // TODO: same format than WS on addresses
+
+		return $data;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getProductReturnContext()
+	{
+		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats,
+			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
+			'data' => ['webStoreId' => $this->order->getWebStoreId()], 'detailed' => $this->detailed];
+	}
+
+	protected function generateMinimalReturnsDataSet()
+	{
+		$this->dataSets['returns'] = [];
+		$query = $this->documentManager->getNewQuery('Rbs_Productreturn_ProductReturn');
+		$query->andPredicates($query->eq('orderId', $this->order->getId()));
+		foreach ($query->getDocumentIds() as $id)
+		{
+			/** @var \Rbs\Order\Documents\Shipment $shipment */
+			$this->dataSets['returns'][] = ['common' => ['id' => $id]];
+		}
+	}
+
+	protected function generateFullReturnsDataSet()
+	{
+		$this->dataSets['returns'] = [];
+		$productReturnContext = $this->getProductReturnContext();
+		$query = $this->documentManager->getNewQuery('Rbs_Productreturn_ProductReturn');
+		$query->andPredicates($query->eq('orderId', $this->order->getId()));
+		$query->addOrder('creationDate', false);
+		foreach ($query->getDocuments() as $return)
+		{
+			/** @var \Rbs\Productreturn\Documents\ProductReturn $return */
+			$this->dataSets['returns'][] = $this->returnManager->getProductReturnData($return, $productReturnContext);
+		}
+	}
+}
