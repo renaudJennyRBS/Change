@@ -1,9 +1,39 @@
 @CHARSET "UTF-8";
 
 /* top navbar */
+#rbs-change-navbar {
+	background: #202026;
+	background: linear-gradient(to bottom, #303036 0%, #202026 100%);
+}
+#rbs-change-navbar .navbar-nav > li > a,
+#rbs-change-navbar a.navbar-brand-change-logo {
+	color: #aaa;
+}
+#rbs-change-navbar .navbar-nav > li > a:hover,
+#rbs-change-navbar a.navbar-brand-change-logo:hover {
+	color: #fff;
+}
+
 #rbs-change-navbar a.navbar-brand {
 	position: relative;
 	top: -2px;
+}
+
+.navbar-brand-change-logo {
+	text-align: center;
+	padding: 3px 15px;
+}
+.navbar-brand-change-logo img {
+	height: 30px;
+	margin: 0;
+}
+.navbar-brand-change-logo span {
+	display: block;
+	font-family: arial, sans-serif;
+	letter-spacing: 3px;
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: bold;
 }
 
 .navbar-indicators > li {

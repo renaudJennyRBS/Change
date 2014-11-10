@@ -3,11 +3,11 @@
 .rbs-breadcrumb li {
 	padding: 10px 3px 10px 7px;
 	margin-right: 1px;
-	background: #f5f5f5;
 	position: relative;
 	display: inline-block;
-	background: #EAF1E0;
-	color: #84A65A;
+	background: #54b8e7;
+	background: linear-gradient(to right, #64c8f7 0%,#44a8d7 100%);
+	color: #fff;
 	font-weight: bold;
 	text-shadow: 1px 0 0 rgba(255, 255, 255, 0.3);
 
@@ -32,7 +32,7 @@
 }
 
 .rbs-breadcrumb li:first-child * {
-	margin-left: 0px;
+	margin-left: 0;
 }
 
 .rbs-breadcrumb li:before {
@@ -71,13 +71,8 @@
 
 .rbs-breadcrumb li.location {
 	color: #FFFFFF;
-	background: #94BA65;
-	background: -moz-linear-gradient(left, #91b400 0%, #94BA65 100%);
-	background: -webkit-gradient(linear, left top, right top, color-stop(0%,#84A65A), color-stop(100%,#94BA65));
-	background: -webkit-linear-gradient(left, #84A65A 0%,#94BA65 100%);
-	background: -o-linear-gradient(left, #84A65A 0%,#94BA65 100%);
-	background: -ms-linear-gradient(left, #84A65A 0%,#94BA65 100%);
-	background: linear-gradient(to right, #84A65A 0%,#94BA65 100%);
+	background: #202026;
+	background: linear-gradient(to right, #404046 0%,#202026 100%);
 	text-shadow: 1px 0 0 rgba(0, 0, 0, 0.3);
 }
 
@@ -87,5 +82,5 @@
 }
 
 .rbs-breadcrumb li.location:after {
-	border-left-color: #94BA65;
+	border-left-color: #202026;
 }

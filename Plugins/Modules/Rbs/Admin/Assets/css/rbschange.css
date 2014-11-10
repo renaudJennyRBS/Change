@@ -313,7 +313,8 @@ h4.list-group-item:first-child {
 #workspace .page-header {
 	margin-top: 0;
 	margin-bottom: 15px;
-	border-width: 5px;
+	border: 0 solid #54b8e7;
+	border-bottom-width: 5px;
 	padding-bottom: 0;
 }
 
@@ -424,7 +425,7 @@ h4.list-group-item:first-child {
 body > footer {
 	font-size: 9pt;
 	color: silver;
-	border-top: 5px solid #94BA65;
+	border-top: 5px solid #54b8e7;
 	padding: 7px 15px;
 	line-height: 12px;
 	box-shadow: 0 -7px 7px rgba(128,128,128, 0.1);
@@ -635,9 +636,8 @@ pre {
 }
 
 #rbs-change-navbar {
-	border-width: 0 0 5px 0;
-	border-style: solid;
-	border-color: #94BA65;
+	border: 0 solid #54b8e7;
+	border-bottom-width: 5px;
 	box-shadow: 0 7px 7px rgba(128,128,128,0.1);
 	margin-bottom: 0;
 }
@@ -717,21 +717,4 @@ rbs-uploader .img-thumbnail {
 	width: auto;
 	border-top-left-radius: inherit;
 	border-bottom-left-radius: inherit;
-}
-
-/** Logo */
-.navbar-brand-change-logo {
-	text-align: center;
-	padding: 3px 15px;
-}
-.navbar-brand-change-logo img {
-	height: 30px;
-	margin: 0;
-}
-.navbar-brand-change-logo span {
-	display: block;
-	font-family: arial, sans-serif;
-	letter-spacing: 3px;
-	text-transform: uppercase;
-	font-size: 12px;
 }
