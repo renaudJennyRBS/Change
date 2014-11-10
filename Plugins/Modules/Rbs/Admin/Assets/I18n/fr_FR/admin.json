@@ -457,7 +457,7 @@
 		"message":"ce document existe en plusieurs langues"
 	},
 	"copyright":{
-		"message":"<a onclick=\"window.open(this.href); return false;\" href=\"http:\/\/www.rbschange.com\">RBS Change<\/a> est un CMS e-commerce open-source edité par la société <a onclick=\"window.open(this.href); return false\" href=\"http:\/\/www.rbs.fr\">Ready Business System<\/a>."
+		"message":"<a onclick=\"window.open(this.href); return false;\" href=\"http:\/\/www.change-commerce.com\">Change Commerce<\/a> est une plateforme e-commerce open-source edité par la société <a onclick=\"window.open(this.href); return false\" href=\"http:\/\/proximis.com\">Proximis<\/a>."
 	},
 	"please_wait":{
 		"message":"Merci de bien vouloir patienter<br \/>quelques secondes :)"
