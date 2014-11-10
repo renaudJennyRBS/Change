@@ -91,7 +91,7 @@
 				}
 
 				function updatePageTitle() {
-					var title = 'Rbs Change';
+					var title = 'Change Commerce';
 					angular.forEach(entriesArray, function(entry) {
 						if (entry.label) {
 							title += ' / ' + entry.label;

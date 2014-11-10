@@ -406,10 +406,10 @@
     "message":"this Document has multiple languages"
   },
   "fullscreen_toolbar":{
-    "message":"You are running RBS Change in full-screen mode. Click this bar to exit full-screen mode."
+    "message":"You are running Change Commerce in full-screen mode. Click this bar to exit full-screen mode."
   },
   "copyright":{
-    "message":"<a onclick=\"window.open(this.href); return false;\" href=\"http:\/\/www.rbschange.com\"> RBS Change<\/a> is an open-source CMS and E-Commerce platform developed by <a onclick=\"window.open(this.href); return false\" href=\"http:\/\/www.rbs.fr\"> Ready Business System<\/a>."
+    "message":"<a onclick=\"window.open(this.href); return false;\" href=\"http:\/\/www.change-commerce.com\">Change Commerce<\/a> is an open-source E-Commerce platform developed by <a onclick=\"window.open(this.href); return false\" href=\"http:\/\/proximis.com\"> Proximis<\/a>."
   },
   "please_wait":{
     "message":"Please wait for a few seconds :)"

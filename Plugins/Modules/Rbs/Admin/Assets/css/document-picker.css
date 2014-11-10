@@ -1,34 +1,6 @@
 @CHARSET "UTF-8";
 
 /* Picker */
-
-.widget-element-picker .items a {
-	display: block;
-}
-
-.drop-zone {
-	border: 3px dashed silver;
-	border-radius: 12px;
-	text-align: center;
-	color: silver;
-	background: url('../img/icons/drop-icon.png') center 10px no-repeat;
-	padding: 40px 10px 10px;
-	font-size: 95%;
-	line-height: 1.1em;
-}
-
-
-.drop-zone.large {
-	border: 3px dashed silver;
-	border-radius: 12px;
-	text-align: center;
-	color: silver;
-	background: url('../img/icons/drop-icon.png') center 10px no-repeat;
-	padding: 40px 10px 10px;
-	font-size: 140%;
-	line-height: 1.1em;
-}
-
 rbs-document-picker-single .input-append {
 	display: inline-block;
 	margin: 0;

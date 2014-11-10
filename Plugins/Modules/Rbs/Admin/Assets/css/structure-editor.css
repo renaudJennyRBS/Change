@@ -84,7 +84,6 @@
 	border: 1px solid rgba(0, 0, 0, 0.5);
 	border-radius: 4px;
 	min-height: 20px;
-	/*background: #FFFFF8 url(../img/icons/text-edit.png) center right no-repeat;*/
 	outline: 0;
 }
 .structure-editor .rbs-rich-text.block.active {

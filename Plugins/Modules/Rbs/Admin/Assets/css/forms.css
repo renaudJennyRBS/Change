@@ -141,7 +141,7 @@ a.editor-menu-item {
 	margin-right: 0;
 	line-height: 26px;
 	color: #888888;
-	background: linear-gradient(to right, white 0%, #F8F8F8 100%) repeat scroll 0 0 rgba(0, 0, 0, 0)
+	background: linear-gradient(to right, white 0%, #F8F8F8 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
 }
 
 a.editor-menu-item:hover {
@@ -149,9 +149,10 @@ a.editor-menu-item:hover {
 }
 
 a.editor-menu-item.active {
-	background: linear-gradient(to right, white 0%, #EAF1E0 100%);
+	color: #2790b0;
+	background: #b5e3ee;
+	background: linear-gradient(to right, #fff 0%, #d4eff5 50%, #b5e3ee 100%);
 	text-decoration: none;
-	color: #719400;
 }
 
 a.editor-menu-item.active:focus,
@@ -178,7 +179,7 @@ a.editor-menu-item .badge.badge-required {
 
 a.editor-menu-item.active:after {
 	border-bottom: 20px inset rgba(0, 0, 0, 0);
-	border-left: 20px solid #EAF1E0;
+	border-left: 20px solid #b5e3ee;
 	border-top: 20px inset rgba(0, 0, 0, 0);
 	content: "";
 	height: 0;
@@ -204,8 +205,14 @@ a.editor-menu-item i[class*=" icon-"] {
 a.editor-menu-item i[class^="icon-"]:before,
 a.editor-menu-item i[class*=" icon-"]:before {
 	width: 36px;
-
 }
+
+a.editor-menu-item.active i[class^="icon-"],
+a.editor-menu-item.active i[class*=" icon-"] {
+	color: #2790b0;
+	opacity: 0.5;
+}
+
 rbs-gps-google-maps .map-input {
 	background-color: #fff;
 	padding: 0 11px 0 13px;
