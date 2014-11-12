@@ -283,13 +283,29 @@
 
 				function setupConfigurationZone() {
 					var mode = scope.currentMode;
-					var html = '<div class="configuration-zone"';
+
+					var linesContainer = element.find('.shipping-configuration-zone');
+					var collection = linesContainer.children();
+					collection.each(function() {
+						var isolateScope = angular.element(this).isolateScope();
+						if (isolateScope) {
+							isolateScope.$destroy();
+						}
+					});
+					collection.remove();
+
+					var html = '<div';
 					if (mode.directiveName) {
-						html += ' ' + mode.directiveName + '=""';
+						if (scope.display.readonly)
+						{
+							mode.directiveName +='-readonly';
+						}
+						html += ' ' + mode.directiveName + '="" data-delivery="delivery"';
 					}
 					html += '></div>';
-					element.find('.configuration-zone').replaceWith(html);
-					$compile(element.find('.configuration-zone'))(scope);
+					$compile(html)(scope, function (clone) {
+						linesContainer.append(clone);
+					});
 				}
 
 				function loadCompatibleShippingModes(address, hasAddress) {

@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -41,7 +40,8 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('setDefaultAddress', [$this, 'onDefaultSetDefaultAddress'], 5);
 		$eventManager->attach('getDefaultAddress', [$this, 'onDefaultGetDefaultAddress'], 5);
 		$eventManager->attach('getZoneByCode', [$this, 'onDefaultGetZoneByCode'], 5);
-
+		$eventManager->attach('getCityAutocompletion', [$this, 'onDefaultGetCityAutocompletion'], 1);
+		$eventManager->attach('getPoints', [$this, 'onDefaultGetPoints'], 1);
 	}
 
 	/**
@@ -200,7 +200,8 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			foreach ($addressFields->getFields() as $fieldDefinition)
 			{
 				$fieldCode = $fieldDefinition->getCode();
-				if ($fieldDefinition->getCollectionCode() && isset($fields[$fieldCode])) {
+				if ($fieldDefinition->getCollectionCode() && isset($fields[$fieldCode]))
+				{
 					$collection = $collectionManager->getCollection($fieldDefinition->getCollectionCode());
 					if ($collection)
 					{
@@ -223,7 +224,7 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function formatFieldsByLayout(array $fields, array $layout)
 	{
-		$lines =  array();
+		$lines = array();
 		foreach ($layout as $lineLayout)
 		{
 			$line = [];
@@ -765,6 +766,86 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			return true;
 		}
 		return false;
+	}
 
+	/**
+	 * @param string $context
+	 * @return mixed|null
+	 */
+	public function getCityAutocompletion($context)
+	{
+		if (is_array($context))
+		{
+			if (!is_array($context['options']))
+			{
+				$context['options'] = [];
+			}
+
+			$eventManager = $this->getEventManager();
+			$args = $eventManager->prepareArgs(['context' => $context]);
+			$this->getEventManager()->trigger('getCityAutocompletion', $this, $args);
+			if (isset($args['cities']) && is_array($args['cities']))
+			{
+				return $args['cities'];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Input param beginOfName
+	 * Output param cities
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetCityAutocompletion($event)
+	{
+		$cities = $event->getParam('cities', []);
+
+		if (count($cities) == 0)
+		{
+			// TODO
+			//$context = $event->getParam('context');
+		}
+
+		$event->setParam('cities', $cities);
+	}
+
+	/**
+	 * @param array $context
+	 * @return \Rbs\Geo\Map\Point[]|null
+	 */
+	public function getPoints($context)
+	{
+		if (is_array($context))
+		{
+			if (!is_array($context['options']))
+			{
+				$context['options'] = [];
+			}
+
+			$eventManager = $this->getEventManager();
+			$args = $eventManager->prepareArgs(['context' => $context]);
+			$this->getEventManager()->trigger('getPoints', $this, $args);
+			if (isset($args['points']) && is_array($args['points']))
+			{
+				return $args['points'];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetPoints($event)
+	{
+		$points = $event->getParam('points', []);
+
+		if (count($points) == 0)
+		{
+			// TODO
+		}
+
+		$event->setParam('points', $points);
 	}
 }

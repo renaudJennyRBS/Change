@@ -486,6 +486,7 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		$eventManager->attach(static::EVENT_KEY_NOT_FOUND, array($this, 'onKeyNotFound'), 5);
+		$eventManager->attach(static::EVENT_KEY_NOT_FOUND, array($this, 'onKeyDayNameNotFound'), 6);
 		$eventManager->attach(static::EVENT_FORMATTING, array($this, 'onFormatting'), 5);
 	}
 
@@ -511,10 +512,56 @@ class I18nManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onKeyNotFound($event)
 	{
+		if (! $event->getParam('text'))
+		{
+			$key = $event->getParam('preparedKey')->getKey();
+			$stringLine = $event->getParam('LCID') . '/' . $key;
+			$event->getTarget()->getLogging()->namedLog($stringLine, 'keynotfound');
+			$event->setParam('text', $key);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onKeyDayNameNotFound($event)
+	{
 		$key = $event->getParam('preparedKey')->getKey();
-		$stringLine = $event->getParam('LCID') . '/' . $key;
-		$event->getTarget()->getLogging()->namedLog($stringLine, 'keynotfound');
-		$event->setParam('text', $key);
+		$lcid = $event->getParam('LCID');
+
+		$date = null;
+		if ($key === 'c.date.long_day_name_monday')
+		{
+			$date = new \DateTime('2013-07-01');
+		}
+		elseif ($key === 'c.date.long_day_name_tuesday')
+		{
+			$date = new \DateTime('2013-07-02');
+		}
+		elseif ($key === 'c.date.long_day_name_wednesday')
+		{
+			$date = new \DateTime('2013-07-03');
+		}
+		elseif ($key === 'c.date.long_day_name_thursday')
+		{
+			$date = new \DateTime('2013-07-04');
+		}
+		elseif ($key === 'c.date.long_day_name_friday')
+		{
+			$date = new \DateTime('2013-07-05');
+		}
+		elseif ($key === 'c.date.long_day_name_saturday')
+		{
+			$date = new \DateTime('2013-07-06');
+		}elseif ($key === 'c.date.long_day_name_sunday')
+		{
+			$date = new \DateTime('2013-07-07');
+		}
+
+		if ($date != null)
+		{
+			$event->setParam('text', $this->formatDate($lcid, $date, 'cccc'));
+		}
 	}
 
 	/**

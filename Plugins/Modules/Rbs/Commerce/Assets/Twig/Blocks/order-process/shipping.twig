@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="/shipping-mode-selector.static.tpl">
-	<div data-ng-show="!display.readonly">
+	<div data-ng-if="!display.readonly">
 		<div data-ng-hide="editShippingAddress" class="row">
 			<div class="col-md-4">
 				<address class="no-bottom-margin">
@@ -116,11 +116,11 @@
 		</div>
 		<div data-ng-hide="editShippingAddress" class="row">
 			<div class="col-md-12">
-				<div class="configuration-zone"></div>
+				<div class="shipping-configuration-zone"></div>
 			</div>
 		</div>
 	</div>
-	<div data-ng-show="display.readonly">
+	<div data-ng-if="display.readonly">
 		<div class="panel panel-default" >
 			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_mode', ['ucf']) }}</div>
 			<div class="panel-body">
@@ -138,7 +138,7 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<div class="configuration-zone"></div>
+						<div class="shipping-configuration-zone"></div>
 					</div>
 				</div>
 			</div>
