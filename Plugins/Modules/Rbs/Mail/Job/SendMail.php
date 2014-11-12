@@ -70,7 +70,7 @@ class SendMail
 	 * @param \Change\Job\Event $event
 	 * @return array
 	 */
-	protected function getFrom($mail, $website, $event)
+	protected function getFrom($mail, $website, $event, $logger)
 	{
 		if ($mail->getCurrentLocalization()->getSenderMail())
 		{
@@ -79,9 +79,18 @@ class SendMail
 		if ($website->getMailSender())
 		{
 			$mail = $website->getMailSender();
-			$senderName = trim(substr($mail, 0, strpos($mail, '<')));
-			$senderMail = trim(substr($mail, strpos($mail, '<') + 1));
-			$senderMail = trim(substr($senderMail, 0, strrpos($senderMail, '>')));
+
+			if (strpos($mail, '<'))
+			{
+				$senderName = trim(substr($mail, 0, strpos($mail, '<')));
+				$senderMail = trim(substr($mail, strpos($mail, '<') + 1));
+				$senderMail = trim(substr($senderMail, 0, strrpos($senderMail, '>')));
+			}
+			else
+			{
+				$senderName = '';
+				$senderMail = $mail;
+			}
 			return [['name' => $senderName, 'email' => $senderMail]];
 		}
 		return [$event->getApplication()->getConfiguration('Rbs/Mail/defaultSender')];
