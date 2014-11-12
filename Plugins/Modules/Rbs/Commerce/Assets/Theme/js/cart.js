@@ -433,7 +433,7 @@
 	app.directive('rbsCommerceShippingModeConfigurationNone', rbsCommerceShippingModeConfigurationNone);
 
 	// A directive to configure a shipping mode by selecting an address.
-	function rbsCommerceShippingModeConfigurationAddress() {
+	function rbsCommerceShippingModeConfigurationAddressReadonly() {
 		return {
 			restrict: 'AE',
 			scope: false,
@@ -443,7 +443,7 @@
 		}
 	}
 
-	app.directive('rbsCommerceShippingModeConfigurationAddress', rbsCommerceShippingModeConfigurationAddress);
+	app.directive('rbsCommerceShippingModeConfigurationAddressReadonly', rbsCommerceShippingModeConfigurationAddressReadonly);
 
 	function rbsCommercePaymentConnectorSelector($http, $compile, $sce, $window) {
 		return {
