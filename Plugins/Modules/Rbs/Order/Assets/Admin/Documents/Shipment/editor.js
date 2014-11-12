@@ -247,7 +247,7 @@
 							address: document.address,
 							addressFieldsId: document.address.__addressFieldsId
 						}).success(function(data) {
-							document.address.__lines = data;
+							document.address.lines = data;
 							q.resolve(data);
 						}).error(function(dataError) {
 							q.reject(dataError);

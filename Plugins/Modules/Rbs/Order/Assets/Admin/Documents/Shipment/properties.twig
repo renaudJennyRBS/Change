@@ -53,7 +53,7 @@
 	</div>
 </div>
 
-<div class="panel panel-default" data-ng-if="!document.prepared || document.address.__lines">
+<div class="panel panel-default" data-ng-if="!document.prepared || document.address.lines">
 	<div class="panel-heading">
 		<h3 class="panel-title"><i class="icon-envelope"></i>
 			{{ i18n('m.rbs.order.admin.shipment_shipping_address', ['ucf']) }}
@@ -65,8 +65,8 @@
 		</div>
 	</div>
 	<address data-ng-if="document.prepared" class="panel-body no-bottom-margin">
-		<strong>(= document.address.__lines[0] =)</strong>
-		<div data-ng-repeat="addressLine in document.address.__lines track by $index" data-ng-if="!$first">(= addressLine =)</div>
+		<strong>(= document.address.lines[0] =)</strong>
+		<div data-ng-repeat="addressLine in document.address.lines track by $index" data-ng-if="!$first">(= addressLine =)</div>
 	</address>
 </div>
 
