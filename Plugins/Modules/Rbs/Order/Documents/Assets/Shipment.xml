@@ -16,5 +16,6 @@
 		<property name="data" type="JSON" internal="true" />
 		<property name="address" type="JSON" />
 		<property name="shippingDate" type="DateTime" />
+		<property name="deliveryDate" type="DateTime" />
 	</properties>
 </document>

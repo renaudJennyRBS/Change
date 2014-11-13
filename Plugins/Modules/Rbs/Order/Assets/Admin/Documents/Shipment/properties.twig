@@ -50,6 +50,10 @@
 		<rbs-field-date data-ng-if="document.prepared" property="shippingDate"
 				label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'shippingDate'), ['ucf']) }}">
 		</rbs-field-date>
+
+		<rbs-field-date data-ng-if="document.prepared" property="deliveryDate"
+				label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'deliveryDate'), ['ucf']) }}">
+		</rbs-field-date>
 	</div>
 </div>
 

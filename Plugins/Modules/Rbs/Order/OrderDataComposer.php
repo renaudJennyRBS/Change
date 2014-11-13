@@ -466,6 +466,10 @@ class OrderDataComposer
 		{
 			$data['common']['shippingDate'] = $this->formatDate($shipment->getShippingDate());
 		}
+		if ($shipment->getDeliveryDate())
+		{
+			$data['common']['deliveryDate'] = $this->formatDate($shipment->getDeliveryDate());
+		}
 
 		// Handle tracking URL.
 		$modeId = $shipment->getContext()->get('shippingModeId');
