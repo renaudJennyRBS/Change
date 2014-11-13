@@ -6,23 +6,17 @@
 	 * Return list controller.
 	 */
 	function RbsProductreturnReturnListController(scope, $window, AjaxAPI) {
-		scope.pleaseWait = false;
-
-		scope.cancelReturn = function cancelReturn(returnId) {
-			scope.pleaseWait = true;
+		scope.cancelReturn = function cancelReturn(returnId, waitingMessage) {
+			AjaxAPI.openWaitingModal(waitingMessage);
 			AjaxAPI.putData('Rbs/Productreturn/ProductReturn/' + returnId, { 'cancelRequest': true }, { detailed: false })
 				.success(function() {
 					$window.location.reload();
 				})
 				.error(function(data, status, headers) {
-					scope.pleaseWait = false;
+					AjaxAPI.closeWaitingModal();
 					console.log('error', data, status, headers);
 				});
 		};
-
-		scope.printUrl = function printUrl(printUrl) {
-			window.open(printUrl);
-		}
 	}
 
 	RbsProductreturnReturnListController.$inject = ['$scope', '$window', 'RbsChange.AjaxAPI'];

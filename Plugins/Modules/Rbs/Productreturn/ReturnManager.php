@@ -700,11 +700,28 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		$return->setEmail(isset($data['common']['email']) ? $data['common']['email'] : $order->getEmail());
 		$return->setProcessingStatus($processingStatus);
 
+		// Existing returns for the order to check available quantities. Canceled returns and returns in edition mode (created
+		// from admin panel and not confirmed) are ignored.
+		$existingReturns = [];
+		if ($order instanceof \Rbs\Order\Documents\Order)
+		{
+			$excludedStatuses = [
+				\Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_EDITION,
+				\Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_CANCELED
+			];
+			$query = $this->getDocumentManager()->getNewQuery('Rbs_Productreturn_ProductReturn');
+			$query->andPredicates(
+				$query->eq('orderId', $order->getId()),
+				$query->notIn('processingStatus', $excludedStatuses)
+			);
+			$existingReturns = $query->getDocuments();
+		}
+
 		// Lines.
 		$reasonIds = $process->getReasonsIds();
 		$needsReshipment = false;
 		$lines = [];
-		foreach ($data['lines'] as $lineData)
+		foreach ($data['lines'] as $lineIndex => $lineData)
 		{
 			$line = new \Rbs\Productreturn\ReturnLine();
 
@@ -712,7 +729,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			$shipment = $documentManager->getDocumentInstance($lineData['shipmentId']);
 			if (!($shipment instanceof \Rbs\Order\Documents\Shipment) || $shipment->getOrderId() != $order->getId())
 			{
-				throw new \RuntimeException('Invalid shipment.', 999999);
+				throw new \RuntimeException('Invalid shipment in line ' . $lineIndex . '.', 999999);
 			}
 			$line->setShipmentId($shipment->getId());
 
@@ -720,7 +737,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			$shipmentLine = $shipment->getLines()[$lineData['shipmentLineIndex']];
 			if (!($shipmentLine instanceof \Rbs\Order\Shipment\Line))
 			{
-				throw new \RuntimeException('Invalid shipment line.', 999999);
+				throw new \RuntimeException('Invalid shipment line in line ' . $lineIndex . '.', 999999);
 			}
 			$line->setShipmentLineIndex($lineData['shipmentLineIndex']);
 			$line->setDesignation($shipmentLine->getDesignation());
@@ -744,7 +761,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					if ($lineKey == $orderLine->getKey())
 					{
-						$line->getOptions()->set('unitAmountWithoutTaxes', $orderLine->getUnitAmount());
+						$line->getOptions()->set('unitAmountWithoutTaxes', $orderLine->getUnitAmountWithoutTaxes());
 						$line->getOptions()->set('unitAmountWithTaxes', $orderLine->getUnitAmountWithTaxes());
 						$line->getOptions()->set('orderLineOptions', $orderLine->getOptions());
 						break;
@@ -752,11 +769,23 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 				}
 			}
 
-			// Check the quantity.
-			// TODO: handle existing returns.
-			if ($lineData['quantity'] < $line->getQuantity())
+			// Check the quantity: available quantity is the shipped one less the one already returned.
+			$availableQuantity = $shipmentLine->getQuantity();
+			foreach ($existingReturns as $existingReturn)
 			{
-				throw new \RuntimeException('Invalid quantity.', 999999);
+				/* @var $existingReturn \Rbs\Productreturn\Documents\ProductReturn */
+				foreach ($existingReturn->getLines() as $existingLine)
+				{
+					if ($shipment->getId() == $existingLine->getShipmentId()
+						&& $lineData['shipmentLineIndex'] == $existingLine->getShipmentLineIndex())
+					{
+						$availableQuantity -= $existingLine->getQuantity();
+					}
+				}
+			}
+			if ($availableQuantity < $lineData['quantity'])
+			{
+				throw new \RuntimeException('Invalid quantity in line ' . $lineIndex . '.', 999999);
 			}
 			$line->setQuantity($lineData['quantity']);
 
@@ -764,9 +793,30 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			$reason = $documentManager->getDocumentInstance($lineData['reasonId']);
 			if (!($reason instanceof \Rbs\Productreturn\Documents\Reason) || !in_array($reason->getId(), $reasonIds))
 			{
-				throw new \RuntimeException('Invalid reason.', 999999);
+				throw new \RuntimeException('Invalid reason in line ' . $lineIndex . '.', 999999);
 			}
-			// TODO check time limit.
+			$timeLimit = $reason->getTimeLimitAfterReceipt();
+			if ($timeLimit)
+			{
+				if ($shipment->getDeliveryDate())
+				{
+					$dateToCheck = $shipment->getDeliveryDate();
+				}
+				else
+				{
+					$dateToCheck = $shipment->getShippingDate();
+					if ($reason->getExtraTimeAfterShipping())
+					{
+						$dateToCheck->add(new \DateInterval('P' . $reason->getExtraTimeAfterShipping() . 'D'));
+					}
+				}
+
+				$dateToCheck->add(new \DateInterval('P' . $timeLimit . 'D'));
+				if ($dateToCheck->getTimestamp() < time())
+				{
+					throw new \RuntimeException('Time limit exceeded in line ' . $lineIndex . '.', 999999);
+				}
+			}
 			$line->setReasonId($reason->getId());
 			$line->getOptions()->set('reasonTitle', $reason->getCurrentLocalization()->getTitle());
 
@@ -777,16 +827,22 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			elseif ($reason->getRequirePrecisions())
 			{
-				throw new \RuntimeException('Precisions are required.', 999999);
+				throw new \RuntimeException('Precisions are required in line ' . $lineIndex . '.', 999999);
 			}
 			if (isset($lineData['reasonAttachedFile']))
 			{
-				// TODO attached file.
-				$line->setReasonAttachedFileUri($lineData['reasonAttachedFile']);
+				if (isset($lineData['reasonAttachedFile']['contents']) && isset($lineData['reasonAttachedFile']['name']))
+				{
+					$line->setReasonAttachedFileUri($lineData['reasonAttachedFile']);
+				}
+				else
+				{
+					throw new \RuntimeException('Invalid attached file in line ' . $lineIndex . '.', 999999);
+				}
 			}
 			elseif ($reason->getRequireAttachedFile())
 			{
-				throw new \RuntimeException('Attached file is required.', 999999);
+				throw new \RuntimeException('Attached file is required in line ' . $lineIndex . '.', 999999);
 			}
 
 			// Preferred processing mode.
@@ -795,7 +851,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 				|| !in_array($processingMode->getId(), $reason->getProcessingModesIds())
 			)
 			{
-				throw new \RuntimeException('Invalid processing mode.', 999999);
+				throw new \RuntimeException('Invalid processing mode in line ' . $lineIndex . '.', 999999);
 			}
 			$line->setPreferredProcessingModeId($processingMode->getId());
 			$needsReshipment = $needsReshipment || $processingMode->getImpliesReshipment();
@@ -806,7 +862,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 				$reshippingProduct = $documentManager->getDocumentInstance($lineData['options']['reshippingProductId']);
 				if (!($reshippingProduct instanceof \Rbs\Catalog\Documents\Product) || !$reshippingProduct->getSkuId())
 				{
-					throw new \RuntimeException('Invalid product to reship.', 999999);
+					throw new \RuntimeException('Invalid product to reship in line ' . $lineIndex . '.', 999999);
 				}
 				$line->setReshippingCodeSKU($reshippingProduct->getSkuId());
 				$line->getOptions()->set('reshippingProductId', $reshippingProduct->getId());
@@ -904,6 +960,20 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$tm->begin();
 
+			// Upload attached files in storage. We do it only here to avoid polluting storage with files related to not saved
+			// returns.
+			$storageManager = $event->getApplicationServices()->getStorageManager();
+			$lines = $return->getLines();
+			foreach ($return->getLines() as $line)
+			{
+				$fileData = $line->getReasonAttachedFileUri();
+				if (is_array($fileData))
+				{
+					$line->setReasonAttachedFileUri($this->storeFile($storageManager, $fileData));
+				}
+			}
+			$return->setLines($lines);
+
 			$return->save();
 
 			$tm->commit();
@@ -912,6 +982,37 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			throw $tm->rollBack($e);
 		}
+	}
+
+	/**
+	 * @param \Change\Storage\StorageManager $storageManager
+	 * @param array $fileData
+	 * @throws \RuntimeException
+	 * @return string
+	 */
+	protected function storeFile($storageManager, array $fileData)
+	{
+		$fileContents = $fileData['contents'];
+		$fileContents = substr($fileContents, strpos($fileContents, ';base64,') + strlen(';base64,'));
+		$fileContents = base64_decode($fileContents);
+		$fileName = $fileData['name'];
+
+		$storageName = 'Rbs_Productreturn';
+		$storageEngine = $storageManager->getStorageByName($storageName);
+		$storagePath = $storageEngine->normalizePath(implode('/', array(uniqid() . '_' . trim($fileName))));
+		$destinationPath = \Change\Storage\StorageManager::DEFAULT_SCHEME . '://' . $storageName . '/' . $storagePath;
+		if (file_put_contents($destinationPath, $fileContents))
+		{
+			if ($storageManager->getItemInfo($destinationPath) === null)
+			{
+				throw new \RuntimeException('Unable to find: ' . $destinationPath, 999999);
+			}
+		}
+		else
+		{
+			throw new \RuntimeException('Unable to put contents in "' . $destinationPath . '"', 999999);
+		}
+		return $destinationPath;
 	}
 
 	/**

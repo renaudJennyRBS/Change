@@ -25,6 +25,11 @@ class ProductReturnDataComposer
 	protected $returnManager;
 
 	/**
+	 * @var \Change\Storage\StorageManager
+	 */
+	protected $storageManager;
+
+	/**
 	 * @var null|array
 	 */
 	protected $dataSets = null;
@@ -48,6 +53,8 @@ class ProductReturnDataComposer
 		$this->priceManager = $commerceServices->getPriceManager();
 		$this->processManager = $commerceServices->getProcessManager();
 		$this->returnManager = $commerceServices->getReturnManager();
+
+		$this->storageManager = $event->getApplicationServices()->getStorageManager();
 	}
 
 	/**
@@ -83,6 +90,8 @@ class ProductReturnDataComposer
 			'cancellable' => $this->returnManager->isReturnCancellable($return)
 		];
 
+		$this->generateURLData();
+
 		$this->dataSets['context'] = $return->getContext()->toArray();
 
 		if ($this->hasDataSet('order'))
@@ -107,6 +116,23 @@ class ProductReturnDataComposer
 		if ($this->detailed || $this->hasDataSet('reshipping'))
 		{
 			$this->generateReshippingDataSet();
+		}
+	}
+
+	protected function generateURLData()
+	{
+		$section = $this->section ? $this->section : $this->website;
+		if (is_array($this->URLFormats) && count($this->URLFormats) && $section instanceof \Change\Presentation\Interfaces\Section)
+		{
+			$website = $section->getWebsite();
+			if ($website)
+			{
+				$urlManager = $website->getUrlManager($website->getLCID());
+				$query = ['orderId' => $this->return->getOrderId()];
+				$url = $urlManager->getByFunction('Rbs_Order_OrderDetail', $query)->normalize()
+					->setFragment('return-details-' . $this->return->getId())->toString();
+				$this->dataSets['common']['URL']['canonical'] = $url;
+			}
 		}
 	}
 
@@ -163,6 +189,13 @@ class ProductReturnDataComposer
 		foreach ($this->return->getLines() as $line)
 		{
 			$lineData = $line->toArray();
+			// Handle attached files to return the public URL instead of the internal URI.
+			if (isset($lineData['reasonAttachedFileUri']))
+			{
+				$attachedFileUri = $lineData['reasonAttachedFileUri'];
+				unset($lineData['reasonAttachedFileUri']);
+				$lineData['reasonAttachedFileURL'] = $this->storageManager->getPublicURL($attachedFileUri);
+			}
 
 			if (isset($lineData['options']['productId']))
 			{

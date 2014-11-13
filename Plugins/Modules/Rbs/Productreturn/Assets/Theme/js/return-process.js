@@ -62,13 +62,27 @@
 
 						if (shipmentLine.options.hasOwnProperty('lineKey')) {
 							line['orderLine'] = scope.getOrderLineByKey(shipmentLine.options['lineKey']);
-							console.log('orderLine', line['orderLine'], shipmentLine.options['lineKey']);
 							if (angular.isObject(line['orderLine'].product)) {
 								line.product = line['orderLine'].product;
 							}
 						}
 						else if (angular.isObject(line['shipmentLine'].product)) {
 							line.product = line['shipmentLine'].product;
+						}
+
+						line.alreadyReturned = 0;
+						for (var returnIndex = 0; returnIndex < scope.orderData.returns.length; returnIndex++) {
+							var returnData = scope.orderData.returns[returnIndex];
+							if (returnData.common['statusInfos'].code === 'CANCELED' ||
+								returnData.common['statusInfos'].code === 'EDITION') {
+								continue;
+							}
+							for (var returnLineIndex = 0; returnLineIndex < returnData.lines.length; returnLineIndex++) {
+								var returnLine = returnData.lines[returnLineIndex];
+								if (returnLine.shipmentId == shipment.common.id && returnLine.shipmentLineIndex == lineIndex) {
+									line.alreadyReturned += returnLine.quantity;
+								}
+							}
 						}
 
 						lines.push(line);
@@ -169,6 +183,7 @@
 
 		scope.getLineRemainingQuantity = function getLineRemainingQuantity(shipmentIndex, lineIndex, returnLineIndex) {
 			var quantity = scope.returnData.shipments[shipmentIndex].lines[lineIndex].shipmentLine.quantity;
+			quantity -= scope.returnData.shipments[shipmentIndex].lines[lineIndex].alreadyReturned;
 			for (var i = 0; i < scope.returnData.shipments[shipmentIndex].lines[lineIndex].returnLines.length; i++) {
 				// Ignore the quantity of the current return line if its index is given.
 				if (returnLineIndex === undefined || returnLineIndex != i) {
@@ -201,7 +216,7 @@
 			return mode['allowVariantSelection'] === true;
 		};
 
-		scope.sendReturnRequest = function sendReturnRequest() {
+		scope.sendReturnRequest = function sendReturnRequest(waitingMessage) {
 			// Prepare data...
 			var linesData = [];
 			for (var shipmentIndex = 0; shipmentIndex < scope.returnData.shipments.length; shipmentIndex++) {
@@ -221,7 +236,6 @@
 						};
 
 						if (scope.canChooseOtherVariant(line, returnLine) && angular.isObject(returnLine.productData)) {
-							console.log('returnLine.productData', returnLine.productData);
 							returnLine.options.reshippingProductId = returnLine.productData.common.id;
 						}
 
@@ -250,10 +264,17 @@
 			}
 
 			// Send return request.
-			AjaxAPI.postData('Rbs/Productreturn/ProductReturn/', data, { detailed: false })
+			AjaxAPI.openWaitingModal(waitingMessage);
+			AjaxAPI.postData('Rbs/Productreturn/ProductReturn/', data, { detailed: false, URLFormats: ['canonical'] })
 				.success(function(resultData) {
-					// TODO
-					console.log(resultData);
+					var URL = resultData.dataSets.common.URL['canonical'];
+					if (URL) {
+						$window.location = URL;
+					}
+					else {
+						AjaxAPI.closeWaitingModal();
+						console.log('return submitted', resultData);
+					}
 				})
 				.error(function(data, status, headers) {
 					console.log('error', data, status, headers);
@@ -312,7 +333,7 @@
 				};
 
 				function isTimeLimitExceeded(reason) {
-					if (!reason || !reason['timeLimitAfterReceipt'] || !reason['timeoutMessage']) {
+					if (!reason || !reason['timeLimitAfterReceipt']) {
 						return false;
 					}
 					else if (!reason['timeoutMessage']) {
@@ -322,12 +343,14 @@
 					var dateNow = new Date();
 
 					var dateToCheck;
-					if (scope.shipment.shipmentData.common['deliveryDate']) {
-						dateToCheck = new Date(scope.shipment.shipmentData.common['deliveryDate']);
+					var timeLimit = reason['timeLimitAfterReceipt'];
+					if (scope['shipment'].shipmentData.common['deliveryDate']) {
+						dateToCheck = new Date(scope['shipment'].shipmentData.common['deliveryDate']);
+						dateToCheck.setDate(dateToCheck.getDate() + timeLimit);
 					}
 					else {
-						dateToCheck = new Date(scope.shipment.shipmentData.common['shippingDate']);
-						dateToCheck.setDate(dateToCheck.getDate() + reason['timeLimitAfterReceipt']);
+						dateToCheck = new Date(scope['shipment'].shipmentData.common['shippingDate']);
+						dateToCheck.setDate(dateToCheck.getDate() + timeLimit + reason['extraTimeAfterShipping']);
 					}
 
 					return dateNow.getTime() > dateToCheck.getTime();
@@ -338,7 +361,7 @@
 						return null;
 					}
 
-					var processingModes = scope.getAvailableProcessingModes(reason, scope.line.product)
+					var processingModes = scope.getAvailableProcessingModes(reason, scope.line.product);
 					if (reason['processingModes'].length == 1) {
 						return reason['processingModes'][0].id
 					}
@@ -405,23 +428,21 @@
 	function rbsProductreturnShipmentLines($compile) {
 		return {
 			restrict: 'A',
-			controller: function () {
-				this.getLineDirectiveName = function (line) {
+			controller: function() {
+				this.getLineDirectiveName = function(line) {
 					return 'data-rbs-productreturn-shipment-line-details-default';
 				};
 			},
 			link: function(scope, elment, attrs, controller) {
-				console.log('rbsProductreturnShipmentLines', scope['shipment']);
 				var html = [];
-				angular.forEach(scope['shipment'].lines, function(line, lineIndex){
-					console.log(line, lineIndex);
-					html.push('<tr data-line-index="'+ lineIndex +'" ' + controller.getLineDirectiveName(line) + '=""></tr>');
-					html.push('<tr data-line-index="'+ lineIndex +'" data-rbs-productreturn-shipment-line-return=""></tr>');
-					html.push('<tr data-line-index="'+ lineIndex +'" data-rbs-productreturn-shipment-line-footer=""></tr>');
+				angular.forEach(scope['shipment'].lines, function(line, lineIndex) {
+					html.push('<tr data-line-index="' + lineIndex + '" ' + controller.getLineDirectiveName(line) + '=""></tr>');
+					html.push('<tr data-line-index="' + lineIndex + '" data-rbs-productreturn-shipment-line-return=""></tr>');
+					html.push('<tr data-line-index="' + lineIndex + '" data-rbs-productreturn-shipment-line-footer=""></tr>');
 				});
 
 				if (html.length) {
-					$compile(html.join(''))(scope, function (clone) {
+					$compile(html.join(''))(scope, function(clone) {
 						elment.append(clone);
 					});
 				}
@@ -507,7 +528,10 @@
 				element.bind('change', function(e) {
 					var element = e.target;
 
+					var fileData = [];
+
 					var readFile = function readFile(file) {
+						fileData.push({name: file.name, type: file.type, size: file.size});
 						var deferred = $q.defer();
 						var reader = new FileReader();
 						reader.onload = function onLoad(e) {
@@ -522,6 +546,18 @@
 
 					$q.all(slice.call(element.files, 0).map(readFile))
 						.then(function(values) {
+							for (var i = 0; i < values.length; i++) {
+								var value = values[i];
+								if (value) {
+									fileData[i].contents = value;
+									value = fileData[i];
+								}
+								else {
+									value = null;
+								}
+								values[i] = value;
+							}
+
 							if (element.multiple) {
 								ngModel.$setViewValue(values);
 							}

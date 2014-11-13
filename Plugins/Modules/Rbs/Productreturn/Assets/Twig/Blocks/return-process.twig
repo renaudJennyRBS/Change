@@ -52,7 +52,7 @@
 							<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
 							<th>{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</th>
 							{% if showPrices %}
-								<th class="text-right" colspan="2">{{ i18n('m.rbs.commerce.front.price', ['ucf']) }}</th>
+								<th class="text-right" colspan="2">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
 							{% endif %}
 						</tr>
 					</thead>
@@ -90,7 +90,7 @@
 
 			<button type="button" class="btn btn-primary"
 				data-ng-disabled="{{ commonFormName }}.$invalid || isEditing()"
-				data-ng-click="sendReturnRequest()">
+				data-ng-click="sendReturnRequest('{{ i18nAttr('m.rbs.productreturn.front.please_wait_saving_request', ['ucf', 'etc']) }}')">
 				<span class="glyphicon glyphicon-ok"></span>
 				{{ i18n('m.rbs.productreturn.front.send_return_request', ['ucf']) }}
 			</button>

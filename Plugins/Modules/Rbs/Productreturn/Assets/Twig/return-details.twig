@@ -1,8 +1,8 @@
 {% block returnHeader %}
-	<h2>
+	<h2 id="return-details-{{ return.common.id }}">
 		{% if return.common.cancellable %}
 			<span class="pull-right">
-				<button class="btn btn-default" type="button" data-ng-click="cancelReturn({{ return.common.id }})">
+				<button class="btn btn-default" type="button" data-ng-click="cancelReturn({{ return.common.id }}, '{{ i18nAttr('m.rbs.productreturn.front.please_wait_ongoing_treatment', ['ucf', 'etc']) }}')">
 					{{ i18n('m.rbs.productreturn.front.cancel_request', ['ucf']) }}
 				</button>
 			</span>
@@ -40,18 +40,16 @@
 			</div>
 			{% if return.returnMode.sheetURL %}
 				<div class="panel-body">
-					<button class="btn btn-default" type="button"
-						data-ng-click="printUrl('{{ return.returnMode.sheetURL }}')">
+					<a class="btn btn-default" href="{{ return.returnMode.sheetURL }}">
 						{{ i18n('m.rbs.productreturn.front.print_the_return_sheet', ['ucf']) }}
-					</button>
+					</a>
 				</div>
 			{% endif %}
 			{% if return.returnMode.stickerURL %}
 				<div class="panel-body">
-					<button class="btn btn-default" type="button"
-						data-ng-click="printUrl('{{ return.returnMode.stickerURL }}')">
+					<a class="btn btn-default" href="{{ return.returnMode.stickerURL }}">
 						{{ i18n('m.rbs.productreturn.front.print_the_return_sticker', ['ucf']) }}
-					</button>
+					</a>
 				</div>
 			{% endif %}
 		</div>
@@ -120,6 +118,12 @@
 									<br />
 									{{ i18n('m.rbs.productreturn.front.precisions', ['ucf', 'lab']) }}
 									{{ line.reasonPrecisions }}
+								{% endif %}
+								{% if line.reasonAttachedFileURL %}
+									<br />
+									<a href="{{ line.reasonAttachedFileURL }}">
+										{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}
+									</a>
 								{% endif %}
 							</td>
 						</tr>

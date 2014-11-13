@@ -5,7 +5,7 @@
 				<td>
 					<a data-ng-if="line.product" title="(= line.product.common.title =)" href="javascript:"
 						data-ng-href="(= line.product.common.URL.canonical =)">
-						<img data-ng-show="line.product.common.visuals[0].cartItem"
+						<img data-ng-show="line.product.common.visuals[0].cartItem" src=""
 							alt="(= line.product.common.title =)" data-ng-src="(= line.product.common.visuals[0].cartItem =)" />
 						<div class="text-left text-muted" data-ng-hide="line.product.common.visuals[0].cartItem">
 							<span class="glyphicon glyphicon-camera" style="font-size:80px"></span>
@@ -31,10 +31,18 @@
 					</div>
 				</td>
 				<td>
-					(= line.shipmentLine.quantity =)<br />
-					TODO déjà retourné<br />
-					<a href="javascript:;" data-ng-hide="hasReturnLine(shipmentIndex, lineIndex) || isEditing()"
-						data-ng-click="newReturnLine(shipmentIndex, lineIndex)">
+					<p>(= line.shipmentLine.quantity =)</p>
+					<p data-ng-if="line.alreadyReturned > 0">
+						<span data-ng-show="line.alreadyReturned >= line.shipmentLine.quantity">
+							{{ i18n('m.rbs.productreturn.front.already_returned_product', ['ucf']) }}
+						</span>
+						<span data-ng-show="line.alreadyReturned < line.shipmentLine.quantity">
+							{{ i18n('m.rbs.productreturn.front.already_returned_quantity', ['ucf', 'lab']) }}
+							(= line.alreadyReturned =)
+						</span>
+					</p>
+					<a href="javascript:;" data-ng-click="newReturnLine(shipmentIndex, lineIndex)"
+						data-ng-hide="line.alreadyReturned >= line.shipmentLine.quantity || hasReturnLine(shipmentIndex, lineIndex) || isEditing()">
 						{{ i18n('m.rbs.productreturn.front.return_product', ['ucf']) }}
 					</a>
 				</td>
@@ -203,7 +211,7 @@
 						<label for="{{ fieldIdPrefix }}_attachedFile" class="{{ labelColClasses }}">
 							<em data-ng-if="getReasonById(returnLine.reason).requireAttachedFile"
 								class="required-symbol" title="{{ requiredStarTitle }}">*</em>
-							{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}
+							{{ i18n('m.rbs.productreturn.front.attach_file', ['ucf']) }}
 						</label>
 						<div class="{{ fieldColClasses }}">
 							<input id="{{ fieldIdPrefix }}_attachedFile" type="file" name="attachedFile"

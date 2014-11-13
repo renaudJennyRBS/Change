@@ -8,6 +8,12 @@
 	"return_request": {
 		"message": "demande de retour"
 	},
+	"already_returned_product": {
+		"message": "ce produit a déjà été retourné"
+	},
+	"already_returned_quantity": {
+		"message": "déjà retourné"
+	},
 	"return_product": {
 		"message": "retourner ce produit"
 	},
@@ -23,8 +29,11 @@
 	"precisions": {
 		"message": "précisions"
 	},
-	"attached_file": {
+	"attach_file": {
 		"message": "joindre un fichier"
+	},
+	"attached_file": {
+		"message": "fichier joint"
 	},
 	"cancel_returning_this_product": {
 		"message": "annuler le retour de ce produit"
@@ -100,6 +109,9 @@
 	},
 	"please_wait_ongoing_treatment": {
 		"message": "traitement en cours, merci de patienter"
+	},
+	"please_wait_saving_request": {
+		"message": "enregistrement de la demande, merci de patienter"
 	},
 	"print_the_return_sheet": {
 		"message": "imprimer le bon de retour à mettre dans le colis"
