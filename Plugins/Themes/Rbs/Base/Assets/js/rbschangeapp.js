@@ -19,13 +19,35 @@
 					element.click(
 						function() {
 							jQuery('html, body').animate({ scrollTop: jQuery('#' + anchor).offset().top - 20 }, 1000);
-							return false;
 						}
 					);
 				}
 			}
 		}
 	});
+
+	app.directive('rbsAjaxWaitingModal', ['$rootScope', 'RbsChange.AjaxAPI', function($rootScope, AjaxAPI) {
+		var navigationContext = AjaxAPI.globalVar('navigationContext');
+		var themeName = (angular.isObject(navigationContext) ? navigationContext.themeName : null) || 'Rbs_Base';
+		return {
+			restrict: 'A',
+			templateUrl: 'Theme/' + themeName.split('_').join('/') + '/directives/rbsAjaxWaitingModal.twig',
+			scope: {},
+			link: function(scope, element) {
+				$rootScope.$on('rbsAjaxOpenWaitingModal', function(event, message) {
+					if (!event.defaultPrevented) {
+						scope.message = message;
+						element.find('.modal').modal({ 'keyboard': false });
+						event.preventDefault();
+					}
+				});
+
+				$rootScope.$on('rbsAjaxCloseWaitingModal', function(event) {
+					element.find('.modal').modal('hide');
+				});
+			}
+		}
+	}]);
 
 	app.filter('rbsDate', ['RbsChange.AjaxAPI', '$filter', function(AjaxAPI, $filter) {
 		var i18n = AjaxAPI.globalVar('i18n');
@@ -183,6 +205,14 @@
 				return $http(config);
 			}
 
+			function openWaitingModal(message) {
+				$rootScope.$emit('rbsAjaxOpenWaitingModal', message);
+			}
+
+			function closeWaitingModal() {
+				$rootScope.$emit('rbsAjaxCloseWaitingModal');
+			}
+
 			// Public API
 			return {
 				getVersion: getVersion,
@@ -193,7 +223,9 @@
 				getData: getData,
 				postData: postData,
 				putData: putData,
-				deleteData: deleteData
+				deleteData: deleteData,
+				openWaitingModal: openWaitingModal,
+				closeWaitingModal: closeWaitingModal
 			};
 		}];
 	});
