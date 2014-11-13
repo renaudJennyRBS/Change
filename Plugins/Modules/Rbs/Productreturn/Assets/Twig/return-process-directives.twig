@@ -277,3 +277,96 @@
 			data-product-data="returnLine.productData"></div>
 	</script>
 {% endblock reshippingVariants %}
+
+{% block rbsProductreturnReshippingModes %}
+	<script type="text/ng-template" id="/rbsProductreturnReshippingModes.tpl">
+		<div class="panel panel-default">
+			<div class="panel-body" data-ng-if="hasCategory('store')">
+				<label>{{ i18n('m.rbs.commerce.front.store_delivery', ['ucf']) }}</label>
+			</div>
+			<div class="panel-body" data-ng-if="hasCategory('relay')">
+				<label>{{ i18n('m.rbs.commerce.front.relay_delivery', ['ucf']) }}</label>
+			</div>
+			<div class="panel-body" data-ng-if="hasCategory('atHome')">
+				<label>{{ i18n('m.rbs.commerce.front.at_home_delivery', ['ucf']) }}</label>
+				<div data-rbs-productreturn-reshipping-at-home="" data-reshipping-data="returnData.reshippingData"
+					data-user-id="accessorId" data-user-addresses="userAddresses"
+					data-reshipping-mode-definitions="processData.reshippingModes.atHome"></div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</script>
+
+	{% block rbsProductreturnReshippingAtHome %}
+		<script type="text/ng-template" id="/rbsProductreturnReshippingAtHome.tpl">
+			<div data-ng-hide="reshippingData.edition">
+				<div class="row">
+					<div class="col-md-4">
+						<address class="no-bottom-margin" data-ng-show="reshippingData.address">
+							<strong>(= reshippingData.address.lines[0] =)</strong>
+							<div data-ng-repeat="addressLine in reshippingData.address.lines track by $index"
+								data-ng-show="!$first">(= addressLine =)</div>
+						</address>
+						<button class="btn btn-default" data-ng-click="editAddress()">
+							{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+						</button>
+					</div>
+					<div class="col-md-8">
+						<div data-ng-hide="loadShippingModes || reshippingModeDefinitions.length">
+							{{ i18n('m.rbs.commerce.front.no_shipping_mode_available', ['ucf']) }}
+						</div>
+						<div data-ng-repeat="reshippingModeDefinition in reshippingModeDefinitions track by $index">
+							<img class="pull-right" data-ng-show="reshippingModeDefinition.presentation.visual"
+								alt="(= reshippingModeDefinition.presentation.visual.alt =)"
+								data-ng-src="(= reshippingModeDefinition.presentation.visual.detailThumbnail =)" src="" />
+							<label>
+								<input type="radio" data-ng-model="reshippingData.mode.id"
+									data-ng-value="reshippingModeDefinition.common.id" />
+								(= reshippingModeDefinition.common.title =)
+							</label>
+							<div class="small" data-ng-bind-html="trustHtml(reshippingModeDefinition.presentation.description)">
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div data-ng-show="reshippingData.edition">
+				<div data-ng-show="userAddresses.length" class="row">
+					<div data-ng-repeat-start="address in userAddresses" class="col-md-6 col-lg-4">
+						<h3>(= address.common.name =)</h3>
+						<address>
+							<strong>(= address.lines[0] =)</strong>
+							<div data-ng-repeat="line in address.lines track by $index" data-ng-show="!$first">
+								(= line =)
+							</div>
+						</address>
+						<p>
+							<button type="button" class="btn btn-sm btn-primary"
+								data-ng-click="selectUserAddress(address)" >
+								{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
+							</button>
+						</p>
+					</div>
+					<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg-block"></div>
+					<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md-block"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div data-rbs-geo-address-editor="" data-address="reshippingData.address" data-accept-zones=""
+							data-manage-name="(= userId ? 'optional' : 'none' =)" data-valid="reshippingData.addressIsValid">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3">
+						<button type="button" class="btn btn-sm btn-primary" data-ng-click="useAddress()"
+							data-ng-disabled="!reshippingData.addressIsValid">
+							{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
+						</button>
+					</div>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsProductreturnReshippingAtHome %}
+{% endblock rbsProductreturnReshippingModes %}

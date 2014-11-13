@@ -884,17 +884,31 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		// Reshipping data.
 		if ($needsReshipment)
 		{
-			$reshippingMode = $documentManager->getDocumentInstance($data['common']['reshippingModeId']);
+			if (!isset($data['reshippingData']['mode']['id']))
+			{
+				throw new \RuntimeException('Reshipping mode is required.', 999999);
+			}
+			$reshippingMode = $documentManager->getDocumentInstance($data['reshippingData']['mode']['id']);
 			if (!($reshippingMode instanceof \Rbs\Shipping\Documents\Mode)
 				|| !in_array($reshippingMode->getId(), $process->getReshippingModesIds())
 			)
 			{
 				throw new \RuntimeException('Invalid reshipping mode.', 999999);
 			}
+
 			$return->setReshippingModeCode($reshippingMode->getCode());
 			$return->getContext()->set('reshippingModeId', $reshippingMode->getId());
 			$return->getContext()->set('reshippingModeTitle', $reshippingMode->getCurrentLocalization()->getTitle());
-			// TODO reshipping data.
+			// TODO: validate address.
+			if (isset($data['reshippingData']['address']) && is_array($data['reshippingData']['address']))
+			{
+				$address = new \Rbs\Geo\Address\BaseAddress($data['reshipmentData']['address']);
+				$return->getContext()->set('reshippingAddress', $address->toArray());
+			}
+			if (isset($data['reshippingData']['options']) && is_array($data['reshippingData']['options']))
+			{
+				$return->getContext()->set('reshippingOptions', $data['reshippingData']['options']);
+			}
 		}
 
 		$event->setParam('productReturn', $return);

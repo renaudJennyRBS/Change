@@ -6,7 +6,7 @@
 	 * Return process controller.
 	 */
 	function RbsProductreturnReturnProcessController(scope, $element, $window, $sce, AjaxAPI) {
-		scope.returnData = { 'shipments': [], 'returnMode': null, 'reshippingMode': null };
+		scope.returnData = { 'shipments': [], 'returnMode': null, 'reshippingData': {'mode': {'id': null}, 'address': null } };
 		scope.orderData = {};
 		scope.data = { 'editingLine': null, 'productAjaxData': {}, 'productAjaxParams': {} };
 
@@ -259,8 +259,7 @@
 			};
 
 			if (scope.needsReshipment()) {
-				data.common.reshippingModeId = scope.returnData.reshippingMode;
-				// TODO: reshippingData
+				data.reshippingData = scope.returnData.reshippingData;
 			}
 
 			// Send return request.
@@ -531,7 +530,7 @@
 					var fileData = [];
 
 					var readFile = function readFile(file) {
-						fileData.push({name: file.name, type: file.type, size: file.size});
+						fileData.push({ name: file.name, type: file.type, size: file.size });
 						var deferred = $q.defer();
 						var reader = new FileReader();
 						reader.onload = function onLoad(e) {
@@ -572,4 +571,193 @@
 
 	rbsProductreturnFileReader.$inject = ['$q'];
 	app.directive('rbsProductreturnFileReader', rbsProductreturnFileReader);
+
+	// Reshipping mode.
+
+	function rbsProductreturnReshippingModes(AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsProductreturnReshippingModes.tpl',
+			scope: true,
+
+			link: function(scope) {
+				scope.userAddresses = [];
+
+				scope.hasCategory = function(category) {
+					return scope.processData['reshippingModes'].hasOwnProperty(category);
+				};
+
+				scope.getModesByCategory = function(category) {
+					return scope.hasCategory(category) ? scope.processData['reshippingModes'][category] : [];
+				};
+
+				scope.isCategory = function(category) {
+					var shippingModes = scope.getModesByCategory(category);
+					for (var i = 0; i < shippingModes.length; i++) {
+						if (shippingModes[i].common.id == scope.returnData['reshippingData'].mode.id) {
+							return true;
+						}
+					}
+					return false;
+				};
+
+				scope.isReshippingModeValid = function() {
+					return !!scope.returnData.reshippingData.mode.id;
+				};
+
+				scope.loadUserAddresses = function() {
+					if (scope.accessorId) {
+						AjaxAPI.getData('Rbs/Geo/Address/', { userId: scope.accessorId })
+							.success(function(data) {
+								scope.userAddresses = data.items;
+							})
+							.error(function(data, status, headers) {
+								console.log('error getting addresses', data, status, headers);
+								scope.userAddresses = [];
+							});
+					}
+					else {
+						scope.userAddresses = [];
+					}
+				};
+
+				scope.cleanupAddress = function(address) {
+					if (address) {
+						if (address.common) {
+							address.common = { addressFieldsId: address.common.addressFieldsId };
+						}
+						if (address.default) {
+							delete address.default
+						}
+					}
+					return address;
+				};
+
+				function initializeProcessData() {
+					scope.loadUserAddresses();
+				}
+
+				initializeProcessData();
+			}
+		}
+	}
+
+	rbsProductreturnReshippingModes.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsProductreturnReshippingModes', rbsProductreturnReshippingModes);
+
+	function rbsProductreturnReshippingAtHome(AjaxAPI, $sce) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsProductreturnReshippingAtHome.tpl',
+			scope: {
+				reshippingData: "=",
+				reshippingModeDefinitions: "=",
+				userId: "=",
+				userAddresses: "="
+			},
+			link: function(scope) {
+				if (!angular.isObject(scope.reshippingData)) {
+					scope.reshippingData = {};
+				}
+				scope.loadShippingModes = true;
+
+				scope.getDefaultUserAddress = function(userAddresses) {
+					var defaultUserAddress = null, address;
+					if (angular.isArray(userAddresses)) {
+						for (var i = 0; i < userAddresses.length; i++) {
+							address = userAddresses[i];
+							if (address['default']) {
+								if (address['default']['shipping']) {
+									return address;
+								}
+								else if (address['default']['default']) {
+									defaultUserAddress = address;
+								}
+							}
+						}
+					}
+					return defaultUserAddress;
+				};
+
+				scope.isEmptyAddress = function(address) {
+					if (angular.isObject(address) && !angular.isArray(address)) {
+						if (address.fields && address.fields.countryCode && address.lines && address.lines.length) {
+							return false;
+						}
+					}
+					return true;
+				};
+
+				scope.$watchCollection('userAddresses', function(userAddresses) {
+					if (scope.isEmptyAddress(scope.reshippingData.address)) {
+						var defaultUserShippingAddress = scope.getDefaultUserAddress(userAddresses);
+						if (defaultUserShippingAddress) {
+							scope.selectUserAddress(defaultUserShippingAddress);
+							return;
+						}
+						scope.editAddress();
+					}
+				});
+
+				scope.$watch('reshippingData.mode.id', function(id) {
+					if (id) {
+						angular.forEach(scope.reshippingModeDefinitions, function(modeInfo) {
+							if (modeInfo.common.id == id) {
+								scope.reshippingData.mode.title = modeInfo.common.title;
+								if (!angular.isObject(scope.reshippingData.options) ||
+									angular.isArray(scope.reshippingData.options)) {
+									scope.reshippingData.options = {};
+								}
+								scope.reshippingData.options.category = modeInfo.common.category;
+							}
+						});
+					}
+				});
+
+				scope.trustHtml = function(html) {
+					return $sce.trustAsHtml(html);
+				};
+
+				scope.editAddress = function() {
+					scope.reshippingData.edition = true;
+				};
+
+				scope.selectUserAddress = function(address) {
+					scope.reshippingData.address = angular.copy(address);
+					scope.reshippingData.edition = false;
+				};
+
+				scope.useAddress = function() {
+					var address = angular.copy(scope.reshippingData.address);
+					if (scope.userId && address.common && address.common['useName'] && address.common.name) {
+						delete address.common.id;
+						delete address.default;
+						AjaxAPI.postData('Rbs/Geo/Address/', address)
+							.success(function(data) {
+								var addedAddress = data.dataSets;
+								scope.userAddresses.push(addedAddress);
+								scope.reshippingData.address = addedAddress;
+								scope.reshippingData.edition = false;
+							})
+							.error(function(data, status, headers) {
+								console.log('useAddress error', data, status, headers);
+							});
+					}
+					else {
+						AjaxAPI.postData('Rbs/Geo/ValidateAddress', { address: address })
+							.success(function(data) {
+								scope.reshippingData.address = data.dataSets;
+								scope.reshippingData.edition = false;
+							})
+							.error(function(data, status, headers) {
+								console.log('validateAddress error', data, status, headers);
+							});
+					}
+				}
+			}
+		}
+	}
+
+	rbsProductreturnReshippingAtHome.$inject = ['RbsChange.AjaxAPI', '$sce'];
+	app.directive('rbsProductreturnReshippingAtHome', rbsProductreturnReshippingAtHome);
 })();

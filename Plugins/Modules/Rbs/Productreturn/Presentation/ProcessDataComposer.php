@@ -166,31 +166,26 @@ class ProcessDataComposer
 		return $data;
 	}
 
+	/**
+	 * @return array
+	 */
+	protected function getReshippingModeContext()
+	{
+		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats, 'dataSetNames' => $this->dataSetNames,
+			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
+			'data' => $this->data, 'detailed' => false];
+	}
+
 	protected function generateReshippingModesDataSet()
 	{
 		$this->dataSets['reshippingModes'] = [];
+		$context = $this->getReshippingModeContext();
 		foreach ($this->process->getReshippingModes() as $mode)
 		{
 			if ($mode instanceof \Rbs\Shipping\Documents\Mode && $mode->activated())
 			{
-				$this->dataSets['reshippingModes'][] = $this->generateReshippingModeData($mode);
+				$this->dataSets['reshippingModes'][$mode->getCategory()][] = $this->processManager->getShippingModeData($mode, $context);
 			}
 		}
-	}
-
-	/**
-	 * @param \Rbs\Shipping\Documents\Mode $mode
-	 * @return array
-	 */
-	protected function generateReshippingModeData(\Rbs\Shipping\Documents\Mode $mode)
-	{
-		$data = [];
-
-		$data['id'] = $mode->getId();
-		$data['title'] = $mode->getCurrentLocalization()->getTitle();
-
-		// TODO
-
-		return $data;
 	}
 } 

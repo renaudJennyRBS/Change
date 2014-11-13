@@ -70,7 +70,8 @@
 				<h3>{{ i18n('m.rbs.productreturn.front.you_want', ['ucf']) }}</h3>
 				<div class="radio" data-ng-repeat="mode in processData.returnModes">
 					<label>
-						<input type="radio" name="returnMode" data-ng-model="returnData.returnMode" value="(= mode.id =)" />
+						<input type="radio" name="returnMode" data-ng-model="returnData.returnMode" value="(= mode.id =)"
+							data-ng-required="!value" />
 						(= mode.title =)
 					</label>
 				</div>
@@ -78,14 +79,7 @@
 
 			<div class="form-group" data-ng-show="needsReshipment()">
 				<h3>{{ i18n('m.rbs.productreturn.front.reshipment', ['ucf']) }}</h3>
-				TODO grouper les types de modes ?
-				<div class="radio" data-ng-repeat="mode in processData.reshippingModes">
-					<label>
-						<input type="radio" name="reshippingMode" data-ng-model="returnData.reshippingMode"
-							value="(= mode.id =)" />
-						(= mode.title =)
-					</label>
-				</div>
+				<div data-rbs-productreturn-reshipping-modes=""></div>
 			</div>
 
 			<button type="button" class="btn btn-primary"
