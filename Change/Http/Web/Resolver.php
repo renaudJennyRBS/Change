@@ -148,7 +148,7 @@ class Resolver extends BaseResolver
 				return;
 			}
 
-			if (preg_match('/^Storage\/([A-Za-z0-9]+)\/(.+)$/', $relativePath, $matches))
+			if (preg_match('/^Storage\/([A-Za-z0-9_]+)\/(.+)$/', $relativePath, $matches))
 			{
 				$storageName = $matches[1];
 				$changeURI = $event->getApplicationServices()->getStorageManager()
