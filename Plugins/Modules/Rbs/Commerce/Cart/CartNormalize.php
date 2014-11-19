@@ -309,40 +309,14 @@ class CartNormalize
 			{
 				$options = $line->getOptions();
 				$productId = $options->get('productId');
+
+				/** @var \Rbs\Catalog\Documents\Product $product */
 				$product = $applicationServices->getDocumentManager()->getDocumentInstance($productId);
 
-				if ($product instanceof \Rbs\Catalog\Documents\Product)
+				$axesInfo = $commerceServices->getProductManager()->getProductAxesData($product, []);
+				if ($axesInfo)
 				{
-					// If is a product variant, get axes
-					if ($product->getVariant())
-					{
-						$variantGroup = $product->getVariantGroup();
-						if ($variantGroup)
-						{
-							$axesInfo = array();
-							foreach ($variantGroup->getAxesAttributes() as $axisAttribute)
-							{
-								$name = $axisAttribute->getCurrentLocalization()->getTitle();
-								$technicalName = $axisAttribute->getTechnicalName();
-								if (!$technicalName && $axisAttribute->getValueType() == \Rbs\Catalog\Documents\Attribute::TYPE_PROPERTY)
-								{
-									$p = $axisAttribute->getModelProperty();
-									if ($p) {$technicalName = $p->getName();}
-								}
-								$value = $technicalValue = $axisAttribute->getValue($product);
-								if ($value && $axisAttribute->getCollectionCode()) {
-									$collection = $applicationServices->getCollectionManager()->getCollection($axisAttribute->getCollectionCode());
-									if ($collection)
-									{
-										$item = $collection->getItemByValue($value);
-										if ($item) {$value = $item->getTitle();}
-									}
-								}
-								$axesInfo[] = ['name' => $name, 'value' => $value, 'technicalName' => $technicalName, 'technicalValue' => $technicalValue];
-							}
-							$options->set('axesInfo', $axesInfo);
-						}
-					}
+					$options->set('axesInfo', $axesInfo);
 				}
 			}
 		}

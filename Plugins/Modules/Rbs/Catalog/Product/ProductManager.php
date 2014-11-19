@@ -46,6 +46,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$eventManager->attach(static::EVENT_GET_CROSS_SELLING_FOR_PRODUCT, [$this, 'onDefaultGetCrossSellingProductsByProduct'], 5);
 		$eventManager->attach(static::EVENT_GET_CROSS_SELLING_FOR_CART, [$this, 'onDefaultCrossSellingProductsByCart'], 5);
+		$eventManager->attach('getProductAxesData', [$this, 'onDefaultGetProductAxesData'], 5);
 	}
 
 	/**
@@ -59,7 +60,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('product' => $product, 'csParameters' => $csParameters));
-		$this->getEventManager()->trigger(static::EVENT_GET_CROSS_SELLING_FOR_PRODUCT, $this, $args);
+		$em->trigger(static::EVENT_GET_CROSS_SELLING_FOR_PRODUCT, $this, $args);
 		if (isset($args['csProducts']))
 		{
 			return $args['csProducts'];
@@ -78,7 +79,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('cart' => $cart, 'csParameters' => $csParameters));
-		$this->getEventManager()->trigger(static::EVENT_GET_CROSS_SELLING_FOR_CART, $this, $args);
+		$em->trigger(static::EVENT_GET_CROSS_SELLING_FOR_CART, $this, $args);
 		if (isset($args['csProducts']))
 		{
 			return $args['csProducts'];
@@ -245,5 +246,75 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 			return 0;
 		}
 		return ($price1 > $price2) ? -1 : 1;
+	}
+
+	/**
+	 * @param \Rbs\Catalog\Documents\Product|integer $product
+	 * @param array $context
+	 * @return array
+	 */
+	public function getProductAxesData($product, array $context)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(array('product' => $product, 'context' => $context));
+		$em->trigger('getProductAxesData', $this, $args);
+		if (isset($args['productAxesData']) && is_array($args['productAxesData']))
+		{
+			return $args['productAxesData'];
+		}
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @return array
+	 */
+	public function onDefaultGetProductAxesData(\Change\Events\Event $event)
+	{
+		$product = $event->getParam('product');
+		if (is_numeric($product))
+		{
+			$product = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($product);
+		}
+
+		if ($product instanceof \Rbs\Catalog\Documents\Product)
+		{
+			// If is a product variant, get axes
+			if ($product->getVariant())
+			{
+				$variantGroup = $product->getVariantGroup();
+				if ($variantGroup)
+				{
+					$data = [];
+					$collectionManager = $event->getApplicationServices()->getCollectionManager();
+					foreach ($variantGroup->getAxesAttributes() as $axisAttribute)
+					{
+						$name = $axisAttribute->getCurrentLocalization()->getTitle();
+						$technicalName = $axisAttribute->getTechnicalName();
+						if (!$technicalName && $axisAttribute->getValueType() == \Rbs\Catalog\Documents\Attribute::TYPE_PROPERTY)
+						{
+							$p = $axisAttribute->getModelProperty();
+							if ($p) {$technicalName = $p->getName();}
+						}
+						$value = $technicalValue = $axisAttribute->getValue($product);
+						if ($value && $axisAttribute->getCollectionCode()) {
+							$collection = $collectionManager->getCollection($axisAttribute->getCollectionCode());
+							if ($collection)
+							{
+								$item = $collection->getItemByValue($value);
+								if ($item) {$value = $item->getTitle();}
+							}
+						}
+						$data[] = [
+							'name' => $name,
+							'value' => $value,
+							'technicalName' => $technicalName,
+							'technicalValue' => $technicalValue
+						];
+					}
+					$event->setParam('productAxesData', $data);
+				}
+			}
+		}
 	}
 }
