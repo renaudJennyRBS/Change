@@ -2,6 +2,15 @@
 	"cart_without_webstore":{
 		"message":"le panier n'est pas relié à une boutique"
 	},
+	"cart_without_billing_area":{
+		"message":"Aucune zone de tarification n'est définie pour ce panier"
+	},
+	"cart_without_order_process":{
+		"message":"Aucun tunnel d'achat n'est définie pour ce panier"
+	},
+	"cart_without_tax_zone":{
+		"message":"Aucune zone de taxe n'a été sélectionnée."
+	},
 	"line_without_quantity":{
 		"message":"la ligne $NUMBER$ ne contient pas une quantité valide"
 	},

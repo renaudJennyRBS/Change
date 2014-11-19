@@ -43,11 +43,7 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('setDefaultAddress', [$this, 'onDefaultSetDefaultAddress'], 5);
 		$eventManager->attach('getDefaultAddress', [$this, 'onDefaultGetDefaultAddress'], 5);
 		$eventManager->attach('getZoneByCode', [$this, 'onDefaultGetZoneByCode'], 5);
-		$eventManager->attach('getCityAutocompletion', [$this, 'onDefaultGetCityAutocompletion'], 1);
-		$eventManager->attach('getPoints', [$this, 'onDefaultGetPoints'], 1);
 		$eventManager->attach('getAddressFieldsData', [$this, 'onDefaultGetAddressFieldsData'], 5);
-
-
 	}
 
 	/**
@@ -860,86 +856,56 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		return null;
 	}
-	/**
-	 * @param string $context
-	 * @return mixed|null
-	 */
-	public function getCityAutocompletion($context)
-	{
-		if (is_array($context))
-		{
-			if (!is_array($context['options']))
-			{
-				$context['options'] = [];
-			}
-
-			$eventManager = $this->getEventManager();
-			$args = $eventManager->prepareArgs(['context' => $context]);
-			$this->getEventManager()->trigger('getCityAutocompletion', $this, $args);
-			if (isset($args['cities']) && is_array($args['cities']))
-			{
-				return $args['cities'];
-			}
-		}
-		return null;
-	}
-
 
 	/**
-	 * Input param beginOfName
-	 * Output param cities
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultGetCityAutocompletion($event)
-	{
-		$cities = $event->getParam('cities', []);
-
-		if (count($cities) == 0)
-		{
-			// TODO
-			//$context = $event->getParam('context');
-		}
-
-		$event->setParam('cities', $cities);
-	}
-
-	/**
+	 * Default context params:
+	 *  - data:
+	 *    - beginOfName
+	 *    - countryCode
+	 *    - options:
+	 *       - modeId
 	 * @param array $context
-	 * @return \Rbs\Geo\Map\Point[]|null
+	 * @return array
 	 */
-	public function getPoints($context)
+	public function getCityAutoCompletion(array $context)
 	{
-		if (is_array($context))
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['context' => $context]);
+		$eventManager->trigger('getCityAutoCompletion', $this, $args);
+		if (isset($args['cities']) && is_array($args['cities']))
 		{
-			if (!is_array($context['options']))
-			{
-				$context['options'] = [];
-			}
-
-			$eventManager = $this->getEventManager();
-			$args = $eventManager->prepareArgs(['context' => $context]);
-			$this->getEventManager()->trigger('getPoints', $this, $args);
-			if (isset($args['points']) && is_array($args['points']))
-			{
-				return $args['points'];
-			}
+			return $args['cities'];
 		}
-		return null;
+		return [];
 	}
 
+
 	/**
-	 * @param \Change\Events\Event $event
+	 * Default context params:
+	 *  - data:
+	 *    - address:
+	 *       - country
+	 *       - zipCode
+	 *       - city
+	 *    - position:
+	 *       - latitude
+	 *       - longitude
+	 *    - options:
+	 *       - modeId
+	 *    - matchingZone: string or array
+	 * @param array $context
+	 * @return array
 	 */
-	public function onDefaultGetPoints($event)
+	public function getPoints(array $context)
 	{
-		$points = $event->getParam('points', []);
-
-		if (count($points) == 0)
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['context' => $context]);
+		$eventManager->trigger('getPoints', $this, $args);
+		if (isset($args['points']) && is_array($args['points']))
 		{
-			// TODO
+			return $args['points'];
 		}
-
-		$event->setParam('points', $points);
+		return [];
 	}
 
 	/**

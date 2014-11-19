@@ -42,7 +42,7 @@
 												validBillingAreaId = true;
 												scope.zoneData = area.zones;
 												if (area.zones.length == 1) {
-													selection.zone = area.zones[0];
+													selection.zone = area.zones[0].common.code;
 												}
 												var validZone = false;
 												for (var k = 0; k < area.zones.length; k++) {

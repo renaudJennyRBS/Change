@@ -144,14 +144,14 @@
 				<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
 					<del class="text-muted">(= line.quantity =) x (= line.unitBasedAmountWithTaxes | rbsFormatPrice:currencyCode =)</del>
 				</li>
-				<li class="price" data-ng-show="parameters.displayPricesWithoutTax">
+				<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.unitAmountWithoutTaxes">
 					<span class="text-muted">(= quantity =) x (= line.unitAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
 						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
 							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
 						</abbr>
 					</span>
 				</li>
-				<li class="price" data-ng-show="parameters.displayPricesWithTax">
+				<li class="price" data-ng-show="parameters.displayPricesWithTax && line.unitAmountWithTaxes">
 					<span class="text-muted">(= line.quantity =) x (= line.unitAmountWithTaxes | rbsFormatPrice:currencyCode =)</span>
 				</li>
 			</ul>

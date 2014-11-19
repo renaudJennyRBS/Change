@@ -565,6 +565,14 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 					->trans('m.rbs.commerce.front.free_shipping_fee', ['ucf']);
 			}
 		}
+
+		$em = $shippingMode->getEventManager();
+		$args = $em->prepareArgs(['context' => $context, 'shippingModeData' => $shippingModeData]);
+		$em->trigger('getModeData', $shippingMode, $args);
+		if (isset($args['modeData']) && is_array($args['modeData']))
+		{
+			$shippingModeData = array_merge_recursive($shippingModeData, $args['modeData']);
+		}
 		$event->setParam('shippingModeData', $shippingModeData);
 	}
 

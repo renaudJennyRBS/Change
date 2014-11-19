@@ -90,8 +90,16 @@
 					return request;
 				};
 
-				this.showPrices = function() {
-					return (scope.parameters && (scope.parameters.displayPricesWithTax || scope.parameters.displayPricesWithoutTax))
+				this.showPrices = function(asObject) {
+					var showPrices = (scope.parameters && (scope.parameters.displayPricesWithTax || scope.parameters.displayPricesWithoutTax));
+					if (asObject && showPrices) {
+						return {
+							currencyCode: this.getCurrencyCode(),
+							displayPricesWithTax: this.parameters('displayPricesWithTax'),
+							displayPricesWithoutTax: this.parameters('displayPricesWithoutTax')
+						}
+					}
+					return showPrices;
 				};
 
 				this.getCurrencyCode = function() {
@@ -400,7 +408,6 @@
 	rbsCommerceIdentificationStep.$inject = ['$rootScope', 'RbsChange.AjaxAPI'];
 	app.directive('rbsCommerceIdentificationStep', rbsCommerceIdentificationStep);
 
-
 	function rbsCommerceShippingStep(AjaxAPI) {
 		return {
 			restrict: 'A',
@@ -436,7 +443,6 @@
 				};
 
 				scope.loadUserAddresses = function() {
-
 					if (scope.processData.userId) {
 						AjaxAPI.getData('Rbs/Geo/Address/', {userId: scope.processData.userId, matchingZone: scope.shippingZone || scope.taxesZones})
 							.success(function(data, status, headers, config) {
@@ -454,9 +460,9 @@
 				};
 
 				scope.shippingModesValid = function() {
-					for (var i = 0; i< scope.processData.shippingModes.length; i++)
-					{
-						if (!scope.processData.shippingModes[i].id) {
+					for (var i = 0; i< scope.processData.shippingModes.length; i++) {
+						var shippingMode = scope.processData.shippingModes[i];
+						if (!angular.isFunction(shippingMode.valid) || !shippingMode.valid()){
 							return false;
 						}
 					}
@@ -465,32 +471,22 @@
 
 				scope.next = function() {
 					scope.saveMode().success(function() {
+						var cartData = processController.getCartData();
+						scope.processData.shippingModes = angular.copy(cartData['process']['shippingModes']);
+						angular.forEach(scope.processData.shippingModes, function(shippingMode) {
+							shippingMode.shippingZone = scope.shippingZone;
+							shippingMode.taxesZones = scope.taxesZones;
+						});
 						processController.nextStep();
 					});
 				};
 
-				scope.cleanupAddress = function(address) {
-					if (address) {
-						if (address.common) {
-							address.common = {addressFieldsId: address.common.addressFieldsId};
-						}
-						if (address.default) {
-							delete address.default
-						}
-					}
-					return address;
-				};
-
 				scope.saveMode = function() {
-					var actions = {
-						setShippingModes: []
-					};
+					var actions = {setShippingModes: []};
 					angular.forEach(scope.processData.shippingModes, function (shippingMode) {
-						actions.setShippingModes.push({
-							id: shippingMode.id, title: shippingMode.title,
-							lineKeys: shippingMode.lineKeys, address: scope.cleanupAddress(shippingMode.address),
-							options: shippingMode.options
-						});
+						if (angular.isFunction(shippingMode.valid) && shippingMode.valid()) {
+							actions.setShippingModes.push(shippingMode.valid(true));
+						}
 					});
 					return processController.updateCartData(actions);
 				};
@@ -512,15 +508,36 @@
 						shippingMode.shippingZone = scope.shippingZone;
 						shippingMode.taxesZones = scope.taxesZones;
 					});
-					scope.loadUserAddresses();
 				}
 
 				initializeProcessData();
+				scope.loadUserAddresses();
 			}
 		}
 	}
 	rbsCommerceShippingStep.$inject = ['RbsChange.AjaxAPI'];
 	app.directive('rbsCommerceShippingStep', rbsCommerceShippingStep);
+
+	function rbsCommerceModeSelector($sce) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCommerceModeSelector.tpl',
+			require: '^rbsCommerceProcess',
+			scope: {
+				shippingMode: "=",
+				shippingModeInfo: "=",
+				showPrices: "="
+			},
+			link: function (scope, elem, attrs, processController) {
+				scope.trustHtml = function(html) {
+					return $sce.trustAsHtml(html);
+				}
+			}
+		}
+	}
+	rbsCommerceModeSelector.$inject = ['$sce'];
+	app.directive('rbsCommerceModeSelector', rbsCommerceModeSelector);
+
 
 	function rbsCommerceShippingAtHomeStep(AjaxAPI, $sce) {
 		return {
@@ -537,6 +554,30 @@
 			link: function (scope, elem, attrs, processController) {
 
 				scope.loadShippingModes = true;
+				scope.atHomeAddress = {common:{}, fields:{}, lines:[]};
+				scope.atHomeAddressIsValid = false;
+				scope.modeIds = {};
+
+				function cleanupAddress(address) {
+					var cleanAddress = {common:{addressFieldsId: address.common.addressFieldsId},
+						fields: address.fields, lines: address.lines};
+					return cleanAddress;
+				}
+
+				function atHomeValid(returnData) {
+					if (returnData) {
+						var shippingMode = scope.shippingMode;
+						var data = {
+							id: shippingMode.id, title: shippingMode.title,
+							lineKeys: shippingMode.lineKeys,
+							address: cleanupAddress(scope.atHomeAddress),
+							options: {category: shippingMode.options.category}
+						};
+						return data;
+					}
+					var valid = !scope.shippingMode.edition && scope.modeIds[scope.shippingMode.id] && !scope.isEmptyAddress(scope.atHomeAddress);
+					return valid;
+				}
 
 				scope.getDefaultUserAddress = function(userAddresses) {
 					var defaultUserAddress = null, address;
@@ -564,27 +605,11 @@
 					return true;
 				};
 
-				scope.$watchCollection('userAddresses', function(userAddresses) {
-					if (scope.isEmptyAddress(scope.shippingMode.address)) {
-						var defaultUserShippingAddress = scope.getDefaultUserAddress(userAddresses);
-						if (defaultUserShippingAddress) {
-							scope.selectUserAddress(defaultUserShippingAddress);
-							return;
-						}
-						scope.editAddress();
-					}
-				});
+				scope.showPrices = processController.showPrices(true);
 
-				scope.showPrices = processController.showPrices();
-				if (scope.showPrices) {
-					scope.currencyCode = processController.getCurrencyCode();
-					scope.displayPricesWithTax = processController.parameters('displayPricesWithTax');
-					scope.displayPricesWithoutTax = processController.parameters('displayPricesWithoutTax');
-				}
-
-				scope.$watch('shippingMode.address', function (address) {
+				scope.$watch('atHomeAddress', function (address) {
 					scope.shippingMode.allowedShippingModesInfo = [];
-					if (address) {
+					if (!scope.isEmptyAddress(address)) {
 						processController.loading(true);
 						scope.loadShippingModes = true;
 
@@ -592,9 +617,13 @@
 
 						AjaxAPI.getData('Rbs/Commerce/Process/'+ scope.processId +'/ShippingModesByAddress/', {address:address}, params)
 							.success(function(data, status, headers, config) {
+								if (scope.atHomeAddress !== address) {
+									return;
+								}
 								var validCurrentMode = false;
 								angular.forEach(data.items, function(modeData) {
 									if (modeData.common.id == scope.shippingMode.id) {
+										scope.shippingMode.valid = atHomeValid;
 										validCurrentMode = true;
 									}
 									angular.forEach(scope.shippingModesInfo, function(shippingModeInfo) {
@@ -612,6 +641,9 @@
 								processController.loading(false);
 								scope.loadShippingModes = false;
 							}).error(function(data, status) {
+								if (scope.atHomeAddress !== address) {
+									return;
+								}
 								console.log('shippingModesByAddress error', data, status);
 								scope.shippingMode.id = 0;
 								processController.loading(false);
@@ -629,6 +661,7 @@
 									scope.shippingMode.options = {};
 								}
 								scope.shippingMode.options.category = modeInfo.common.category;
+								scope.shippingMode.valid = atHomeValid;
 							}
 						});
 					}
@@ -639,7 +672,7 @@
 				};
 
 				scope.setAddress = function(address) {
-					scope.shippingMode.address = address;
+					scope.atHomeAddress = address;
 					scope.shippingMode.edition = false;
 					scope.matchingZoneError = null;
 					processController.loading(false);
@@ -655,7 +688,7 @@
 				};
 
 				scope.useAddress = function() {
-					var address = angular.copy(scope.shippingMode.address);
+					var address = angular.copy(scope.atHomeAddress);
 					scope.validateAddress(address).success(function(data) {
 						if (scope.userId && address.common && address.common.useName && address.common.name) {
 							delete address.common.id;
@@ -709,7 +742,6 @@
 							} else {
 								scope.setAddress(data.dataSets);
 							}
-
 						}).error(function(data, status, headers, config) {
 							if (status == 409 && data && data.error &&
 								(data.code == 'matchingZone' || data.code == 'compatibleZones')) {
@@ -720,7 +752,31 @@
 							processController.loading(false);
 						});
 					return request;
-				}
+				};
+
+				scope.$watchCollection('shippingModesInfo', function(shippingModesInfo) {
+					//Initialisation
+					var shippingModeId = scope.shippingMode.id;
+					angular.forEach(shippingModesInfo, function(shippingModeInfo) {
+						scope.modeIds[shippingModeInfo.common.id] = true;
+						if (shippingModeInfo.common.id == shippingModeId) {
+							if (!scope.isEmptyAddress(scope.shippingMode.address)) {
+								scope.atHomeAddress = scope.shippingMode.address;
+							}
+						}
+					});
+				});
+
+				scope.$watchCollection('userAddresses', function(userAddresses) {
+					if (scope.isEmptyAddress(scope.atHomeAddress)) {
+						var defaultUserShippingAddress = scope.getDefaultUserAddress(userAddresses);
+						if (defaultUserShippingAddress) {
+							scope.selectUserAddress(defaultUserShippingAddress);
+							return;
+						}
+						scope.editAddress();
+					}
+				});
 			}
 		}
 	}
@@ -752,6 +808,63 @@
 	rbsCommerceSummaryShippingAtHomeStep.$inject = ['$sce'];
 	app.directive('rbsCommerceSummaryShippingAtHomeStep', rbsCommerceSummaryShippingAtHomeStep);
 
+	function rbsCommerceShippingOtherStep() {
+		return {
+			restrict: 'A',
+			template: '<div></div>',
+			require: '^rbsCommerceProcess',
+			scope: {
+				processId: "=",
+				shippingMode: "=",
+				shippingModesInfo: "=",
+				userId: "=",
+				userAddresses: "="
+			},
+			link: function (scope, elem, attrs, processController) {
+				var summary = attrs.summary == 'true';
+				scope.showPrices = processController.showPrices(true);
+
+				scope.$watchCollection('shippingModesInfo', function(shippingModesInfo) {
+					var html = [];
+					angular.forEach(shippingModesInfo, function (shippingModeInfo, index) {
+						var directiveName;
+						if (summary) {
+							if (shippingModeInfo.common.id == scope.shippingMode.id)
+							{
+								directiveName = shippingModeInfo.directiveNames ? shippingModeInfo.directiveNames.summary : null;
+								if (directiveName) {
+									html.push('<div '+directiveName+'=""');
+									html.push(' data-shipping-mode="shippingMode"');
+									html.push(' data-shipping-mode-info="shippingModesInfo['+index+']"');
+									html.push('></div>');
+								}
+							}
+						} else {
+							directiveName = shippingModeInfo.directiveNames ? shippingModeInfo.directiveNames.editor : null;
+							if (directiveName) {
+								html.push('<div rbs-commerce-mode-selector=""');
+								html.push(' data-show-prices="showPrices"');
+								html.push(' data-shipping-mode="shippingMode"');
+								html.push(' data-shipping-mode-info="shippingModesInfo['+index+']"');
+								html.push('></div>');
+
+								html.push('<div '+directiveName+'="" ');
+								html.push(' data-ng-show="shippingMode.id == shippingModesInfo['+index+'].common.id"');
+								html.push(' data-process-id="processId"');
+								html.push(' data-shipping-mode="shippingMode"');
+								html.push(' data-shipping-mode-info="shippingModesInfo['+index+']"');
+								html.push(' data-user-id="userId"');
+								html.push(' data-user-addresses="userAddresses"');
+								html.push('></div>');
+							}
+						}
+					});
+					processController.replaceChildren(elem, scope, html.join(''));
+				});
+			}
+		}
+	}
+	app.directive('rbsCommerceShippingOtherStep', rbsCommerceShippingOtherStep);
 
 	function rbsCommercePaymentStep(AjaxAPI, $sce, $filter, $compile) {
 		return {
@@ -803,7 +916,9 @@
 					if (!defaultUserAddress) {
 						var shippingModes = processController.getCartData()['process']['shippingModes'];
 						angular.forEach(shippingModes, function(shippingMode) {
-							if (!defaultUserAddress && !scope.isEmptyAddress(shippingMode.address)) {
+							if (!defaultUserAddress && shippingMode.options &&
+								shippingMode.options.category == 'atHome' &&
+								!scope.isEmptyAddress(shippingMode.address)) {
 								defaultUserAddress = shippingMode.address;
 							}
 						});

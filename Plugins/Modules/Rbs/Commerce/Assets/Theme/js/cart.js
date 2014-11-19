@@ -17,7 +17,7 @@
 
 				this.loadCartData = function() {
 					scope.loading = true;
-					var request = AjaxAPI.getData('Rbs/Commerce/Cart', null, {detailed: true, visualFormats: scope.parameters['imageFormats']});
+					var request = AjaxAPI.getData('Rbs/Commerce/Cart', null, {detailed: true, URLFormats: 'canonical', visualFormats: scope.parameters['imageFormats']});
 					request.success(function(data, status, headers, config) {
 						var cartData = data.dataSets;
 						if (cartData && !angular.isArray(cartData)) {
@@ -33,7 +33,7 @@
 
 				this.updateCartData = function(actions) {
 					scope.loading = true;
-					var request = AjaxAPI.putData('Rbs/Commerce/Cart', actions, {detailed: true, visualFormats: scope.parameters['imageFormats']});
+					var request = AjaxAPI.putData('Rbs/Commerce/Cart', actions, {detailed: true, URLFormats: 'canonical', visualFormats: scope.parameters['imageFormats']});
 					request.success(function(data, status, headers, config) {
 						var cartData = data.dataSets;
 						if (cartData && !angular.isArray(cartData)) {

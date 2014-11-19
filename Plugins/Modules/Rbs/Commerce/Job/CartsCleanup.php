@@ -15,6 +15,7 @@ class CartsCleanup
 	public function execute(\Change\Job\Event $event)
 	{
 		$reportedAtSeconds = 20 * 60;
+		$logging = $event->getApplication()->getLogging();
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -52,6 +53,7 @@ class CartsCleanup
 				$cart = $cartManager->getCartByIdentifier($identifier);
 				if ($cart)
 				{
+					$logging->info('Cleanup anonymous cart: ' . $identifier);
 					$commerceServices->getCartManager()->deleteCart($cart);
 				}
 			}
@@ -83,7 +85,69 @@ class CartsCleanup
 			$identifiers = $sq->getResults($sq->getRowsConverter()->addStrCol('identifier')->singleColumn('identifier'));
 			foreach ($identifiers as $identifier)
 			{
+				$logging->info('Cleanup reservations cart: ' . $identifier);
 				$stockManager->cleanupReservations($identifier);
+			}
+
+			// Remove duplicated cart for same user and store
+			// SELECT MAX(`last_update`) AS `last_update`, COUNT(`id`) AS `countCart`, `user_id`, `store_id`
+			// FROM `rbs_commerce_dat_cart`
+			// WHERE (`user_id` <> :userId AND `processing` = :processing)
+			// GROUP BY `user_id`, `store_id`
+			// HAVING `countCart` > :countCart
+
+			$qb = $dbProvider->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->select(
+				$fb->alias($fb->func('MAX', $fb->column('last_update')), 'last_update'),
+				$fb->alias($fb->func('COUNT', $fb->column('id')), 'countCart'),
+				$fb->column('user_id'), $fb->column('store_id')
+			);
+			$qb->from($fb->table('rbs_commerce_dat_cart'));
+			$qb->where($fb->logicAnd(
+					$fb->neq($fb->column('user_id'), $fb->integerParameter('userId')),
+					$fb->eq($fb->column('processing'), $fb->booleanParameter('processing'))
+				)
+			);
+			$qb->group($fb->column('user_id'))->group($fb->column('store_id'));
+			$having = new \Change\Db\Query\Clauses\HavingClause($fb->gt($fb->identifier('countCart'), $fb->integerParameter('countCart')));
+			$sq = $qb->query();
+			$sq->setHavingClause($having);
+			$sq->bindParameter('userId', 0);
+			$sq->bindParameter('processing', false);
+			$sq->bindParameter('countCart', 1);
+
+			$result = $sq->getResults($sq->getRowsConverter()->addDtCol('last_update')->addIntCol('countCart', 'user_id', 'store_id'));
+
+			$qb = $dbProvider->getNewQueryBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->column('identifier'));
+			$qb->from($fb->table('rbs_commerce_dat_cart'));
+			$qb->where($fb->logicAnd(
+					$fb->lt($fb->column('last_update'), $fb->dateTimeParameter('lastUpdate')),
+					$fb->eq($fb->column('processing'), $fb->booleanParameter('processing')),
+					$fb->eq($fb->column('user_id'), $fb->integerParameter('userId')),
+					$fb->eq($fb->column('store_id'), $fb->integerParameter('storeId'))
+				)
+			);
+
+			$sq = $qb->query();
+			foreach ($result as $row)
+			{
+				$sq->bindParameter('lastUpdate', $row['last_update']);
+				$sq->bindParameter('processing', false);
+				$sq->bindParameter('userId', $row['user_id']);
+				$sq->bindParameter('storeId', $row['store_id']);
+				$identifiers = $sq->getResults($sq->getRowsConverter()->addStrCol('identifier')->singleColumn('identifier'));
+				foreach ($identifiers as $identifier)
+				{
+					$cart = $cartManager->getCartByIdentifier($identifier);
+					if ($cart)
+					{
+						$logging->info('Cleanup deprecated cart: ' . $identifier . ',' . $row['user_id'] . ',' . $row['store_id']);
+						$commerceServices->getCartManager()->deleteCart($cart);
+					}
+				}
 			}
 		}
 		else

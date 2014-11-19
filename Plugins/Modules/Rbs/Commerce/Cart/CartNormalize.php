@@ -363,12 +363,50 @@ class CartNormalize
 			/* @var $errors \ArrayObject */
 			$errors = $event->getParam('errors');
 
-			if (!$cart->getWebStoreId())
+			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
+			if (!($webStore instanceof \Rbs\Store\Documents\WebStore))
 			{
 				$message = $i18nManager->trans('m.rbs.commerce.front.cart_without_webstore', array('ucf'));
 				$err = new CartError($message, null);
 				$errors[] = $err;
 				return;
+			}
+
+			if (!$cart->getBillingArea()) {
+				$message = $i18nManager->trans('m.rbs.commerce.front.cart_without_billing_area', array('ucf'));
+				$err = new CartError($message, null);
+				$errors[] = $err;
+				return;
+			}
+
+			$orderProcess = $webStore->getOrderProcess();
+			if (!$orderProcess || !$orderProcess->activated()) {
+				$message = $i18nManager->trans('m.rbs.commerce.front.cart_without_order_process', array('ucf'));
+				$err = new CartError($message, null);
+				$errors[] = $err;
+				return;
+			}
+
+			if (!$cart->getZone())
+			{
+				if ($orderProcess->getTaxBehavior() == \Rbs\Commerce\Documents\Process::TAX_BEHAVIOR_BEFORE_PROCESS ||
+					$orderProcess->getTaxBehavior() == \Rbs\Commerce\Documents\Process::TAX_BEHAVIOR_UNIQUE)
+				{
+					$message = $i18nManager->trans('m.rbs.commerce.front.cart_without_tax_zone', array('ucf'));
+					$err = new CartError($message, null);
+					$errors[] = $err;
+					return;
+				}
+				elseif ($orderProcess->getTaxBehavior() == \Rbs\Commerce\Documents\Process::TAX_BEHAVIOR_DURING_PROCESS)
+				{
+					if ($event->getParam('for') == 'lock')
+					{
+						$message = $i18nManager->trans('m.rbs.commerce.front.cart_without_tax_zone', array('ucf'));
+						$err = new CartError($message, null);
+						$errors[] = $err;
+						return;
+					}
+				}
 			}
 
 			foreach ($cart->getLines() as $line)
@@ -411,6 +449,9 @@ class CartNormalize
 			{
 				$commerceServices->getStockManager()->cleanupReservations($cart->getIdentifier());
 			}
+
+
+
 		}
 	}
 } 

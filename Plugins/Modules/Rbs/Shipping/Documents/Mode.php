@@ -27,6 +27,22 @@ class Mode extends \Compilation\Rbs\Shipping\Documents\Mode
 		return static::CATEGORY_AT_HOME;
 	}
 
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach('getModeData', [$this, 'onDefaultGetModeData'], 5);
+	}
+
+	/**
+	 * @param Event $event
+	 */
+	public function onDefaultGetModeData(Event $event)
+	{
+		$baseDirectiveName = str_replace('_', '-', strtolower($this->getDocumentModelName()));
+		$modeData = ['directiveNames' => ['editor' => $baseDirectiveName .'-editor', 'summary' => $baseDirectiveName .'-summary']];
+		$event->setParam('modeData', $modeData);
+	}
+
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart|\Rbs\Order\Documents\Order $value
 	 * @param array $options

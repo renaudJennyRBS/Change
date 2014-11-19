@@ -574,8 +574,6 @@ class ProductDataComposer
 		$webStoreId = $this->getWebStoreId();
 		if ($billingArea && $webStoreId)
 		{
-
-
 			$price = $priceManager->getPriceBySku($sku, ['webStore' => $webStoreId, 'billingArea' => $billingArea]);
 			if ($price && $price->getValue() !== null)
 			{
@@ -588,6 +586,8 @@ class ProductDataComposer
 
 				$taxesApplication = null;
 				$valueWithTax = $valueWithoutTax = $baseValueWithTax = $baseValueWithoutTax = null;
+				$value = $price->getValue();
+				$baseValue = $price->getBasePriceValue();
 				$zone = $this->getZone();
 
 				if ($price instanceof \Rbs\Price\Documents\Price)
@@ -603,24 +603,38 @@ class ProductDataComposer
 					/** @var \Rbs\Price\Documents\Tax[] $taxes */
 					$taxes = $billingArea->getTaxes()->toArray();
 					$taxesApplication = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $this->getQuantity());
+					$basedAmountTaxesApplication = [];
+					$baseValueWithTax = $baseValueWithoutTax = $baseValue;
+					if (count($taxesApplication))
+					{
+						if ($baseValue !== null)
+						{
+							$rate = $baseValue / $value;
+							foreach ($taxesApplication as $tax)
+							{
+								$basedAmountTax = clone($tax);
+								$basedAmountTax->setValue($tax->getValue() * $rate);
+								$basedAmountTaxesApplication[] = $basedAmountTax;
+							}
+						}
+					}
+
 					if ($price->isWithTax())
 					{
-						$valueWithTax = $price->getValue();
+						$valueWithTax = $value;
 						$valueWithoutTax = $priceManager->getValueWithoutTax($valueWithTax, $taxesApplication);
-						$baseValueWithTax = $baseValueWithoutTax = $price->getBasePriceValue();
 						if ($baseValueWithTax !== null)
 						{
-							$baseValueWithoutTax = $priceManager->getValueWithoutTax($baseValueWithTax, $taxesApplication);
+							$baseValueWithoutTax = $priceManager->getValueWithoutTax($baseValueWithTax, $basedAmountTaxesApplication);
 						}
 					}
 					else
 					{
-						$valueWithoutTax = $price->getValue();
+						$valueWithoutTax = $value;
 						$valueWithTax = $priceManager->getValueWithTax($valueWithoutTax, $taxesApplication);
-						$baseValueWithoutTax = $baseValueWithTax = $price->getBasePriceValue();
-						if ($baseValueWithoutTax !== null)
+						if ($baseValue !== null)
 						{
-							$baseValueWithTax = $priceManager->getValueWithTax($baseValueWithoutTax, $taxesApplication);
+							$baseValueWithTax = $priceManager->getValueWithTax($baseValueWithoutTax, $basedAmountTaxesApplication);
 						}
 					}
 				}
@@ -628,13 +642,13 @@ class ProductDataComposer
 				{
 					if ($price->isWithTax())
 					{
-						$valueWithTax = $price->getValue();
-						$baseValueWithTax = $price->getBasePriceValue();
+						$valueWithTax = $value;
+						$baseValueWithTax = $baseValue;
 					}
 					else
 					{
-						$valueWithoutTax = $price->getValue();
-						$baseValueWithoutTax = $price->getBasePriceValue();
+						$valueWithoutTax = $value;
+						$baseValueWithoutTax = $baseValue;
 					}
 				}
 

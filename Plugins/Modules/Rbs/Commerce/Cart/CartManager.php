@@ -1381,7 +1381,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$amountWithoutTaxes = null;
 			$amountWithTaxes = null;
 
-			$basedAmount = null;
+			$basedAmountWithoutTaxes = null;
 			$basedAmountWithTaxes = null;
 
 			$lineQuantity = $line->getQuantity();
@@ -1392,18 +1392,33 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					$price = $item->getPrice();
 					if ($price && (($value = $price->getValue()) !== null))
 					{
-						$lineItemBasedValue = $lineItemValue = $value * $lineQuantity;
+						$lineItemValue = $value * $lineQuantity;
 						if ($price->getBasePriceValue() !== null)
 						{
-							$lineItemBasedValue  = $price->getBasePriceValue() * $lineQuantity;
+							$lineItemBasedValue = $price->getBasePriceValue() * $lineQuantity;
+						}
+						else
+						{
+							$lineItemBasedValue = null;
 						}
 
 						if ($zone)
 						{
 							$taxArray = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $lineQuantity);
+							$basedAmountTaxArray = [];
 							if (count($taxArray))
 							{
 								$lineTaxes = $priceManager->addTaxesApplication($lineTaxes, $taxArray);
+								if ($lineItemBasedValue)
+								{
+									$rate = $lineItemBasedValue /$lineItemValue;
+									foreach ($taxArray as $tax)
+									{
+										$basedAmountTax = clone($tax);
+										$basedAmountTax->setValue($tax->getValue() * $rate);
+										$basedAmountTaxArray[] = $basedAmountTax;
+									}
+								}
 							}
 
 							if ($pricesValueWithTax)
@@ -1412,14 +1427,14 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 								$amountWithoutTaxes += $priceManager->getValueWithoutTax($lineItemValue, $taxArray);
 
 								$basedAmountWithTaxes += $lineItemBasedValue;
-								$basedAmount += $priceManager->getValueWithoutTax($lineItemBasedValue, $taxArray);
+								$basedAmountWithoutTaxes += $priceManager->getValueWithoutTax($lineItemBasedValue, $basedAmountTaxArray);
 							}
 							else
 							{
 								$amountWithoutTaxes += $lineItemValue;
 								$amountWithTaxes = $priceManager->getValueWithTax($lineItemValue, $taxArray);
-								$basedAmount += $lineItemBasedValue;
-								$basedAmountWithTaxes += $priceManager->getValueWithTax($lineItemBasedValue, $taxArray);
+								$basedAmountWithoutTaxes += $lineItemBasedValue;
+								$basedAmountWithTaxes += $priceManager->getValueWithTax($lineItemBasedValue, $basedAmountTaxArray);
 							}
 						}
 						else
@@ -1432,7 +1447,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 							else
 							{
 								$amountWithoutTaxes += $lineItemValue;
-								$basedAmount += $lineItemBasedValue;
+								$basedAmountWithoutTaxes += $lineItemBasedValue;
 							}
 						}
 					}
@@ -1454,7 +1469,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$line->setAmountWithoutTaxes($amountWithoutTaxes);
 
 			$line->setBasedAmountWithTaxes($priceManager->roundValue($basedAmountWithTaxes, $precision));
-			$line->setBasedAmountWithoutTaxes($priceManager->roundValue($basedAmount, $precision));
+			$line->setBasedAmountWithoutTaxes($priceManager->roundValue($basedAmountWithoutTaxes, $precision));
 			if ($lineTaxes !== null)
 			{
 				$linesTaxes = $priceManager->addTaxesApplication($linesTaxes, $lineTaxes);

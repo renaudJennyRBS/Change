@@ -213,5 +213,31 @@ class Listeners implements ListenerAggregateInterface
 				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
+		elseif ('Rbs/Geo/CityAutoCompletion/' == $actionPath)
+		{
+			if ($request->isGet())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\Geo\Http\Ajax\Address())->cityAutoCompletion($event);
+				});
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+			}
+		}
+		elseif ('Rbs/Geo/Points/' == $actionPath)
+		{
+			if ($request->isGet())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\Geo\Http\Ajax\Points())->getList($event);
+				});
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+			}
+		}
 	}
 }

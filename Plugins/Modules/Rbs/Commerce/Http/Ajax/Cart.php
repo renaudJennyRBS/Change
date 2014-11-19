@@ -513,7 +513,11 @@ class Cart
 			$address = $mode->getAddress();
 			if ($address)
 			{
-				$address->setLines($geoManager->getFormattedAddress($address));
+				$lines = $geoManager->getFormattedAddress($address);
+				if ($lines)
+				{
+					$address->setLines($lines);
+				}
 			}
 			$dataSet[] = ['mode' => $mode->toArray()] ;
 			$shippingModes[] = $mode;

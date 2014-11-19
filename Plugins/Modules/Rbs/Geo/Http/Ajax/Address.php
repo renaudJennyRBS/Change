@@ -344,6 +344,29 @@ class Address
 	}
 
 	/**
+	 * Default actionPath: Rbs/Geo/CityAutoCompletion/
+	 * Event params:
+	 *  - data:
+	 *    - beginOfName
+	 *    - countryCode
+	 *    - options:
+	 *       - modeId
+	 * @param \Change\Http\Event $event
+	 */
+	public function cityAutoCompletion(\Change\Http\Event $event)
+	{
+		$genericServices = $event->getServices('genericServices');
+		if ($genericServices instanceof \Rbs\Generic\GenericServices)
+		{
+			$context = $event->paramsToArray();
+			$autoCompletionData = $genericServices->getGeoManager()->getCityAutoCompletion($context);
+			$result = new \Change\Http\Ajax\V1\ItemsResult('Rbs/Geo/CityAutoCompletion/', $autoCompletionData);
+			$result->setPaginationCount(count($autoCompletionData));
+			$event->setResult($result);
+		}
+	}
+
+	/**
 	 * Default actionPath: Rbs/Geo/AddressFields/{addressFieldsId}
 	 * Event params:
 	 *  - addressFieldsId
