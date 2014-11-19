@@ -36,6 +36,7 @@
 				filters = string.substr(p+1).trim().split('|');
 				string = string.substring(0, p).trim();
 			}
+			string = string.toLowerCase();
 
 			p = string.lastIndexOf('.');
 			path = string.substring(0, p);

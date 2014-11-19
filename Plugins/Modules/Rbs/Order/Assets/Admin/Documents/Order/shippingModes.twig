@@ -20,7 +20,7 @@
 			<td>
 				<span data-ng-if="!isOrderEditable() && shippingDetails[shipping.id].status &&
 					(shippingDetails[shipping.id].status == 'noShipment' || shippingDetails[shipping.id].status == 'remain')">
-						<a href="javascript:;" data-ng-href="Rbs/Order/Shipment/new?orderId=(= orderId =)&shippingModeId=(= shipping.id =)">
+						<a href="javascript:;" data-ng-href="(= 'Rbs_Order_Shipment' | rbsURL:'new' =)?orderId=(= orderId =)&shippingModeId=(= shipping.id =)">
 							<i class="icon-archive"></i>
 						{% spaceless %}
 							<span data-ng-switch="shippingDetails[shipping.id].status">

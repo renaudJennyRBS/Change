@@ -265,7 +265,7 @@
 		"model": "Rbs_Catalog_SectionProductList",
 		"name": "list",
 		"rule": {
-			"templateUrl": "Document/Rbs/Catalog/ProductList/list.twig",
+			"redirectTo": "/Rbs/Catalog/ProductList/",
 			"labelKey": "m.rbs.catalog.admin.productlist_list | ucf"
 		},
 		"auto": false

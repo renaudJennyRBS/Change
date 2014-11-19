@@ -53,12 +53,11 @@ class GetOrderLineByProduct
 				$currencyCode = $billingArea->getCurrencyCode();
 				$taxes = $billingArea->getTaxes();
 				$zone = $order->getZone();
-				$precision = $priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
 				$pricesValueWithTax = $webStore->getPricesValueWithTax();
 			}
 			else
 			{
-				$taxes = $currencyCode = $zone = $precision = null;
+				$taxes = $currencyCode = $zone = null;
 				$pricesValueWithTax = false;
 			}
 			$lineQuantity = 1;

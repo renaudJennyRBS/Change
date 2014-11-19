@@ -235,3 +235,12 @@ table.table-striped tr.no-top-border td {
 .richtext video {
 	max-width: 100%;
 }
+
+/* Long string: handle new lines without replacing them with <br /> */
+.long-string {
+	white-space: pre-wrap;
+}
+
+.dropdown-menu-no-list {
+	padding: 10px 20px;
+}
