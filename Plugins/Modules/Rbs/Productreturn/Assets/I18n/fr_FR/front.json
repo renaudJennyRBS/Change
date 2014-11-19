@@ -57,10 +57,10 @@
 		"message": "livraison de votre échange"
 	},
 	"select_variant": {
-		"message": "sélectionnez une autre variante du modèle commandé"
+		"message": "sélectionnez une autre variante du produit commandé"
 	},
 	"replacing_variant": {
-		"message": "variante de remplacement"
+		"message": "produit de remplacement"
 	},
 	"expedition_of": {
 		"message": "expédition du"
@@ -103,6 +103,9 @@
 	},
 	"return_instructions": {
 		"message": "procédure pour renvoyer votre colis"
+	},
+	"return_processingComment": {
+		"message": "commentaire de traitement"
 	},
 	"wait_for_validation": {
 		"message": "Merci d'attendre la validation par nos services pour retourner votre colis."

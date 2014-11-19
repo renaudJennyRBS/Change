@@ -50,6 +50,8 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('addProductReturn', [$this, 'onSaveAddProductReturn'], 0);
 		$eventManager->attach('getReturnStickerURL', [$this, 'onStaticGetReturnStickerURL'], 5);
 		$eventManager->attach('getReturnSheetURL', [$this, 'onDefaultGetReturnSheetURL'], 5);
+		$eventManager->attach('getRefundData', [$this, 'onDefaultGetRefundData'], 5);
+		$eventManager->attach('getReshippingData', [$this, 'onDefaultGetReshippingData'], 5);
 	}
 
 	/**
@@ -115,7 +117,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs($options);
-		$this->getEventManager()->trigger('canViewReturn', $this, $args);
+		$em->trigger('canViewReturn', $this, $args);
 		return (isset($args['canViewReturn']) && $args['canViewReturn'] === true);
 	}
 
@@ -155,7 +157,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(['productReturn' => $productReturn, 'statusInfo' => ['code' => null, 'title' => null]]);
-		$this->getEventManager()->trigger('getReturnStatusInfo', $this, $args);
+		$em->trigger('getReturnStatusInfo', $this, $args);
 		return $args['statusInfo'];
 	}
 
@@ -349,7 +351,6 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function cancelReturn(\Rbs\Productreturn\Documents\ProductReturn $return)
 	{
-		$em = $this->getEventManager();
 		if (is_numeric($return))
 		{
 			$return = $this->getDocumentManager()->getDocumentInstance($return);
@@ -357,6 +358,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 
 		if ($return instanceof \Rbs\Productreturn\Documents\ProductReturn)
 		{
+			$em = $this->getEventManager();
 			$eventArgs = $em->prepareArgs(['return' => $return]);
 			$em->trigger('cancelReturn', $this, $eventArgs);
 			return (isset($eventArgs['cancelled']) && $eventArgs['cancelled'] === true);
@@ -527,7 +529,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$eventArgs = $em->prepareArgs(['user' => $user, 'ownerIds' => $ownerIds, 'context' => $context]);
-		$this->getEventManager()->trigger('getProductReturnsData', $this, $eventArgs);
+		$em->trigger('getProductReturnsData', $this, $eventArgs);
 
 		$productReturnsData = [];
 		$pagination = ['offset' => 0, 'limit' => 100, 'count' => 0];
@@ -566,7 +568,6 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultGetProductReturnsData(\Change\Events\Event $event)
 	{
 		if ($event->getParam('productReturnsData'))
-
 		{
 			return;
 		}
@@ -641,7 +642,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @param \Rbs\Productreturn\Documents\Process|integer $process
 	 * @param array $data
-	 * @param \Rbs\Order\Documents\Order $order
+	 * @param \Rbs\Order\Documents\Order|integer $order
 	 * @param string|null $processingStatus
 	 * @return \Rbs\Productreturn\Documents\ProductReturn|null
 	 */
@@ -684,13 +685,36 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			return;
 		}
 
-		/** @var \Rbs\Productreturn\Documents\Process $process */
-		$process = $event->getParam('process');
-		$order = $event->getParam('order');
-		$processingStatus = $event->getParam('processingStatus',
-			\Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_EDITION);
+		$commerceServices = $event->getServices('commerceServices');
+		if (!($commerceServices instanceof \Rbs\Commerce\CommerceServices))
+		{
+			return;
+		}
 
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
+
+		$order = $event->getParam('order');
+		if (is_numeric($order))
+		{
+			$order = $documentManager->getDocumentInstance($order);
+		}
+		if (!($order instanceof \Rbs\Order\Documents\Order))
+		{
+			return;
+		}
+
+		$process = $event->getParam('process');
+		if (is_numeric($process))
+		{
+			$process = $documentManager->getDocumentInstance($process);
+		}
+		if (!($process instanceof \Rbs\Productreturn\Documents\Process))
+		{
+			return;
+		}
+
+		$processingStatus = $event->getParam('processingStatus',
+			\Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_EDITION);
 
 		/** @var \Rbs\Productreturn\Documents\ProductReturn $return */
 		$return = $documentManager->getNewDocumentInstanceByModelName('Rbs_Productreturn_ProductReturn');
@@ -699,23 +723,20 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		$return->setOrderId($order->getId());
 		$return->setEmail(isset($data['common']['email']) ? $data['common']['email'] : $order->getEmail());
 		$return->setProcessingStatus($processingStatus);
+		$return->getContext()->set('currencyCode', $order->getCurrencyCode());
 
 		// Existing returns for the order to check available quantities. Canceled returns and returns in edition mode (created
 		// from admin panel and not confirmed) are ignored.
-		$existingReturns = [];
-		if ($order instanceof \Rbs\Order\Documents\Order)
-		{
-			$excludedStatuses = [
-				\Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_EDITION,
-				\Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_CANCELED
-			];
-			$query = $this->getDocumentManager()->getNewQuery('Rbs_Productreturn_ProductReturn');
-			$query->andPredicates(
-				$query->eq('orderId', $order->getId()),
-				$query->notIn('processingStatus', $excludedStatuses)
-			);
-			$existingReturns = $query->getDocuments();
-		}
+		$excludedStatuses = [
+			\Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_EDITION,
+			\Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_CANCELED
+		];
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Productreturn_ProductReturn');
+		$query->andPredicates(
+			$query->eq('orderId', $order->getId()),
+			$query->notIn('processingStatus', $excludedStatuses)
+		);
+		$existingReturns = $query->getDocuments();
 
 		// Lines.
 		$reasonIds = $process->getReasonsIds();
@@ -754,18 +775,15 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			}
 
 			// Data from order line.
-			if ($order instanceof \Rbs\Order\Documents\Order)
+			$lineKey = $line->getOptions()->get('lineKey');
+			foreach ($order->getLines() as $orderLine)
 			{
-				$lineKey = $line->getOptions()->get('lineKey');
-				foreach ($order->getLines() as $orderLine)
+				if ($lineKey == $orderLine->getKey())
 				{
-					if ($lineKey == $orderLine->getKey())
-					{
-						$line->getOptions()->set('unitAmountWithoutTaxes', $orderLine->getUnitAmountWithoutTaxes());
-						$line->getOptions()->set('unitAmountWithTaxes', $orderLine->getUnitAmountWithTaxes());
-						$line->getOptions()->set('orderLineOptions', $orderLine->getOptions());
-						break;
-					}
+					$line->getOptions()->set('unitAmountWithoutTaxes', $orderLine->getUnitAmountWithoutTaxes());
+					$line->getOptions()->set('unitAmountWithTaxes', $orderLine->getUnitAmountWithTaxes());
+					$line->getOptions()->set('orderLineOptions', $orderLine->getOptions());
+					break;
 				}
 			}
 
@@ -821,9 +839,9 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			$line->getOptions()->set('reasonTitle', $reason->getCurrentLocalization()->getTitle());
 
 			// Precisions and attached file.
-			if (isset($lineData['reasonPrecisions']))
+			if (isset($lineData['reasonPrecisions']) && trim($lineData['reasonPrecisions']))
 			{
-				$line->setReasonPrecisions($lineData['reasonPrecisions']);
+				$line->setReasonPrecisions(trim($lineData['reasonPrecisions']));
 			}
 			elseif ($reason->getRequirePrecisions())
 			{
@@ -854,6 +872,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 				throw new \RuntimeException('Invalid processing mode in line ' . $lineIndex . '.', 999999);
 			}
 			$line->setPreferredProcessingModeId($processingMode->getId());
+			$line->getOptions()->set('preferredProcessingModeTitle', $processingMode->getCurrentLocalization()->getTitle());
 			$needsReshipment = $needsReshipment || $processingMode->getImpliesReshipment();
 
 			// Product to reship.
@@ -864,9 +883,14 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					throw new \RuntimeException('Invalid product to reship in line ' . $lineIndex . '.', 999999);
 				}
-				$line->setReshippingCodeSKU($reshippingProduct->getSkuId());
+				$line->setReshippingCodeSKU($reshippingProduct->getSku()->getCode());
 				$line->getOptions()->set('reshippingProductId', $reshippingProduct->getId());
 				$line->getOptions()->set('reshippingProductTitle', $reshippingProduct->getCurrentLocalization()->getTitle());
+				$axesInfo = $commerceServices->getProductManager()->getProductAxesData($reshippingProduct, []);
+				if ($axesInfo)
+				{
+					$line->getOptions()->set('reshippingProductAxesInfos', $axesInfo);
+				}
 			}
 
 			$lines[] = $line;
@@ -875,11 +899,14 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 
 		// Return mode.
 		$returnModeId = $data['common']['returnModeId'];
-		if (!$returnModeId || !in_array($returnModeId, $process->getReturnModesIds()))
+		$returnMode = $documentManager->getDocumentInstance($returnModeId);
+		if (!($returnMode instanceof \Rbs\Productreturn\Documents\ReturnMode)
+			|| !in_array($returnModeId, $process->getReturnModesIds()))
 		{
 			throw new \RuntimeException('Invalid return mode.', 999999);
 		}
 		$return->setReturnModeId($data['common']['returnModeId']);
+		$return->getContext()->set('returnModeTitle', $returnMode->getCurrentLocalization()->getTitle());
 
 		// Reshipping data.
 		if ($needsReshipment)
@@ -902,7 +929,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			// TODO: validate address.
 			if (isset($data['reshippingData']['address']) && is_array($data['reshippingData']['address']))
 			{
-				$address = new \Rbs\Geo\Address\BaseAddress($data['reshipmentData']['address']);
+				$address = new \Rbs\Geo\Address\BaseAddress($data['reshippingData']['address']);
 				$return->getContext()->set('reshippingAddress', $address->toArray());
 			}
 			if (isset($data['reshippingData']['options']) && is_array($data['reshippingData']['options']))
@@ -1039,7 +1066,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(['document' => $document]);
-		$this->getEventManager()->trigger('getNewCode', $this, $args);
+		$em->trigger('getNewCode', $this, $args);
 		if (isset($args['newCode']))
 		{
 			return strval($args['newCode']);
@@ -1058,7 +1085,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(['returnMode' => $returnMode, 'productReturn' => $return, 'urlManager' => $urlManager]);
-		$this->getEventManager()->trigger('getReturnStickerURL', $this, $args);
+		$em->trigger('getReturnStickerURL', $this, $args);
 		if (isset($args['stickerURL']))
 		{
 			return strval($args['stickerURL']);
@@ -1105,7 +1132,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(['returnMode' => $returnMode, 'productReturn' => $return, 'urlManager' => $urlManager]);
-		$this->getEventManager()->trigger('getReturnSheetURL', $this, $args);
+		$em->trigger('getReturnSheetURL', $this, $args);
 		if (isset($args['sheetURL']))
 		{
 			return strval($args['sheetURL']);
@@ -1130,5 +1157,170 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		$urlManager = $event->getParam('urlManager');
 		$returnMode = $event->getParam('returnMode');
 		// TODO
+	}
+
+	/**
+	 * @api
+	 * @param \Rbs\Productreturn\Documents\ProductReturn|integer $return
+	 * @param array $context
+	 * @return array|null
+	 */
+	public function getRefundData($return, array $context)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['productReturn' => $return, 'context' => $context]);
+		$em->trigger('getRefundData', $this, $args);
+		if (isset($args['refundData']) && is_array($args['refundData']))
+		{
+			return $args['refundData'];
+		}
+		return null;
+	}
+
+	/**
+	 * Input params: productReturn, context
+	 * Output param: refundData
+	 * @param \Change\Events\Event $event
+	 * @throws \Change\Transaction\RollbackException
+	 * @throws \Exception
+	 */
+	public function onDefaultGetRefundData(\Change\Events\Event $event)
+	{
+		if ($event->getParam('refundData'))
+		{
+			return;
+		}
+
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$return = $event->getParam('productReturn');
+		if (is_numeric($return))
+		{
+			$return = $documentManager->getDocumentInstance($return);
+		}
+
+		if (!($return instanceof \Rbs\Productreturn\Documents\ProductReturn))
+		{
+			return;
+		}
+
+		$order = $return->getOrderIdInstance();
+		if (!($order instanceof \Rbs\Order\Documents\Order))
+		{
+			return;
+		}
+
+		$amount = 0;
+		foreach ($return->getLines() as $line)
+		{
+			$processingMode = $documentManager->getDocumentInstance($line->getPreferredProcessingModeId());
+			if ($processingMode instanceof \Rbs\Productreturn\Documents\ProcessingMode
+				&& !$processingMode->getImpliesReshipment())
+			{
+				$amount += $line->getOptions()->get('unitAmountWithTaxes') * $line->getQuantity();
+			}
+		}
+
+		$refundData = [
+			'productReturnId' => $return->getId(),
+			'orderId' => $return->getOrderId(),
+			'ownerId' => $order->getOwnerId(),
+			'identifier' => $order->getIdentifier(),
+			'currencyCode' => $order->getCurrencyCode(),
+			'amount' => $amount
+		];
+		$event->setParam('refundData', $refundData);
+	}
+
+	/**
+	 * @api
+	 * @param \Rbs\Productreturn\Documents\ProductReturn|integer $return
+	 * @param array $context
+	 * @return array|null
+	 */
+	public function getReshippingData($return, array $context)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['productReturn' => $return, 'context' => $context]);
+		$em->trigger('getReshippingData', $this, $args);
+		if (isset($args['reshippingData']) && is_array($args['reshippingData']))
+		{
+			return $args['reshippingData'];
+		}
+		return null;
+	}
+
+	/**
+	 * Input params: productReturn, context
+	 * Output param: refundData
+	 * @param \Change\Events\Event $event
+	 * @throws \Change\Transaction\RollbackException
+	 * @throws \Exception
+	 */
+	public function onDefaultGetReshippingData(\Change\Events\Event $event)
+	{
+		if ($event->getParam('reshippingData'))
+		{
+			return;
+		}
+
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$return = $event->getParam('productReturn');
+		if (is_numeric($return))
+		{
+			$return = $documentManager->getDocumentInstance($return);
+		}
+
+		if (!($return instanceof \Rbs\Productreturn\Documents\ProductReturn))
+		{
+			return;
+		}
+
+		$order = $return->getOrderIdInstance();
+		if (!($order instanceof \Rbs\Order\Documents\Order))
+		{
+			return;
+		}
+
+		$lines = [];
+		foreach ($return->getLines() as $line)
+		{
+			$processingMode = $documentManager->getDocumentInstance($line->getPreferredProcessingModeId());
+			if ($processingMode instanceof \Rbs\Productreturn\Documents\ProcessingMode
+				&& $processingMode->getImpliesReshipment())
+			{
+				if ($processingMode->getAllowVariantSelection())
+				{
+					$lineData = [
+						'designation' => $line->getOptions()->get('reshippingProductTitle'),
+						'codeSKU' => $line->getReshippingCodeSKU(),
+						'options' => [
+							'productId' => $line->getOptions()->get('reshippingProductId'),
+							'axesInfo' => $line->getOptions()->get('reshippingProductAxesInfos')
+						]
+					];
+				}
+				else
+				{
+					$lineData = [
+						'designation' => $line->getDesignation(),
+						'codeSKU' => $line->getCodeSKU(),
+						'options' => $line->getOptions()->get('orderLineOptions')
+					];
+				}
+				$lineData['quantity'] = $line->getQuantity();
+				$lineData['options']['lineKey'] = $line->getOptions()->get('lineKey');
+				$lines[] = $lineData;
+			}
+		}
+
+		$reshippingData = [
+			'productReturnId' => $return->getId(),
+			'orderId' => $return->getOrderId(),
+			'shippingModeCode' => $return->getReshippingModeCode(),
+			'address' => $return->getContext()->get('reshippingAddress'),
+			'lines' => $lines,
+			'context' => [ 'shippingModeId' => $return->getContext()->get('reshippingModeId') ]
+		];
+		$event->setParam('reshippingData', $reshippingData);
 	}
 }

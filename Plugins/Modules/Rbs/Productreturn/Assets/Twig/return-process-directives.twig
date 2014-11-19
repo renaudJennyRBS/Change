@@ -138,7 +138,9 @@
 						<dt>{{ i18n('m.rbs.productreturn.front.return_reason', ['ucf']) }}</dt>
 						<dd>(= getReasonById(returnLine.reason).title =)</dd>
 						<dt data-ng-show="returnLine.precisions">{{ i18n('m.rbs.productreturn.front.precisions', ['ucf']) }}</dt>
-						<dd data-ng-show="returnLine.precisions">(= returnLine.precisions =)</dd>
+						<dd data-ng-show="returnLine.precisions">
+							<div class="long-string">(= returnLine.precisions =)</div>
+						</dd>
 						<dt>{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}</dt>
 						<dd>(= returnLine.attachedFile ? "{{ i18n('m.rbs.generic.front.yes', ['ucf']) }}" : "{{ i18n('m.rbs.generic.front.no', ['ucf']) }}" =)</dd>
 						<dt>{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf']) }}</dt>

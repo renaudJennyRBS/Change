@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Proximis
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Order\Http\Rest;
+namespace Rbs\Productreturn\Http\Rest;
 
 use Change\Http\Rest\V1\CollectionResult;
 use Change\Http\Rest\V1\Link;
@@ -14,19 +14,18 @@ use Change\Http\Rest\V1\Resources\DocumentLink;
 use Zend\Http\Response;
 
 /**
- * @name \Rbs\Order\Http\Rest\ShipmentResult
+ * @name \Rbs\Productreturn\Http\Rest\ProductReturnResult
  */
-class ShipmentResult
+class ProductReturnResult
 {
 	/**
 	 * @param \Change\Http\Event $event
 	 */
-	public function orderShipmentCollection(\Change\Http\Event $event)
+	public function orderProductReturnCollection(\Change\Http\Event $event)
 	{
 		$request = $event->getRequest();
 		$startIndex = intval($request->getQuery('offset', 0));
-		$maxResults = intval($request->getQuery('limit', 10));
-		$includeReturnRelated = intval($request->getQuery('includeReturnRelated', false));
+		$maxResults = intval($request->getQuery('limit', 50));
 		$orderId = intval($event->getParam('documentId'));
 
 		$sort = $request->getQuery('sort');
@@ -43,15 +42,8 @@ class ShipmentResult
 		$result->setOffset($startIndex);
 		$result->setLimit($maxResults);
 
-		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
+		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Productreturn_ProductReturn');
 		$query->andPredicates($query->eq('orderId', $orderId));
-		if (!$includeReturnRelated)
-		{
-			$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Productreturn_Shipment');
-			$query->andPredicates(
-				$query->notIn('model', array_merge(['Rbs_Productreturn_Shipment'], $model->getDescendantsNames()))
-			);
-		}
 		$query->addOrder($sort, !$desc);
 		$result->setSort($sort);
 		$result->setDesc($desc);

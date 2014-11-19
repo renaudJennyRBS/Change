@@ -1,0 +1,21 @@
+<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Productreturn_ProductReturn'), ['ucf']) }}"></rbs-page-header>
+
+<nav class="navbar navbar-default" role="navigation">
+	<ul class="nav navbar-nav">
+		<li{% if currentRouteName == 'edit' %} class="active"{% endif %}>
+			<a href="javascript:;" data-ng-href="(= document | rbsURL =)">
+				<i class="icon-edit"></i> {{ i18n('m.rbs.admin.admin.properties', ['ucf']) }}
+			</a>
+		</li>
+		<li{% if currentRouteName == 'payments' %} class="active"{% endif %}>
+			<a href="javascript:;" data-ng-href="(= document | rbsURL:'creditNotes' =)">
+				<i class="icon-money"></i> {{ i18n('m.rbs.order.admin.creditNote_list', ['ucf']) }}
+			</a>
+		</li>
+		<li{% if currentRouteName == 'shipments' %} class="active"{% endif %}>
+			<a href="javascript:;" data-ng-href="(= document | rbsURL:'shipments' =)">
+				<i class="icon-archive"></i> {{ i18n('m.rbs.productreturn.admin.shipment_list', ['ucf']) }}
+			</a>
+		</li>
+	</ul>
+</nav>

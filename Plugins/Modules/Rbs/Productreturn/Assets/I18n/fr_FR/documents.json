@@ -55,5 +55,32 @@
 	},
 	"process_reshippingModes":{
 		"message":"modes réexpédition"
+	},
+	"productReturn":{
+		"message":"retour"
+	},
+	"productReturn_orderId":{
+		"message":"commande associée"
+	},
+	"productReturn_processingStatus":{
+		"message":"état"
+	},
+	"productReturn_processingComment":{
+		"message":"commentaire de traitement"
+	},
+	"productReturn_code":{
+		"message":"code"
+	},
+	"productReturn_returnModeId":{
+		"message":"mode de retour"
+	},
+	"productreturn_reshippingModeCode":{
+		"message":"mode de réexpédition"
+	},
+	"shipment": {
+		"message":"réexpédition"
+	},
+	"shipment_productReturnId":{
+		"message":"retour associé"
 	}
 }

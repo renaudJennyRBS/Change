@@ -1,0 +1,32 @@
+<div data-ng-controller="rbsProductreturnProductReturnCreditNotes">
+	{% set currentRouteName = 'creditNotes' %}
+	{% include '@Rbs_Productreturn/Documents/ProductReturn/header.twig' %}
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="icon-money"></i>
+				{{ i18n('m.rbs.order.admin.creditnote_list', ['ucf', 'lab']) }} (= creditNotes.length =)
+			</h3>
+		</div>
+		<div class="panel-body">
+			<table class="table table-striped table-bordered no-bottom-margin document-list" data-ng-show="creditNotes.length > 0">
+				<thead>
+				<tr>
+					<th>{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'code'), ['ucf']) }}</th>
+					<th>{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'amount'), ['ucf']) }}</th>
+					<th>{{ i18nAttr(propertyKey('Rbs_Order_CreditNote', 'amountNotApplied'), ['ucf']) }}</th>
+				</tr>
+				</thead>
+				<tr class="normal-row" data-ng-repeat="creditNote in creditNotes">
+					<td><a href="javascript:;" data-ng-href="(= creditNote | rbsURL =)">(= creditNote.label =)</a></td>
+					<td>(= creditNote.formattedAmount =)</td>
+					<td>(= creditNote.formattedAmountNotApplied =)</td>
+				</tr>
+			</table>
+			<p data-ng-show="creditNotes.length == 0" class="no-bottom-margin">
+				{{ i18n('m.rbs.productreturn.admin.productReturn_no_credit_notes_yet', ['ucf']) }}
+			</p>
+		</div>
+	</div>
+</div>

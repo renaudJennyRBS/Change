@@ -1,10 +1,29 @@
 <rbs-links-panel title="{{ i18nAttr('m.rbs.order.admin.order_management', ['ucf']) }}">
-	<a rbs-active-route="" href="Rbs/Order/Cart/" rbs-panel-link="">{{ i18n('m.rbs.commerce.admin.cart_list', ['ucf']) }}</a>
-	<a rbs-active-route="" href="Rbs/Order/Order/" rbs-panel-link="">{{ i18n('m.rbs.order.admin.order_list', ['ucf']) }}</a>
-	<a rbs-active-route="" href="Rbs/Order/Shipment/" rbs-panel-link="">{{ i18n('m.rbs.order.admin.shipment_list', ['ucf']) }}</a>
+	<a data-rbs-active-route="" href="{{ namedURL('Rbs_Commerce_Cart', 'list') }}" data-rbs-panel-link="">
+		{{ i18n('m.rbs.commerce.admin.cart_list', ['ucf']) }}
+	</a>
+	<a data-rbs-active-route="" href="{{ namedURL('Rbs_Order_Order', 'list') }}" data-rbs-panel-link="">
+		{{ i18n('m.rbs.order.admin.order_list', ['ucf']) }}
+	</a>
+	<a data-rbs-active-route="" href="{{ namedURL('Rbs_Order_Shipment', 'list') }}" data-rbs-panel-link="">
+		{{ i18n('m.rbs.order.admin.shipment_list', ['ucf']) }}
+	</a>
 </rbs-links-panel>
+
 <rbs-links-panel title="{{ i18nAttr('m.rbs.order.admin.billing_management', ['ucf']) }}">
-	<a rbs-active-route="" href="Rbs/Order/Transaction/" rbs-panel-link="">{{ i18n('m.rbs.payment.admin.transaction_list', ['ucf']) }}</a>
-	<a rbs-active-route="" href="Rbs/Order/Invoice/" rbs-panel-link="">{{ i18n('m.rbs.order.admin.invoice_list', ['ucf']) }}</a>
-	<a rbs-active-route="" href="Rbs/Order/CreditNote/" rbs-panel-link="">{{ i18n('m.rbs.order.admin.creditnote_list', ['ucf']) }}</a>
+	<a data-rbs-active-route="" href="{{ namedURL('Rbs_Payment_Transaction', 'list') }}" data-rbs-panel-link="">
+		{{ i18n('m.rbs.payment.admin.transaction_list', ['ucf']) }}
+	</a>
+	<a data-rbs-active-route="" href="{{ namedURL('Rbs_Order_Invoice', 'list') }}" data-rbs-panel-link="">
+		{{ i18n('m.rbs.order.admin.invoice_list', ['ucf']) }}
+	</a>
+	<a data-rbs-active-route="" href="{{ namedURL('Rbs_Order_CreditNote', 'list') }}" data-rbs-panel-link="">
+		{{ i18n('m.rbs.order.admin.creditnote_list', ['ucf']) }}
+	</a>
+</rbs-links-panel>
+
+<rbs-links-panel title="{{ i18nAttr('m.rbs.order.admin.return_management', ['ucf']) }}">
+	<a data-rbs-active-route="" href="{{ namedURL('Rbs_Productreturn_ProductReturn', 'list') }}" data-rbs-panel-link="">
+		{{ i18n('m.rbs.productreturn.admin.productReturn_list', ['ucf']) }}
+	</a>
 </rbs-links-panel>

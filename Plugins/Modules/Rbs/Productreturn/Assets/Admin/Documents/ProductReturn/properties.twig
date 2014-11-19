@@ -1,0 +1,150 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<span class="icon-edit"></span>
+			{{ i18n('m.rbs.productreturn.admin.productreturn_general_information', ['ucf']) }}
+		</h3>
+	</div>
+	<div class="panel-body">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_ProductReturn', 'processingStatus'), ['ucf']) }}">
+			<p class="form-control-static">(= document.statusInfos.title || document.statusInfos.code =)</p>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_ProductReturn', 'orderId'), ['ucf']) }}">
+			<p class="form-control-static">
+				<a href="javascript:;" data-ng-href="Rbs/Order/Order/(= data.order.id =)">(= data.order.label =)</a>
+			</p>
+		</rbs-field>
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_ProductReturn', 'code'), ['ucf']) }}">
+			<p class="form-control-static">(= document.code =)</p>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_ProductReturn', 'returnModeId'), ['ucf']) }}">
+			<p class="form-control-static">(= document.context.returnModeTitle =)</p>
+		</rbs-field>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<span class="icon-list"></span>
+			{{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.lines.length =) &mdash;
+			{{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= data.articleCount =)
+		</h3>
+	</div>
+	<div class="panel-body">
+		<table class="document-list table table-condensed table-bordered table-striped table-hover">
+			<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.productreturn.admin.productReturn_line_number', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.productreturn.admin.productReturn_line_product', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.productreturn.admin.productReturn_line_sku', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.productreturn.admin.productReturn_line_quntity', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.productreturn.admin.productReturn_line_reason', ['ucf']) }}</th>
+					<th style="min-width: 200px;">
+						{{ i18n('m.rbs.productreturn.admin.productReturn_line_preferred_processing_mode', ['ucf']) }}
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="line in document.lines" class="normal-row">
+					<td>(= $index + 1 =)</td>
+					<td>(= line.designation =)</td>
+					<td>(= line.codeSKU =)</td>
+					<td>(= line.quantity =)</td>
+					<td>
+						<strong>(= line.options.reasonTitle =)</strong>
+						<div data-ng-if="line.reasonPrecisions" data-rbs-max-height="70">
+							{{ i18n('m.rbs.productreturn.admin.productReturn_line_reason_precisions', ['ucf', 'lab']) }}
+							<span class="long-string">(= line.reasonPrecisions =)</span>
+						</div>
+						<div data-ng-if="line.reasonAttachedFileURL">
+							<a href="javascript:;" data-ng-href="(= line.reasonAttachedFileURL =)"
+								onclick="window.open(this.href); return false;">
+								{{ i18n('m.rbs.productreturn.admin.productReturn_attached_file', ['ucf']) }}
+							</a>
+						</div>
+					</td>
+					<td>
+						<strong>(= line.options.preferredProcessingModeTitle =)</strong>
+						<div data-ng-if="line.reshippingCodeSKU">
+							<div data-ng-if="line.options.reshippingProductTitle">
+								{{ i18n('m.rbs.productreturn.admin.productReturn_line_product', ['ucf', 'lab']) }}
+								(= line.options.reshippingProductTitle =)
+							</div>
+							<div>
+								{{ i18n('m.rbs.productreturn.admin.productReturn_line_sku', ['ucf', 'lab']) }}
+								(= line.reshippingCodeSKU =)
+							</div>
+						</div>
+						<div data-ng-if="line.options.unitAmountWithTaxes">
+							<div>
+								{{ i18n('m.rbs.productreturn.admin.productReturn_line_unit_price', ['ucf', 'lab']) }}
+								(= line.options.unitAmountWithTaxes | number:priceInfo.decimals =)
+								(= priceInfo.currencyCode =)
+							</div>
+							<div>
+								{{ i18n('m.rbs.productreturn.admin.productReturn_line_total_price', ['ucf', 'lab']) }}
+								(= line.options.unitAmountWithTaxes * line.quantity | number:priceInfo.decimals =)
+								(= priceInfo.currencyCode =)
+							</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="panel-footer" data-ng-show="document.processingStatus == 'processing'">
+		<a data-ng-href="(= 'Rbs_Productreturn_Shipment'|rbsURL:'new' =)?productReturnId=(= document.id =)"
+			data-ng-show="document.context.reshippingModeId" href="javascript:;" class="btn btn-default">
+			<span class="icon-archive"></span>
+			{{ i18n('m.rbs.productreturn.admin.productReturn_create_shipment', ['ucf']) }}
+		</a>
+		<a data-ng-href="(= 'Rbs_Order_CreditNote'|rbsURL:'new' =)?productReturnId=(= document.id =)"
+			href="javascript:;" class="btn btn-default">
+			<span class="icon-money"></span>
+			{{ i18n('m.rbs.productreturn.admin.productReturn_create_credit_note', ['ucf']) }}
+		</a>
+	</div>
+</div>
+
+<div data-ng-if="document.reshippingModeCode" class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<span class="icon-envelope"></span>
+			{{ i18n('m.rbs.productreturn.admin.productreturn_reshipment_information', ['ucf']) }}
+		</h3>
+	</div>
+	<div class="panel-body">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_ProductReturn', 'reshippingModeCode'), ['ucf']) }}"
+			ng-disabled="true">
+			<p class="form-control-static">
+				(= document.context.reshippingModeTitle || document.reshippingModeCode =)
+			</p>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr('m.rbs.productreturn.admin.productreturn_reshipment_address', ['ucf']) }}"
+			ng-disabled="true">
+			<address data-ng-if="document.context.reshippingAddress.lines.length" class="no-bottom-margin form-control-static">
+				<strong>(= document.context.reshippingAddress.lines[0] =)</strong>
+				<div data-ng-repeat="addressLine in document.context.reshippingAddress.lines track by $index"
+					data-ng-if="!$first">(= addressLine =)</div>
+			</address>
+		</rbs-field>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<span class="icon-comment-alt"></span>
+			{{ i18nAttr(propertyKey('Rbs_Productreturn_ProductReturn', 'processingComment'), ['ucf']) }}
+		</h3>
+	</div>
+	<div class="panel-body">
+		<p>{{ i18n('m.rbs.productreturn.admin.productreturn_processingComment_help', ['ucf']) }}</p>
+		<textarea class="form-control" rows="5" data-ng-model="document.processingComment"></textarea>
+	</div>
+</div>
+

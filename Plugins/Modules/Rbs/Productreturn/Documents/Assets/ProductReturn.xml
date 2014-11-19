@@ -8,7 +8,11 @@
 		<property name="orderId" type="DocumentId" document-type="Rbs_Order_Order" />
 		<property name="ownerId" type="DocumentId" />
 		<property name="email" type="String" />
-		<property name="processingStatus" type="String" required="true" default-value="edition" />
+		<property name="processingStatus" type="String" required="true" default-value="edition">
+			<dboptions length="10" />
+			<constraint name="enum" values="edition,validation,reception,processing,finalized,canceled,refused" />
+		</property>
+		<property name="processingComment" type="LongString" />
 		<property name="returnModeId" type="DocumentId" document-type="Rbs_Productreturn_ReturnMode" />
 		<property name="linesData" type="JSON" internal="true" />
 		<property name="reshippingModeCode" type="String" />

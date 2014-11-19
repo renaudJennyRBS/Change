@@ -1,3 +1,34 @@
+{% block productDetails %}
+	{% macro productDetails(designation, product, axesInfo) %}
+		<ul class="list-unstyled{% if not (axesInfo | length) %} no-bottom-margin{% endif %}">
+			{% if product %}
+				<li>
+					{% if product.common.URL.canonical %}
+						<a href="{{ product.common.URL.canonical }}">{{ product.common.title }}</a>
+					{% else %}
+						{{ product.common.title }}
+					{% endif %}
+				</li>
+				{% if product.common.reference %}
+					<li>{{ product.common.reference }}</li>
+				{% endif %}
+			{% else %}
+				<li>{{ designation }}</li>
+			{% endif %}
+		</ul>
+		{% if axesInfo | length %}
+			<dl class="dl-inline-items no-bottom-margin">
+				{% for axisInfo in axesInfo %}
+					<dt>{{ axisInfo.name }}</dt>
+					<dd>{{ axisInfo.value }}</dd>
+				{% endfor %}
+			</dl>
+		{% endif %}
+	{% endmacro %}
+{% endblock productDetails %}
+
+{% import _self as macros %}
+
 {% block returnHeader %}
 	<h2 id="return-details-{{ return.common.id }}">
 		{% if return.common.cancellable %}
@@ -16,12 +47,20 @@
 			</a>
 		</p>
 	{% endif %}
-	<dl class="dl-horizontal">
-		<dt>{{ i18n('m.rbs.productreturn.front.request_date', ['ucf']) }}</dt>
-		<dd>{{ return.common.date | transDateTime }}</dd>
-		<dt>{{ i18n('m.rbs.productreturn.front.status', ['ucf']) }}</dt>
-		<dd>{{ return.common.statusInfos.title }}</dd>
-	</dl>
+	<div class="row">
+		<dl class="dl-horizontal col-md-6">
+			<dt>{{ i18n('m.rbs.productreturn.front.request_date', ['ucf']) }}</dt>
+			<dd>{{ return.common.date | transDateTime }}</dd>
+			<dt>{{ i18n('m.rbs.productreturn.front.status', ['ucf']) }}</dt>
+			<dd>{{ return.common.statusInfos.title }}</dd>
+		</dl>
+		{% if return.common.processingComment %}
+			<dl class="col-md-6">
+				<dt>{{ i18n('m.rbs.productreturn.front.return_processingComment', ['ucf']) }}</dt>
+				<dd class="long-string">{{ return.common.processingComment }}</dd>
+			</dl>
+		{% endif %}
+	</div>
 {% endblock returnHeader %}
 
 {% block returnInstructions %}
@@ -90,24 +129,7 @@
 								{% endif %}
 							</td>
 							<td>
-								{% if line.product %}
-									<ul class="list-unstyled{% if not (line.options.orderLineOptions.axesInfo | length) %} no-bottom-margin{% endif %}">
-										<li>{{ line.product.common.title }}</li>
-										{% if line.product.common.reference %}
-											<li>{{ line.product.common.reference }}</li>
-										{% endif %}
-									</ul>
-									{% if line.options.orderLineOptions.axesInfo | length %}
-										<dl class="dl-inline-items no-bottom-margin">
-											{% for axisInfo in line.options.orderLineOptions.axesInfo %}
-												<dt>{{ axisInfo.name }}</dt>
-												<dd>{{ axisInfo.value }}</dd>
-											{% endfor %}
-										</dl>
-									{% endif %}
-								{% else %}
-									{{ line.designation }}
-								{% endif %}
+								{{ macros.productDetails(line.designation, line.product, line.options.orderLineOptions.axesInfo) }}
 							</td>
 							<td class="form-inline">
 								{{ line.quantity }}
@@ -117,13 +139,27 @@
 								{% if line.reasonPrecisions %}
 									<br />
 									{{ i18n('m.rbs.productreturn.front.precisions', ['ucf', 'lab']) }}
-									{{ line.reasonPrecisions }}
+									<span class="long-string">{{ line.reasonPrecisions }}</span>
 								{% endif %}
 								{% if line.reasonAttachedFileURL %}
 									<br />
 									<a href="{{ line.reasonAttachedFileURL }}">
 										{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}
 									</a>
+								{% endif %}
+								<br />
+								{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf', 'lab']) }}
+								{% if not line.options.reshippingProductId %}
+									{{ line.options.preferredProcessingModeTitle }}
+								{% else %}
+									<span class="dropdown">
+										<a href="javascript:;" data-toggle="dropdown">
+											{{ line.options.preferredProcessingModeTitle }}  <span class="caret"></span>
+										</a>
+										<div class="dropdown-menu dropdown-menu-no-list">
+											{{ macros.productDetails(line.options.reshippingProductTitle, line.reshippingProduct, line.options.reshippingProductAxesInfos) }}
+										</div>
+									</span>
 								{% endif %}
 							</td>
 						</tr>

@@ -24,6 +24,14 @@ class ProductReturn extends \Compilation\Rbs\Productreturn\Documents\ProductRetu
 	/**
 	 * @return string
 	 */
+	public function getIdentifier()
+	{
+		return 'ProductReturn:' . $this->getId();
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getLabel()
 	{
 		return $this->getCode() ? $this->getCode() : '[' . $this->getId() . ']';
@@ -176,15 +184,37 @@ class ProductReturn extends \Compilation\Rbs\Productreturn\Documents\ProductRetu
 		$restResult = $event->getParam('restResult');
 		if ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentResult)
 		{
+			$um = $restResult->getUrlManager();
+			$selfLinks = $restResult->getRelLink('self');
+			$selfLink = array_shift($selfLinks);
+			if ($selfLink instanceof \Change\Http\Rest\V1\Link)
+			{
+				$baseUrl = $selfLink->getPathInfo();
+				$restResult->addLink(new \Change\Http\Rest\V1\Link($um, $baseUrl . '/Shipments/', 'shipments'));
+				$restResult->addLink(new \Change\Http\Rest\V1\Link($um, $baseUrl . '/CreditNotes/', 'creditNotes'));
+			}
+
 			$context = $this->getContext()->toArray();
 			$restResult->setProperty('context', (count($context)) ? $context : null);
 
 			$lines = [];
 			foreach ($this->getLines() as $line)
 			{
-				$lines[] = $line->toArray();
+				$lineData = $line->toArray();
+				if ($line->getReasonAttachedFileUri())
+				{
+					$uri = $line->getReasonAttachedFileUri();
+					$lineData['reasonAttachedFileURL'] = str_replace('change://', '/rest.php/storage/', $uri) . '?content=1';
+				}
+				$lines[] = $lineData;
 			}
 			$restResult->setProperty('lines', $lines);
+
+			$commerceServices = $event->getServices('commerceServices');
+			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$restResult->setProperty('statusInfos', $commerceServices->getReturnManager()->getReturnStatusInfo($this));
+			}
 		}
 		elseif ($restResult instanceof \Change\Http\Rest\V1\Resources\DocumentLink)
 		{
@@ -192,6 +222,12 @@ class ProductReturn extends \Compilation\Rbs\Productreturn\Documents\ProductRetu
 			if (!$linkResult->getProperty('code'))
 			{
 				$linkResult->setProperty('code', $linkResult->getProperty('label'));
+			}
+
+			$commerceServices = $event->getServices('commerceServices');
+			if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+			{
+				$restResult->setProperty('statusInfos', $commerceServices->getReturnManager()->getReturnStatusInfo($this));
 			}
 		}
 	}

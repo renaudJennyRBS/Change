@@ -1,0 +1,31 @@
+<div data-ng-controller="rbsProductreturnOrderProductReturns">
+	{% set currentRouteName = 'productReturns' %}
+	{% include '@Rbs_Order/Documents/Order/header.twig' %}
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="icon-undo"></i>
+				{{ i18n('m.rbs.productReturn.admin.productReturn_list', ['ucf', 'lab']) }} (= productReturns.length =)
+			</h3>
+		</div>
+		<div class="panel-body">
+			<table class="table table-striped table-bordered no-bottom-margin document-list"
+				data-ng-show="productReturns.length > 0">
+				<thead>
+					<tr>
+						<th>{{ i18nAttr(propertyKey('Rbs_Productreturn_ProductReturn', 'code'), ['ucf']) }}</th>
+						<th>{{ i18nAttr(propertyKey('Rbs_Productreturn_ProductReturn', 'processingStatus'), ['ucf']) }}</th>
+					</tr>
+				</thead>
+				<tr class="normal-row" data-ng-repeat="productReturn in productReturns">
+					<td><a href="javascript:;" data-ng-href="(= productReturn | rbsURL =)">(= productReturn.code =)</a></td>
+					<td>(= productReturn.statusInfos.title || productReturn.statusInfos.code =)</td>
+				</tr>
+			</table>
+			<p data-ng-show="productReturns.length == 0" class="no-bottom-margin">
+				{{ i18n('m.rbs.productreturn.admin.order_no_product_return_yet', ['ucf']) }}
+			</p>
+		</div>
+	</div>
+</div>

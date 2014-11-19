@@ -87,6 +87,7 @@ class ProductReturnDataComposer
 			'ownerId' => $return->getOwnerId(),
 			'email' => $return->getEmail(),
 			'statusInfos' => $this->returnManager->getReturnStatusInfo($return),
+			'processingComment' => trim($return->getProcessingComment()),
 			'cancellable' => $this->returnManager->isReturnCancellable($return)
 		];
 
@@ -190,7 +191,7 @@ class ProductReturnDataComposer
 		{
 			$lineData = $line->toArray();
 			// Handle attached files to return the public URL instead of the internal URI.
-			if (isset($lineData['reasonAttachedFileUri']))
+			if (isset($lineData['reasonAttachedFileUri']) && is_string($lineData['reasonAttachedFileUri']))
 			{
 				$attachedFileUri = $lineData['reasonAttachedFileUri'];
 				unset($lineData['reasonAttachedFileUri']);
@@ -203,6 +204,15 @@ class ProductReturnDataComposer
 				if (count($productData))
 				{
 					$lineData['product'] = $productData;
+				}
+			}
+
+			if (isset($lineData['options']['reshippingProductId']))
+			{
+				$productData = $this->catalogManager->getProductData($lineData['options']['reshippingProductId'], $productContext);
+				if (count($productData))
+				{
+					$lineData['reshippingProduct'] = $productData;
 				}
 			}
 

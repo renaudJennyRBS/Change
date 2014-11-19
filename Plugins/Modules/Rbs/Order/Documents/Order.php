@@ -716,6 +716,7 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				$documentResult->addLink(new \Change\Http\Rest\V1\Link($um, $baseUrl . '/Shipments/', 'shipments'));
 				$documentResult->addLink(new \Change\Http\Rest\V1\Link($um, $baseUrl . '/Transactions/', 'transactions'));
 				$documentResult->addLink(new \Change\Http\Rest\V1\Link($um, $baseUrl . '/Invoices/', 'invoices'));
+				$documentResult->addLink(new \Change\Http\Rest\V1\Link($um, $baseUrl . '/ProductReturns/', 'productReturns'));
 			}
 
 			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
