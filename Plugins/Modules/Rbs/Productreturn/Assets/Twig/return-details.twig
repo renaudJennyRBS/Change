@@ -57,7 +57,11 @@
 		{% if return.common.processingComment %}
 			<dl class="col-md-6">
 				<dt>{{ i18n('m.rbs.productreturn.front.return_processingComment', ['ucf']) }}</dt>
-				<dd class="long-string">{{ return.common.processingComment }}</dd>
+				<dd>
+					<div data-rbs-max-height="70">
+						<div class="long-string">{{ return.common.processingComment }}</div>
+					</div>
+				</dd>
 			</dl>
 		{% endif %}
 	</div>
@@ -135,32 +139,37 @@
 								{{ line.quantity }}
 							</td>
 							<td>
-								<strong>{{ line.options.reasonTitle }}</strong>
-								{% if line.reasonPrecisions %}
-									<br />
-									{{ i18n('m.rbs.productreturn.front.precisions', ['ucf', 'lab']) }}
-									<span class="long-string">{{ line.reasonPrecisions }}</span>
-								{% endif %}
-								{% if line.reasonAttachedFileURL %}
-									<br />
-									<a href="{{ line.reasonAttachedFileURL }}">
-										{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}
-									</a>
-								{% endif %}
-								<br />
-								{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf', 'lab']) }}
-								{% if not line.options.reshippingProductId %}
-									{{ line.options.preferredProcessingModeTitle }}
-								{% else %}
-									<span class="dropdown">
-										<a href="javascript:;" data-toggle="dropdown">
-											{{ line.options.preferredProcessingModeTitle }}  <span class="caret"></span>
-										</a>
-										<div class="dropdown-menu dropdown-menu-no-list">
-											{{ macros.productDetails(line.options.reshippingProductTitle, line.reshippingProduct, line.options.reshippingProductAxesInfos) }}
-										</div>
-									</span>
-								{% endif %}
+								<ul class="list-unstyled">
+									<li><strong>{{ line.options.reasonTitle }}</strong></li>
+									{% if line.reasonPrecisions %}
+										<li data-rbs-max-height="70">
+											{{ i18n('m.rbs.productreturn.front.precisions', ['ucf', 'lab']) }}
+											<span class="long-string">{{ line.reasonPrecisions }}</span>
+										</li>
+									{% endif %}
+									{% if line.reasonAttachedFileURL %}
+										<li>
+											<a href="{{ line.reasonAttachedFileURL }}" target="_blank">
+												{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}
+											</a>
+										</li>
+									{% endif %}
+									<li>
+										{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf', 'lab']) }}
+										{% if not line.options.reshippingProductId %}
+											{{ line.options.preferredProcessingModeTitle }}
+										{% else %}
+											<span class="dropdown">
+												<a href="javascript:;" data-toggle="dropdown">
+													{{ line.options.preferredProcessingModeTitle }}  <span class="caret"></span>
+												</a>
+												<span class="dropdown-menu dropdown-menu-no-list">
+													{{ macros.productDetails(line.options.reshippingProductTitle, line.reshippingProduct, line.options.reshippingProductAxesInfos) }}
+												</span>
+											</span>
+										{% endif %}
+									</li>
+								</ul>
 							</td>
 						</tr>
 					{% endblock returnLine %}
