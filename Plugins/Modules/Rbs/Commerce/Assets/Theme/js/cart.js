@@ -9,7 +9,7 @@
 			restrict: 'A',
 			templateUrl: '/rbsCommerceCart.tpl',
 			scope: {},
-			controller : ['$scope', '$element', function(scope, elem) {
+			controller: ['$scope', '$element', function(scope, elem) {
 				var self = this;
 				var modifications = {};
 
@@ -50,14 +50,15 @@
 				this.updateLineQuantity = function(key, newQuantity) {
 					var actions = {
 						'updateLinesQuantity': [
-							{key: key, quantity: newQuantity}
+							{ key: key, quantity: newQuantity }
 						]
 					};
 					this.updateCartData(actions);
 				};
 
 				this.showPrices = function() {
-					return (scope.parameters && (scope.parameters.displayPricesWithTax || scope.parameters.displayPricesWithoutTax))
+					return (scope.parameters &&
+					(scope.parameters.displayPricesWithTax || scope.parameters.displayPricesWithoutTax))
 
 				};
 
@@ -69,7 +70,8 @@
 					if (scope.parameters) {
 						if (angular.isUndefined(name)) {
 							return scope.parameters;
-						} else {
+						}
+						else {
 							return scope.parameters[name];
 						}
 					}
@@ -84,11 +86,12 @@
 					scope.cartData = cartData;
 					if (this.showPrices()) {
 						scope.currencyCode = cartData.common.currencyCode;
-					} else {
+					}
+					else {
 						scope.currencyCode = null;
 					}
 					modifications = {};
-					$rootScope.$broadcast('rbsRefreshCart', {'cart': cartData });
+					$rootScope.$broadcast('rbsRefreshCart', { 'cart': cartData });
 				};
 
 				this.replaceChildren = function(parentNode, scope, html) {
@@ -100,7 +103,7 @@
 						}
 					});
 					collection.remove();
-					$compile(html)(scope, function (clone) {
+					$compile(html)(scope, function(clone) {
 						parentNode.append(clone);
 					});
 				};
@@ -112,8 +115,8 @@
 					};
 					var lines = scope.cartData.lines;
 					var html = [];
-					angular.forEach(lines, function(line, idx){
-						html.push('<tr data-line="cartData.lines['+ idx +']" ' + directiveName(line) + '=""></tr>');
+					angular.forEach(lines, function(line, idx) {
+						html.push('<tr data-line="cartData.lines[' + idx + ']" ' + directiveName(line) + '=""></tr>');
 					});
 					this.replaceChildren(linesContainer, scope, html.join(''));
 				};
@@ -131,7 +134,8 @@
 				this.setModification = function(key, modified) {
 					if (modified) {
 						modifications[key] = true;
-					} else {
+					}
+					else {
 						delete modifications[key];
 					}
 				};
@@ -147,12 +151,12 @@
 				var cacheKey = elem.attr('data-cache-key');
 				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
 
-
 				var cartData = AjaxAPI.globalVar(cacheCartDataKey);
 
 				if (!cartData) {
 					this.loadCartData();
-				} else {
+				}
+				else {
 					this.setCartData(cartData);
 				}
 			}],
@@ -164,18 +168,18 @@
 					if (newValue !== oldValue && angular.isDefined(newValue)) {
 						var actions = {
 							'updateContext': {
-								'acceptTermsAndConditions' : (newValue == true)
+								'acceptTermsAndConditions': (newValue == true)
 							}
 						};
 						controller.updateCartData(actions);
 					}
 				});
 
-				scope.hasModifications = function () {
+				scope.hasModifications = function() {
 					return controller.hasModifications();
 				};
 
-				scope.canOrder = function () {
+				scope.canOrder = function() {
 					var cartData = scope.cartData;
 					if (!cartData
 						|| !cartData.lines || !cartData.lines.length
@@ -189,6 +193,7 @@
 			}
 		}
 	}
+
 	rbsCommerceCart.$inject = ['$rootScope', '$compile', 'RbsChange.AjaxAPI'];
 	app.directive('rbsCommerceCart', rbsCommerceCart);
 
@@ -198,7 +203,7 @@
 			templateUrl: '/rbsCommerceCartLineDefault.tpl',
 			require: '^rbsCommerceCart',
 			replace: true,
-			scope: {line: "="},
+			scope: { line: "=" },
 			link: function(scope, elem, attrs, cartController) {
 				scope.showPrices = cartController.showPrices();
 				scope.currencyCode = cartController.getCurrencyCode();
@@ -232,4 +237,17 @@
 
 	rbsCommerceCartLineDefault.$inject = [];
 	app.directive('rbsCommerceCartLineDefault', rbsCommerceCartLineDefault);
+
+	function rbsCommerceCartLineVisual() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCommerceCartLineVisual.tpl',
+			scope: { product: "=" },
+			link: function(scope, elem, attrs, cartController) {
+			}
+		}
+	}
+
+	rbsCommerceCartLineVisual.$inject = [];
+	app.directive('rbsCommerceCartLineVisual', rbsCommerceCartLineVisual);
 })();

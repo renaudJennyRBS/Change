@@ -314,7 +314,15 @@ class ProductDataComposer
 					}
 				}
 
-				$this->dataSets['rootProduct'] = ['id' => $variantGroup->getRootProductId()];
+				if ($this->hasDataSet('rootProduct'))
+				{
+					$this->dataSets['rootProduct'] = $this->catalogManager->getProductData($variantGroup->getRootProduct(),
+						$this->getRootProductContext());
+				}
+				else
+				{
+					$this->dataSets['rootProduct'] = ['id' => $variantGroup->getRootProductId()];
+				}
 			}
 		}
 	}

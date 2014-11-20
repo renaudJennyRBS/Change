@@ -11,8 +11,16 @@
 	{% include 'Rbs_Catalog/product-directives.twig' %}
 {% endblock productDirectives %}
 
+{% block cartDirectives %}
+	{% use 'Rbs_Commerce/cart-directives.twig' %}
+	{{ block('rbsCommerceCartLineVisual') }}
+{% endblock cartDirectives %}
+
 {% block returnProcessDirectives %}
-	{% include 'Rbs_Productreturn/return-process-directives.twig' %}
+	{% use 'Rbs_Productreturn/return-process-directives.twig' %}
+	{{ block('rbsProductreturnShipmentLine') }}
+	{{ block('rbsProductreturnReturnLine') }}
+	{{ block('rbsProductreturnReshipping') }}
 {% endblock returnProcessDirectives %}
 
 {% set cacheKey = blockId %}

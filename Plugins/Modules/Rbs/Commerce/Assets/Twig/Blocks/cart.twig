@@ -1,4 +1,5 @@
 {% use 'Rbs_Commerce/cart-directives.twig' %}
+
 {% if cartData %}
 	<script type="text/javascript">
 		window.__change['cartData'] = {{ cartData | json_encode | raw}};
@@ -10,7 +11,7 @@
 	{% block cart %}
 		<div data-rbs-commerce-cart="" data-cache-key="{{ blockId }}">
 		</div>
-	{% endblock %}
+	{% endblock cart %}
 {% else %}
 	{{ block('emptyCart') }}
 {% endif %}

@@ -121,5 +121,8 @@
 	},
 	"print_the_return_sticker": {
 		"message": "imprimer l'étiquette de retour à coller sur le colis"
+	},
+	"please_wait_loading_data": {
+		"message": "Chargement des données du produit. Merci de patienter."
 	}
 }

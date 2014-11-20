@@ -288,10 +288,22 @@
 	RbsProductreturnReturnProcessController.$inject = ['$scope', '$element', '$window', '$sce', 'RbsChange.AjaxAPI'];
 	app.controller('RbsProductreturnReturnProcessController', RbsProductreturnReturnProcessController);
 
-	function rbsProductreturnReturnLine() {
+	function rbsProductreturnReturnLineSummary() {
 		return {
 			restrict: 'A',
-			templateUrl: '/rbsProductreturnReturnLine.tpl',
+			templateUrl: '/rbsProductreturnReturnLineSummary.tpl',
+			scope: true,
+			link: function(scope, element, attrs) {
+			}
+		};
+	}
+
+	app.directive('rbsProductreturnReturnLineSummary', rbsProductreturnReturnLineSummary);
+
+	function rbsProductreturnReturnLineEdition() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsProductreturnReturnLineEdition.tpl',
 			scope: true,
 			link: function(scope, element, attrs) {
 				var formName = attrs['formName'];
@@ -393,14 +405,14 @@
 		};
 	}
 
-	app.directive('rbsProductreturnReturnLine', rbsProductreturnReturnLine);
+	app.directive('rbsProductreturnReturnLineEdition', rbsProductreturnReturnLineEdition);
 
 	function rbsProductreturnVariantSelectorContainer(AjaxAPI) {
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsProductreturnVariantSelectorContainer.tpl',
 			scope: true,
-			link: function(scope) {
+			link: function(scope, elment, attrs) {
 				var productId = scope.line.product.common.id;
 
 				var params = angular.copy(scope.data.productAjaxParams);
@@ -409,13 +421,16 @@
 				}
 				params.dataSetNames.push('rootProduct');
 
+				AjaxAPI.openWaitingModal(attrs['waitingMessage']);
 				var request = AjaxAPI.getData('Rbs/Catalog/Product/' + productId, scope.data.productAjaxData, params);
 				request.success(function(data) {
 					scope['returnLine'].productData = data['dataSets'];
+					AjaxAPI.closeWaitingModal();
 				});
 				request.error(function(data, status) {
 					scope.error = data.message;
 					console.log('error', data, status);
+					AjaxAPI.closeWaitingModal();
 				});
 			}
 		};

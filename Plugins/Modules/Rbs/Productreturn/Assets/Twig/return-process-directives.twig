@@ -1,19 +1,9 @@
-{% block shipmentLine %}
-	{% block shipmentLineDetails %}
+{% block rbsProductreturnShipmentLine %}
+	{% block rbsProductreturnShipmentLineDetailsDefault %}
 		<script type="text/ng-template" id="/rbsProductreturnShipmentLineDetailsDefault.tpl">
 			<tr data-ng-class="{{ lineTrNgClass }}">
 				<td>
-					<a data-ng-if="line.product" title="(= line.product.common.title =)" href="javascript:"
-						data-ng-href="(= line.product.common.URL.canonical =)">
-						<img data-ng-show="line.product.common.visuals[0].cartItem" src=""
-							alt="(= line.product.common.title =)" data-ng-src="(= line.product.common.visuals[0].cartItem =)" />
-						<div class="text-left text-muted" data-ng-hide="line.product.common.visuals[0].cartItem">
-							<span class="glyphicon glyphicon-camera" style="font-size:80px"></span>
-						</div>
-					</a>
-					<div class="text-left text-muted" data-ng-if="!line.product">
-						<span class="glyphicon glyphicon-camera" style="font-size:80px"></span>
-					</div>
+					<div data-rbs-commerce-cart-line-visual="" data-product="line.product"></div>
 				</td>
 				<td>
 					<div data-ng-hide="line.product">
@@ -82,22 +72,29 @@
 				{% endif %}
 			</tr>
 		</script>
-	{% endblock shipmentLineDetails %}
+	{% endblock rbsProductreturnShipmentLineDetailsDefault %}
 
-	{% block shipmentLineReturn %}
+	{% block rbsProductreturnShipmentLineReturn %}
 		<script type="text/ng-template" id="/rbsProductreturnShipmentLineReturn.tpl">
 			<tr data-ng-show="hasReturnLine(shipmentIndex, lineIndex)" class="no-top-border" data-ng-class="{{ lineTrNgClass }}">
 				<td></td>
 				<td colspan="{{ columnCount - 1 }}">
 					<div data-ng-repeat="(returnLineIndex, returnLine) in line.returnLines">
-						<div data-rbs-productreturn-return-line="" data-form-name="{{ lineFormName }}"></div>
+						<div class="panel panel-default">
+							<div class="panel-body" data-ng-hide="isEditing(shipmentIndex, lineIndex, returnLineIndex)"
+								data-rbs-productreturn-return-line-summary="">
+							</div>
+							<div class="panel-body" data-ng-hide="!isEditing(shipmentIndex, lineIndex, returnLineIndex)"
+								data-rbs-productreturn-return-line-edition="" data-form-name="{{ lineFormName }}">
+							</div>
+						</div>
 					</div>
 				</td>
 			</tr>
 		</script>
-	{% endblock shipmentLineReturn %}
+	{% endblock rbsProductreturnShipmentLineReturn %}
 
-	{% block shipmentLineFooter %}
+	{% block rbsProductreturnShipmentLineFooter %}
 		<script type="text/ng-template" id="/rbsProductreturnShipmentLineFooter.tpl">
 			<tr data-ng-show="hasReturnLine(shipmentIndex, lineIndex)" class="no-top-border" data-ng-class="{{ lineTrNgClass }}">
 				<td colspan="2"></td>
@@ -112,192 +109,207 @@
 				</td>
 			</tr>
 		</script>
-	{% endblock shipmentLineFooter %}
-{% endblock shipmentLine %}
+	{% endblock rbsProductreturnShipmentLineFooter %}
+{% endblock rbsProductreturnShipmentLine %}
 
-{% block returnLine %}
-	{% macro formGroupNgClass(formName, propertyName) %}
-		data-ng-class="{
-			'has-error': {{ formName }}.{{ propertyName }}.$invalid,
-			'has-success': {{ formName }}.{{ propertyName }}.$dirty && !{{ formName }}.{{ propertyName }}.$invalid
-		}"
-	{% endmacro %}
-	{% import _self as macros %}
+{% block rbsProductreturnReturnLine %}
+	{% block rbsProductreturnReturnLineSummary %}
+		<script type="text/ng-template" id="/rbsProductreturnReturnLineSummary.tpl">
+			<button type="button" class="btn btn-sm btn-default pull-right" data-ng-disabled="isEditing()"
+				data-ng-click="editLine(shipmentIndex, lineIndex, returnLineIndex)">
+				{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+			</button>
+			<dl class="dl-horizontal no-top-margin no-bottom-margin">
+				<dt>{{ i18n('m.rbs.productreturn.front.quantity_to_return', ['ucf']) }}</dt>
+				<dd>(= returnLine.quantity =)</dd>
+				<dt>{{ i18n('m.rbs.productreturn.front.return_reason', ['ucf']) }}</dt>
+				<dd>(= getReasonById(returnLine.reason).title =)</dd>
+				<dt data-ng-show="returnLine.precisions">{{ i18n('m.rbs.productreturn.front.precisions', ['ucf']) }}</dt>
+				<dd data-ng-show="returnLine.precisions">
+					<div class="long-string">(= returnLine.precisions =)</div>
+				</dd>
+				<dt>{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}</dt>
+				<dd>(= returnLine.attachedFile ? "{{ i18n('m.rbs.generic.front.yes', ['ucf']) }}" : "{{ i18n('m.rbs.generic.front.no', ['ucf']) }}" =)</dd>
+				<dt>{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf']) }}</dt>
+				<dd>(= getProcessingModeById(returnLine.preferredProcessingMode).title =)</dd>
+				<dt data-ng-show="canChooseOtherVariant(line, returnLine)">
+					{{ i18n('m.rbs.productreturn.front.replacing_variant', ['ucf']) }}
+				</dt>
+				<dd data-ng-show="canChooseOtherVariant(line, returnLine)">
+					(= returnLine.productData.common.title =)
+				</dd>
+			</dl>
+		</script>
+	{% endblock rbsProductreturnReturnLineSummary %}
 
-	<script type="text/ng-template" id="/rbsProductreturnReturnLine.tpl">
-		<div class="panel panel-default">
-			{% block returnLineDisplay %}
-				<div class="panel-body" data-ng-hide="isEditing(shipmentIndex, lineIndex, returnLineIndex)">
-					<button type="button" class="btn btn-sm btn-default pull-right" data-ng-disabled="isEditing()"
-						data-ng-click="editLine(shipmentIndex, lineIndex, returnLineIndex)">
-						{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
-					</button>
-					<dl class="dl-horizontal no-top-margin no-bottom-margin">
-						<dt>{{ i18n('m.rbs.productreturn.front.quantity_to_return', ['ucf']) }}</dt>
-						<dd>(= returnLine.quantity =)</dd>
-						<dt>{{ i18n('m.rbs.productreturn.front.return_reason', ['ucf']) }}</dt>
-						<dd>(= getReasonById(returnLine.reason).title =)</dd>
-						<dt data-ng-show="returnLine.precisions">{{ i18n('m.rbs.productreturn.front.precisions', ['ucf']) }}</dt>
-						<dd data-ng-show="returnLine.precisions">
-							<div class="long-string">(= returnLine.precisions =)</div>
-						</dd>
-						<dt>{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}</dt>
-						<dd>(= returnLine.attachedFile ? "{{ i18n('m.rbs.generic.front.yes', ['ucf']) }}" : "{{ i18n('m.rbs.generic.front.no', ['ucf']) }}" =)</dd>
-						<dt>{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf']) }}</dt>
-						<dd>(= getProcessingModeById(returnLine.preferredProcessingMode).title =)</dd>
-						<dt data-ng-show="canChooseOtherVariant(line, returnLine)">
-							{{ i18n('m.rbs.productreturn.front.replacing_variant', ['ucf']) }}
-						</dt>
-						<dd data-ng-show="canChooseOtherVariant(line, returnLine)">
-							(= returnLine.productData.common.title =)
-						</dd>
-					</dl>
+	{% block rbsProductreturnReturnLineEdition %}
+		<script type="text/ng-template" id="/rbsProductreturnReturnLineEdition.tpl">
+			{% set requiredStarTitle = i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) %}
+			{% set labelColClasses = 'col-sm-4 col-md-3 control-label' %}
+			{% set fieldOffsetClasses = 'col-sm-offset-4 col-md-offset-3' %}
+			{% set fieldColClasses = 'col-sm-8 col-md-9' %}
+			{% set fieldIdPrefix = 'input_' ~ blockId ~ '_(= lineIndex =)_(= returnLineIndex =)' %}
+			<form class="form-horizontal" name="{{ lineFormName }}">
+				<div class="form-group" data-ng-class="{
+						'has-error': {{ lineFormName }}.quantity.$invalid,
+						'has-success': {{ lineFormName }}.quantity.$dirty && !{{ lineFormName }}.quantity.$invalid
+					}">
+					<label for="{{ fieldIdPrefix }}_quantity" class="{{ labelColClasses }}">
+						<em class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						{{ i18n('m.rbs.productreturn.front.quantity_to_return', ['ucf']) }}
+					</label>
+					<div class="{{ fieldColClasses }}">
+						<select data-ng-show="getLineRemainingQuantity(shipmentIndex, lineIndex, returnLineIndex) > 1"
+							id="{{ fieldIdPrefix }}_quantity" class="form-control" name="quantity"
+							required="required" data-ng-model="returnLine.quantity"
+							data-ng-options="q for q in getAvailableQuantities(shipmentIndex, lineIndex, returnLineIndex)">
+						</select>
+						<p data-ng-show="getLineRemainingQuantity(shipmentIndex, lineIndex, returnLineIndex) == 1"
+							class="form-control-static">
+							(= returnLine.quantity =)
+						</p>
+					</div>
 				</div>
-			{% endblock returnLineDisplay %}
-			{% block returnLineEdition %}
-				{% set requiredStarTitle = i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) %}
-				{% set labelColClasses = 'col-sm-4 col-md-3 control-label' %}
-				{% set fieldOffsetClasses = 'col-sm-offset-4 col-md-offset-3' %}
-				{% set fieldColClasses = 'col-sm-8 col-md-9' %}
-				{% set fieldIdPrefix = 'input_' ~ blockId ~ '_(= lineIndex =)_(= returnLineIndex =)' %}
-				<form class="panel-body form-horizontal" name="{{ lineFormName }}"
-					data-ng-show="isEditing(shipmentIndex, lineIndex, returnLineIndex)">
-					<div class="form-group" {{ macros.formGroupNgClass(lineFormName, 'quantity') }}>
-						<label for="{{ fieldIdPrefix }}_quantity" class="{{ labelColClasses }}">
-							<em class="required-symbol" title="{{ requiredStarTitle }}">*</em>
-							{{ i18n('m.rbs.productreturn.front.quantity_to_return', ['ucf']) }}
-						</label>
-						<div class="{{ fieldColClasses }}">
-							<select data-ng-show="getLineRemainingQuantity(shipmentIndex, lineIndex, returnLineIndex) > 1"
-								id="{{ fieldIdPrefix }}_quantity" class="form-control" name="quantity"
-								required="required" data-ng-model="returnLine.quantity"
-								data-ng-options="q for q in getAvailableQuantities(shipmentIndex, lineIndex, returnLineIndex)">
-							</select>
-							<p data-ng-show="getLineRemainingQuantity(shipmentIndex, lineIndex, returnLineIndex) == 1"
-								class="form-control-static">
-								(= returnLine.quantity =)
-							</p>
-						</div>
+				<div class="form-group" data-ng-class="{
+						'has-error': {{ lineFormName }}.reason.$invalid,
+						'has-success': {{ lineFormName }}.reason.$dirty && !{{ lineFormName }}.reason.$invalid
+					}">
+					<label for="{{ fieldIdPrefix }}_reason" class="{{ labelColClasses }}">
+						<em class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						{{ i18n('m.rbs.productreturn.front.return_reason', ['ucf']) }}
+					</label>
+					<div class="{{ fieldColClasses }}">
+						<select data-ng-show="processData.reasons.length > 1"
+							id="{{ fieldIdPrefix }}_reason" class="form-control" name="reason"
+							required="required" data-ng-model="returnLine.reason"
+							data-ng-options="reason.id as reason.title for reason in processData.reasons">
+						</select>
+						<p data-ng-show="processData.reasons.length == 1" class="form-control-static">
+							(= processData.reasons[0].title =)
+						</p>
+						<p class="text-danger" data-ng-show="returnLine.timeLimitExceeded"
+							data-ng-bind-html="trustHtml(returnLine.timeLimitErrorMessage)"></p>
 					</div>
-					<div class="form-group" {{ macros.formGroupNgClass(lineFormName, 'reason') }}>
-						<label for="{{ fieldIdPrefix }}_reason" class="{{ labelColClasses }}">
-							<em class="required-symbol" title="{{ requiredStarTitle }}">*</em>
-							{{ i18n('m.rbs.productreturn.front.return_reason', ['ucf']) }}
-						</label>
-						<div class="{{ fieldColClasses }}">
-							<select data-ng-show="processData.reasons.length > 1"
-								id="{{ fieldIdPrefix }}_reason" class="form-control" name="reason"
-								required="required" data-ng-model="returnLine.reason"
-								data-ng-options="reason.id as reason.title for reason in processData.reasons">
-							</select>
-							<p data-ng-show="processData.reasons.length == 1" class="form-control-static">
-								(= processData.reasons[0].title =)
-							</p>
-							<p class="text-danger" data-ng-show="returnLine.timeLimitExceeded"
-								data-ng-bind-html="trustHtml(returnLine.timeLimitErrorMessage)"></p>
-						</div>
+				</div>
+				<div class="form-group" data-ng-class="{
+						'has-error': {{ lineFormName }}.precisions.$invalid,
+						'has-success': {{ lineFormName }}.precisions.$dirty && !{{ lineFormName }}.precisions.$invalid
+					}">
+					<label for="{{ fieldIdPrefix }}_precisions" class="{{ labelColClasses }}">
+						<em data-ng-if="getReasonById(returnLine.reason).requirePrecisions"
+							class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						{{ i18n('m.rbs.productreturn.front.precisions', ['ucf']) }}
+					</label>
+					<div class="{{ fieldColClasses }}">
+						<textarea id="{{ fieldIdPrefix }}_precisions" class="form-control" name="precisions"
+							data-ng-required="getReasonById(returnLine.reason).requirePrecisions"
+							data-ng-model="returnLine.precisions"></textarea>
 					</div>
-					<div class="form-group" {{ macros.formGroupNgClass(lineFormName, 'precisions') }}>
-						<label for="{{ fieldIdPrefix }}_precisions" class="{{ labelColClasses }}">
-							<em data-ng-if="getReasonById(returnLine.reason).requirePrecisions"
-								class="required-symbol" title="{{ requiredStarTitle }}">*</em>
-							{{ i18n('m.rbs.productreturn.front.precisions', ['ucf']) }}
-						</label>
-						<div class="{{ fieldColClasses }}">
-							<textarea id="{{ fieldIdPrefix }}_precisions" class="form-control" name="precisions"
-								data-ng-required="getReasonById(returnLine.reason).requirePrecisions"
-								data-ng-model="returnLine.precisions"></textarea>
-						</div>
+				</div>
+				<div class="form-group" data-ng-class="{
+						'has-error': {{ lineFormName }}.attachedFile.$invalid,
+						'has-success': {{ lineFormName }}.attachedFile.$dirty && !{{ lineFormName }}.attachedFile.$invalid
+					}">
+					<label for="{{ fieldIdPrefix }}_attachedFile" class="{{ labelColClasses }}">
+						<em data-ng-if="getReasonById(returnLine.reason).requireAttachedFile"
+							class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						{{ i18n('m.rbs.productreturn.front.attach_file', ['ucf']) }}
+					</label>
+					<div class="{{ fieldColClasses }}">
+						<input id="{{ fieldIdPrefix }}_attachedFile" type="file" name="attachedFile"
+							data-ng-required="getReasonById(returnLine.reason).requireAttachedFile"
+							data-ng-model="returnLine.attachedFile" data-rbs-productreturn-file-reader="" />
 					</div>
-					<div class="form-group" {{ macros.formGroupNgClass(lineFormName, 'attachedFile') }}>
-						<label for="{{ fieldIdPrefix }}_attachedFile" class="{{ labelColClasses }}">
-							<em data-ng-if="getReasonById(returnLine.reason).requireAttachedFile"
-								class="required-symbol" title="{{ requiredStarTitle }}">*</em>
-							{{ i18n('m.rbs.productreturn.front.attach_file', ['ucf']) }}
-						</label>
-						<div class="{{ fieldColClasses }}">
-							<input id="{{ fieldIdPrefix }}_attachedFile" type="file" name="attachedFile"
-								data-ng-required="getReasonById(returnLine.reason).requireAttachedFile"
-								data-ng-model="returnLine.attachedFile" data-rbs-productreturn-file-reader="" />
+				</div>
+				<div class="form-group" data-ng-class="{
+						'has-error': {{ lineFormName }}.preferredProcessingMode.$invalid,
+						'has-success': {{ lineFormName }}.preferredProcessingMode.$dirty && !{{ lineFormName }}.preferredProcessingMode.$invalid
+					}" data-ng-show="returnLine.reason">
+					<label class="{{ labelColClasses }}">
+						<em class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf']) }}
+					</label>
+					<div class="{{ fieldColClasses }}">
+						<div data-ng-repeat="mode in getAvailableProcessingModes(returnLine.reason, line.product)"
+							class="radio">
+							<label>
+								<input type="radio" name="preferredProcessingMode" data-ng-value="(= mode.id =)"
+									data-ng-model="returnLine.preferredProcessingMode" data-ng-required="!value" />
+								(= mode.title =)
+							</label>
 						</div>
-					</div>
-					<div class="form-group" {{ macros.formGroupNgClass(lineFormName, 'preferredProcessingMode') }}
-						data-ng-show="returnLine.reason">
-						<label class="{{ labelColClasses }}">
-							<em class="required-symbol" title="{{ requiredStarTitle }}">*</em>
-							{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf']) }}
-						</label>
-						<div class="{{ fieldColClasses }}">
-							<div data-ng-repeat="mode in getAvailableProcessingModes(returnLine.reason, line.product)"
-								class="radio">
-								<label>
-									<input type="radio" name="preferredProcessingMode" data-ng-value="(= mode.id =)"
-										data-ng-model="returnLine.preferredProcessingMode" data-ng-required="!value" />
-									(= mode.title =)
-								</label>
-							</div>
-							<div data-ng-if="canChooseOtherVariant(line, returnLine)">
-								<div data-rbs-productreturn-variant-selector-container=""></div>
+						<div data-ng-if="canChooseOtherVariant(line, returnLine)">
+							<div data-rbs-productreturn-variant-selector-container=""
+								data-waiting-message="{{ i18n('m.rbs.productreturn.front.please_wait_loading_data', ['ucf']) }}">
 							</div>
 						</div>
 					</div>
-					<div class="form-group no-bottom-margin">
-						<div class="{{ fieldOffsetClasses }} {{ fieldColClasses }}">
-							<button type="button" class="btn btn-default pull-right"
-								data-ng-click="cancelLine(shipmentIndex, lineIndex, returnLineIndex)">
-								<span class="glyphicon glyphicon-remove"></span>
-								<span class="visible-md-inline visible-lg-inline">
-									{{ i18n('m.rbs.productreturn.front.cancel_returning_this_product', ['ucf']) }}
-								</span>
-							</button>
-							<button type="button" class="btn btn-primary"
-								data-ng-disabled="!isLineValid(line, returnLine)"
-								data-ng-click="validateLine(shipmentIndex, lineIndex, returnLineIndex)">
-								<span class="glyphicon glyphicon-ok"></span>
-								{{ i18n('m.rbs.productreturn.front.validate_returning_this_product', ['ucf']) }}
-							</button>
-						</div>
+				</div>
+				<div class="form-group no-bottom-margin">
+					<div class="{{ fieldOffsetClasses }} {{ fieldColClasses }}">
+						<button type="button" class="btn btn-default pull-right"
+							data-ng-click="cancelLine(shipmentIndex, lineIndex, returnLineIndex)">
+							<span class="glyphicon glyphicon-remove"></span>
+							<span class="visible-md-inline visible-lg-inline">
+								{{ i18n('m.rbs.productreturn.front.cancel_returning_this_product', ['ucf']) }}
+							</span>
+						</button>
+						<button type="button" class="btn btn-primary"
+							data-ng-disabled="!isLineValid(line, returnLine)"
+							data-ng-click="validateLine(shipmentIndex, lineIndex, returnLineIndex)">
+							<span class="glyphicon glyphicon-ok"></span>
+							{{ i18n('m.rbs.productreturn.front.validate_returning_this_product', ['ucf']) }}
+						</button>
 					</div>
-				</form>
-			{% endblock returnLineEdition %}
-		</div>
-	</script>
-{% endblock returnLine %}
+				</div>
+			</form>
+		</script>
+	{% endblock rbsProductreturnReturnLineEdition %}
 
-{% block reshippingVariants %}
-	<script type="text/ng-template" id="/rbsProductreturnVariantSelectorContainer.tpl">
-		<h3>{{ i18n('m.rbs.productreturn.front.select_variant', ['ucf']) }}</h3>
+	{% block rbsProductreturnVariantSelectorContainer %}
+		<script type="text/ng-template" id="/rbsProductreturnVariantSelectorContainer.tpl">
+			<h3>{{ i18n('m.rbs.productreturn.front.select_variant', ['ucf']) }}</h3>
 
-		<div data-rbs-catalog-variant-selector="" data-product-data="returnLine.productData"
-			data-ajax-data="data.productAjaxData" data-ajax-params="data.productAjaxParams">
-		</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div data-rbs-commerce-cart-line-visual="" data-product="returnLine.productData"></div>
+				</div>
+				<div class="col-sm-6">
+					<div data-rbs-catalog-variant-selector="" data-product-data="returnLine.productData"
+						data-ajax-data="data.productAjaxData" data-ajax-params="data.productAjaxParams">
+					</div>
 
-		<div data-ng-hide="returnLine.productData.stock.sku" class="alert warning">
-			{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}
-		</div>
-		<div data-ng-show="returnLine.productData.stock.sku" data-rbs-productreturn-product-availability=""
-			data-product-data="returnLine.productData"></div>
-	</script>
-{% endblock reshippingVariants %}
-
-{% block rbsProductreturnReshippingModes %}
-	<script type="text/ng-template" id="/rbsProductreturnReshippingModes.tpl">
-		<div class="panel panel-default">
-			<div class="panel-body" data-ng-if="hasCategory('store')">
-				<label>{{ i18n('m.rbs.commerce.front.store_delivery', ['ucf']) }}</label>
+					<div data-ng-hide="returnLine.productData.stock.sku" class="alert warning">
+						{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}
+					</div>
+					<div data-ng-show="returnLine.productData.stock.sku" data-rbs-productreturn-product-availability=""
+						data-product-data="returnLine.productData"></div>
+				</div>
 			</div>
-			<div class="panel-body" data-ng-if="hasCategory('relay')">
-				<label>{{ i18n('m.rbs.commerce.front.relay_delivery', ['ucf']) }}</label>
+		</script>
+	{% endblock rbsProductreturnVariantSelectorContainer %}
+{% endblock rbsProductreturnReturnLine %}
+
+{% block rbsProductreturnReshipping %}
+	{% block rbsProductreturnReshippingModes %}
+		<script type="text/ng-template" id="/rbsProductreturnReshippingModes.tpl">
+			<div class="panel panel-default">
+				<div class="panel-body" data-ng-if="hasCategory('store')">
+					<label>{{ i18n('m.rbs.commerce.front.store_delivery', ['ucf']) }}</label>
+				</div>
+				<div class="panel-body" data-ng-if="hasCategory('relay')">
+					<label>{{ i18n('m.rbs.commerce.front.relay_delivery', ['ucf']) }}</label>
+				</div>
+				<div class="panel-body" data-ng-if="hasCategory('atHome')">
+					<label>{{ i18n('m.rbs.commerce.front.at_home_delivery', ['ucf']) }}</label>
+					<div data-rbs-productreturn-reshipping-at-home="" data-reshipping-data="returnData.reshippingData"
+						data-user-id="accessorId" data-user-addresses="userAddresses"
+						data-reshipping-mode-definitions="processData.reshippingModes.atHome"></div>
+				</div>
 			</div>
-			<div class="panel-body" data-ng-if="hasCategory('atHome')">
-				<label>{{ i18n('m.rbs.commerce.front.at_home_delivery', ['ucf']) }}</label>
-				<div data-rbs-productreturn-reshipping-at-home="" data-reshipping-data="returnData.reshippingData"
-					data-user-id="accessorId" data-user-addresses="userAddresses"
-					data-reshipping-mode-definitions="processData.reshippingModes.atHome"></div>
-			</div>
-		</div>
-		<div class="clearfix"></div>
-	</script>
+			<div class="clearfix"></div>
+		</script>
+	{% endblock rbsProductreturnReshippingModes %}
 
 	{% block rbsProductreturnReshippingAtHome %}
 		<script type="text/ng-template" id="/rbsProductreturnReshippingAtHome.tpl">
@@ -371,4 +383,4 @@
 			</div>
 		</script>
 	{% endblock rbsProductreturnReshippingAtHome %}
-{% endblock rbsProductreturnReshippingModes %}
+{% endblock rbsProductreturnReshipping %}

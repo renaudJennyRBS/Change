@@ -207,7 +207,9 @@ class OrderDataComposer
 	{
 		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats,
 			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
-			'data' => ['webStoreId' => $this->order->getWebStoreId()], 'detailed' => false];
+			'data' => ['webStoreId' => $this->order->getWebStoreId()], 'detailed' => false,
+			'dataSetNames' => ['rootProduct' => null]
+		];
 	}
 
 	protected function generateLinesDataSet()
