@@ -178,3 +178,9 @@
 		</table>
 	</div>
 {% endblock returnLines %}
+
+{% block returnShipments %}
+	{% if return.shipments | length %}
+		{% include 'Rbs_Order/shipment-list.twig' with {'shipments': return.shipments, 'blockId': blockId} %}
+	{% endif %}
+{% endblock returnShipments %}

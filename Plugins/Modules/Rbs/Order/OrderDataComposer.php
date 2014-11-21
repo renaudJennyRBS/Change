@@ -20,6 +20,11 @@ class OrderDataComposer
 	protected $order;
 
 	/**
+	 * @var \Change\Documents\ModelManager
+	 */
+	protected $modelManager;
+
+	/**
 	 * @var \Rbs\Order\OrderManager
 	 */
 	protected $orderManager;
@@ -59,6 +64,7 @@ class OrderDataComposer
 		$context = $event->getParam('context');
 		$this->setContext(is_array($context) ? $context : []);
 		$this->setServices($event->getApplicationServices());
+		$this->modelManager = $event->getApplicationServices()->getModelManager();
 
 		/** @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -422,11 +428,31 @@ class OrderDataComposer
 		}
 	}
 
+	// Shipments.
+
+	/**
+	 * @return array
+	 */
+	protected function getShipmentContext()
+	{
+		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats,
+			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
+			'data' => ['webStoreId' => $this->order->getWebStoreId()], 'detailed' => $this->detailed
+		];
+	}
+
 	protected function generateMinimalShipmentsDataSet()
 	{
 		$this->dataSets['shipments'] = [];
 		$query = $this->documentManager->getNewQuery('Rbs_Order_Shipment');
 		$query->andPredicates($query->eq('orderId', $this->order->getId()), $query->eq('prepared', true));
+		if (!isset($this->data['includeReturnRelatedShipments']) || !$this->data['includeReturnRelatedShipments'])
+		{
+			$model = $this->modelManager->getModelByName('Rbs_Productreturn_Shipment');
+			$query->andPredicates(
+				$query->notIn('model', array_merge(['Rbs_Productreturn_Shipment'], $model->getDescendantsNames()))
+			);
+		}
 		foreach ($query->getDocumentIds() as $id)
 		{
 			$this->dataSets['shipments'][] = ['common' => ['id' => $id]];
@@ -436,90 +462,36 @@ class OrderDataComposer
 	protected function generateFullShipmentsDataSet()
 	{
 		$this->dataSets['shipments'] = [];
-		$productContext = $this->getProductLineContext();
+		$shipmentContext = $this->getShipmentContext();
 		$query = $this->documentManager->getNewQuery('Rbs_Order_Shipment');
 		$query->andPredicates($query->eq('orderId', $this->order->getId()), $query->eq('prepared', true));
+		if (!isset($this->data['includeReturnRelatedShipments']) || !$this->data['includeReturnRelatedShipments'])
+		{
+			$model = $this->modelManager->getModelByName('Rbs_Productreturn_Shipment');
+			$query->andPredicates(
+				$query->notIn('model', array_merge(['Rbs_Productreturn_Shipment'], $model->getDescendantsNames()))
+			);
+		}
 		foreach ($query->getDocuments() as $shipment)
 		{
 			/** @var \Rbs\Order\Documents\Shipment $shipment */
-			$this->dataSets['shipments'][] = $this->generateShipmentData($shipment, $productContext);
+			$this->dataSets['shipments'][] = $this->orderManager->getShipmentData($shipment, $shipmentContext);
 		}
 	}
 
-	/**
-	 * @param \Rbs\Order\Documents\Shipment $shipment
-	 * @param array $productContext
-	 * @return array
-	 */
-	protected function generateShipmentData($shipment, $productContext = null)
-	{
-		$data = [
-			'common' => [
-				'id' => $shipment->getId(),
-				'code' => $shipment->getCode(),
-				'parcelCode' => $shipment->getParcelCode(),
-				'shippingModeCode' => $shipment->getShippingModeCode(),
-				'trackingCode' => $shipment->getTrackingCode(),
-				'carrierStatus' => $shipment->getCarrierStatus()
-			]
-		];
-
-		if ($shipment->getShippingDate())
-		{
-			$data['common']['shippingDate'] = $this->formatDate($shipment->getShippingDate());
-		}
-		if ($shipment->getDeliveryDate())
-		{
-			$data['common']['deliveryDate'] = $this->formatDate($shipment->getDeliveryDate());
-		}
-
-		// Handle tracking URL.
-		$modeId = $shipment->getContext()->get('shippingModeId');
-		$trackingCode = $shipment->getTrackingCode();
-		if ($modeId && $trackingCode)
-		{
-			$mode = $this->documentManager->getDocumentInstance($modeId);
-			if ($mode instanceof \Rbs\Shipping\Documents\Mode)
-			{
-				$urlTemplate = $mode->getTrackingUrlTemplate();
-				if ($urlTemplate)
-				{
-					$data['common']['trackingUrl'] = str_replace('{CODE}', $trackingCode, $urlTemplate);
-				}
-			}
-		}
-
-		$data['context'] = $shipment->getContext()->toArray();
-
-		$data['lines'] = [];
-		foreach ($shipment->getLines() as $line)
-		{
-			$lineData = $line->toArray();
-
-			// The product data are set only if the line is not linked to an order line because order lines already contain them.
-			if ($productContext && !isset($lineData['options']['lineKey']) && isset($lineData['options']['productId']))
-			{
-				$productData = $this->catalogManager->getProductData($lineData['options']['productId'], $productContext);
-				if (count($productData))
-				{
-					$lineData['product'] = $productData;
-				}
-			}
-
-			$data['lines'][] = $lineData;
-		}
-
-		$data['address'] = $shipment->getAddress(); // TODO: same format than WS on addresses
-
-		return $data;
-	}
+	// Product returns.
 
 	/**
 	 * @return array
 	 */
 	protected function getProductReturnContext()
 	{
-		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats,
+		$dataSetNames = [];
+		if ($this->hasDataSet('shipments'))
+		{
+			$dataSetNames['shipments'] = true;
+		}
+		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats, 'dataSetNames' => $dataSetNames,
 			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
 			'data' => ['webStoreId' => $this->order->getWebStoreId()], 'detailed' => $this->detailed];
 	}
@@ -531,7 +503,6 @@ class OrderDataComposer
 		$query->andPredicates($query->eq('orderId', $this->order->getId()));
 		foreach ($query->getDocumentIds() as $id)
 		{
-			/** @var \Rbs\Order\Documents\Shipment $shipment */
 			$this->dataSets['returns'][] = ['common' => ['id' => $id]];
 		}
 	}

@@ -66,7 +66,8 @@
 								line.product = line['orderLine'].product;
 							}
 						}
-						else if (angular.isObject(line['shipmentLine'].product)) {
+
+						if (angular.isObject(line['shipmentLine'].product)) {
 							line.product = line['shipmentLine'].product;
 						}
 

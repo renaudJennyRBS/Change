@@ -118,6 +118,15 @@ class ProductReturnDataComposer
 		{
 			$this->generateReshippingDataSet();
 		}
+
+		if ($this->hasDataSet('shipments'))
+		{
+			$this->generateFullShipmentsDataSet();
+		}
+		else
+		{
+			$this->generateMinimalShipmentsDataSet();
+		}
 	}
 
 	protected function generateURLData()
@@ -177,7 +186,7 @@ class ProductReturnDataComposer
 	protected function getProductLineContext()
 	{
 		$order = $this->return->getOrderIdInstance();
-		$webStoreId = $order ? $this->return->getOrderIdInstance()->getWebStoreId() : null;
+		$webStoreId = $order ? $order->getWebStoreId() : null;
 		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats,
 			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
 			'data' => ['webStoreId' => $webStoreId], 'detailed' => false];
@@ -262,6 +271,45 @@ class ProductReturnDataComposer
 		{
 			$this->dataSets['reshippingMode']['id'] = $this->return->getContext()->get('reshippingModeId');
 			$this->dataSets['reshippingMode']['title'] = $this->return->getContext()->get('reshippingModeTitle');
+		}
+	}
+
+	// Shipments.
+
+	/**
+	 * @return array
+	 */
+	protected function getShipmentContext()
+	{
+		$order = $this->return->getOrderIdInstance();
+		$webStoreId = $order ? $order->getWebStoreId() : null;
+		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats,
+			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
+			'data' => ['webStoreId' => $webStoreId], 'detailed' => $this->detailed
+		];
+	}
+
+	protected function generateMinimalShipmentsDataSet()
+	{
+		$this->dataSets['shipments'] = [];
+		$query = $this->documentManager->getNewQuery('Rbs_Productreturn_Shipment');
+		$query->andPredicates($query->eq('productReturnId', $this->return->getId()), $query->eq('prepared', true));
+		foreach ($query->getDocumentIds() as $id)
+		{
+			$this->dataSets['shipments'][] = ['common' => ['id' => $id]];
+		}
+	}
+
+	protected function generateFullShipmentsDataSet()
+	{
+		$this->dataSets['shipments'] = [];
+		$shipmentContext = $this->getShipmentContext();
+		$query = $this->documentManager->getNewQuery('Rbs_Productreturn_Shipment');
+		$query->andPredicates($query->eq('productReturnId', $this->return->getId()), $query->eq('prepared', true));
+		foreach ($query->getDocuments() as $shipment)
+		{
+			/** @var \Rbs\Order\Documents\Shipment $shipment */
+			$this->dataSets['shipments'][] = $this->orderManager->getShipmentData($shipment, $shipmentContext);
 		}
 	}
 }

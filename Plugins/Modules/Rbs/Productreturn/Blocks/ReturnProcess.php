@@ -132,6 +132,8 @@ class ReturnProcess extends \Change\Presentation\Blocks\Standard\Block
 		$context->setVisualFormats($parameters->getParameter('imageFormats'));
 		$context->setURLFormats(['canonical']);
 		$context->setDataSetNames(['shipments', 'returns']);
+		// Reshipped products can be returned again.
+		$context->setData(['includeReturnRelatedShipments' => true]);
 		return $context;
 	}
 
