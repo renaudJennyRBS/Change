@@ -56,7 +56,7 @@ class OrderPresentation
 	/**
 	 * @var float
 	 */
-	protected $linesAmount;
+	protected $linesAmountWithoutTaxes;
 
 	/**
 	 * @var float
@@ -66,7 +66,7 @@ class OrderPresentation
 	/**
 	 * @var float
 	 */
-	protected $totalAmount;
+	protected $totalAmountWithoutTaxes;
 
 	/**
 	 * @var float
@@ -76,7 +76,7 @@ class OrderPresentation
 	/**
 	 * @var float
 	 */
-	protected $paymentAmountWithTaxes;
+	protected $paymentAmount;
 
 	/**
 	 * @var string
@@ -172,11 +172,11 @@ class OrderPresentation
 		$this->setCartIdentifier($order->getContext()->get('cartIdentifier'));
 		$this->setCurrencyCode($order->getCurrencyCode());
 		$this->setDate($order->getCreationDate());
-		$this->setLinesAmount($order->getLinesAmount());
+		$this->setLinesAmountWithoutTaxes($order->getLinesAmountWithoutTaxes());
 		$this->setLinesAmountWithTaxes($order->getLinesAmountWithTaxes());
-		$this->setTotalAmount($order->getTotalAmount());
+		$this->setTotalAmountWithoutTaxes($order->getTotalAmountWithoutTaxes());
 		$this->setTotalAmountWithTaxes($order->getTotalAmountWithTaxes());
-		$this->setPaymentAmountWithTaxes($order->getPaymentAmountWithTaxes());
+		$this->setPaymentAmount($order->getPaymentAmount());
 		$itemCount = 0;
 		foreach ($order->getLines() as $line)
 		{
@@ -206,11 +206,11 @@ class OrderPresentation
 		$this->setCartIdentifier($cart->getIdentifier());
 		$this->setCurrencyCode($cart->getCurrencyCode());
 		$this->setDate($cart->lastUpdate());
-		$this->setLinesAmount($cart->getLinesAmount());
+		$this->setLinesAmountWithoutTaxes($cart->getLinesAmountWithoutTaxes());
 		$this->setLinesAmountWithTaxes($cart->getLinesAmountWithTaxes());
-		$this->setTotalAmount($cart->getTotalAmount());
+		$this->setTotalAmountWithoutTaxes($cart->getTotalAmountWithoutTaxes());
 		$this->setTotalAmountWithTaxes($cart->getTotalAmountWithTaxes());
-		$this->setPaymentAmountWithTaxes($cart->getPaymentAmountWithTaxes());
+		$this->setPaymentAmount($cart->getPaymentAmount());
 		$itemCount = 0;
 		foreach ($cart->getLines() as $line)
 		{
@@ -265,25 +265,25 @@ class OrderPresentation
 		{
 			$this->setDate($array['date']);
 		}
-		if (isset($array['linesAmount']))
+		if (isset($array['linesAmountWithoutTaxes']))
 		{
-			$this->setLinesAmount($array['linesAmount']);
+			$this->setLinesAmountWithoutTaxes($array['linesAmountWithoutTaxes']);
 		}
 		if (isset($array['linesAmountWithTaxes']))
 		{
 			$this->setLinesAmountWithTaxes($array['linesAmountWithTaxes']);
 		}
-		if (isset($array['totalAmount']))
+		if (isset($array['totalAmountWithoutTaxes']))
 		{
-			$this->setTotalAmount($array['totalAmount']);
+			$this->setTotalAmountWithoutTaxes($array['totalAmountWithoutTaxes']);
 		}
 		if (isset($array['totalAmountWithTaxes']))
 		{
 			$this->setTotalAmountWithTaxes($array['totalAmountWithTaxes']);
 		}
-		if (isset($array['paymentAmountWithTaxes']))
+		if (isset($array['paymentAmount']))
 		{
-			$this->setPaymentAmountWithTaxes($array['paymentAmountWithTaxes']);
+			$this->setPaymentAmount($array['paymentAmount']);
 		}
 		if (isset($array['itemCount']))
 		{
@@ -491,21 +491,21 @@ class OrderPresentation
 	}
 
 	/**
-	 * @param float $linesAmount
+	 * @param float $linesAmountWithoutTaxes
 	 * @return $this
 	 */
-	public function setLinesAmount($linesAmount)
+	public function setLinesAmountWithoutTaxes($linesAmountWithoutTaxes)
 	{
-		$this->linesAmount = $linesAmount;
+		$this->linesAmountWithoutTaxes = $linesAmountWithoutTaxes;
 		return $this;
 	}
 
 	/**
 	 * @return float
 	 */
-	public function getLinesAmount()
+	public function getLinesAmountWithoutTaxes()
 	{
-		return $this->linesAmount;
+		return $this->linesAmountWithoutTaxes;
 	}
 
 	/**
@@ -530,18 +530,18 @@ class OrderPresentation
 	 * @param float $amount
 	 * @return $this
 	 */
-	public function setTotalAmount($amount)
+	public function setTotalAmountWithoutTaxes($amount)
 	{
-		$this->totalAmount = $amount;
+		$this->totalAmountWithoutTaxes = $amount;
 		return $this;
 	}
 
 	/**
 	 * @return float
 	 */
-	public function getTotalAmount()
+	public function getTotalAmountWithoutTaxes()
 	{
-		return $this->totalAmount;
+		return $this->totalAmountWithoutTaxes;
 	}
 
 	/**
@@ -580,21 +580,21 @@ class OrderPresentation
 	}
 
 	/**
-	 * @param float $paymentAmountWithTaxes
+	 * @param float $paymentAmount
 	 * @return $this
 	 */
-	public function setPaymentAmountWithTaxes($paymentAmountWithTaxes)
+	public function setPaymentAmount($paymentAmount)
 	{
-		$this->paymentAmountWithTaxes = $paymentAmountWithTaxes;
+		$this->paymentAmount = $paymentAmount;
 		return $this;
 	}
 
 	/**
 	 * @return float
 	 */
-	public function getPaymentAmountWithTaxes()
+	public function getPaymentAmount()
 	{
-		return $this->paymentAmountWithTaxes;
+		return $this->paymentAmount;
 	}
 
 	/**

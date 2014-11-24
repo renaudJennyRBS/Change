@@ -17,6 +17,30 @@ use Rbs\Catalog\Product\ProductManager;
  */
 class Collections
 {
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function addSpecificationDisplayMode(\Change\Events\Event $event)
+	{
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
+		{
+			$i18n = $applicationServices->getI18nManager();
+			$items = [
+				'table' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_table', array('ucf')),
+				'accordion' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_accordion', array('ucf')),
+				'tabs' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_tabs', array('ucf')),
+				'flat' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_flat', array('ucf'))
+			];
+			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_SpecificationDisplayMode', $items);
+			$event->setParam('collection', $collection);
+			$event->stopPropagation();
+		}
+	}
+
+
+
 	/**
 	 * @param \Change\Events\Event $event
 	 */

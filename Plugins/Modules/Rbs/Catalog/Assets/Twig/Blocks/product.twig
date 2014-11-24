@@ -1,0 +1,16 @@
+{% block productDirectives %}
+	{% include 'Rbs_Catalog/product-directives.twig' %}
+{% endblock %}
+{% if productData.common.type == 'variant' %}
+	{% block variantProduct %}
+		{% include 'Rbs_Catalog/Blocks/Product/detail-variant.twig' %}
+	{% endblock %}
+{% elseif productData.common.type == 'set' %}
+	{% block productSet %}
+		{% include 'Rbs_Catalog/Blocks/Product/detail-set.twig' %}
+	{% endblock %}
+{% else %}
+	{% block simpleProduct %}
+		{% include 'Rbs_Catalog/Blocks/Product/detail-simple.twig' %}
+	{% endblock %}
+{% endif %}

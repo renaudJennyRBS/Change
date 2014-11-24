@@ -30,7 +30,8 @@ class ProductInformation extends Information
 		$this->addInformationMeta('activateZoom', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_activate_zoom', $ucf));
 		$this->addInformationMeta('attributesDisplayMode', Property::TYPE_STRING, false, 'table')
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_attributes_display_mode', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_attributes_display_mode', $ucf))
+			->setCollectionCode('Rbs_Catalog_SpecificationDisplayMode');
 
 		$this->addTTL(60);
 	}

@@ -8,9 +8,6 @@
 	"mode_description":{
 		"message":"description"
 	},
-	"mode_hasaddress":{
-		"message":"adresse nécessaire"
-	},
 	"mode_cartfilterdata":{
 		"message":"critères d'application"
 	},

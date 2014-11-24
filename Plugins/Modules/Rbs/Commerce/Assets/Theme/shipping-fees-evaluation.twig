@@ -10,28 +10,28 @@
 				<div data-ng-hide="data.countriesCount > 1" data-ng-cloak="" class="form-control-static">(= data.countries[0].title =)</div>
 			</div>
 		</div>
-		<div class="row" data-ng-repeat="mode in currentShippingModes">
+		<div class="row" data-ng-repeat="mode in currentShippingModes track by $index">
 			<div class="col-xs-6 col-md-4">
-				<img data-ng-src="(= mode.visualUrl =)" alt="" class="img-responsive" />
+				<img data-ng-show="mode.presentation.visual"
+						alt="(= mode.presentation.visual.alt =)"
+						data-ng-src="(= mode.presentation.visual.detailThumbnail =)" class="img-responsive" />
 			</div>
 			<div class="col-xs-6 col-md-8">
 				<div class="row">
 					<div class="col-xs-6">
-						<strong>(= mode.title =)</strong>
+						<strong>(= mode.common.title =)</strong>
 					</div>
-					<div class="col-xs-6 price">
-							<span data-ng-show="mode.amount != null && mode.amount > 0">
-								<span data-ng-show="displayPrices">(= mode.formattedAmount =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr></span>
-								<span data-ng-show="displayPricesWithTax">(= mode.formattedAmountWithTax =) <abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr></span>
-							</span>
-							<span data-ng-hide="mode.amount != null && mode.amount > 0">
+					<div class="col-xs-6 price" data-ng-show="displayPricesWithoutTax || displayPricesWithTax">
+						<span data-ng-show="displayPricesWithoutTax && mode.fee.amountWithoutTaxes">(= mode.fee.amountWithoutTaxes | rbsFormatPrice:mode.fee.currencyCode  =)
+							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr></span>
+						<span data-ng-show="displayPricesWithTax && mode.fee.amountWithTaxes">(= mode.fee.amountWithTaxes | rbsFormatPrice:mode.fee.currencyCode =)</span>
+						<span data-ng-hide="mode.fee.amountWithoutTaxes || mode.fee.amountWithTaxes">
 								{{ i18n('m.rbs.commerce.front.shipping_fees_evaluation_free', ['ucf']) }}
-							</span>
+						</span>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-xs-12" data-ng-bind-html="trustHtml(mode.description)">
-					</div>
+					<div class="col-xs-12" data-ng-bind-html="trustHtml(mode.presentation.description)"></div>
 				</div>
 			</div>
 		</div>

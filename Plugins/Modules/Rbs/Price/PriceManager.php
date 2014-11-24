@@ -412,7 +412,7 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$result = [];
 		$value = $price->getValue();
-		if ($value === null || $value == 0.0)
+		if ($value === null || $value == 0.0 || !$zone || !$currencyCode)
 		{
 			return $result;
 		}

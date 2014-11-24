@@ -18,7 +18,7 @@
 
 		<property name="contentData" type="JSON" internal="true" />
 
-		<property name="paymentAmountWithTaxes" type="Decimal" />
+		<property name="paymentAmount" type="Decimal" />
 
 		<property name="processingStatus" type="String" default-value="edition">
 			<dboptions length="10" />

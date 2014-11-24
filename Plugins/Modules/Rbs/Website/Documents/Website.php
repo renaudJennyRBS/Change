@@ -371,7 +371,7 @@ class Website extends \Compilation\Rbs\Website\Documents\Website implements \Cha
 				}
 				catch (\Exception $e)
 				{
-					$applicationServices->getLogging()->fatal($e);
+					$applicationServices->getLogging()->exception($e);
 					$applicationServices->getDocumentManager()->popLCID();
 				}
 			}

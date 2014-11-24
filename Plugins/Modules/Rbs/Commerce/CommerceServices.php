@@ -9,7 +9,6 @@
 namespace Rbs\Commerce;
 
 use Change\Application;
-use Change\Events\EventsCapableTrait;
 use Change\Services\ApplicationServices;
 use Zend\Di\Di;
 

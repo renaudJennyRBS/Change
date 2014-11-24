@@ -31,5 +31,8 @@
 	},
 	"error_user_not_connected":{
 		"message":"utilisateur non connecté"
+	},
+	"select":{
+		"message":"sélectionner"
 	}
 }

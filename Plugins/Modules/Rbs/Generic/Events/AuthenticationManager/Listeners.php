@@ -29,10 +29,15 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (Event $event)
 		{
-			$loginListener = new \Rbs\User\Events\Login();
-			$loginListener->execute($event);
+			(new \Rbs\User\Events\Login())->execute($event);
 		};
-		$events->attach(array(AuthenticationManager::EVENT_LOGIN, AuthenticationManager::EVENT_BY_USER_ID), $callback, 5);
+		$events->attach([AuthenticationManager::EVENT_LOGIN, AuthenticationManager::EVENT_BY_USER_ID], $callback, 5);
+
+		$callback = function (Event $event)
+		{
+			(new \Rbs\User\Events\Logout())->execute($event);
+		};
+		$events->attach(AuthenticationManager::EVENT_LOGOUT, $callback, 5);
 	}
 
 	/**

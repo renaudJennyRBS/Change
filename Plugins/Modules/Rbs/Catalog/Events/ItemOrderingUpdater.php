@@ -46,7 +46,7 @@ class ItemOrderingUpdater
 				$sku = $document->getSku();
 				if ($sku instanceof \Rbs\Stock\Documents\Sku)
 				{
-					$products = $commerceServices->getCatalogManager()->getProductsBySku($sku, false);
+					$products = $commerceServices->getCatalogManager()->getProductsBySku($sku);
 					foreach ($products as $product)
 					{
 						$commerceServices->getCatalogManager()->updateItemsOrdering($product);
@@ -72,7 +72,7 @@ class ItemOrderingUpdater
 				$modifiedPropertyNames = $event->getParam('modifiedPropertyNames', []);
 				if (count(array_intersect(['thresholds', 'unlimitedInventory'], $modifiedPropertyNames)))
 				{
-					$products = $commerceServices->getCatalogManager()->getProductsBySku($document, false);
+					$products = $commerceServices->getCatalogManager()->getProductsBySku($document);
 					foreach ($products as $product)
 					{
 						$commerceServices->getCatalogManager()->updateItemsOrdering($product);
@@ -99,39 +99,22 @@ class ItemOrderingUpdater
 				$sku = $document->getSku();
 				if ($sku instanceof \Rbs\Stock\Documents\Sku)
 				{
-					$products = $catalogManager->getProductsBySku($sku, false);
+					$products = $catalogManager->getProductsBySku($sku);
 					foreach ($products as $product)
 					{
 						$catalogManager->updateItemsOrdering($product);
-						$variantGroup = $product->getVariantGroup();
-						if ($variantGroup)
+
+						$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductSet');
+						$query->andPredicates($query->eq('products', $product));
+						$productSets = $query->getDocuments();
+
+						/** @var $productSet \Rbs\Catalog\Documents\ProductSet */
+						foreach ($productSets as $productSet)
 						{
-							$rootProduct = $variantGroup->getRootProduct();
-							if ($rootProduct && $rootProduct !== $product)
+							$rootProduct = $productSet->getRootProduct();
+							if ($rootProduct)
 							{
 								$catalogManager->updateItemsOrdering($rootProduct);
-							}
-							foreach ($variantGroup->getVariantProducts(false) as $variantProduct)
-							{
-								if ($product !== $variantProduct)
-								{
-									$catalogManager->updateItemsOrdering($variantProduct);
-								}
-							}
-						}
-						else
-						{
-							$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Catalog_ProductSet');
-							$query->andPredicates($query->eq('products', $product));
-							$productSets = $query->getDocuments();
-							/** @var $productSet \Rbs\Catalog\Documents\ProductSet */
-							foreach ($productSets as $productSet)
-							{
-								$rootProduct = $productSet->getRootProduct();
-								if ($rootProduct)
-								{
-									$catalogManager->updateItemsOrdering($rootProduct);
-								}
 							}
 						}
 					}
@@ -160,12 +143,11 @@ class ItemOrderingUpdater
 					if ($sku instanceof \Rbs\Stock\Documents\Sku && $commerceServices instanceof \Rbs\Commerce\CommerceServices)
 					{
 						$catalogManager = $commerceServices->getCatalogManager();
-						$products = $catalogManager->getProductsBySku($sku, false);
+						$products = $catalogManager->getProductsBySku($sku);
 						foreach ($products as $product)
 						{
 							if ($product instanceof \Rbs\Catalog\Documents\Product)
 							{
-								$event->getApplication()->getLogging()->fatal('updateItemsOrdering ' . $document->__toString());
 								$catalogManager->updateItemsOrdering($product);
 							}
 						}

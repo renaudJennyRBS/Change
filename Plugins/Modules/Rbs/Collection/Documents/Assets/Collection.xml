@@ -4,7 +4,7 @@
 	editable="true">
 	<properties>
 		<property name="items" type="InlineArray">
-			<inline name="CollectionItem" editable="true" localized="true">
+			<inline name="CollectionItem" editable="true" localized="true" >
 				<properties>
 					<property name="title" type="String" localized="true" />
 					<property name="value" type="String" />

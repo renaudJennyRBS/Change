@@ -55,7 +55,6 @@ class SharedListeners implements SharedListenerAggregateInterface
 		$eventNames = array('documents.created', 'documents.updated');
 		$events->attach('Rbs_Website_Website', $eventNames, $callback, 5);
 
-
 		$callback = function ($event)
 		{
 			if ($event instanceof \Change\Documents\Events\Event)

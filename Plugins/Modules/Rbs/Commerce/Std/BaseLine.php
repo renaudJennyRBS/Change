@@ -48,7 +48,7 @@ class BaseLine implements LineInterface
 	/**
 	 * @var float|null
 	 */
-	protected $amount;
+	protected $amountWithoutTaxes;
 
 	/**
 	 * @var float|null
@@ -58,7 +58,7 @@ class BaseLine implements LineInterface
 	/**
 	 * @var float|null
 	 */
-	protected $basedAmount;
+	protected $basedAmountWithoutTaxes;
 
 	/**
 	 * @var float|null
@@ -229,40 +229,41 @@ class BaseLine implements LineInterface
 	}
 
 	/**
-	 * @param float|null $amount
+	 * @param float|null $amountWithoutTaxes
 	 * @return $this
 	 */
-	public function setAmount($amount)
+	public function setAmountWithoutTaxes($amountWithoutTaxes)
 	{
-		$this->amount = $amount;
+		$this->amountWithoutTaxes = $amountWithoutTaxes;
 		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getAmount()
+	public function getAmountWithoutTaxes()
 	{
-		return $this->amount;
+		return $this->amountWithoutTaxes;
 	}
 
 	/**
-	 * @param float|null $basedAmount
+	 * @param float|null $basedAmountWithoutTaxes
 	 * @return $this
 	 */
-	public function setBasedAmount($basedAmount)
+	public function setBasedAmountWithoutTaxes($basedAmountWithoutTaxes)
 	{
-		$this->basedAmount = $basedAmount;
+		$this->basedAmountWithoutTaxes = $basedAmountWithoutTaxes;
 		return $this;
 	}
 
 	/**
 	 * @return float|null
 	 */
-	public function getBasedAmount()
+	public function getBasedAmountWithoutTaxes()
 	{
-		return $this->basedAmount;
+		return $this->basedAmountWithoutTaxes;
 	}
+
 
 	/**
 	 * @param float|null $basedAmountWithTaxes
@@ -351,13 +352,15 @@ class BaseLine implements LineInterface
 					}
 					break;
 				case 'amount':
-					$this->setAmount($value);
+				case 'amountWithoutTaxes':
+					$this->setAmountWithoutTaxes($value);
 					break;
 				case 'amountWithTaxes':
 					$this->setAmountWithTaxes($value);
 					break;
 				case 'basedAmount':
-					$this->setBasedAmount($value);
+				case 'basedAmountWithoutTaxes':
+					$this->setBasedAmountWithoutTaxes($value);
 					break;
 				case 'basedAmountWithTaxes':
 					$this->setBasedAmountWithTaxes($value);
@@ -385,9 +388,9 @@ class BaseLine implements LineInterface
 			'designation' => $this->designation,
 			'items' => array(),
 			'taxes' => array(),
-			'amount' => $this->amount,
+			'amountWithoutTaxes' => $this->amountWithoutTaxes,
 			'amountWithTaxes' => $this->amountWithTaxes,
-			'basedAmount' => $this->basedAmount,
+			'basedAmountWithoutTaxes' => $this->basedAmountWithoutTaxes,
 			'basedAmountWithTaxes' => $this->basedAmountWithTaxes,
 			'options' => count($options) ? $options : null
 		];
@@ -432,10 +435,10 @@ class BaseLine implements LineInterface
 		}
 
 		$this->setAmountWithTaxes($line->getAmountWithTaxes());
-		$this->setAmount($line->getAmount());
+		$this->setAmountWithoutTaxes($line->getAmountWithoutTaxes());
 
 		$this->setBasedAmountWithTaxes($line->getBasedAmountWithTaxes());
-		$this->setBasedAmount($line->getBasedAmount());
+		$this->setBasedAmountWithoutTaxes($line->getBasedAmountWithoutTaxes());
 		return $this;
 	}
 
@@ -467,12 +470,14 @@ class BaseLine implements LineInterface
 		return $item;
 	}
 
+
+
 	/**
 	 * @return float|null
 	 */
-	public function getUnitAmount()
+	public function getUnitAmountWithoutTaxes()
 	{
-		$value = $this->getAmount();
+		$value = $this->getAmountWithoutTaxes();
 		if ($value !== null && $this->getQuantity())
 		{
 			return $value / floatval($this->getQuantity());
@@ -493,12 +498,13 @@ class BaseLine implements LineInterface
 		return null;
 	}
 
+
 	/**
 	 * @return float|null
 	 */
-	public function getUnitBasedAmount()
+	public function getUnitBasedAmountWithoutTaxes()
 	{
-		$value = $this->getBasedAmount();
+		$value = $this->getBasedAmountWithoutTaxes();
 		if ($value !== null && $this->getQuantity())
 		{
 			return $value / floatval($this->getQuantity());
@@ -517,5 +523,57 @@ class BaseLine implements LineInterface
 			return $value / floatval($this->getQuantity());
 		}
 		return null;
+	}
+
+	/**
+	 * @deprecated
+	 * @param $amount
+	 * @return \Rbs\Commerce\Std\BaseLine
+	 */
+	public function setAmount($amount)
+	{
+		return $this->setAmountWithoutTaxes($amount);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function getAmount()
+	{
+		return $this->getAmountWithoutTaxes();
+	}
+
+	/**
+	 * @deprecated
+	 * @param $basedAmount
+	 * @return \Rbs\Commerce\Std\BaseLine
+	 */
+	public function setBasedAmount($basedAmount)
+	{
+		return $this->setBasedAmountWithoutTaxes($basedAmount);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function getBasedAmount()
+	{
+		return $this->getBasedAmountWithoutTaxes();
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function getUnitAmount()
+	{
+		return $this->getUnitAmountWithoutTaxes();
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public function getUnitBasedAmount()
+	{
+		return $this->getUnitBasedAmountWithoutTaxes();
 	}
 }

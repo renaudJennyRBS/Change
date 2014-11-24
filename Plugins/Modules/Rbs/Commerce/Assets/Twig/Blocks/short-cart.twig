@@ -1,6 +1,6 @@
-<script type="text/ng-template" id="/shortCart.tpl">
-	<div data-ng-show="cart">
-		<div data-ng-show="cart" class="dropdown">
+<script type="text/ng-template" id="/rbsShortCart.tpl">
+	<div>
+		<div data-ng-show="cart.lines.length" class="dropdown">
 			<a href="#" data-toggle="dropdown" class="dropdown-toggle">
 				<i class="glyphicon glyphicon-shopping-cart"></i>
 				{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
@@ -13,27 +13,22 @@
 					<span data-ng-show="cart.lines.length == 1">{{ i18n('m.rbs.commerce.front.article') }}</span>
 					<span data-ng-show="cart.lines.length > 1">{{ i18n('m.rbs.commerce.front.articles') }}</span>
 				</li>
-					{% if parameters.displayPrices or parameters.displayPricesWithTax %}
-						<li class="divider"></li>
-						{% if parameters.displayPrices %}
-							<li class="dropdown-text price">
-								(= cart.context.formattedLinesAmount =)
-								<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
-							</li>
-						{% endif %}
-						{% if parameters.displayPricesWithTax %}
-							<li class="dropdown-text price">
-								(= cart.context.formattedLinesAmountWithTaxes =)
-								<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
-							</li>
-						{% endif %}
-						<li class="dropdown-text">{{ i18n('m.rbs.commerce.front.excluding_fees') }}</li>
-					{% endif %}
+
+				<li class="divider" data-ng-show="parameters.displayPricesWithoutTax || parameters.displayPricesWithTax"></li>
+				<li class="dropdown-text price" data-ng-show="parameters.displayPricesWithoutTax">
+					(= cart.amounts.linesAmountWithoutTaxes | rbsFormatPrice:cart.common.currencyCode =)
+					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
+				</li>
+				<li class="dropdown-text price" data-ng-show="parameters.displayPricesWithTax">
+					(= cart.amounts.linesAmountWithTaxes | rbsFormatPrice:cart.common.currencyCode =)
+				</li>
+				<li class="dropdown-text" data-ng-show="parameters.displayPricesWithoutTax || parameters.displayPricesWithTax">{{ i18n('m.rbs.commerce.front.excluding_fees') }}</li>
+
 				<li class="divider"></li>
 				<li><a href="{{ functionURL('Rbs_Commerce_Cart') }}">{{ i18n('m.rbs.commerce.front.view_my_cart', ['ucf']) }}</a></li>
 			</ul>
 		</div>
-		<div data-ng-show="!cart" class="dropdown">
+		<div data-ng-hide="cart.lines.length" class="dropdown">
 			<a href="#" data-toggle="dropdown" class="dropdown-toggle">
 				<i class="glyphicon glyphicon-shopping-cart"></i>
 				{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
@@ -45,60 +40,9 @@
 			</ul>
 		</div>
 	</div>
-	<div data-ng-show="!cart" data-ng-transclude=""></div>
 </script>
 
-<div data-rbs-short-cart="">
-	{% if cart %}
-		<div class="dropdown">
-			<a href="#" data-toggle="dropdown" class="dropdown-toggle">
-				<i class="glyphicon glyphicon-shopping-cart"></i>
-				{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
-				<span class="badge">{{ cart.lines|length }}</span>
-				<b class="caret"></b>
-			</a>
-			<ul class="dropdown-menu">
-				<li class="dropdown-text">
-					{{ cart.lines|length }}
-					{% if cart.lines|length == 1 %}
-						{{ i18n('m.rbs.commerce.front.article') }}
-					{% else %}
-						{{ i18n('m.rbs.commerce.front.articles') }}
-					{% endif %}
-				</li>
-				{% block prices %}
-					{% if parameters.displayPrices or parameters.displayPricesWithTax %}
-						<li class="divider"></li>
-						{% if parameters.displayPrices %}
-							<li class="dropdown-text price">
-								{{ formatPrice(cart.linesAmount) }}
-								<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
-							</li>
-						{% endif %}
-						{% if parameters.displayPricesWithTax %}
-							<li class="dropdown-text price">
-								{{ formatPrice(cart.linesAmountWithTaxes) }}
-								<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
-							</li>
-						{% endif %}
-						<li class="dropdown-text">{{ i18n('m.rbs.commerce.front.excluding_fees') }}</li>
-					{% endif %}
-				{% endblock %}
-				<li class="divider"></li>
-				<li><a href="{{ functionURL('Rbs_Commerce_Cart') }}">{{ i18n('m.rbs.commerce.front.view_my_cart', ['ucf']) }}</a></li>
-			</ul>
-		</div>
-	{% else %}
-		<div class="dropdown">
-			<a href="#" data-toggle="dropdown" class="dropdown-toggle">
-				<i class="glyphicon glyphicon-shopping-cart"></i>
-				{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
-				<span class="badge">{{ i18n('m.rbs.commerce.front.empty') }}</span>
-				<b class="caret"></b>
-			</a>
-			<ul class="dropdown-menu">
-				<li><a href="{{ functionURL('Rbs_Commerce_Cart') }}">{{ i18n('m.rbs.commerce.front.empty_cart', ['ucf']) }}</a></li>
-			</ul>
-		</div>
-	{% endif %}
+<div data-rbs-short-cart="" data-cache-key="{{ blockId }}">
+	<i class="glyphicon glyphicon-shopping-cart"></i>
+	{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
 </div>

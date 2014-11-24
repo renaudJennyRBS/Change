@@ -1,37 +1,12 @@
-{% block descriptionTitle %}
-	{% if productPresentation.general.description %}
-		<h2>{{ i18n('m.rbs.catalog.front.full_description', ['ucf']) }}</h2>
-	{% endif %}
-{% endblock %}
-
 {% block description %}
-	{% if productPresentation.general.description %}
-		<div itemprop="description">
-			{{ productPresentation.general.description|richText }}
-		</div>
-	{% endif %}
+	<div data-ng-if="productData | rbsCatalogGetAttribute:'description'" >
+		<h2>{{ i18n('m.rbs.catalog.front.full_description', ['ucf']) }}</h2>
+		<div itemprop="description" data-rbs-catalog-attribute-value="" data-attribute="productData | rbsCatalogGetAttribute:'description'"></div>
+	</div>
 {% endblock %}
 
-{% if parameters.attributesDisplayMode and not(productPresentation.attributesConfiguration is empty) %}
-	{% block attributesTitle %}
-		<h2>{{ i18n('m.rbs.catalog.front.attributes', ['ucf']) }}</h2>
-	{% endblock %}
-
-	{% block attributes %}
-		{% if parameters.attributesDisplayMode == 'accordion' %}
-			{% include 'Rbs_Catalog/Blocks/Product/attributes-accordion.twig' %}
-		{% elseif parameters.attributesDisplayMode == 'flat' %}
-			{% include 'Rbs_Catalog/Blocks/Product/attributes-flat.twig' %}
-		{% elseif parameters.attributesDisplayMode == 'table' %}
-			{% include 'Rbs_Catalog/Blocks/Product/attributes-table.twig' %}
-		{% elseif parameters.attributesDisplayMode == 'tabs' %}
-			{% include 'Rbs_Catalog/Blocks/Product/attributes-tabs.twig' %}
-		{# For development and tests only... #}
-		{% elseif parameters.attributesDisplayMode == 'all' %}
-			{% include 'Rbs_Catalog/Blocks/Product/attributes-accordion.twig' %}
-			{% include 'Rbs_Catalog/Blocks/Product/attributes-flat.twig' %}
-			{% include 'Rbs_Catalog/Blocks/Product/attributes-table.twig' %}
-			{% include 'Rbs_Catalog/Blocks/Product/attributes-tabs.twig' %}
-		{% endif %}
-	{% endblock %}
+{% if parameters.attributesDisplayMode %}
+	<div data-rbs-catalog-section-attributes="" data-product-data="productData"
+			data-visibility="specifications" data-display-mode="{{ parameters.attributesDisplayMode }}" data-block-id="{{ blockId }}">
+	</div>
 {% endif %}

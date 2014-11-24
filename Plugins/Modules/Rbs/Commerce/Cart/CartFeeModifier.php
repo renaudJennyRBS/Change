@@ -71,25 +71,30 @@ class CartFeeModifier implements \Rbs\Commerce\Process\ModifierInterface
 			]
 		];
 
+		$priceWithTax = $cart->getPricesValueWithTax();
 		$currencyCode = $cart->getCurrencyCode();
+		$precision = $this->priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
 		$zone = $cart->getZone();
-		$taxes = $cart->getTaxes();
-		if (!$currencyCode || !$zone || count($taxes) == 0)
+		if ($zone)
 		{
-			$taxes = null;
+			$taxes = $cart->getTaxes();
+			$taxesLine = [];
+		}
+		else
+		{
+			$taxes = $taxesLine = null;
 		}
 
-		$taxesLine = [];
 		$amount = null;
 		$amountWithTaxes = null;
 
 		$price = $this->price;
 		if (($value = $price->getValue()) !== null)
 		{
-			if ($taxes !== null)
+			if ($zone)
 			{
 				$taxesLine = $this->priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, 1);
-				if ($price->isWithTax())
+				if ($priceWithTax)
 				{
 					$amountWithTaxes += $value;
 					$amount += $this->priceManager->getValueWithoutTax($value, $taxesLine);
@@ -102,16 +107,30 @@ class CartFeeModifier implements \Rbs\Commerce\Process\ModifierInterface
 			}
 			else
 			{
-				$amountWithTaxes += $value;
-				$amount += $value;
+				if ($priceWithTax)
+				{
+					$amountWithTaxes += $value;
+				}
+				else
+				{
+					$amount += $value;
+				}
 			}
 		}
-		$parameters['taxes'] = array_map(function(\Rbs\Price\Tax\TaxApplication $tax) {return $tax->toArray();}, $taxesLine);
-		$parameters['amount'] = $amount;
-		$parameters['amountWithTaxes'] = $amountWithTaxes;
+		if (is_array($taxesLine))
+		{
+			$parameters['taxes'] = array_map(function(\Rbs\Price\Tax\TaxApplication $tax) {return $tax->toArray();}, $taxesLine);
+		}
+		else
+		{
+			$parameters['taxes'] = null;
+		}
 
+		$parameters['currencyCode'] = $currencyCode;
+		$parameters['precision'] = $precision;
+		$parameters['amount'] = $this->priceManager->roundValue($amount, $precision);
+		$parameters['amountWithTaxes'] = $this->priceManager->roundValue($amountWithTaxes, $precision);
 		$feeLine = $cart->getNewLine($parameters);
 		$cart->appendFee($feeLine);
 	}
-
 }

@@ -23,7 +23,7 @@ class RowsFixedDiscount extends \Rbs\Commerce\Cart\CartDiscountModifier
 		$withTax = is_array($data) && isset($data['withTax']) ? $data['withTax'] == true : true;
 		if ($amount > 0.0 && count($this->cart->getLines()))
 		{
-			$linesAmount = $withTax ? $this->cart->getLinesAmountWithTaxes() : $this->cart->getLinesAmount();
+			$linesAmount = $withTax ? $this->cart->getLinesAmountWithTaxes() : $this->cart->getLinesAmountWithoutTaxes();
 			if ($linesAmount > $amount)
 			{
 				$percent = -($amount / $linesAmount);
@@ -34,7 +34,7 @@ class RowsFixedDiscount extends \Rbs\Commerce\Cart\CartDiscountModifier
 				}
 				else
 				{
-					$value =  $this->cart->getLinesAmount() * $percent;
+					$value =  $this->cart->getLinesAmountWithoutTaxes() * $percent;
 				}
 				$price = new \Rbs\Commerce\Std\BasePrice(['value' => $value, 'withTax' => $priceValueWithTax]);
 				foreach ($this->cart->getLines() as $line)

@@ -15,27 +15,32 @@ use Change\Documents\Events\Event;
  */
 class Mode extends \Compilation\Rbs\Shipping\Documents\Mode
 {
+	const CATEGORY_AT_HOME = 'atHome';
+	const CATEGORY_RELAY = 'relay';
+	const CATEGORY_STORE = 'store';
+
+	/**
+	 * @return string
+	 */
+	public function getCategory()
+	{
+		return static::CATEGORY_AT_HOME;
+	}
+
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach('httpInfos', [$this, 'onDefaultHttpInfos'], 5);
+		$eventManager->attach('getModeData', [$this, 'onDefaultGetModeData'], 5);
 	}
 
 	/**
 	 * @param Event $event
 	 */
-	public function onDefaultHttpInfos(Event $event)
+	public function onDefaultGetModeData(Event $event)
 	{
-		$httpInfos = $event->getParam('httpInfos',[]);
-		if ($this->getHasAddress())
-		{
-			$httpInfos['directiveName'] = 'rbs-commerce-shipping-mode-configuration-address';
-		}
-		else
-		{
-			$httpInfos['directiveName'] = 'rbs-commerce-shipping-mode-configuration-none';
-		}
-		$event->setParam('httpInfos', $httpInfos);
+		$baseDirectiveName = str_replace('_', '-', strtolower($this->getDocumentModelName()));
+		$modeData = ['directiveNames' => ['editor' => $baseDirectiveName .'-editor', 'summary' => $baseDirectiveName .'-summary']];
+		$event->setParam('modeData', $modeData);
 	}
 
 	/**

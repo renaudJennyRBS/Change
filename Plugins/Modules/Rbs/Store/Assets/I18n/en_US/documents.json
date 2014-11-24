@@ -5,7 +5,7 @@
   "webstore_billingareas":{
     "message":"pricing zones"
   },
-  "webstore_displayprices":{
+  "webstore_displaypriceswithouttax":{
     "message":"display prices excluding taxes"
   },
   "webstore_displaypriceswithtax":{

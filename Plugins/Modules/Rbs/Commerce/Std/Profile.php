@@ -28,44 +28,7 @@ class Profile extends AbstractProfile
 	 */
 	public function getPropertyNames()
 	{
-		return array('lastCartIdentifier', 'defaultWebStoreId', 'defaultZone', 'defaultBillingAreaId',
-			'defaultBillingAddressId', 'defaultShippingAddressId');
-	}
-
-	/**
-	 * @param string $lastCartIdentifier
-	 * @return $this
-	 */
-	public function setLastCartIdentifier($lastCartIdentifier)
-	{
-		$this->properties['lastCartIdentifier'] = $lastCartIdentifier;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getLastCartIdentifier()
-	{
-		return isset($this->properties['lastCartIdentifier']) ? $this->properties['lastCartIdentifier'] : null;
-	}
-
-	/**
-	 * @param string $defaultZone
-	 * @return $this
-	 */
-	public function setDefaultZone($defaultZone)
-	{
-		$this->properties['defaultZone'] = $defaultZone;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getDefaultZone()
-	{
-		return isset($this->properties['defaultZone'])? $this->properties['defaultZone'] : null;
+		return array('defaultWebStoreId', 'defaultBillingAddressId', 'defaultShippingAddressId');
 	}
 
 	/**
@@ -102,41 +65,6 @@ class Profile extends AbstractProfile
 	public function getDefaultWebStoreId()
 	{
 		return isset($this->properties['defaultWebStoreId']) ? $this->properties['defaultWebStoreId'] : null;
-	}
-
-	/**
-	 * @param \Rbs\Price\Documents\BillingArea $defaultBillingArea
-	 * @return $this
-	 */
-	public function setDefaultBillingArea($defaultBillingArea)
-	{
-		if ($defaultBillingArea instanceof \Rbs\Price\Documents\BillingArea)
-		{
-			$this->properties['defaultBillingAreaId'] = $defaultBillingArea->getId();
-		}
-		else
-		{
-			$this->properties['defaultBillingAreaId'] = null;
-		}
-		return $this;
-	}
-
-	/**
-	 * @param integer $defaultBillingAreaId
-	 * @return $this
-	 */
-	public function setDefaultBillingAreaId($defaultBillingAreaId)
-	{
-		$this->properties['defaultBillingAreaId'] = $defaultBillingAreaId;
-		return $this;
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function getDefaultBillingAreaId()
-	{
-		return isset($this->properties['defaultBillingAreaId']) ? $this->properties['defaultBillingAreaId'] : null;
 	}
 
 	/**

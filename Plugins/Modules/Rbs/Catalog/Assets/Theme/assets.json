@@ -1,11 +1,21 @@
 {
-	"blocks" : {
+	"blocks": {
 		"Product": {
 			"jsAssets": [
 				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
 			]
 		},
 		"ProductList": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+			]
+		},
+		"CrossSelling": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+			]
+		},
+		"CartCrossSelling": {
 			"jsAssets": [
 				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
 			]

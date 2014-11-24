@@ -22,7 +22,7 @@
 				label="{{ i18nAttr('m.rbs.order.admin.order_statuses', ['ucf']) }}">
 				<span data-rbs-order-status-indicators="" data-order="doc"></span>
 			</rbs-column>
-			<rbs-column name="paymentAmountWithTaxes">(= doc.formattedPaymentAmountWithTaxes =)</rbs-column>
+			<rbs-column name="paymentAmount">(= doc.formattedPaymentAmount =)</rbs-column>
 			<rbs-column name="creationDate">(= doc.creationDate | rbsDateTime =)</rbs-column>
 		</rbs-document-list>
 	</div>

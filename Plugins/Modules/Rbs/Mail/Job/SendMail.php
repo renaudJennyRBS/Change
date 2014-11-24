@@ -70,7 +70,7 @@ class SendMail
 	 * @param \Change\Job\Event $event
 	 * @return array
 	 */
-	protected function getFrom($mail, $website, $event, $logger)
+	protected function getFrom($mail, $website, $event)
 	{
 		if ($mail->getCurrentLocalization()->getSenderMail())
 		{

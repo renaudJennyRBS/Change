@@ -60,11 +60,11 @@
 				<tr>
 					<th>#</th>
 					<th>{{ i18n('m.rbs.commerce.front.designation', ['ucf']) }}</th>
-					{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+					{% if parameters.displayPricesWithoutTax or parameters.displayPricesWithTax %}
 						<th>{{ i18n('m.rbs.commerce.front.unit_price', ['ucf']) }}</th>
 					{% endif %}
 					<th>{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</th>
-					{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+					{% if parameters.displayPricesWithoutTax or parameters.displayPricesWithTax %}
 						<th>{{ i18n('m.rbs.commerce.front.total_price', ['ucf']) }}</th>
 					{% endif %}
 				</tr>
@@ -74,13 +74,13 @@
 					<tr>
 						<td>{{ loop.index }}</td>
 						<td>{{ line.designation }}</td>
-						{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+						{% if parameters.displayPricesWithoutTax or parameters.displayPricesWithTax %}
 							<td class="price">
-								{% if parameters.displayPrices %}
+								{% if parameters.displayPricesWithoutTax %}
 									{{ formatPrice(line.unitAmount, order.currencyCode) }}
 									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
 								{% endif %}
-								{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
+								{% if parameters.displayPricesWithoutTax and parameters.displayPricesWithTax %}<br />{% endif %}
 								{% if parameters.displayPricesWithTax %}
 									{{ formatPrice(line.unitAmountWithTaxes, order.currencyCode) }}
 									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
@@ -88,13 +88,13 @@
 							</td>
 						{% endif %}
 						<td class="form-inline">{{ line.quantity }}</td>
-						{% if parameters.displayPrices or parameters.displayPricesWithTax %}
+						{% if parameters.displayPricesWithoutTax or parameters.displayPricesWithTax %}
 							<td class="price">
-								{% if parameters.displayPrices %}
+								{% if parameters.displayPricesWithoutTax %}
 									{{ formatPrice(line.amount, order.currencyCode)}}
 									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
 								{% endif %}
-								{% if parameters.displayPrices and parameters.displayPricesWithTax %}<br />{% endif %}
+								{% if parameters.displayPricesWithoutTax and parameters.displayPricesWithTax %}<br />{% endif %}
 								{% if parameters.displayPricesWithTax %}
 									{{ formatPrice(line.amountWithTaxes, order.currencyCode) }}
 									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
@@ -223,7 +223,7 @@
 					{% endif %}
 					<tr>
 						<td><strong>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</strong></td>
-						<td class="price">{{ formatPrice(order.paymentAmountWithTaxes, order.currencyCode) }}</td>
+						<td class="price">{{ formatPrice(order.paymentAmount, order.currencyCode) }}</td>
 					</tr>
 				</tbody>
 			</table>

@@ -13,6 +13,14 @@ namespace Rbs\Store\Documents;
  */
 class WebStore extends \Compilation\Rbs\Store\Documents\WebStore
 {
+	/**
+	 * @deprecated
+	 */
+	public function getDisplayPrices()
+	{
+		return $this->getDisplayPricesWithoutTax();
+	}
+
 	public function onDefaultUpdateRestResult(\Change\Documents\Events\Event $event)
 	{
 		parent::onDefaultUpdateRestResult($event);

@@ -9,7 +9,6 @@
 namespace Rbs\Payment\Documents;
 
 use Change\Documents\Events\Event;
-use Change\Http\Rest\V1\Resources\DocumentLink;
 use Change\Http\Rest\V1\Resources\DocumentResult;
 
 /**
@@ -20,17 +19,20 @@ class DeferredConnector extends \Compilation\Rbs\Payment\Documents\DeferredConne
 	protected function attachEvents($eventManager)
 	{
 		parent::attachEvents($eventManager);
-		$eventManager->attach('httpInfos', [$this, 'onDefaultHttpInfos'], 5);
+		$eventManager->attach('getPaymentData', [$this, 'onDefaultGetPaymentData'], 5);
 	}
 
 	/**
 	 * @param Event $event
 	 */
-	public function onDefaultHttpInfos(Event $event)
+	public function onDefaultGetPaymentData(Event $event)
 	{
-		$httpInfos = $event->getParam('httpInfos',[]);
-		$httpInfos['directiveName'] = 'rbs-commerce-payment-connector-deferred';
-		$event->setParam('httpInfos', $httpInfos);
+		$paymentData = ['directiveName' => 'rbs-commerce-payment-connector-deferred'];
+		$context = $event->getParam('context', []);
+		/** @var \Rbs\Payment\Documents\Transaction $transaction */
+		$transaction = $context['data']['transaction'];
+		$paymentData['amount'] = $transaction->getAmount();
+		$event->setParam('paymentData', $paymentData);
 	}
 
 	/**

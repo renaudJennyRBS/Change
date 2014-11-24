@@ -1,9 +1,9 @@
-{% import 'Rbs_Catalog/macros.twig' as catalogMacros %}
-{% set listFormat = {'maxWidth': 160, 'maxHeight' : 120}  %}
-{% set pictogramFormat = {'maxWidth': 60, 'maxHeight' : 45}  %}
+{% block productDirectives %}
+	{% include 'Rbs_Catalog/product-directives.twig' %}
+{% endblock %}
+
 {% if rows %}
 	<h1 id="product-list-title">{{ parameters.title }}</h1>
-
 	<div id="myCarousel{{ blockId }}" class="carousel slide" data-ride="carousel">
 		<div class="carousel-inner">
 			{% for i in range(0,slideCount-1) %}
@@ -15,7 +15,7 @@
 								<li>
 									<div class="grid-list-cell">
 										{% block productItem %}
-											{% include 'Rbs_Catalog/product-list-item.twig' %}
+											{% include 'Rbs_Catalog/product-list-item.twig' with {'productData': row} %}
 										{% endblock %}
 									</div>
 								</li>
@@ -34,4 +34,3 @@
 		</a>
 	</div>
 {% endif %}
-{% include 'Rbs_Catalog/product-added-to-cart-popin.twig' %}

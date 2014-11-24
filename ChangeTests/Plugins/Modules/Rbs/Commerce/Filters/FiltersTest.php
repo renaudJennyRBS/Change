@@ -48,9 +48,13 @@ class FiltersTest extends \ChangeTests\Change\TestAssets\TestCase
 		$cs = $this->commerceServices;
 		$cartManager = $cs->getCartManager();
 
+		$cartManager->getEventManager()->attachAggregate(new \Rbs\Commerce\Cart\Listeners());
+
 		$filters = new \Rbs\Commerce\Filters\Filters($this->getApplication());
 
 		$cart = new \Rbs\Commerce\Cart\Cart('idt', $cartManager);
+
+		$cart->setBillingArea(new FakeBillingArea89532());
 
 		$itemParameters = ['codeSKU' => 'skTEST', 'reservationQuantity' => 2, 'price' => 5.3, 'options' => []];
 
@@ -66,17 +70,15 @@ class FiltersTest extends \ChangeTests\Change\TestAssets\TestCase
 
 		$cart->appendLine($cart->getNewLine($lineParameters));
 
-		$this->assertNull($cart->getLinesAmount());
+		$this->assertNull($cart->getLinesAmountWithoutTaxes());
 		$this->assertNull($cart->getLinesAmountWithTaxes());
 		$cartManager->normalize($cart);
 
 		$v = 5.3 * 3 + 12 * 2; //39.9
-		$this->assertEquals($v, $cart->getLinesAmount());
-
-		$this->assertEquals($v, $cart->getLinesAmount());
+		$this->assertEquals($v, $cart->getLinesAmountWithoutTaxes());
+		$this->assertNull($cart->getLinesAmountWithTaxes());
 
 		$this->assertTrue($filters->isValid($cart, []));
-		$this->assertEquals($v, $cart->getLinesAmountWithTaxes());
 
 		$filter = ['name' => 'group', 'operator' => 'AND', 'filters' => [
 			['name' => 'linesAmountValue', 'parameters' => ['propertyName' => 'linesAmountValue', 'operator' => 'gte', 'value' => 40]]
@@ -150,4 +152,32 @@ class FiltersTest extends \ChangeTests\Change\TestAssets\TestCase
 		]];
 		$this->assertFalse($filters->isValid($cart, $filter));
 	}
-} 
+}
+
+class FakeBillingArea89532 implements \Rbs\Price\Tax\BillingAreaInterface
+{
+
+	/**
+	 * @return integer
+	 */
+	public function getId()
+	{
+		return -1;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCurrencyCode()
+	{
+		return 'EUR';
+	}
+
+	/**
+	 * @return \Rbs\Price\Tax\TaxInterface []
+	 */
+	public function getTaxes()
+	{
+		return [];
+	}
+}

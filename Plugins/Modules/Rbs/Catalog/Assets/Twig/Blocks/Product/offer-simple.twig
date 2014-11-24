@@ -1,69 +1,47 @@
 {% if parameters.webStoreId %}
-	<script type="text/ng-template" id="/addSimpleLineToCart.tpl">
-		{% if productPresentation.general.hasOwnSku %}
-			{% if productPresentation.general.canBeOrdered %}
-				<div class="form-group">
-					<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
-					<input class="form-control" type="number" name="quantity" data-ng-model="quantity"
-						min="{{ productPresentation.stock.minQuantity }}"
-						{% if productPresentation.stock.maxQuantity %}max="{{ productPresentation.stock.maxQuantity }}"{% endif %}
-						step="{{ productPresentation.stock.quantityIncrement }}" />
-				</div>
-
-				<button name="key" type="button" class="btn btn-primary btn-lg" data-ng-click="addLine()">
-					<i class="glyphicon glyphicon-shopping-cart"></i>
-					{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-				</button>
-			{% else %}
-				<button type="button" class="btn btn-primary btn-lg" disabled="disabled">
-					{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-				</button>
-			{% endif %}
-		{% endif %}
-	</script>
-
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
 		{% block availability %}
-			{% if productPresentation.stock.thresholdTitle %}
-				<div class="alert availability text-center {{ productPresentation.stock.thresholdClass }}">
-					<h4 itemprop="availability">{{ productPresentation.stock.thresholdTitle }}</h4>
+			{% if productData.stock.thresholdTitle %}
+				{% set threshold = productData.stock.threshold %}
+				<div class="alert availability text-center stock-{{ threshold|lower }}{% if threshold == 'AVAILABLE' %} alert-success{% elseif threshold == 'UNAVAILABLE' %} alert-danger{% endif %}" >
+					<h4 itemprop="availability">{{ productData.stock.thresholdTitle }}</h4>
 				</div>
 			{% endif %}
 		{% endblock %}
 
 		{% block prices %}
-			{% if productPresentation.prices.price and (parameters.displayPrices or parameters.displayPricesWithTax) %}
-				{% if productPresentation.prices.currencyCode %}<meta itemprop="priceCurrency" content="{{ productPresentation.prices.currencyCode }}" />{% endif %}
+			{% set currencyCode = productData.price.currencyCode %}
+			{% if productData.price and (parameters.displayPricesWithoutTax or productData.price.valueWithTax) %}
+				{% if currencyCode %}<meta itemprop="priceCurrency" content="{{ currencyCode }}" />{% endif %}
 				<ul class="list-unstyled main-price">
-					{% if parameters.displayPrices %}
+					{% if parameters.displayPricesWithoutTax and productData.price.valueWithoutTax %}
 						<li class="price">
-							{% if not (parameters.displayPricesWithTax and productPresentation.prices.priceWithTax) %}
-								<span itemprop="price">{{ productPresentation.prices.formattedPrice }}</span>
+							{% if not (parameters.displayPricesWithTax and productData.price.valueWithTax) %}
+								<span itemprop="price">{{ formatPrice(productData.price.valueWithoutTax, currencyCode) }}</span>
 							{% else %}
-								{{ productPresentation.prices.formattedPrice }}
+								{{ formatPrice(productData.price.valueWithoutTax, currencyCode) }}
 							{% endif %}
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
-							{% if productPresentation.prices.priceWithoutDiscount %}
+							{% if productData.price.baseValueWithoutTax %}
 								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-									{{ productPresentation.prices.formattedPriceWithoutDiscount }}
+									{{ formatPrice(productData.price.baseValueWithoutTax, currencyCode) }}
 								</del>
 							{% endif %}
 						</li>
 					{% endif %}
-					{% if parameters.displayPricesWithTax and productPresentation.prices.priceWithTax %}
+					{% if parameters.displayPricesWithTax and productData.price.valueWithTax %}
 						<li class="price">
-							<span itemprop="price">{{ productPresentation.prices.formattedPriceWithTax }}</span>
-							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}</abbr>
-							{% if productPresentation.prices.priceWithoutDiscountWithTax %}
+							<span itemprop="price">{{ formatPrice(productData.price.valueWithTax, currencyCode) }}</span>
+							{% if productData.price.baseValueWithTax %}
 								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-									{{ productPresentation.prices.formattedPriceWithoutDiscountWithTax }}
+									{{ formatPrice(productData.price.baseValueWithTax, currencyCode) }}
 								</del>
 							{% endif %}
 						</li>
 					{% endif %}
-					{% if productPresentation.prices.ecoTax %}
+					{% if productData.price.ecoTax %}
 						<li class="small">
-							{{ i18n('m.rbs.catalog.front.including', ['ucf']) }} {{ i18n('m.rbs.catalog.front.ecotax') }} {{ productPresentation.prices.formattedEcoTax }}
+							{{ i18n('m.rbs.catalog.front.including', ['ucf']) }} {{ i18n('m.rbs.catalog.front.ecotax') }} {{ formatPrice(productData.price.ecoTax, currencyCode) }}
 						</li>
 					{% endif %}
 				</ul>
@@ -71,40 +49,9 @@
 		{% endblock %}
 
 		{% block addToCart %}
-			<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" name="addLineToCart">
-				<fieldset data-rbs-catalog-simple-product-data="" data-product-id="{{ parameters.toDisplayDocumentId }}"
-					data-modal-id="addToCartConfirmationModal-{{ blockId }}" data-section-id="{{ section.id }}"
-					data-product-title="{{ productPresentation.general.title }}" data-stock-sku="{{ productPresentation.stock.sku }}"
-					data-product-quantity="{{ productPresentation.stock.minQuantity }}">
-					{% if productPresentation.general.hasOwnSku %}
-						{% if productPresentation.general.canBeOrdered %}
-							<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
-							<input type="hidden" name="errorLocation" value="{{ currentURL() }}" />
-							<input type="hidden" name="key" value="{{ productPresentation.general.id }}">
-							<input type="hidden" name="designation" value="{{ productPresentation.general.title }}">
-							<input type="hidden" name="options[productId]" value="{{ productPresentation.general.id }}">
-							<input type="hidden" name="items[][codeSKU]" value="{{ productPresentation.stock.sku }}">
-							<div class="form-group">
-								<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
-								<input class="form-control" type="number" id="product-quantity" name="quantity"
-									value="{{ productPresentation.stock.minQuantity }}"
-									{% if productPresentation.stock.maxQuantity %}max="{{ productPresentation.stock.maxQuantity }}"{% endif %}
-									min="{{ productPresentation.stock.minQuantity }}"
-									step="{{ productPresentation.stock.quantityIncrement }}" />
-							</div>
-
-							<button type="submit" class="btn btn-primary btn-lg">
-								<i class="glyphicon glyphicon-shopping-cart"></i>
-								{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-							</button>
-						{% else %}
-							<button type="button" class="btn btn-primary btn-lg" disabled="disabled">
-								{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-							</button>
-						{% endif %}
-					{% endif %}
-				</fieldset>
-			</form>
+			{% if productData.stock.sku %}
+				<div data-rbs-catalog-add-simple-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+			{% endif %}
 		{% endblock %}
 	</div>
 {% endif %}

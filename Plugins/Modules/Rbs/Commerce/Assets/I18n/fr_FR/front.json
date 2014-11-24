@@ -2,6 +2,15 @@
 	"cart_without_webstore":{
 		"message":"le panier n'est pas relié à une boutique"
 	},
+	"cart_without_billing_area":{
+		"message":"Aucune zone de tarification n'est définie pour ce panier"
+	},
+	"cart_without_order_process":{
+		"message":"Aucun tunnel d'achat n'est définie pour ce panier"
+	},
+	"cart_without_tax_zone":{
+		"message":"Aucune zone de taxe n'a été sélectionnée."
+	},
 	"line_without_quantity":{
 		"message":"la ligne $NUMBER$ ne contient pas une quantité valide"
 	},
@@ -84,7 +93,7 @@
 		"message":"actions"
 	},
 	"accept_terms_and_conditions":{
-		"message":"J'accepte les $LINK_OPEN$conditions générales de vente$LINK_CLOSE$ d'une commande avec obligation de paiement (obligatoire pour passer commande)"
+		"message":"J'accepte les $LINK_OPEN$ conditions générales de vente $LINK_CLOSE$ d'une commande avec obligation de paiement (obligatoire pour passer commande)"
 	},
 	"will_open_new_tab":{
 		"message":"la page s'ouvrira dans un nouvel onglet"
@@ -95,14 +104,59 @@
 	"process_step_cart":{
 		"message":"panier"
 	},
-	"process_step_personal_information":{
-		"message":"informations personnelles"
+	"modify_cart":{
+		"message":"modifier le panier"
+	},
+	"line_product":{
+		"message":"produit"
+	},
+	"line_detail":{
+		"message":"détails"
+	},
+	"line_quantity":{
+		"message":"quantité"
+	},
+	"line_prices":{
+		"message":"prix"
+	},
+	"process_step_identification":{
+		"message":"coordonnées"
 	},
 	"process_step_shipping":{
 		"message":"livraison"
 	},
+	"shipping_part_of":{
+		"message":"expédition $NUMBER$ sur $TOTAL$"
+	},
+	"store_delivery":{
+		"message":"retrait en magasin"
+	},
+	"relay_delivery":{
+		"message":"retrait en point relais"
+	},
+	"at_home_delivery":{
+		"message":"livraison à l'adresse"
+	},
+	"no_shipping_mode_available":{
+		"message":"Nous ne disposons pas de transporteur capable de livrer à cette adresse."
+	},
+	"shipping_fee":{
+		"message":"frais de livraison"
+	},
 	"process_step_payment":{
 		"message":"paiement"
+	},
+	"process_step_payment_title":{
+		"message":"montant à payer"
+	},
+	"billing_address":{
+		"message":"adresse de facturation"
+	},
+	"payment_amounts":{
+		"message":"Montants"
+	},
+	"payment_taxes":{
+		"message":"dont taxes"
 	},
 	"process_step_confirmation":{
 		"message":"confirmation"
@@ -212,6 +266,9 @@
 	"select_payment_connector":{
 		"message":"Parmi la liste ci-dessous, sélectionnez celui que vous souhaitez utiliser."
 	},
+	"please_wait_loading":{
+		"message":"chargement en cours"
+	},
 	"please_wait_loading_connector":{
 		"message":"chargement des informations nécessaires au paiement"
 	},
@@ -282,6 +339,9 @@
 	},
 	"must_accept_terms_and_conditions":{
 		"message":"Vous devez accepter les conditions générales de vente avant de pouvoir passer commande."
+	},
+	"invalid_tax_behavior": {
+		"message":"Impossible de calculer les taxes."
 	},
 	"by_shipping_default":{
 		"message":"livraison par défaut"

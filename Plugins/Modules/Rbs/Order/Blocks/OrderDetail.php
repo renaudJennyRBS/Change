@@ -29,7 +29,7 @@ class OrderDetail extends Block
 		$parameters->addParameterMeta('accessorId');
 		$parameters->addParameterMeta('orderId');
 		$parameters->addParameterMeta('cartIdentifier');
-		$parameters->addParameterMeta('displayPrices');
+		$parameters->addParameterMeta('displayPricesWithoutTax');
 		$parameters->addParameterMeta('displayPricesWithTax');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
@@ -85,7 +85,7 @@ class OrderDetail extends Block
 		$webStore = $documentManager->getDocumentInstance($order->getWebStoreId());
 		if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 		{
-			$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+			$parameters->setParameterValue('displayPricesWithoutTax', $webStore->getDisplayPricesWithoutTax());
 			$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
 		}
 		return $parameters;
@@ -123,7 +123,7 @@ class OrderDetail extends Block
 		$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
 		if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 		{
-			$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
+			$parameters->setParameterValue('displayPricesWithoutTax', $webStore->getDisplayPricesWithoutTax());
 			$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
 		}
 		return $parameters;

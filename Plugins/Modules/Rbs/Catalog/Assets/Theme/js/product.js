@@ -1,222 +1,89 @@
-(function() {
+(function(jQuery) {
 	"use strict";
 
 	var app = angular.module('RbsChangeApp');
 
-	function productDataLink(scope, elm, attrs) {
-		var v = parseInt(attrs.productId, 10);
-		scope.baseProductId = scope.product.id = isNaN(v) ? 0 : v;
-
-		if (attrs.hasOwnProperty('productTitle')) {
-			scope.product.title = attrs['productTitle'];
-		}
-		if (attrs.hasOwnProperty('stockSku')) {
-			scope.stock = { sku: attrs['stockSku'] };
-		}
-		if (attrs.hasOwnProperty('productQuantity')) {
-			scope.quantity = parseInt(attrs['productQuantity']);
+	function RbsCatalogProductItemController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
+		scope.productData = {};
+		var cacheKey = $element.attr('data-cache-key');
+		if (cacheKey && angular.isObject($window['__change']) && $window['__change'][cacheKey]) {
+			scope.productData = $window['__change'][cacheKey];
 		}
 
-		scope.redirectUrl = attrs.redirectUrl;
-
-		scope.modalId = attrs.modalId;
-		scope.sectionId = attrs.sectionId;
-	}
-
-	function rbsCatalogAxisOptionClass ($parse) {
-		return {
-			require: 'select',
-			link: function(scope, elem, attrs) {
-				// Get the source for the items array that populates the select.
-				var optionsSourceStr = attrs.ngOptions.split(' ').pop();
-				// Use $parse to get a function from the options-class attribute
-				// that you can use to evaluate later.
-				var getOptionsClass = $parse(attrs.rbsCatalogAxisOptionClass);
-
-				scope.$watchCollection(optionsSourceStr, function(items) {
-					angular.forEach(items, function(item, index) {
-						// Evaluate against the item to get a mapping object for
-						// for your classes.
-						var classes = getOptionsClass(item);
-						// Also get the option you're going to need. This can be found
-						// by looking for the option with the appropriate index in the
-						// value attribute.
-						var option = elem.find('option[value=' + index + ']');
-
-						// Now loop through the key/value pairs in the mapping object
-						// and apply the classes that evaluated to be truthy.
-						angular.forEach(classes, function(add, className) {
-							if (add) {
-								angular.element(option).addClass(className);
-							}
-							else {
-								angular.element(option).removeClass(className);
-							}
-						});
-					});
-				});
+		this.setPictograms = function (productData) {
+			scope.pictograms = null;
+			if (productData && productData.common && productData.common.attributes && productData.common.attributes.pictograms) {
+				var attr = productData.attributes[productData.common.attributes.pictograms];
+				if (attr && attr.value && attr.value.length) {
+					scope.pictograms = attr.value;
+				}
 			}
 		};
+
+		this.setPictograms(scope.productData);
+
+		scope.addLine = function() {
+			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+		};
 	}
+	RbsCatalogProductItemController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
 
-	app.directive('rbsCatalogAxisOptionClass', ['$parse', rbsCatalogAxisOptionClass]);
-
-	function rbsCatalogSimpleProductData() {
+	function rbsCatalogAddListItemProductToCart() {
 		return {
 			restrict: 'A',
-			templateUrl: '/addSimpleLineToCart.tpl',
+			templateUrl: '/rbsCatalogAddListItemProductToCart.tpl',
 			replace: false,
 			scope: false,
 			link: productDataLink
 		}
 	}
+	app.directive('rbsCatalogAddListItemProductToCart', rbsCatalogAddListItemProductToCart);
 
-	app.directive('rbsCatalogSimpleProductData', rbsCatalogSimpleProductData);
+	function productDataLink(scope, elm, attrs) {
 
-	function rbsCatalogVariantProductData() {
-		return {
-			restrict: 'A',
-			templateUrl: '/addVariantLineToCart.tpl',
-			replace: false,
-			scope: false,
-			link: productDataLink
-		}
-	}
-
-	app.directive('rbsCatalogVariantProductData', rbsCatalogVariantProductData);
-
-	function rbsCatalogProductItemData() {
-		return {
-			restrict: 'A',
-			templateUrl: '/addItemLineToCart.tpl',
-			replace: false,
-			scope: false,
-			link: productDataLink
-		}
-	}
-
-	app.directive('rbsCatalogProductItemData', rbsCatalogProductItemData);
-
-	function rbsCatalogProductAvailability() {
-		return {
-			restrict: 'A',
-			templateUrl: '/productAvailability.tpl',
-			replace: false,
-			scope: false,
-			transclude: true,
-
-			link: function(scope, elm, attrs) {
-			}
-		}
-	}
-
-	app.directive('rbsCatalogProductAvailability', rbsCatalogProductAvailability);
-
-	function rbsCatalogProductPrice() {
-		return {
-			restrict: 'A',
-			templateUrl: '/productPrice.tpl',
-			replace: false,
-			require: 'ngModel',
-			scope: false,
-			transclude: true,
-
-			link: function(scope, elm, attrs, ngModel) {
-				var display = (attrs.hasOwnProperty('display')) ? (attrs.display == "1") : false;
-				var displayWithTax = (attrs.hasOwnProperty('displayWithTax')) ? (attrs.displayWithTax == "1") : false;
-				ngModel.$setViewValue({display: display, displayWithTax: displayWithTax});
-			}
-		}
-	}
-
-	app.directive('rbsCatalogProductPrice', rbsCatalogProductPrice);
-
-	function rbsCatalogProductPictograms() {
-		return {
-			restrict: 'A',
-			templateUrl: '/productPictograms.tpl',
-			replace: false,
-			scope: false,
-			transclude: true,
-
-			link: function(scope, elm, attrs) {
-				if (attrs.hasOwnProperty('pictogramFormats')) {
-					angular.extend(scope['pictogramFormats'], angular.fromJson(attrs['pictogramFormats']));
+		scope.$watch('productData', function(productData) {
+			if (productData && productData.cart) {
+				var cart = productData.cart;
+				if (attrs.hasOwnProperty('productQuantity')) {
+					cart.quantity = parseInt(attrs['productQuantity']);
+				} else {
+					cart.quantity = (cart.minQuantity) ? cart.minQuantity : 1;
+				}
+				if (attrs.modalId) {
+					cart.modalId = attrs.modalId;
 				}
 			}
-		}
+		});
 	}
 
-	app.directive('rbsCatalogProductPictograms', rbsCatalogProductPictograms);
-
-	function rbsCatalogProductVisuals() {
-		return {
-			restrict: 'A',
-			templateUrl: '/productVisuals.tpl',
-			replace: false,
-			scope: false,
-			transclude: true,
-
-			link: function(scope, elm, attrs) {
-				if (attrs.hasOwnProperty('visualFormats')) {
-					angular.extend(scope.visualFormats, angular.fromJson(attrs.visualFormats));
+	function addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI) {
+		var productData = scope.productData;
+		if (productData && productData.cart && productData.cart.key) {
+			var data = {productId: productData.common.id, quantity: productData.cart.quantity};
+			var modalId = productData.cart.modalId;
+			if (modalId) {
+				data.sectionPageFunction = 'Rbs_Catalog_ProductAddedToCart';
+				if (angular.isObject($window['__change']) && angular.isObject($window['__change']['navigationContext'])) {
+					var navigationContext = $window['__change']['navigationContext'];
+					data.themeName = navigationContext.themeName;
 				}
-			}
-		}
-	}
-
-	app.directive('rbsCatalogProductVisuals', rbsCatalogProductVisuals);
-
-	function rbsCatalogVariantData() {
-		return {
-			restrict: 'A',
-			template: '<div></div>',
-			replace: true,
-			scope: false,
-
-			link: function(scope, elm, attrs) {
-				scope.variantGroupId = attrs.variantGroupId;
-				scope.axes = angular.fromJson(attrs.axes);
-			}
-		}
-	}
-
-	app.directive('rbsCatalogVariantData', rbsCatalogVariantData);
-
-	function addLine(scope, $http, $compile, $rootScope) {
-		if (scope.product.id !== 0) {
-			var data = {
-				key: scope.product.id,
-				designation: scope.product.title,
-				quantity: scope.quantity,
-				options: {productId: scope.product.id},
-				items: [
-					{codeSKU: scope.stock.sku}
-				]
-			};
-			if (scope.modalId) {
-				data.modalInfos = {
-					sectionPageFunction: 'Rbs_Catalog_ProductAddedToCart',
-					sectionId: scope.sectionId,
-					productId: scope.product.id,
-					themeName: __change.navigationContext.themeName
-				};
 			}
 
 			scope.modalContentLoading = true;
-			$http.post('Action/Rbs/Commerce/AddLineToCart', data, {})
-				.success(function(resultData) {
-					// Launch event
-					$rootScope.$broadcast('rbsRefreshCart', {'cart':resultData.cart});
-
-					if (scope.modalId) {
-						if (resultData.hasOwnProperty('modalContentUrl') && resultData['modalContentUrl']) {
-							var mainContentElement = jQuery('#' + scope.modalId + ' .modal-main-content');
+			var request = AjaxAPI.putData('Rbs/Commerce/Cart', {addProducts:[data]}, {detailed:false});
+			request.success(function(resultData) {
+					var cart = resultData.dataSets;
+					$rootScope.$broadcast('rbsRefreshCart', {'cart': cart});
+					if (modalId && cart.updated && cart.updated.addProducts && cart.updated.addProducts.length) {
+						var addData = cart.updated.addProducts[0];
+						if (addData['modalContentUrl']) {
+							var mainContentElement = jQuery('#' + modalId + ' .modal-main-content');
 							mainContentElement.html('<div class="text-center"><img alt="" src="data:image/gif;base64,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" /></div>');
 							scope.hideModalContent = false;
-							$http.get(resultData.modalContentUrl)
+							$http.get(addData['modalContentUrl'])
 								.success(function(resultData2) {
-									jQuery('#' + scope.modalId + ' .modal-loading').hide();
+									jQuery('#' + modalId + ' .modal-loading').hide();
 									mainContentElement.html(resultData2);
 									$compile(mainContentElement.contents())(scope);
 									mainContentElement.show();
@@ -231,10 +98,7 @@
 						else {
 							scope.hideModalContent = true;
 						}
-						jQuery('#' + scope.modalId).modal({});
-					}
-					else if (scope.redirectUrl) {
-						window.location.href = scope.redirectUrl;
+						jQuery('#' + modalId).modal({});
 					}
 				})
 				.error(function(data, status, headers) {
@@ -243,264 +107,686 @@
 		}
 	}
 
-	function initializeScope(scope) {
-		scope.productLoading = false;
-		scope.productPresentation = null;
-
-		scope.redirectUrl = null;
-		scope.modalId = null;
-		scope.sectionId = null;
-		scope.modalContentLoading = false;
-		scope.pricesConfig = {};
-		scope.pictogramFormats = {};
-		scope.visualFormats = {};
-		scope.stock = null;
-		scope.quantity = 1;
-
-		// Variant Config
-		scope.axesValues = [];
-		scope.selectedAxesValues = [];
-		scope.axes = null;
-
-		// Base Product
-		scope.baseProductId = 0;
-
-		// Product
-		scope.product = {'id': 0};
+	function extractPictogram(productData) {
+		if (productData && productData.common && productData.common.attributes && productData.common.attributes.pictograms) {
+			var attr = productData.attributes[productData.common.attributes.pictograms];
+			if (attr && attr.value && attr.value.length) {
+				return attr.value;
+			}
+		}
+		return null;
 	}
 
-	function RbsCatalogSimpleProductController(scope, $http, $compile, $rootScope) {
-		initializeScope(scope);
+	function rbsCatalogProductPictograms() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductPictograms.tpl',
+			replace: false,
+			scope: {pictograms: '=', pictogramFormat: '='},
+			link: function(scope, elm, attrs) {
+
+			}
+		}
+	}
+	app.directive('rbsCatalogProductPictograms', rbsCatalogProductPictograms);
+
+
+	function extractVisuals(productData) {
+		if (productData && productData.common && productData.common.visuals) {
+			var visuals = productData.common.visuals;
+			if (visuals && visuals.length) {
+				return visuals;
+			}
+		}
+		return null;
+	}
+
+	//use scope.visuals
+	function rbsCatalogProductVisuals() {
+		return {
+			restrict: 'A',
+			link: function(scope, elm, attrs) {
+				scope.visualFormats = ['detail', 'detailThumbnail'];
+				scope.fullBaseId = attrs.fullBaseId;
+
+				scope.showVisual = function(event) {
+					var jNode = jQuery(event.currentTarget);
+					var visualId = jNode.attr('data-index');
+					jQuery('[id^="' + scope.fullBaseId +'"]').hide();
+					jQuery('#' + scope.fullBaseId + visualId).show();
+					return false;
+				};
+
+				scope.startZoom = function(event) {
+					var jNode = jQuery(event.currentTarget);
+					var zoomDiv = jQuery('<div class="zoomDiv"><img src="' + jNode.attr('href') + '" alt="" /></div>');
+					jNode.after(zoomDiv);
+
+					var image = jNode.children('img');
+					var bigImage = zoomDiv.children('img');
+					var scaleX = (bigImage.width() / image.width());
+					var scaleY = (bigImage.height() / image.height());
+					var offset = image.offset();
+
+					jNode.mousemove(function(e){
+						bigImage.css({
+							top: Math.max(zoomDiv.height() - bigImage.height(), Math.min(0, zoomDiv.height()/2 - (e.pageY - offset.top)*scaleY)),
+							left: Math.max(zoomDiv.width() - bigImage.width(), Math.min(0, zoomDiv.width()/2 - (e.pageX - offset.left)*scaleX))
+						});
+					});
+
+					jNode.mouseout(function () {
+						jQuery('.zoomDiv').remove();
+						jNode.unbind('mousemove');
+						jNode.unbind('mouseout');
+					});
+
+					// Disable the link on the image.
+					jNode.click(function () { return false });
+				};
+			}
+		}
+	}
+	app.directive('rbsCatalogProductVisuals', rbsCatalogProductVisuals);
+
+	function RbsCatalogSimpleProductController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
+		scope.productData = {};
+		scope.pictograms = null;
+		scope.visuals = null;
+
+		var cacheKey = $element.attr('data-cache-key');
+		if (cacheKey && angular.isObject($window['__change']) && $window['__change'][cacheKey]) {
+			scope.productData = $window['__change'][cacheKey];
+		}
+
+		this.setPictograms = function(productData) {
+			scope.pictograms = extractPictogram(productData)
+		};
+
+		this.setVisuals = function(productData) {
+			scope.visuals = extractVisuals(productData);
+		};
+
+		this.setPictograms(scope.productData);
+
+		this.setVisuals(scope.productData);
 
 		scope.addLine = function() {
-			addLine(scope, $http, $compile, $rootScope);
+			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
 		};
 	}
 
-	RbsCatalogSimpleProductController.$inject = ['$scope', '$http', '$compile', '$rootScope'];
+	RbsCatalogSimpleProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogSimpleProductController', RbsCatalogSimpleProductController);
-	function RbsCatalogProductItemController(scope, $http, $compile, $rootScope) {
-		initializeScope(scope);
 
-		scope.addLine = function() {
-			addLine(scope, $http, $compile, $rootScope);
-		};
+
+	function rbsCatalogAddSimpleProductToCart() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogAddSimpleProductToCart.tpl',
+			replace: false,
+			scope: false,
+			link: productDataLink
+		}
 	}
-	RbsCatalogProductItemController.$inject = ['$scope', '$http', '$compile', '$rootScope'];
-	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
+	app.directive('rbsCatalogAddSimpleProductToCart', rbsCatalogAddSimpleProductToCart);
 
-	function RbsCatalogProductSetController(scope, $http, $compile, $rootScope) {
-		scope.pictogramFormats = {};
-		scope.visualFormats = {};
-		scope.product = {};
-		scope.productLoading = false;
 
-		scope.addLine = function() {
-			addLine(scope, $http, $compile, $rootScope);
-		};
-	}
 
-	RbsCatalogProductSetController.$inject = ['$scope', '$http', '$compile', '$rootScope'];
-	app.controller('RbsCatalogProductSetController', RbsCatalogProductSetController);
+	function RbsCatalogVariantProductController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
+		scope.productData = {};
+		scope.originalProductData = {};
+		scope.rootProductData = null;
+		scope.pictograms = null;
+		scope.visuals = null;
 
-	function RbsCatalogVariantProductController(scope, $http, $compile, $rootScope) {
-		initializeScope(scope);
-		setCurrentProduct(null);
+		scope.selectedAxesValues = [];
+		scope.axesItems = [];
 
-		scope.addLine = function() {
-			addLine(scope, $http, $compile, $rootScope);
-		};
+		scope.parameters = {};
 
-		scope.$watch('axes', function(val) {
-			var i, product, productAxisVal, productId = scope.product.id,
-				axesLength, index = 0, parentValues = [];
-			if (val) {
-				axesLength = val.axesValues.length;
-				buildSelectAxisValues(index, parentValues, val.products, val.axesValues);
+		scope.loadProductId = null;
+		scope.loadedProducts = {};
 
-				product = findProduct(productId, val.products);
-				if (product) {
-					for (index = 0; index < axesLength; index++) {
-						productAxisVal = product.values[index];
-						i = -1;
-						if (scope.axesValues[index]) {
-							i = getIndexOfValue(scope.axesValues[index], productAxisVal.value);
-						}
-						if (i != -1) {
-							scope.selectedAxesValues[index] = scope.axesValues[index][i];
-							parentValues.push(productAxisVal);
-							if (index + 1 < axesLength) {
-								buildSelectAxisValues(index + 1, parentValues, val.products, val.axesValues);
-							}
+		var cacheKey = $element.attr('data-cache-key');
+		if (cacheKey) {
+			scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+			if (angular.isObject($window['__change']) && $window['__change'][cacheKey]) {
+				scope.productData = $window['__change'][cacheKey];
+				scope.originalProductData = scope.productData;
+				scope.rootProductData = scope.productData.rootProduct || scope.productData;
+			}
+		}
 
-							if (index == axesLength - 1) {
-								loadProduct(product)
-							}
-						}
-						else {
-							scope.selectedAxesValues[index] = null;
-						}
+		scope.$watch('productData', function(productData) {
+			if (productData) {
+				scope.pictograms = extractPictogram(productData);
+				if (!scope.pictograms && productData.rootProduct) {
+					scope.pictograms = extractPictogram(productData.rootProduct);
+				}
+
+				scope.visuals = extractVisuals(productData);
+				if (!scope.visuals && productData.rootProduct) {
+					scope.visuals = extractVisuals(productData.rootProduct);
+				}
+
+				if (productData && productData.cart && !productData.cart.quantity) {
+					if (productData.cart.minQuantity) {
+						productData.cart.quantity = productData.cart.minQuantity;
+					} else {
+						productData.cart.quantity = 1;
 					}
 				}
-				else {
-					for (i = 0; i < axesLength; i++) {
-						scope.selectedAxesValues[i] = null;
+			}
+		});
+
+		scope.addLine = function() {
+			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+		};
+
+		function compareAxesValues(axesValues, expectedValues, compareType) {
+			var i;
+			if (!compareType || compareType == '=') {
+				if (axesValues.length == expectedValues.length) {
+					for(i = 0; i < axesValues.length; i++) {
+						if (axesValues[i] != expectedValues[i]) {
+							return false;
+						}
+					}
+					return true;
+				}
+				return false;
+			} else if (compareType == '<') {
+				if (axesValues.length == expectedValues.length - 1) {
+					for(i = 0; i < axesValues.length; i++) {
+						if (axesValues[i] != expectedValues[i]) {
+							return false;
+						}
+					}
+					return true;
+				}
+				return false;
+			} else if (compareType == '<<') {
+				if (axesValues.length < expectedValues.length) {
+					for(i = 0; i < axesValues.length; i++) {
+						if (axesValues[i] != expectedValues[i]) {
+							return false;
+						}
+					}
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+
+		function getChildrenAxesValues(axesValue) {
+			var indexedValues = {}, childrenValues = [], childAxisIndex = axesValue.length,
+				variantProducts = scope.rootProductData.variants.products, variantAxesValue, i, axisValue;
+			for (i = 0; i < variantProducts.length; i++) {
+				variantAxesValue = variantProducts[i].axesValues;
+				if (compareAxesValues(axesValue, variantAxesValue, '<<')) {
+					axisValue = variantAxesValue[childAxisIndex];
+					if (!indexedValues.hasOwnProperty(axisValue)) {
+						indexedValues[axisValue] = true;
+						childrenValues.push(axisValue);
 					}
 				}
+			}
+			return childrenValues;
+		}
+
+
+		function getAxisItem(axesValue) {
+			var index = axesValue.length - 1,
+				axisItem = {value: axesValue[index], title: axesValue[index],
+					lastAxis: axesValue.length == scope.rootProductData.variants.axes.length},
+			 variantProducts = scope.rootProductData.variants.products, variantAxesValue, i;
+			for (i = 0; i < variantProducts.length; i++) {
+				if (compareAxesValues(axesValue, variantProducts[i].axesValues, '=')) {
+					variantAxesValue = variantProducts[i];
+					angular.extend(axisItem, variantAxesValue);
+				}
+			}
+			var axis = scope.rootProductData.variants.axes[index];
+			if (axis.defaultItems && axis.defaultItems.length) {
+				for (i = 0; i < axis.defaultItems.length; i++) {
+					if (axis.defaultItems[i].value == axisItem.value) {
+						axisItem.title = axis.defaultItems[i].title;
+						break;
+					}
+				}
+			}
+			return axisItem;
+		}
+
+		function getAxisItems(axesValue, values) {
+			var axisItems = [];
+			for (i = 0; i< values.length; i++) {
+				axesValue.push(values[i]);
+				axisItems.push(getAxisItem(axesValue));
+				axesValue.pop();
+			}
+			return axisItems;
+		}
+
+		scope.$watchCollection('selectedAxesValues', function(definedAxes) {
+			var axesDefinition =  scope.rootProductData.variants.axes;
+			var variantProducts = scope.rootProductData.variants.products;
+			scope.axesItems = [];
+
+			var processingAxesValue = [], currentAxesValue = [], axisIndex, values, i, axisItems;
+			for (axisIndex = 0; axisIndex < axesDefinition.length; axisIndex++) {
+				if (definedAxes[axisIndex]) {
+					values = getChildrenAxesValues(currentAxesValue);
+					axisItems = getAxisItems(currentAxesValue, values);
+					scope.axesItems.push(axisItems);
+					currentAxesValue.push(definedAxes[axisIndex]);
+				} else if (axisIndex == definedAxes.length) {
+					values = getChildrenAxesValues(currentAxesValue);
+					axisItems = getAxisItems(currentAxesValue, values);
+					scope.axesItems.push(axisItems);
+
+					if (values.length == 1) {
+						definedAxes.push(values[0]);
+						currentAxesValue.push(definedAxes[axisIndex]);
+					}
+				} else {
+					scope.axesItems.push([]);
+				}
+			}
+
+			if (definedAxes.length) {
+				var variant = getVariantByAxesValue(definedAxes);
+				if (variant && variant.id != scope.productData.common.id) {
+					selectProduct(variant.id);
+				}
+			} else {
+				scope.productData = scope.rootProductData;
 			}
 		});
 
 		scope.variantChanged = function(axisIndex) {
-			scope.selectedAxesValues.length = axisIndex + 1;
+			scope.selectedAxesValues.length = axisIndex + (scope.selectedAxesValues[axisIndex] !== null ? 1 : 0);
 		};
 
-		scope.$watchCollection('selectedAxesValues', function(val) {
-			if (!val || !scope.axes) {
-				return;
-			}
-
-			var i, expected = [], axes = scope.axes.axesValues, products = scope.axes.products;
-			for (i = 0; i < val.length; i++) {
-				if (val[i] === null) {
-					break;
-				}
-				expected.push({id: val[i].id, value: val[i].value});
-			}
-
-			if (expected.length < axes.length) {
-				buildSelectAxisValues(expected.length, expected, products, axes);
-			}
-
-			var significantAxesCount = expected.length;
-			for (i = significantAxesCount; i < axes.length; i++) {
-				expected.push({id: axes[i].id, value: null});
-			}
-
-			while (significantAxesCount > 0) {
-				// Look for a product with these axis values.
-				for (i = 0; i < products.length; i++) {
-					if (eqAxesValues(expected, products[i].values)) {
-						if (products[i].id != scope.product.id) {
-							loadProduct(products[i]);
-						}
-						return;
+		function selectProduct(productId) {
+			if (scope.loadedProducts[productId]) {
+				scope.productData = scope.loadedProducts[productId];
+			} else if (productId == scope.originalProductData.common.id) {
+				scope.productData = scope.originalProductData;
+			} else if (productId == scope.rootProductData.common.id) {
+				scope.productData = scope.rootProductData;
+			} else if (scope.loadProductId != productId) {
+				scope.loadProductId = productId;
+				var blockParameters = scope.parameters;
+				var data = {
+					webStoreId: blockParameters.webStoreId,
+					billingAreaId: blockParameters.billingAreaId,
+					zone: blockParameters.zone
+				};
+				var params = {visualFormats: blockParameters.imageFormats};
+				var request = AjaxAPI.getData('Rbs/Catalog/Product/' + productId, data, params);
+				request.success(function(data, status, headers, config) {
+					var productData = data.dataSets, loadProductId = productData.common.id;
+					productData.rootProduct = scope.rootProductData;
+					scope.loadedProducts[loadProductId] = productData;
+					if (loadProductId == scope.loadProductId) {
+						scope.productData = productData;
 					}
-				}
-				// Iteratively remove the last axis value look for a parent intermediate product.
-				significantAxesCount--;
-				expected[significantAxesCount].value = null;
-			}
-			setCurrentProduct(null);
-		});
-
-		function loadProduct(product) {
-			scope.productLoading = true;
-			var params = {
-				productId: product.id,
-				axesValues: product.values,
-				formats: { visuals: scope.visualFormats, pictograms: scope.pictogramFormats }
-			};
-			$http.post('Action/Rbs/Catalog/ProductResult', params)
-				.success(function(data) {
-					scope.productLoading = false;
-					setCurrentProduct(data);
-				})
-				.error(function() {
-					scope.productLoading = false;
-					setCurrentProduct(null);
+				}).error(function(data, status, headers, config) {
+					scope.error = data.message;
+					console.log('error', data, status);
 				});
-		}
-
-		function setCurrentProduct(data) {
-			if (data) {
-				scope.product = data['general'];
-				scope.prices = data.prices;
-				scope.stock = data.stock;
-				scope.pictograms = data.pictograms.data;
-				scope.visuals = data.visuals.data;
-				scope.quantity = data.stock['minQuantity'];
-			}
-			else {
-				scope.product = {'id': null};
-				scope.prices = null;
-				scope.stock = null;
-				scope.pictograms = null;
-				scope.visuals = null;
-				scope.quantity = 1;
 			}
 		}
 
-		function findProduct(productId, products) {
-			var i;
-			for (i = 0; i < products.length; i++) {
-				if (products[i].id == productId) {
-					return products[i];
+		function getVariantByAxesValue(axesValue) {
+			var	variantProducts = scope.rootProductData.variants.products, i;
+			for (i = 0; i < variantProducts.length; i++) {
+				if (compareAxesValues(axesValue, variantProducts[i].axesValues, '=')) {
+					return  variantProducts[i]
 				}
 			}
 			return null;
 		}
 
-		function buildSelectAxisValues(index, parentAxesValue, products, axes) {
-			var values = [], value, axisId, lastAxis = (axes.length - 1 == index);
-			angular.forEach(products, function(product) {
-				if (eqAxesValues(parentAxesValue, product.values)) {
-					value = product.values[index].value;
-					axisId = product.values[index].id;
-					if (value !== null && (getIndexOfValue(values, value) == -1)) {
-						var title = value;
-						if (axes[index].hasOwnProperty('defaultValues') && axes[index]['defaultValues'].length > 0) {
-							for (var i = 0; i < axes[index]['defaultValues'].length; i++) {
-								if (axes[index]['defaultValues'][i].hasOwnProperty('title') &&
-									axes[index]['defaultValues'][i]['value'] == value) {
-									title = axes[index]['defaultValues'][i]['title'];
-									break;
-								}
-							}
-						}
-						var axisValue = {id: axisId, value: value, title: title, index: index, lastAxis: lastAxis};
-						var stockData = lastAxis ? product.stockData : null;
-						if (angular.isObject(stockData) && stockData.hasOwnProperty('hasStock')) {
-							angular.extend(axisValue, stockData);
-						}
-						values.push(axisValue);
-					}
-				}
-			});
-			scope.axesValues[index] = values;
-
-			if (scope.axesValues[index].length == 1)
-			{
-				scope.selectedAxesValues[index] = scope.axesValues[index][0];
-			}
-		}
-
-		function eqAxesValues(expected, actual) {
-			var e, eav, a, aav;
-			for (e = 0; e < expected.length; e++) {
-				eav = expected[e];
-				for (a = 0; a < actual.length; a++) {
-					aav = actual[a];
-					if (aav.id == eav.id && aav.value !== eav.value) {
-						return false;
-					}
+		if (scope.rootProductData !== scope.productData) {
+			for (var i = 0; i < scope.rootProductData.variants.products.length; i++) {
+				if (scope.rootProductData.variants.products[i].id == scope.productData.common.id) {
+					scope.selectedAxesValues = angular.copy(scope.rootProductData.variants.products[i].axesValues);
+					break;
 				}
 			}
-			return true;
-		}
-		// Expose this function to extended controllers.
-		scope.eqAxesValues = eqAxesValues;
-
-		function getIndexOfValue(array, value) {
-			var e, ev;
-			for (e = 0; e < array.length; e++) {
-				ev = array[e];
-				if (ev.hasOwnProperty('value') && ev.value == value) {
-					return e;
-				}
-			}
-			return -1;
 		}
 	}
-	RbsCatalogVariantProductController.$inject = ['$scope', '$http', '$compile', '$rootScope'];
+	RbsCatalogVariantProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogVariantProductController', RbsCatalogVariantProductController);
-})();
+
+	function rbsCatalogAddVariantProductToCart() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogAddVariantProductToCart.tpl',
+			replace: false,
+			scope: false,
+			link: productDataLink
+		}
+	}
+	app.directive('rbsCatalogAddVariantProductToCart', rbsCatalogAddVariantProductToCart);
+
+	function rbsCatalogAxisOptionClass($parse) {
+		return {
+			require: 'select',
+			link: function(scope, elem, attrs) {
+				var optionsSourceStr = attrs.ngOptions.split(' ').pop();
+				var getOptionsClass = $parse(attrs.rbsCatalogAxisOptionClass);
+
+				scope.$watchCollection(optionsSourceStr, function(items) {
+					angular.forEach(items, function(item, index) {
+						var classes = getOptionsClass(item);
+						var option = elem.find('option[value=' + index + ']');
+						angular.forEach(classes, function(add, className) {
+							if (add) {
+								angular.element(option).addClass(className);
+							}
+							else {
+								angular.element(option).removeClass(className);
+							}
+						});
+					});
+				});
+			}
+		};
+	}
+	app.directive('rbsCatalogAxisOptionClass', ['$parse', rbsCatalogAxisOptionClass]);
+
+	function rbsCatalogProductAvailability() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductAvailability.tpl',
+			link: function(scope, elm, attrs) {
+
+			}
+		}
+	}
+	app.directive('rbsCatalogProductAvailability', rbsCatalogProductAvailability);
+
+
+	function RbsCatalogProductSetController(scope, $element, AjaxAPI) {
+		scope.productData = {};
+		scope.pictograms = null;
+		scope.visuals = null;
+
+		var cacheKey = $element.attr('data-cache-key');
+		if (cacheKey) {
+			scope.productData = AjaxAPI.globalVar(cacheKey);
+		}
+
+		this.setPictograms = function(productData) {
+			scope.pictograms = extractPictogram(productData)
+		};
+
+		this.setVisuals = function(productData) {
+			scope.visuals = extractVisuals(productData);
+		};
+
+		this.setPictograms(scope.productData);
+
+		this.setVisuals(scope.productData);
+	}
+	RbsCatalogProductSetController.$inject = ['$scope', '$element', 'RbsChange.AjaxAPI'];
+	app.controller('RbsCatalogProductSetController', RbsCatalogProductSetController);
+
+	function rbsCatalogAddSetItemProductToCart($http, $compile, $rootScope, $window, AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogAddSetItemProductToCart.tpl',
+			replace: false,
+			scope: {productData: "="},
+			link: function(scope, elm, attrs) {
+				scope.addLine = function() {
+					console.log('addLine');
+					addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+				};
+				productDataLink(scope, elm, attrs);
+			}
+		}
+	}
+	rbsCatalogAddSetItemProductToCart.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	app.directive('rbsCatalogAddSetItemProductToCart', rbsCatalogAddSetItemProductToCart);
+
+	function rbsCatalogProductPrice() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductPrice.tpl',
+			link: function(scope, elm, attrs) {
+				scope.displayWithoutTax = (attrs.hasOwnProperty('displayWithoutTax')) ? (attrs.displayWithoutTax == "1") : false;
+				scope.displayWithTax = (attrs.hasOwnProperty('displayWithTax')) ? (attrs.displayWithTax == "1") : false;
+			}
+		}
+	}
+	app.directive('rbsCatalogProductPrice', rbsCatalogProductPrice);
+
+
+	app.filter('rbsCatalogGetAttribute', function () {
+		function filter (productData, name) {
+			if (!angular.isObject(productData) || !angular.isString(name) ) {
+				return null;
+			}
+			if (angular.isObject(productData['common']) && angular.isObject(productData['common']['attributes']) &&
+				angular.isString(productData['common']['attributes'][name])) {
+				var key = productData['common']['attributes'][name];
+
+				if (angular.isObject(productData['attributes']) && angular.isObject(productData['attributes'][key]) &&
+					angular.isDefined(productData['attributes'][key]['value'])) {
+					return productData['attributes'][key];
+				}
+			}
+
+			if (angular.isObject(productData['rootProduct'])) {
+				return filter(productData['rootProduct'], name);
+			}
+			return null;
+		}
+
+		return filter;
+	});
+
+	function rbsCatalogAttributeValue($sce) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogAttributeValue.tpl',
+			replace: false,
+			scope: {attribute:'='},
+			link: function(scope, elm, attrs) {
+
+				scope.isArrayValue = function(attribute) {
+					attribute = attribute || scope.attribute;
+					return (attribute && attribute.type == 'DocumentArray');
+				};
+
+				scope.isDocument = function(attribute) {
+					attribute = attribute || scope.attribute;
+					return (attribute && attribute.type == 'Document');
+				};
+
+				scope.isLinkValue = function(value) {
+					return (value && value.URL && value.URL.canonical);
+				};
+
+				scope.isLink = function(attribute) {
+					attribute = attribute || scope.attribute;
+					return (scope.isDocument(attribute) && scope.isLinkValue(attribute.value));
+				};
+
+				scope.isImageValue = function(value) {
+					return (value && value.attribute);
+				};
+
+				scope.isImage = function(attribute) {
+					attribute = attribute || scope.attribute;
+					return (scope.isDocument(attribute) && scope.isImageValue(attribute.value));
+				};
+
+				scope.isHtml = function(attribute) {
+					attribute = attribute || scope.attribute;
+					return (attribute && attribute.type == 'RichText' && angular.isString(attribute.value));
+				};
+
+				scope.isDate = function(attribute) {
+					attribute = attribute || scope.attribute;
+					return (attribute && attribute.type == 'Date');
+				};
+
+				scope.isDateTime = function(attribute) {
+					attribute = attribute || scope.attribute;
+					return (attribute && attribute.type == 'DateTime');
+				};
+				scope.isString = function(attribute) {
+					attribute = attribute || scope.attribute;
+					return (attribute && !scope.isDocument(attribute) && !scope.isArrayValue(attribute)
+					&& !scope.isHtml(attribute) && !scope.isDate(attribute) && !scope.isDateTime(attribute));
+				};
+
+				scope.trustHtml = function(html) {
+					return $sce.trustAsHtml(html);
+				};
+			}
+		}
+	}
+	rbsCatalogAttributeValue.$inject = ['$sce'];
+	app.directive('rbsCatalogAttributeValue', rbsCatalogAttributeValue);
+
+
+	function rbsCatalogSectionAttributes($sce, $compile) {
+		return {
+			restrict: 'A',
+			template: '<div></div>',
+			scope: {productData: '='},
+			compile: function (elm, attrs) {
+				var displayMode = attrs['displayMode'] || 'table';
+				var displayDirective = '<div data-rbs-catalog-attributes-'+ displayMode +'=""></div>';
+				elm.html(displayDirective);
+
+				return function(scope, elm, attrs) {
+					scope.visibility = attrs.visibility || 'specifications';
+					scope.blockId = attrs.blockId || 'product';
+					scope.sections = [];
+					scope.sectionsAttributes = {};
+
+					scope.trustHtml = function(html) {
+						return $sce.trustAsHtml(html);
+					};
+
+					function buildAttributes(productData) {
+						scope.sections = [];
+						scope.sectionsAttributes = {};
+						if (!angular.isObject(productData) || !angular.isObject(productData['attributesVisibility'])
+							|| !angular.isArray(productData['attributesVisibility'][scope.visibility])) {
+							return;
+						}
+						buildAttributes(productData['rootProduct']);
+						var keys = productData['attributesVisibility'][scope.visibility];
+						var technicalNamesById = {};
+						angular.forEach(productData['common']['attributes'], function(id, technicalName) {
+							technicalNamesById[id] = technicalName;
+						});
+						var attributes = productData['attributes'];
+						angular.forEach(keys, function(id) {
+							var attribute = attributes[id];
+							if (attribute && attribute.value) {
+								var section = attribute['section'] || '';
+								attribute.id = id;
+								if (technicalNamesById['id']) {
+									attribute['technicalName'] = technicalNamesById['id'];
+								}
+								if (!scope.sectionsAttributes[section]) {
+									scope.sections.push(section);
+									scope.sectionsAttributes[section] = [];
+								}
+								else
+								{
+									for (var i = 0; i< scope.sectionsAttributes[section].length; i++) {
+										if (attribute.id == scope.sectionsAttributes[section][i].id) {
+											scope.sectionsAttributes[section][i] = attribute;
+											return;
+										}
+									}
+								}
+								scope.sectionsAttributes[section].push(attribute);
+							}
+						})
+					}
+
+					scope.$watch('productData', function(productData, oldValue) {
+						buildAttributes(productData);
+					});
+				}
+			}
+		}
+	}
+	rbsCatalogSectionAttributes.$inject = ['$sce', '$compile'];
+	app.directive('rbsCatalogSectionAttributes', rbsCatalogSectionAttributes);
+
+	function rbsCatalogAttributesTable() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogAttributesTable.tpl',
+			link: function(scope, elm, attrs) {
+				scope.tableRows = [];
+
+				scope.$watch('sectionsAttributes', function(sectionsAttributes) {
+					scope.tableRows = [];
+					angular.forEach(scope.sections, function (section) {
+						scope.tableRows.push({isSectionTitle: true, section: section});
+						angular.forEach(scope.sectionsAttributes[section], function (attribute) {
+							scope.tableRows.push(attribute);
+						})
+					});
+				}, true);
+			}
+		}
+	}
+	app.directive('rbsCatalogAttributesTable', rbsCatalogAttributesTable);
+
+	function rbsCatalogAttributesAccordion() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogAttributesAccordion.tpl',
+			link: function(scope, elm, attrs) {
+
+			}
+		}
+	}
+	app.directive('rbsCatalogAttributesAccordion', rbsCatalogAttributesAccordion);
+
+	function rbsCatalogAttributesFlat() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogAttributesFlat.tpl',
+			link: function(scope, elm, attrs) {
+				scope.flatRows = [];
+				scope.$watch('sectionsAttributes', function(sectionsAttributes) {
+					scope.flatRows = [];
+					angular.forEach(scope.sections, function (section) {
+						angular.forEach(scope.sectionsAttributes[section], function (attribute) {
+							scope.flatRows.push(attribute);
+						})
+					});
+				}, true);
+			}
+		}
+	}
+	app.directive('rbsCatalogAttributesFlat', rbsCatalogAttributesFlat);
+
+	function rbsCatalogAttributesTabs() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogAttributesTabs.tpl',
+			link: function(scope, elm, attrs) {
+
+			}
+		}
+	}
+	app.directive('rbsCatalogAttributesTabs', rbsCatalogAttributesTabs);
+})(jQuery);

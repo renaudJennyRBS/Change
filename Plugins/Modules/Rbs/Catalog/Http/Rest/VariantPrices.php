@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright (C) 2014 Ready Business System
- *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -138,19 +137,40 @@ class VariantPrices
 								$price->setSku($sku);
 								$price->setWebStore($webStore);
 								$price->setBillingArea($billingArea);
-								$price->setTaxCategories($priceData['taxCategories']);
-								$price->setValue($priceData['value']);
-								$price->setEcoTax($priceData['ecoTax']);
+								if (isset($priceData['taxCategories']))
+								{
+									$price->setTaxCategories($priceData['taxCategories']);
+								}
+								if (isset($priceData['value']))
+								{
+									$price->setValue($priceData['value']);
+								}
+								if (isset($priceData['ecoTax']))
+								{
+									$price->setEcoTax($priceData['ecoTax']);
+								}
 								$price->save();
 							}
 							else
 							{
 								/* @var $price \Rbs\Price\Documents\Price */
 								$price = $documentManger->getDocumentInstance($priceData['id'], 'Rbs_Price_Price');
-								$price->setValue($priceData['value']);
-								$price->setEcoTax($priceData['ecoTax']);
-								$price->setTaxCategories($priceData['taxCategories']);
-								$price->save();
+								if ($price)
+								{
+									if (isset($priceData['value']))
+									{
+										$price->setValue($priceData['value']);
+									}
+									if (isset($priceData['ecoTax']))
+									{
+										$price->setEcoTax($priceData['ecoTax']);
+									}
+									if (isset($priceData['taxCategories']))
+									{
+										$price->setTaxCategories($priceData['taxCategories']);
+									}
+									$price->save();
+								}
 							}
 
 							$transactionManager->commit();

@@ -249,7 +249,7 @@ class AttributeManager
 	/**
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param \Rbs\Catalog\Attribute[]|integer[] $attributes
+	 * @param \Rbs\Catalog\Documents\Attribute[]|integer[] $attributes
 	 * @return integer[]
 	 */
 	public function initProductAttributesValue($product, array $attributes = [])
@@ -259,7 +259,7 @@ class AttributeManager
 		$attributeIds = [];
 		foreach ($attributes as $attribute)
 		{
-			$attributeIds[] = ($attribute instanceof \Rbs\Catalog\Attribute) ? $attribute->getId() : intval($attribute);
+			$attributeIds[] = ($attribute instanceof \Rbs\Catalog\Documents\Attribute) ? $attribute->getId() : intval($attribute);
 		}
 		$defined = $this->getDefinedAttributesValues($productId);
 		$value = ['valueType' => Attribute::TYPE_STRING, 'value' => null];

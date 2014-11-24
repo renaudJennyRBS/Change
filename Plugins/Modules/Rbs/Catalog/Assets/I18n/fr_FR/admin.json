@@ -565,5 +565,17 @@
 	},
 	"product_list_show_unavailable":{
 		"message": "Afficher les produits indisponible"
+	},
+	"display_mode_table":{
+		"message": "tableau"
+	},
+	"display_mode_accordion":{
+		"message": "accordéon"
+	},
+	"display_mode_tabs":{
+		"message": "onglets"
+	},
+	"display_mode_flat":{
+		"message": "à plat"
 	}
 }

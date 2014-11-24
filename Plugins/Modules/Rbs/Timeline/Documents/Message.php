@@ -110,7 +110,7 @@ class Message extends \Compilation\Rbs\Timeline\Documents\Message
 				}
 				catch (\Exception $e)
 				{
-					$event->getApplicationServices()->getLogging()->fatal($e);
+					$event->getApplicationServices()->getLogging()->exception($e);
 					$documentManager->popLCID();
 				}
 			}

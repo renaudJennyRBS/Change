@@ -3,10 +3,8 @@
 
 	var app = angular.module('RbsChangeApp');
 
-	/**
-	 * Cart controller.
-	 */
-	function rbsGeoManageAddressesController(scope, $http) {
+
+	function rbsGeoManageAddressesController(scope, AjaxAPI) {
 		scope.data = {
 			addresses: [],
 			newAddress: null,
@@ -15,14 +13,15 @@
 			isEditedAddressValid: false
 		};
 
-		$http.get('Action/Rbs/Geo/GetAddresses')
-			.success(function(data) {
-				scope.data.addresses = data;
-			})
-			.error(function(data, status, headers) {
-				console.log('GetAddresses error', data, status, headers);
-			}
-		);
+		function loadAddresses() {
+			AjaxAPI.getData('Rbs/Geo/Address/', {})
+				.success(function(data, status, headers, config) {
+					scope.data.addresses = data.items;
+				}).error(function(data, status, headers, config) {
+					scope.data.addresses = [];
+					console.log('loadAddresses error', data, status, headers);
+				});
+		}
 
 		scope.openEditAddressForm = function (address) {
 			scope.data.editedAddress = address;
@@ -33,43 +32,68 @@
 		};
 
 		scope.setDefaultAddress = function (address, defaultFor) {
-			$http.post('Action/Rbs/Geo/SetDefaultAddress', { id: address.fieldValues['__id'], defaultFor: defaultFor })
+			var id = address.common.id;
+			address.default[defaultFor] = true;
+			AjaxAPI.putData('Rbs/Geo/Address/' + id, address)
 				.success(function(data) {
-					scope.data.addresses = data;
+					loadAddresses();
 				})
 				.error(function(data, status, headers) {
-					console.log('SetDefaultAddress error', data, status, headers);
+					console.log('setDefaultAddress error', data, status, headers);
 				}
 			);
 		};
 
 		scope.updateAddress = function () {
-			$http.post('Action/Rbs/Geo/UpdateAddress', scope.data.editedAddress)
+			var id = scope.data.editedAddress.common.id;
+			AjaxAPI.putData('Rbs/Geo/Address/' + id, scope.data.editedAddress)
 				.success(function(data) {
-					scope.data.addresses = data;
+					var addedAddress = data.dataSets;
+					var addresses = [];
+					angular.forEach(scope.data.addresses, function(address) {
+						if (address.common.id == id) {
+							addresses.push(addedAddress);
+						} else {
+							addresses.push(address);
+						}
+					});
+					scope.data.addresses = addresses;
 					scope.data.editedAddress = null;
 				})
 				.error(function(data, status, headers) {
-					console.log('UpdateAddress error', data, status, headers);
+					console.log('updateAddress error', data, status, headers);
 				}
 			);
 		};
 
 		scope.deleteAddress = function (address) {
-			$http.post('Action/Rbs/Geo/DeleteAddress', { id: address.fieldValues['__id'] })
+			var id = address.common.id;
+			AjaxAPI.deleteData('Rbs/Geo/Address/' + id, scope.data.editedAddress)
 				.success(function(data) {
-					scope.data.addresses = data;
+					var addresses = [];
+					angular.forEach(scope.data.addresses, function(address) {
+						if (address.common.id != id) {
+							addresses.push(address);
+						}
+					});
+					scope.data.addresses = addresses;
 				})
 				.error(function(data, status, headers) {
-					console.log('DeleteAddress error', data, status, headers);
+					console.log('deleteAddress error', data, status, headers);
 				}
 			);
 		};
 
 		scope.openNewAddressForm = function () {
 			scope.data.newAddress = {
-				name: '',
-				fieldValues: {}
+				common: {name:null},
+				fields: {}
+			};
+		};
+
+		scope.clearAddress = function () {
+			scope.data.newAddress.fields = {
+				countryCode: scope.data.newAddress.fields.countryCode
 			};
 		};
 
@@ -78,19 +102,22 @@
 		};
 
 		scope.addNewAddress = function () {
-			$http.post('Action/Rbs/Geo/AddAddress', scope.data.newAddress)
+			AjaxAPI.postData('Rbs/Geo/Address/', scope.data.newAddress)
 				.success(function(data) {
-					scope.data.addresses = data;
+					var addedAddress = data.dataSets;
+					scope.data.addresses.push(addedAddress);
 					scope.data.newAddress = null;
 				})
 				.error(function(data, status, headers) {
-					console.log('AddAddress error', data, status, headers);
+					console.log('addNewAddress error', data, status, headers);
 				}
 			);
 		};
+
+		loadAddresses();
 	}
 
-	rbsGeoManageAddressesController.$inject = ['$scope', '$http'];
+	rbsGeoManageAddressesController.$inject = ['$scope', 'RbsChange.AjaxAPI'];
 	app.controller('rbsGeoManageAddressesController', rbsGeoManageAddressesController);
 })();
 

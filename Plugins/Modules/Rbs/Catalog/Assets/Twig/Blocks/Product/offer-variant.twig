@@ -1,193 +1,38 @@
 {% if parameters.webStoreId %}
-	<script type="text/ng-template" id="/addVariantLineToCart.tpl">
-		<div data-ng-show="product.hasOwnSku">
-			<div class="form-group" data-ng-show="product.canBeOrdered">
-				<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
-				<input data-ng-show="stock.maxQuantity" class="form-control" type="number" name="quantity"
-					data-ng-model="quantity" max="(= stock.maxQuantity =)" min="(= stock.minQuantity =)"
-					step="(= stock.quantityIncrement =)"/>
-				<input data-ng-show="!stock.maxQuantity" class="form-control" type="number" name="quantity"
-					data-ng-model="quantity" min="(= stock.minQuantity =)" step="(= stock.quantityIncrement =)"/>
-			</div>
-			<button name="key" type="button" class="btn btn-primary btn-lg" data-ng-click="addLine()"
-				data-ng-disabled="!product.canBeOrdered">
-				<span data-ng-show="product.canBeOrdered">
-					<i class="glyphicon glyphicon-shopping-cart"></i> {{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-				</span>
-				<span data-ng-hide="product.canBeOrdered">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
-			</button>
-		</div>
-	</script>
-
-	<script type="text/ng-template" id="/productAvailability.tpl">
-		<div data-ng-show="stock && stock.thresholdTitle" class="alert availability text-center"
-			data-ng-class="stock.thresholdClass">
-			<h4 itemprop="availability">(= stock.thresholdTitle =)</h4>
-		</div>
-		<div data-ng-show="!stock" data-ng-transclude="></div>
-	</script>
-
-	<script type="text/ng-template" id="/productPrice.tpl">
-		<div data-ng-show="prices">
-			<meta itemprop="priceCurrency" content="(= prices.currencyCode =)" data-ng-show="prices.price" />
-			<ul class="list-unstyled main-price" data-ng-show="prices.price">
-				<li class="price" data-ng-show="pricesConfig.display">
-					<span data-ng-if="!product.hasOwnSku">
-						{{ i18n('m.rbs.catalog.front.from', ['ucf']) }}
-					</span>
-					<span data-ng-if="!(pricesConfig.displayWithTax && prices.priceWithTax)" itemprop="price">
-						(= prices.formattedPrice =)
-					</span>
-					<span data-ng-if="pricesConfig.displayWithTax && prices.priceWithTax">(= prices.formattedPrice =)</span>
-					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-					{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-					</abbr>
-					<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}" data-ng-show="prices.priceWithoutDiscount">
-						(= prices.formattedPriceWithoutDiscount =)
-					</del>
-				</li>
-				<li class="price" data-ng-show="pricesConfig.displayWithTax && prices.priceWithTax">
-					<span data-ng-if="!product.hasOwnSku">
-						{{ i18n('m.rbs.catalog.front.from', ['ucf']) }}
-					</span>
-					<span itemprop="price">(= prices.formattedPriceWithTax =)</span>
-					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">
-					{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}
-					</abbr>
-					<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}" data-ng-show="prices.priceWithoutDiscountWithTax">
-						(= prices.formattedPriceWithoutDiscountWithTax =)
-					</del>
-				</li>
-				<li class="small" data-ng-show="prices.ecoTax">
-					{{ i18n('m.rbs.catalog.front.including', ['ucf']) }} {{ i18n('m.rbs.catalog.front.ecotax') }}
-					(= prices.formattedEcoTax =)
-				</li>
-			</ul>
-		</div>
-		<div data-ng-show="!prices" data-ng-transclude=""></div>
-	</script>
-
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
+		{% set rootProduct = productData.rootProduct | default(productData) %}
 		{% block variants %}
-			<div data-rbs-catalog-variant-data=""
-					data-variant-group-id="{{ productPresentation.variantsConfiguration.variantGroup.id }}"
-					data-axes="{{ productPresentation.variantsConfiguration.axes | json_encode }}">
-			</div>
 			<div class="form-group">
-				{% for axisName in productPresentation.variantsConfiguration.axesNames %}
+				{% for axis in rootProduct.variants.axes %}
 					{% set i = loop.index0 %}
-					<label for="selectedVariant{{ i }}">{{ axisName }}</label>
-					<select data-ng-show="axesValues[{{ i }}].length > 1" data-ng-cloak="" id="selectedVariant{{ i }}" class="form-control" data-ng-model="selectedAxesValues[{{ i }}]"
-						data-ng-options="var.title for var in axesValues[{{ i }}]" data-ng-change="variantChanged({{ i }})"
+					<label for="selectedVariant_{{ blockId }}_{{ i }}">{{ axis.title }}</label>
+					<select id="selectedVariant_{{ blockId }}_{{ i }}" data-ng-show="axesItems[{{ i }}].length != 1" data-ng-cloak=""
+							class="form-control" data-ng-model="selectedAxesValues[{{ i }}]"
+						data-ng-options="axisItem.value as axisItem.title for axisItem in axesItems[{{ i }}]" data-ng-change="variantChanged({{ i }})"
 						data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
 						{% if i > 0 %}data-ng-disabled="!selectedAxesValues[{{ i - 1}}]"{% endif %}>
 						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
 					</select>
-					<div data-ng-hide="axesValues[{{ i }}].length > 1" data-ng-cloak="" class="form-control-static">(= axesValues[{{ i }}][0].title =)</div>
+					<div data-ng-show="axesItems[{{ i }}].length == 1" data-ng-cloak="" class="form-control-static">(= axesItems[{{ i }}][0].title =)</div>
 				{% endfor %}
 			</div>
 
-			<div data-ng-hide="product.hasOwnSku" data-ng-cloak="" class="alert warning">{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}</div>
+			<div data-ng-hide="productData.stock.sku" data-ng-cloak="" class="alert warning">{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}</div>
 		{% endblock%}
 
 		{% block availability %}
-			<div data-rbs-catalog-product-availability="">
-				{% if productPresentation.stock.thresholdTitle %}
-					<div class="alert availability text-center {{ productPresentation.stock.thresholdClass }}">
-						<h4 itemprop="availability">{{ productPresentation.stock.thresholdTitle }}</h4>
-					</div>
-				{% endif %}
-			</div>
+			<div data-ng-show="productData.stock.sku" data-rbs-catalog-product-availability=""></div>
 		{% endblock %}
 
 		{% block prices %}
-			<div data-rbs-catalog-product-price="" data-ng-model="pricesConfig"
-				data-display="{{ parameters.displayPrices }}"
+			<div data-rbs-catalog-product-price=""
+				data-display-without-tax="{{ parameters.displayPricesWithoutTax }}"
 				data-display-with-tax="{{ parameters.displayPricesWithTax }}">
-				<div>
-					{% if productPresentation.prices.price and (parameters.displayPrices or parameters.displayPricesWithTax) %}
-						{% set prices = productPresentation.prices %}
-						{% if prices.currencyCode %}
-							<meta itemprop="priceCurrency" content="{{ prices.currencyCode }}" />
-						{% endif %}
-						<ul class="list-unstyled main-price">
-							{% if parameters.displayPrices and prices.price %}
-								<li class="price">
-									{% if not productPresentation.general.hasOwnSku %}
-										{{ i18n('m.rbs.catalog.front.from', ['ucf']) }}
-									{% endif %}
-									{% if not (parameters.displayPricesWithTax and prices.priceWithTax) %}
-										<span itemprop="price">{{ prices.formattedPrice }}</span>
-									{% else %}
-										{{ prices.formattedPrice }}
-									{% endif %}
-									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-										{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-									</abbr>
-									{% if prices.priceWithoutDiscount %}
-										<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-											{{ prices.formattedPriceWithoutDiscount }}
-										</del>
-									{% endif %}
-								</li>
-							{% endif %}
-							{% if parameters.displayPricesWithTax  and prices.priceWithTax %}
-								<li class="price">
-									{% if not productPresentation.general.hasOwnSku %}
-										{{ i18n('m.rbs.catalog.front.from', ['ucf']) }}
-									{% endif %}
-									<span itemprop="price">{{ prices.formattedPriceWithTax }}</span>
-									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.with_tax') }}">
-										{{ i18n('m.rbs.catalog.front.with_tax_abbr') }}
-									</abbr>
-									{% if prices.priceWithoutDiscountWithTax %}
-										<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
-											{{ prices.formattedPriceWithoutDiscountWithTax }}
-										</del>
-									{% endif %}
-								</li>
-							{% endif %}
-							{% if prices.ecoTax %}
-								<li class="small">
-									{{ i18n('m.rbs.catalog.front.including', ['ucf']) }} {{ i18n('m.rbs.catalog.front.ecotax') }}
-									{{ prices.formattedEcoTax }}
-								</li>
-							{% endif %}
-						</ul>
-					{% endif %}
-				</div>
 			</div>
 		{% endblock %}
 
 		{% block addToCart %}
-			<form action="{{ ajaxURL('Rbs_Commerce', 'AddLineToCart') }}" method="POST" name="addLineToCart">
-				<fieldset data-rbs-catalog-variant-product-data="" data-product-id="{{ parameters.toDisplayDocumentId }}"
-					data-modal-id="addToCartConfirmationModal-{{ blockId }}" data-section-id="{{ section.id }}">
-					{% if productPresentation.general.hasOwnSku %}
-						{% if productPresentation.general.canBeOrdered %}
-							<input type="hidden" name="redirectLocation" value="{{ functionURL('Rbs_Commerce_Cart') }}" />
-							<input type="hidden" name="errorLocation" value="{{ currentURL() }}">
-							<div class="form-group">
-								<label for="product-quantity">{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</label>
-								<input class="form-control" type="number" id="product-quantity" name="quantity"
-									value="{{ productPresentation.stock.minQuantity }}"
-									max="{{ productPresentation.stock.maxQuantity }}"
-									min="{{ productPresentation.stock.minQuantity }}"
-									step="{{ productPresentation.stock.quantityIncrement }}" />
-							</div>
-
-							<button type="submit" class="btn btn-primary btn-lg">
-								<i class="glyphicon glyphicon-shopping-cart"></i>
-								{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-							</button>
-						{% else %}
-							<button type="button" class="btn btn-primary btn-lg" disabled="disabled">
-								{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-							</button>
-						{% endif %}
-					{% endif %}
-				</fieldset>
-			</form>
+			<div data-rbs-catalog-add-variant-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
 		{% endblock %}
 	</div>
 {% endif %}

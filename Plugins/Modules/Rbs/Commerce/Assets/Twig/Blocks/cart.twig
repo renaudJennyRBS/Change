@@ -1,4 +1,16 @@
-<div data-ng-controller="rbsCommerceCartController">
-	<h1>{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}</h1>
-	{% include 'Rbs_Commerce/Blocks/order-process/cart.twig' %}
-</div>
+{% use 'Rbs_Commerce/cart-directives.twig' %}
+{% if cartData %}
+	<script type="text/javascript">
+		window.__change['cartData'] = {{ cartData | json_encode | raw}};
+	</script>
+
+	{{ block('cartStructure') }}
+	{{ block('cartLine') }}
+
+	{% block cart %}
+		<div data-rbs-commerce-cart="" data-cache-key="{{ blockId }}">
+		</div>
+	{% endblock %}
+{% else %}
+	{{ block('emptyCart') }}
+{% endif %}

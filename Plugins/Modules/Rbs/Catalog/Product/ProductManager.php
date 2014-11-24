@@ -53,7 +53,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product $product
 	 * @param array $csParameters
-	 * @return \Rbs\Catalog\Product\ProductItem[]
+	 * @return array
 	 */
 	public function getCrossSellingForProduct($product, $csParameters)
 	{
@@ -72,7 +72,7 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param array $csParameters
-	 * @return \Rbs\Catalog\Product\ProductItem[]
+	 * @return array
 	 */
 	public function getCrossSellingForCart($cart, $csParameters)
 	{
@@ -122,25 +122,45 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 				$subQuery->addOrder('position', true);
 				$query->addOrder($crossSellingList->getProductSortOrder(), $crossSellingList->getProductSortDirection());
 
+				$catalogManager = $commerceServices->getCatalogManager();
 				/* @var $urlManager \Change\Http\Web\UrlManager */
 				$urlManager = $parameters['urlManager'];
+				$context = new \Change\Http\Ajax\V1\Context($event->getApplication(), $documentManager);
+				if ($urlManager instanceof \Change\Http\Web\UrlManager)
+				{
+					$context->setWebsiteUrlManager($urlManager);
+					$context->setWebsite($urlManager->getWebsite());
+					$context->setURLFormats('canonical');
+				}
+
+				$context->setDetailed(false);
+				$commerceContext = $commerceServices->getContext();
+
+				$context->setVisualFormats(isset($parameters['visualFormats']) ? $parameters['visualFormats'] : 'listItem');
+				$webStoreId = isset($parameters['webStoreId']) ?
+					$parameters['webStoreId'] : ($commerceContext->getWebStore() ? $commerceContext->getWebStore()->getId() : 0);
+
+				if ($webStoreId)
+				{
+					$context->addData('webStoreId', $webStoreId);
+
+					$billingAreaId = isset($parameters['billingAreaId']) ?
+						$parameters['billingAreaId'] : ($commerceContext->getBillingArea() ? $commerceContext->getBillingArea()->getId(): 0);
+					if ($billingAreaId) {
+						$context->addData('billingAreaId', $billingAreaId);
+						$context->addData('zone', isset($parameters['zone']) ? $parameters['zone'] : $commerceContext->getZone());
+					}
+				}
+				$contextArray = $context->toArray();
+
+				/** @var \Rbs\Catalog\Documents\Product $p */
 				foreach ($query->getDocuments() as $p)
 				{
-					/* @var $p \Rbs\Catalog\Documents\Product */
-					$url = $urlManager->getCanonicalByDocument($p)->normalize()->toString();
-					$row = array('id' => $p->getId(), 'url' => $url);
-					$visual = $p->getFirstVisual();
-					$row['visual'] = $visual ? $visual->getPath() : null;
-
-					$options = [ 'urlManager' => $urlManager ];
-					$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($p, $options);
-					if ($productPresentation)
+					$productData = $catalogManager->getProductData($p, $contextArray);
+					if ($productData)
 					{
-						$productPresentation->evaluate();
-						$row['productPresentation'] = $productPresentation;
+						$products[] = $productData;
 					}
-
-					$products[] = (new \Rbs\Catalog\Product\ProductItem($row))->setDocumentManager($documentManager);
 				}
 			}
 			$event->setParam('csProducts', $products);

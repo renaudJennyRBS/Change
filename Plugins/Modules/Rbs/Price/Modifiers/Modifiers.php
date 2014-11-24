@@ -90,11 +90,11 @@ class Modifiers
 				$container = $event->getParam('cart', $event->getParam('order'));
 				if ($container instanceof \Rbs\Commerce\Cart\Cart)
 				{
-					$amount = ($container->getPricesValueWithTax()) ? $container->getLinesAmountWithTaxes() : $container->getLinesAmount();
+					$amount = ($container->getPricesValueWithTax()) ? $container->getLinesAmountWithTaxes() : $container->getLinesAmountWithoutTaxes();
 				}
 				elseif ($container instanceof \Rbs\Order\Documents\Order)
 				{
-					$amount = ($container->getPricesValueWithTax()) ? $container->getLinesAmountWithTaxes() : $container->getLinesAmount();
+					$amount = ($container->getPricesValueWithTax()) ? $container->getLinesAmountWithTaxes() : $container->getLinesAmountWithoutTaxes();
 				}
 				else
 				{

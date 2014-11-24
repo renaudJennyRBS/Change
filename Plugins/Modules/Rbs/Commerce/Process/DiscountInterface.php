@@ -31,7 +31,7 @@ interface DiscountInterface
 	/**
 	 * @return float|null
 	 */
-	public function getAmount();
+	public function getAmountWithoutTaxes();
 
 	/**
 	 * @return \Rbs\Price\Tax\TaxApplication[]
@@ -52,4 +52,10 @@ interface DiscountInterface
 	 * @return array
 	 */
 	public function toArray();
+
+
+	/**
+	 * @deprecated
+	 */
+	public function getAmount();
 }

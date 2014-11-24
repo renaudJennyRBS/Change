@@ -52,6 +52,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Catalog_CrossSelling_CartProductChoiceStrategy':
 					(new \Rbs\Catalog\Collection\Collections())->addCartProductChoiceStrategyCollection($event);
 					break;
+				case 'Rbs_Catalog_SpecificationDisplayMode':
+					(new \Rbs\Catalog\Collection\Collections())->addSpecificationDisplayMode($event);
+					break;
 				case 'Rbs_Discount_Collection_DiscountTypes':
 					(new \Rbs\Discount\Collection\Collections())->addDiscountTypes($event);
 					break;
@@ -76,6 +79,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Store_Collection_WebStores':
 					(new \Rbs\Store\Collection\Collections())->addWebStores($event);
 					break;
+				case 'Rbs_Commerce_TaxBehavior':
+					(new \Rbs\Commerce\Collection\Collections())->addTaxBehavior($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -90,6 +96,7 @@ class Listeners implements ListenerAggregateInterface
 			$codes[] = 'Rbs_Catalog_Collection_AttributeVisibility';
 			$codes[] = 'Rbs_Catalog_Collection_AttributeProductProperties';
 			$codes[] = 'Rbs_Catalog_CrossSelling_CartProductChoiceStrategy';
+			$codes[] = 'Rbs_Catalog_SpecificationDisplayMode';
 			$codes[] = 'Rbs_Discount_Collection_DiscountTypes';
 			$codes[] = 'Rbs_Order_ProcessingStatus';
 			$codes[] = 'Rbs_Price_Collection_BillingAreasForWebStore';
@@ -97,6 +104,7 @@ class Listeners implements ListenerAggregateInterface
 			$codes[] = 'Rbs_Price_Collection_Iso4217';
 			$codes[] = 'Rbs_Price_Collection_TaxRoundingStrategy';
 			$codes[] = 'Rbs_Store_Collection_WebStores';
+			$codes[] = 'Rbs_Commerce_TaxBehavior';
 			$event->setParam('codes', $codes);
 		};
 		$events->attach(CollectionManager::EVENT_GET_CODES, $callback, 1);

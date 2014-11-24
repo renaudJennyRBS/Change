@@ -36,13 +36,6 @@ class Transaction
 				{
 					$cartManager->startProcessingCart($cart);
 				}
-
-				// Remove cart from context.
-				$context = $commerceServices->getContext();
-				if ($context->getCartIdentifier() == $transaction->getTargetIdentifier())
-				{
-					$context->setCartIdentifier(null)->save();
-				}
 			}
 		}
 	}
@@ -130,7 +123,7 @@ class Transaction
 				}
 				else if (isset($contextData['from']) && $contextData['from'] == 'order')
 				{
-					$idParts = explode(':', $contextData['from']);
+					$idParts = explode(':', $transaction->getTargetIdentifier());
 					if (count($idParts) == 2 && $idParts[0] == 'Order')
 					{
 						$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($idParts[1]);
@@ -145,7 +138,6 @@ class Transaction
 						}
 					}
 				}
-
 				$tm->commit();
 			}
 			catch (\Exception $e)

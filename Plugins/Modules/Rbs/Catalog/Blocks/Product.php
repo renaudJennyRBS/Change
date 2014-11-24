@@ -17,6 +17,8 @@ use Change\Presentation\Blocks\Standard\Block;
  */
 class Product extends Block
 {
+	use \Rbs\Commerce\Blocks\Traits\ContextParameters;
+
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -28,50 +30,27 @@ class Product extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		$parameters->addParameterMeta('webStoreId');
-		$parameters->addParameterMeta('billingAreaId');
-		$parameters->addParameterMeta('zone');
 		$parameters->addParameterMeta('activateZoom', true);
 		$parameters->addParameterMeta('attributesDisplayMode', 'table');
-		$parameters->addParameterMeta('displayPrices');
-		$parameters->addParameterMeta('displayPricesWithTax');
-		$parameters->addParameterMeta('redirectUrl');
-
+		$parameters->addParameterMeta('imageFormats', 'x,detail,detailThumbnail,pictogram,attribute');
+		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
+
 		$this->setParameterValueForDetailBlock($parameters, $event);
+
+		$parameters->addParameterMeta('redirectUrl');
+		$parameters->addParameterMeta('pageId', null);
+
+		$page = $event->getParam('page');
+		if ($page instanceof \Rbs\Website\Documents\Page)
+		{
+			$parameters->setParameterValue('pageId', $page->getId());
+		}
+
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		$webStore = $commerceServices->getContext()->getWebStore();
-		if ($webStore)
-		{
-			$parameters->setParameterValue('webStoreId', $webStore->getId());
-			if ($parameters->getParameter('displayPrices') === null)
-			{
-				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
-				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
-			}
-
-			$billingArea = $commerceServices->getContext()->getBillingArea();
-			if ($billingArea)
-			{
-				$parameters->setParameterValue('billingAreaId', $billingArea->getId());
-			}
-
-			$zone = $commerceServices->getContext()->getZone();
-			if ($zone)
-			{
-				$parameters->setParameterValue('zone', $zone);
-			}
-		}
-		else
-		{
-			$parameters->setParameterValue('webStoreId', 0);
-			$parameters->setParameterValue('billingAreaId', 0);
-			$parameters->setParameterValue('zone', null);
-			$parameters->setParameterValue('displayPrices', false);
-			$parameters->setParameterValue('displayPricesWithTax', false);
-		}
+		$this->setCommerceContextParameters($commerceServices->getContext(), $parameters);
 
 		if (!$parameters->getParameter('redirectUrl'))
 		{
@@ -115,26 +94,33 @@ class Product extends Block
 			$catalogManager = $commerceServices->getCatalogManager();
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
-			/* @var $product \Rbs\Catalog\Documents\Product */
-			$product = $documentManager->getDocumentInstance($productId);
-			if ($product instanceof \Rbs\Catalog\Documents\Product)
-			{
-				$finalProduct = $catalogManager->getProductToBeDisplayed($product);
-				if ($finalProduct !== null)
-				{
-					$options = [ 'urlManager' => $event->getUrlManager() ];
-					$productPresentation = $commerceServices->getCatalogManager()->getProductPresentation($finalProduct, $options);
-					$productPresentation->evaluate();
-					$attributes['productPresentation'] = $productPresentation;
+			$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
 
-					return 'product-detail-' . $productPresentation->getTemplateSuffix() . '.twig';
-				}
-			}
+			$productData = $catalogManager->getProductData($productId, $context->toArray());
 
-			/* @var $page \Change\Presentation\Interfaces\Page */
-			$page = $event->getParam('page');
-			$attributes['section'] = $page->getSection();
+			$attributes['productData'] = $productData;
+			return 'product.twig';
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param Parameters $parameters
+	 * @return \Change\Http\Ajax\V1\Context
+	 */
+	protected function populateContext($application, $documentManager, $parameters)
+	{
+		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
+		$context->setDetailed(true);
+		$context->setVisualFormats($parameters->getParameter('imageFormats'));
+		$context->setURLFormats(['canonical', 'contextual']);
+		$context->setDataSetNames('rootProduct');
+		$context->setPage($parameters->getParameter('pageId'));
+		$context->addData('webStoreId', $parameters->getParameter('webStoreId'));
+		$context->addData('billingAreaId', $parameters->getParameter('billingAreaId'));
+		$context->addData('zone', $parameters->getParameter('zone'));
+		return $context;
 	}
 }

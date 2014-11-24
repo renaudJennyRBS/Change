@@ -89,11 +89,13 @@ class TwigExtension  implements \Twig_ExtensionInterface
 	 */
 	public function getFunctions()
 	{
-		return array(
-			new \Twig_SimpleFunction('formatPrice', array($this, 'formatPrice')),
-			new \Twig_SimpleFunction('formatRate', array($this, 'formatRate')),
-			new \Twig_SimpleFunction('taxTitle', array($this, 'taxTitle'))
-		);
+		return [
+			new \Twig_SimpleFunction('formatPrice', [$this, 'formatPrice']),
+			new \Twig_SimpleFunction('formatRate', [$this, 'formatRate']),
+			new \Twig_SimpleFunction('taxTitle', [$this, 'taxTitle']),
+			new \Twig_SimpleFunction('getAttributesByVisibility', [$this, 'getAttributesByVisibility']),
+			new \Twig_SimpleFunction('getAttributeByName', [$this, 'getAttributeByName'])
+		];
 	}
 
 	/**
@@ -156,5 +158,75 @@ class TwigExtension  implements \Twig_ExtensionInterface
 	public function taxTitle($tax)
 	{
 		return $this->getCommerceServices()->getPriceManager()->taxTitle($tax);
+	}
+
+
+	/**
+	 * @param array $productData
+	 * @param string $technicalName
+	 * @return array|null
+	 */
+	public function getAttributeByName($productData, $technicalName)
+	{
+		if (!is_array($productData))
+		{
+			return null;
+		}
+
+		if (isset($productData['common']['attributes'][$technicalName])) {
+			$key = $productData['common']['attributes'][$technicalName];
+			if (isset($productData['attributes'][$key]['value']))
+			{
+				return $productData['attributes'][$key];
+			}
+		}
+
+		if (isset($productData['rootProduct']['common']))
+		{
+			return $this->getAttributeByName($productData['rootProduct'], $technicalName);
+		}
+		return null;
+	}
+
+	/**
+	 * @param array $productData
+	 * @param string $visibility
+	 * @return array
+	 */
+	public function getAttributesByVisibility($productData, $visibility = 'specifications')
+	{
+		$sections = [];
+		if (is_array($productData) && isset($productData['rootProduct']['attributesVisibility']))
+		{
+			$sections = $this->getAttributesByVisibility($productData['rootProduct'], $visibility);
+		}
+
+		if (is_array($productData) && isset($productData['attributesVisibility'][$visibility]))
+		{
+			$keys = $productData['attributesVisibility'][$visibility];
+			if (is_array($keys) && count($keys)) {
+				$technicalNames = array_flip($productData['common']['attributes']);
+				if (!is_array($technicalNames))
+				{
+					$technicalNames = [];
+				}
+				foreach ($keys as $key)
+				{
+					if (isset($productData['attributes'][$key]['value']))
+					{
+						$attr = $productData['attributes'][$key];
+						$section = $attr['section'] ? $attr['section'] : '';
+
+						if (isset($technicalNames[$key]))
+						{
+							$attr['technicalName'] = $technicalNames[$key];
+						}
+						$sections[$section][$key] = $attr;
+					}
+				}
+			}
+		}
+
+		return $sections;
 	}
 }

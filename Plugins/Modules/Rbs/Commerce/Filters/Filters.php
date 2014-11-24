@@ -166,12 +166,12 @@ class Filters implements \Zend\EventManager\EventsCapableInterface
 			$value = $event->getParam('value');
 			if ($value instanceof \Rbs\Commerce\Cart\Cart)
 			{
-				$amount = $value->getPricesValueWithTax() ? $value->getLinesAmountWithTaxes() : $value->getLinesAmount();
+				$amount = $value->getPricesValueWithTax() ? $value->getLinesAmountWithTaxes() : $value->getLinesAmountWithoutTaxes();
 				$event->setParam('valid', $this->testNumValue($amount, $operator, $expected));
 			}
 			elseif ($value instanceof \Rbs\Order\Documents\Order)
 			{
-				$amount = $value->getPricesValueWithTax() ? $value->getLinesAmountWithTaxes() : $value->getLinesAmount();
+				$amount = $value->getPricesValueWithTax() ? $value->getLinesAmountWithTaxes() : $value->getLinesAmountWithoutTaxes();
 				$event->setParam('valid', $this->testNumValue($amount, $operator, $expected));
 			}
 		}
@@ -192,12 +192,12 @@ class Filters implements \Zend\EventManager\EventsCapableInterface
 			$value = $event->getParam('value');
 			if ($value instanceof \Rbs\Commerce\Cart\Cart)
 			{
-				$amount = $value->getPricesValueWithTax() ? $value->getTotalAmountWithTaxes() : $value->getTotalAmount();
+				$amount = $value->getPricesValueWithTax() ? $value->getTotalAmountWithTaxes() : $value->getTotalAmountWithoutTaxes();
 				$event->setParam('valid', $this->testNumValue($amount, $operator, $expected));
 			}
 			elseif ($value instanceof \Rbs\Order\Documents\Order)
 			{
-				$amount = $value->getPricesValueWithTax() ? $value->getTotalAmountWithTaxes() : $value->getTotalAmount();
+				$amount = $value->getPricesValueWithTax() ? $value->getTotalAmountWithTaxes() : $value->getTotalAmountWithoutTaxes();
 				$event->setParam('valid', $this->testNumValue($amount, $operator, $expected));
 			}
 		}
@@ -218,12 +218,12 @@ class Filters implements \Zend\EventManager\EventsCapableInterface
 			$value = $event->getParam('value');
 			if ($value instanceof \Rbs\Commerce\Cart\Cart)
 			{
-				$amount = $value->getPaymentAmountWithTaxes();
+				$amount = $value->getPaymentAmount();
 				$event->setParam('valid', $this->testNumValue($amount, $operator, $expected));
 			}
 			elseif ($value instanceof \Rbs\Order\Documents\Order)
 			{
-				$amount =  $value->getPaymentAmountWithTaxes();
+				$amount =  $value->getPaymentAmount();
 				$event->setParam('valid', $this->testNumValue($amount, $operator, $expected));
 			}
 		}

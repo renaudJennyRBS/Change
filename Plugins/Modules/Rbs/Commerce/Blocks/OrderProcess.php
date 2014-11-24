@@ -17,6 +17,8 @@ use Change\Presentation\Blocks\Standard\Block;
  */
 class OrderProcess extends Block
 {
+	use Traits\ContextParameters;
+
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -28,11 +30,13 @@ class OrderProcess extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('cartIdentifier');
-		$parameters->addParameterMeta('displayPrices');
-		$parameters->addParameterMeta('displayPricesWithTax');
 		$parameters->addParameterMeta('realm', 'web');
-		$parameters->addParameterMeta('accessorId');
-		$parameters->addParameterMeta('confirmed');
+		$parameters->addParameterMeta('userId', 0 );
+		$parameters->addParameterMeta('confirmed', false);
+		$parameters->addParameterMeta('login', null);
+		$parameters->addParameterMeta('email', null);
+		$parameters->addParameterMeta('imageFormats', 'cartItem,detailThumbnail');
+		$this->initCommerceContextParameters($parameters);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
@@ -51,22 +55,27 @@ class OrderProcess extends Block
 			{
 				$parameters->setParameterValue('cartIdentifier', null);
 			}
-			elseif ($parameters->getParameter('displayPrices') === null)
+			else
 			{
 				$documentManager = $event->getApplicationServices()->getDocumentManager();
+				/** @var \Rbs\Store\Documents\WebStore $webStore */
 				$webStore = $documentManager->getDocumentInstance($cart->getWebStoreId());
-				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
-				{
-					$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
-					$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
-				}
+				$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(), $parameters);
 			}
 		}
 
 		$user = $event->getAuthenticationManager()->getCurrentUser();
-		$parameters->setParameterValue('accessorId', $user->getId());
-		$parameters->setParameterValue('confirmed', $event->getAuthenticationManager()->getConfirmed());
-
+		if ($user->authenticated())
+		{
+			$parameters->setParameterValue('userId', $user->getId());
+			$parameters->setParameterValue('confirmed', $event->getAuthenticationManager()->getConfirmed());
+			$userDocument = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($user->getId());
+			if ($userDocument instanceof \Rbs\User\Documents\User)
+			{
+				$parameters->setParameterValue('login', $userDocument->getLogin());
+				$parameters->setParameterValue('email', $userDocument->getEmail());
+			}
+		}
 		return $parameters;
 	}
 
@@ -83,21 +92,40 @@ class OrderProcess extends Block
 		if ($cartIdentifier)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
-			$user = $documentManager->getDocumentInstance($parameters->getParameter('accessorId'));
-			if ($user)
-			{
-				$attributes['user'] = $user;
-			}
-
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
 			if ($cart && !$cart->isEmpty())
 			{
-				$attributes['cart'] = $cart;
-				return 'order-process.twig';
+				$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+				$context->setWebsite($event->getParam('website'));
+				$contextArray = $context->toArray();
+
+				$cartData = $commerceServices->getCartManager()->getCartData($cartIdentifier, $contextArray);
+				$attributes['cartData'] = $cartData;
+				if (isset($cartData['process']['orderProcessId']))
+				{
+					return 'order-process.twig';
+				}
 			}
 		}
-		return 'cart-undefined.twig';
+		return null;
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param Parameters $parameters
+	 * @return \Change\Http\Ajax\V1\Context
+	 */
+	protected function populateContext($application, $documentManager, $parameters)
+	{
+		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
+		$context->setDetailed(true);
+		$context->setVisualFormats($parameters->getParameter('imageFormats'));
+		$context->setURLFormats(['canonical']);
+		$context->setDataSetNames('process');
+		$context->setDetailed(true);
+		return $context;
 	}
 }

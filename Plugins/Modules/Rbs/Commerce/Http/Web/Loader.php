@@ -15,9 +15,9 @@ use Rbs\Commerce\CommerceServices;
 class Loader
 {
 	/**
-	 * @param \Change\Events\Event $event
+	 * @param \Change\Http\Event $event
 	 */
-	public function onRegisterServices(\Change\Events\Event $event)
+	public function onRegisterServices(\Change\Http\Event $event)
 	{
 		$commerceServices = $event->getServices('commerceServices');
 		if ($commerceServices instanceof CommerceServices)
@@ -26,8 +26,10 @@ class Loader
 			$extension = new \Rbs\Commerce\Presentation\TwigExtension($commerceServices);
 			$applicationServices->getTemplateManager()->addExtension($extension);
 
-			$commerceServices->getContext()->getEventManager()->attach('load', array($this, 'onLoadContext'), 5);
-			$commerceServices->getContext()->getEventManager()->attach('save', array($this, 'onSaveContext'), 5);
+			$context = $commerceServices->getContext();
+			$context->getEventManager()->attach('load', array($this, 'onLoadContext'), 10);
+
+			$context->getEventManager()->attach('save', array($this, 'onSaveContext'), 1);
 		}
 		else
 		{
@@ -46,7 +48,6 @@ class Loader
 		$dm = $applicationServices->getDocumentManager();
 
 		$session = new \Zend\Session\Container('Rbs_Commerce');
-
 		if (isset($session['webStoreId']) && $session['webStoreId'])
 		{
 			$webStore = $dm->getDocumentInstance($session['webStoreId']);
@@ -61,46 +62,49 @@ class Loader
 			$session['webStoreId'] = false;
 			$session['zone'] = null;
 			$session['billingAreaId'] = 0;
-
-			$query = $dm->getNewQuery('Rbs_Store_WebStore');
-			$webStores = $query->getDocuments(0, 2);
-			if ($webStores->count() == 1)
-			{
-				/* @var $webStore \Rbs\Store\Documents\WebStore */
-				$webStore = $webStores[0];
-				$session['webStoreId'] = $webStore->getId();
-				if ($webStore->getBillingAreasCount() == 1)
-				{
-					$billingArea = $webStore->getBillingAreas()[0];
-					if ($billingArea instanceof \Rbs\Price\Documents\BillingArea)
-					{
-						$session['billingAreaId'] = $billingArea->getId();
-						$zones = array();
-						foreach ($billingArea->getTaxes() as $tax)
-						{
-							$zones = array_merge($zones, $tax->getZoneCodes());
-						}
-						$zones = array_unique($zones);
-						if (count($zones) == 1)
-						{
-							$session['zone'] = $zones[0];
-						}
-					}
-				}
-			}
+			$session['parameters'] = [];
 		}
+
 		$context = $commerceServices->getContext();
 		if ($session['webStoreId'])
 		{
-			$context->setWebStore($dm->getDocumentInstance($session['webStoreId']));
-		}
-		if ($session['billingAreaId'])
-		{
-			$context->setBillingArea($dm->getDocumentInstance($session['billingAreaId']));
-		}
-		$context->setZone($session['zone']);
+			/** @var \Rbs\Store\Documents\WebStore $webStore */
+			$webStore = $dm->getDocumentInstance($session['webStoreId'], 'Rbs_Store_WebStore');
+			if ($webStore)
+			{
+				$context->setWebStore($webStore);
+			}
+			else
+			{
+				unset($session['webStoreId']);
+			}
 
-		$context->setCartIdentifier(isset($session['cartIdentifier']) ? $session['cartIdentifier'] : null);
+			if ($session['billingAreaId'])
+			{
+				/** @var \Rbs\Price\Documents\BillingArea $billingArea */
+				$billingArea = $dm->getDocumentInstance($session['billingAreaId'], 'Rbs_Price_BillingArea');
+				if ($billingArea)
+				{
+					$context->setBillingArea($billingArea);
+					$context->setZone($session['zone'] ? $session['zone'] : null);
+				}
+				else
+				{
+					unset($session['billingAreaId']);
+					unset($session['zone']);
+				}
+			}
+		}
+
+		$context->getParameters()->fromArray(isset($session['parameters']) ? $session['parameters'] : []);
+		$cartIdentifier = isset($session['cartIdentifier']) ? $session['cartIdentifier'] : null;
+		$cart = $cartIdentifier ? $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier) : null;
+		if ($cart && $cart->isProcessing())
+		{
+			$session['cartIdentifier'] = null;
+			$cart = null;
+		}
+		$context->setCartIdentifier($cart ? $cart->getIdentifier() : null);
 	}
 
 	/**
@@ -111,34 +115,19 @@ class Loader
 		/* @var $commerceServices CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		$session = new \Zend\Session\Container('Rbs_Commerce');
-
 		$context = $commerceServices->getContext();
+
+		$session['parameters'] = $context->getParameters()->toArray();
 
 		$webStore = $context->getWebStore();
 		$session['webStoreId'] = ($webStore instanceof \Rbs\Store\Documents\WebStore) ? $webStore->getId() : false;
-
 		$billingArea = $context->getBillingArea();
 		$session['billingAreaId'] = ($billingArea instanceof \Rbs\Price\Documents\BillingArea) ? $billingArea->getId() : 0;
 		$session['zone'] = $context->getZone();
 		$session['cartIdentifier'] = $context->getCartIdentifier();
-
-		// If the cart is replaced, update the last cart identifier in the profile.
-		$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
-		if ($user->authenticated())
-		{
-			if (isset($session['profile']) && $session['profile'] instanceof \Rbs\Commerce\Std\Profile)
-			{
-				/* @var \Rbs\Commerce\Std\Profile $profile */
-				$profile = $session['profile'];
-				if ($profile->getLastCartIdentifier() !== $context->getCartIdentifier())
-				{
-					$profile->setLastCartIdentifier($context->getCartIdentifier());
-					$pm = $event->getApplicationServices()->getProfileManager();
-					$pm->saveProfile($user, $profile);
-				}
-			}
-		}
 	}
+
+
 
 	/**
 	 * @param \Change\Events\Event $event
@@ -150,7 +139,6 @@ class Loader
 			$applicationServices = $event->getApplicationServices();
 			$profile = new \Rbs\Commerce\Std\Profile();
 			$user = $event->getParam('user');
-
 			if ($user instanceof \Change\User\UserInterface)
 			{
 				$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
@@ -161,12 +149,9 @@ class Loader
 					$documentProfile = $query->getFirstDocument();
 					if ($documentProfile instanceof \Rbs\Commerce\Documents\Profile)
 					{
-						$profile->setLastCartIdentifier($documentProfile->getLastCartIdentifier());
 						$profile->setDefaultBillingAddressId($documentProfile->getDefaultBillingAddressId());
 						$profile->setDefaultShippingAddressId($documentProfile->getDefaultShippingAddressId());
 						$profile->setDefaultWebStoreId($documentProfile->getDefaultWebStoreId());
-						$profile->setDefaultBillingAreaId($documentProfile->getDefaultBillingAreaId());
-						$profile->setDefaultZone($documentProfile->getDefaultZone());
 					}
 				}
 			}
@@ -207,16 +192,8 @@ class Loader
 							$documentProfile->setUser($docUser);
 						}
 
-						$documentProfile->setDefaultZone($profile->getDefaultZone());
-						$documentProfile->setLastCartIdentifier($profile->getLastCartIdentifier());
-
 						$webStore = $documentManager->getDocumentInstance($profile->getDefaultWebStoreId());
-						$documentProfile->setDefaultWebStore(($webStore instanceof
-							\Rbs\Store\Documents\WebStore) ? $webStore : null);
-
-						$billingArea = $documentManager->getDocumentInstance($profile->getDefaultBillingAreaId());
-						$documentProfile->setDefaultBillingArea(($billingArea instanceof
-							\Rbs\Price\Documents\BillingArea) ? $billingArea : null);
+						$documentProfile->setDefaultWebStore(($webStore instanceof \Rbs\Store\Documents\WebStore) ? $webStore : null);
 
 						$address = $documentManager->getDocumentInstance($profile->getDefaultBillingAddressId());
 						$documentProfile->setDefaultBillingAddress(($address instanceof \Rbs\Geo\Documents\Address) ? $address : null);
@@ -226,6 +203,7 @@ class Loader
 
 						$documentProfile->save();
 					}
+
 					$transactionManager->commit();
 				}
 				catch (\Exception $e)
@@ -277,77 +255,79 @@ class Loader
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 			$context = $commerceServices->getContext();
-			if ($context->getWebStore() && !$profile->getDefaultWebStoreId())
-			{
-				$profile->setDefaultWebStoreId($context->getWebStore()->getId());
-			}
-			elseif (!$context->getWebStore() && $profile->getDefaultWebStoreId())
-			{
-				$webStore = $documentManager->getDocumentInstance($profile->getDefaultWebStoreId());
-				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
-				{
-					$context->setWebStore($webStore);
-				}
-			}
-
-			if ($context->getBillingArea() && !$profile->getDefaultBillingAreaId())
-			{
-				$profile->setDefaultBillingAreaId($context->getBillingArea()->getId());
-				$profile->setDefaultZone($context->getZone());
-			}
-			elseif (!$context->getBillingArea() && $profile->getDefaultBillingAreaId())
-			{
-				$billingArea = $documentManager->getDocumentInstance($profile->getDefaultBillingAreaId());
-				if ($billingArea instanceof \Rbs\Price\Tax\BillingAreaInterface)
-				{
-					$context->setBillingArea($billingArea);
-					$context->setZone($profile->getDefaultZone());
-				}
-			}
+			$saveProfile = false;
 
 			$cartManager = $commerceServices->getCartManager();
-			$contextCartIdentifier = $context->getCartIdentifier();
-			$profileCartIdentifier = $profile->getLastCartIdentifier();
+			$cartIdentifier = $context->getCartIdentifier();
+			$currentCart = $cartIdentifier ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
 
-			$currentCart = $contextCartIdentifier ? $cartManager->getCartByIdentifier($contextCartIdentifier) : null;
-			$profileCart = $profileCartIdentifier && ($profileCartIdentifier != $contextCartIdentifier) ?
-				$cartManager->getCartByIdentifier($profileCartIdentifier) : null;
-
-
-			if ($currentCart)
+			$contextWebStore = $context->getWebStore();
+			if (!$contextWebStore)
 			{
-				if (!$currentCart->isLocked() && $profileCart)
+				if ($profile->getDefaultWebStoreId())
 				{
-					$currentCart = $cartManager->mergeCart($currentCart, $profileCart);
-				}
-			}
-			else
-			{
-				if ($profileCart)
-				{
-					$currentCart = $cartManager->getUnlockedCart($profileCart);
+					$contextWebStore = $documentManager->getDocumentInstance($profile->getDefaultWebStoreId());
+					if ($contextWebStore instanceof \Rbs\Store\Documents\WebStore)
+					{
+						$context->setWebStore($contextWebStore);
+					}
 				}
 			}
 
-			$cartIdentifier = null;
+			if ($contextWebStore instanceof \Rbs\Store\Documents\WebStore)
+			{
+				if ($contextWebStore->getId() !== $profile->getDefaultWebStoreId())
+				{
+					$profile->setDefaultWebStoreId($contextWebStore->getId());
+					$saveProfile = true;
+				}
+
+				$lastCartIdentifier = $cartManager->getLastCartIdentifier($user, $contextWebStore);
+				$lastCart = $lastCartIdentifier ? $cartManager->getCartByIdentifier($lastCartIdentifier) : null;
+				if ($lastCart)
+				{
+					if (!$context->getBillingArea() && $lastCart->getBillingArea())
+					{
+						$context->setBillingArea($lastCart->getBillingArea());
+						$context->setZone($lastCart->getZone());
+					}
+
+					$httpEvent = $this->getHttpEventOption($event);
+					$request = $httpEvent ? $httpEvent->getRequest() : null;
+					$ignoreProfileCart = false;
+					if ($request instanceof \Change\Http\Ajax\Request)
+					{
+						$JSON = $request->getJSON();
+						$ignoreProfileCart = is_array($JSON)
+						&& isset($JSON['data']['ignoreProfileCart']) ? $JSON['data']['ignoreProfileCart'] : false;
+					}
+
+					if (!$ignoreProfileCart)
+					{
+						if ($currentCart)
+						{
+							if (!$currentCart->isLocked())
+							{
+								$currentCart = $cartManager->mergeCart($currentCart, $lastCart);
+							}
+						}
+						else
+						{
+							$currentCart = $cartManager->getUnlockedCart($lastCart);
+						}
+					}
+				}
+			}
+
 			if ($currentCart)
 			{
 				$cartIdentifier = $currentCart->getIdentifier();
 				$currentCart->setUserId($user->getId());
-				if (!$currentCart->getOwnerId())
+				$documentUser = $documentManager->getDocumentInstance($user->getId());
+				if ($documentUser instanceof \Rbs\User\Documents\User)
 				{
-					$currentCart->setOwnerId($user->getId());
+					$currentCart->setEmail($documentUser->getEmail());
 				}
-
-				if (!$currentCart->getEmail())
-				{
-					$documentUser = $documentManager->getDocumentInstance($user->getId());
-					if ($documentUser instanceof \Rbs\User\Documents\User)
-					{
-						$currentCart->setEmail($documentUser->getEmail());
-					}
-				}
-
 				$cartManager->normalize($currentCart);
 				$cartManager->saveCart($currentCart);
 			}
@@ -355,14 +335,17 @@ class Loader
 			$context->setCartIdentifier($cartIdentifier);
 			$context->save();
 
-			$profile->setLastCartIdentifier($cartIdentifier);
-			$profileManager->saveProfile($user, $profile);
+			if ($saveProfile)
+			{
+				$profileManager->saveProfile($user, $profile);
+			}
 		}
 	}
+
 	/**
-	 * @param \Change\Http\Web\Event $event
+	 * @param \Change\Http\Event $event
 	 */
-	public function onAuthenticate(\Change\Http\Web\Event $event)
+	public function onAuthenticate(\Change\Http\Event $event)
 	{
 		/* @var $commerceServices CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -371,17 +354,28 @@ class Loader
 			$event->getApplicationServices()->getLogging()->error('Commerce services not set in: ' . __METHOD__);
 			return;
 		}
-
-		$cartManager = $commerceServices->getCartManager();
 		$context = $commerceServices->getContext();
-		$contextCartIdentifier = $context->getCartIdentifier();
-		$currentCart = $contextCartIdentifier ? $cartManager->getCartByIdentifier($contextCartIdentifier) : null;
-		if ($currentCart && $currentCart->isProcessing())
-		{
-			$context->setCartIdentifier(null);
-			$context->save();
-		}
+		$context->load();
+		$context->initializeContext(['website' => $event->getParam('website')]);
 	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @return \Change\Http\Event|null
+	 */
+	protected function getHttpEventOption(\Change\Events\Event $event)
+	{
+		$options = $event->getParam('options');
+		if (is_array($options) && isset($options['httpEvent']))
+		{
+			$httpEvent = $options['httpEvent'];
+			if ($httpEvent instanceof \Change\Http\Event) {
+				return $httpEvent;
+			}
+		}
+		return null;
+	}
+
 
 	/**
 	 * @param \Change\Events\Event $event
@@ -392,9 +386,7 @@ class Loader
 		$session['userId'] = null;
 		$session['profile'] = null;
 
-		$options = $event->getParam('options');
-		/** @var $httpEvent \Change\Http\Web\Event */
-		$httpEvent = $options['httpEvent'];
+		$httpEvent = $this->getHttpEventOption($event);
 
 		/* @var $commerceServices CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
@@ -404,7 +396,17 @@ class Loader
 			return;
 		}
 
-		$keepCart = $httpEvent->getRequest()->getPost('keepCart', false);
+		$request = $httpEvent ? $httpEvent->getRequest() : null;
+		if ($request instanceof \Change\Http\Ajax\Request)
+		{
+			$JSON = $request->getJSON();
+			$keepCart = is_array($JSON) && isset($JSON['data']['keepCart']) ? $JSON['data']['keepCart'] : false;
+		}
+		else
+		{
+			$keepCart = false;
+		}
+
 		if (!$keepCart)
 		{
 			$context = $commerceServices->getContext();
@@ -424,21 +426,12 @@ class Loader
 
 			$user = new \Change\User\AnonymousUser();
 			$newCart = $cartManager->cloneCartContentForUser($currentCart, $user);
-
 			if ($newCart)
 			{
+				$newCart->setEmail(null);
+				$newCart->getContext()->set('userName', null);
 				$context->setCartIdentifier($newCart->getIdentifier());
 				$context->save();
-
-				if ($newCart->getUserId() != 0)
-				{
-					$documentUser = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($user->getId());
-					if ($documentUser instanceof \Rbs\User\Documents\User)
-					{
-						$newCart->setEmail($documentUser->getEmail());
-					}
-				}
-
 				$cartManager->normalize($newCart);
 				$cartManager->saveCart($newCart);
 			}

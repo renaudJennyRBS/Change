@@ -1,11 +1,7 @@
-<div data-ng-show="loadingConnector" class="well text-center">
-	<p>{{ i18n('m.rbs.commerce.front.please_wait_loading_connector', ['ucf', 'etc']) | raw }}</p>
-	<img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" />
-</div>
-<div data-ng-if="!loadingConnector">
+<div>
 	<div class="panel panel-default">
 		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</div>
-		<div class="panel-body price">(= cart.context.formattedPaymentAmountWithTaxes =)</div>
+		<div class="panel-body price">(= transaction.common.amount | rbsFormatPrice:transaction.common.currencyCode =)</div>
 	</div>
 
 	<p class="clearfix">

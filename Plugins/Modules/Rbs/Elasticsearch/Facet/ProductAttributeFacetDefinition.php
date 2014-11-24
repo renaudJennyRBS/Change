@@ -86,14 +86,28 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 				$descendants = [];
 				if (!$document->getSku())
 				{
+					$descendantIds = [];
 					if ($document->getVariantGroup())
 					{
 						$catalogManager = $this->getCatalogManager();
-						$descendants = $catalogManager->getProductDescendants($document, true);
+						$descendantIds = $catalogManager->getVariantDescendantIds($document);
 					}
 					elseif ($document->getProductSet())
 					{
-						$descendants = $document->getProductSet()->getProducts()->toArray();
+						$descendantIds = $document->getProductSet()->getProducts()->getIds();
+					}
+
+					foreach ($descendantIds as $descendantId)
+					{
+						if ($descendantId == $document->getId())
+						{
+							continue;
+						}
+						$descendant = $this->getDocumentManager()->getDocumentInstance($descendantId);
+						if ($descendant instanceof \Rbs\Catalog\Documents\Product && $descendant->published())
+						{
+							$descendants[] = $descendant;
+						}
 					}
 				}
 				$descendants[] = $document;

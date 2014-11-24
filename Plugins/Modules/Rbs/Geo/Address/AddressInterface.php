@@ -46,4 +46,9 @@ interface AddressInterface
 	 * @return array
 	 */
 	public function toArray();
+
+	/**
+	 * @return array
+	 */
+	public function toFlatArray();
 }

@@ -17,6 +17,8 @@ use Change\Presentation\Blocks\Standard\Block;
  */
 class CrossSelling extends Block
 {
+	use \Rbs\Commerce\Blocks\Traits\ContextParameters;
+
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -29,12 +31,13 @@ class CrossSelling extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('title');
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
+		$parameters->addParameterMeta('imageFormats', 'listItem,pictogram');
 		$parameters->addParameterMeta('crossSellingType', 'ACCESSORIES');
-		$parameters->addParameterMeta('webStoreId');
+
 		$parameters->addParameterMeta('itemsPerSlide', 3);
 		$parameters->addParameterMeta('slideCount');
-		$parameters->addParameterMeta('displayPrices');
-		$parameters->addParameterMeta('displayPricesWithTax');
+
+		$this->initCommerceContextParameters($parameters);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$this->setParameterValueForDetailBlock($parameters, $event);
@@ -47,22 +50,7 @@ class CrossSelling extends Block
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-		$webStore = $commerceServices->getContext()->getWebStore();
-		if ($webStore)
-		{
-			$parameters->setParameterValue('webStoreId', $webStore->getId());
-			if ($parameters->getParameter('displayPrices') === null)
-			{
-				$parameters->setParameterValue('displayPrices', $webStore->getDisplayPrices());
-				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
-			}
-		}
-		else
-		{
-			$parameters->setParameterValue('webStoreId', 0);
-			$parameters->setParameterValue('displayPrices', false);
-			$parameters->setParameterValue('displayPricesWithTax', false);
-		}
+		$this->setCommerceContextParameters($commerceServices->getContext(), $parameters);
 
 		return $parameters;
 	}
@@ -105,6 +93,10 @@ class CrossSelling extends Block
 				$csParameters = array();
 				$csParameters['urlManager'] = $event->getUrlManager();
 				$csParameters['crossSellingType'] = $crossSellingType;
+				$csParameters['visualFormats'] = $parameters->getParameter('imageFormats');
+				$csParameters['webStoreId'] = $parameters->getParameter('webStoreId');
+				$csParameters['billingAreaId'] = $parameters->getParameter('billingAreaId');
+				$csParameters['zone'] = $parameters->getParameter('zone');
 				$rows = $commerceServices->getProductManager()->getCrossSellingForProduct($product, $csParameters);
 			}
 

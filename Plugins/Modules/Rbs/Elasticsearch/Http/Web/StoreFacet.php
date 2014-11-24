@@ -57,7 +57,12 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 			$event->setResult($webResult);
 		}
 
-		$commerceContext = $request->getPost('commerceContext');
+		$context = [];
+		$context['webStoreId'] =  $request->getPost('webStoreId');
+		$context['billingAreaId'] =  $request->getPost('billingAreaId');
+		$context['zone'] =  $request->getPost('zone');
+		$context['conditionId'] =  $request->getPost('conditionId');
+
 		$productListId = intval($request->getPost('toDisplayDocumentId'));
 
 		/** @var $productList \Rbs\Catalog\Documents\ProductList */
@@ -112,7 +117,7 @@ class StoreFacet extends \Change\Http\Web\Actions\AbstractAjaxAction
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 
 		$query = $queryHelper->getProductListQuery($productList, $availableInWarehouseId, $searchText);
-		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $commerceContext);
+		$queryHelper->addFilteredFacets($query, $facets, $facetFilters, $context);
 
 		$searchResult = $index->getType($storeIndex->getDefaultTypeName())->search($query);
 

@@ -261,5 +261,8 @@
 	},
 	"change_password_label":{
 		"message":"changement de mot de passe"
+	},
+	"reload_on_success":{
+		"message":"recharger la page après authentification."
 	}
 }

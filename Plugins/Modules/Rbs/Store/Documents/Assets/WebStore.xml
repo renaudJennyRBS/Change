@@ -5,9 +5,10 @@
 	<properties>
 		<property name="title" type="String" localized="true" />
 		<property name="billingAreas" type="DocumentArray" document-type="Rbs_Price_BillingArea" required="true" />
-		<property name="displayPrices" type="Boolean" default-value="true" />
+		<property name="displayPricesWithoutTax" type="Boolean" default-value="false" />
 		<property name="displayPricesWithTax" type="Boolean" default-value="true" />
 		<property name="pricesValueWithTax" type="Boolean" default-value="false" />
+		<property name="favoriteWebsiteId" type="DocumentId" document-type="Rbs_Website_Website" />
 		<property name="orderProcess" type="Document" document-type="Rbs_Commerce_Process" />
 	</properties>
 </document>

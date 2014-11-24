@@ -17,6 +17,12 @@ class AddressFilters implements \Zend\EventManager\EventsCapableInterface
 
 	const EVENT_MANAGER_IDENTIFIER = 'AddressFilters';
 
+	/**
+	 * @var string
+	 */
+	protected $error;
+
+
 	public function __construct(\Change\Application $application)
 	{
 		$this->setApplication($application);
@@ -47,6 +53,24 @@ class AddressFilters implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('isValidCountryCode', [$this, 'onDefaultIsValidCountryCode'], 5);
 		$eventManager->attach('isValidZipCode', [$this, 'onDefaultIsValidZipCode'], 5);
 		$eventManager->attach('isValidField', [$this, 'onDefaultIsValidField'], 5);
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getError()
+	{
+		return $this->error;
+	}
+
+	/**
+	 * @param string|null $error
+	 * @return $this
+	 */
+	public function setError($error)
+	{
+		$this->error = $error;
+		return $this;
 	}
 
 	/**

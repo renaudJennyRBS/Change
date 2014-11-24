@@ -26,6 +26,9 @@
 	"zone_addressfilterdata":{
 		"message":"validation d'adresse"
 	},
+	"zone_filtererrormessage":{
+		"message":"Message d'erreur de validation"
+	},
 	"addressfield_required":{
 		"message":"requis"
 	},

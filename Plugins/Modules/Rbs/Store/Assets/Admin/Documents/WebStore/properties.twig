@@ -2,6 +2,11 @@
 	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'title'), ['ucf']) }}">
 </rbs-field-label-title>
 
+<rbs-field-picker property="favoriteWebsiteId" accepted-model="Rbs_Website_Website" value-ids="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'favoriteWebsiteId'), ['ucf']) }}"
+		selector-title="{{ i18nAttr('m.rbs.store.admin.store_select_favoritewebsiteid', ['ucf']) }}">
+</rbs-field-picker>
+
 <rbs-field-picker-multiple property="billingAreas" required="true" accepted-model="Rbs_Price_BillingArea"
 	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'billingAreas'), ['ucf']) }}"
 	selector-title="{{ i18nAttr('m.rbs.store.admin.store_billingareas_picker_title', ['ucf']) }}">
@@ -15,8 +20,8 @@
 	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'pricesValueWithTax'), ['ucf']) }}">
 </rbs-field-boolean>
 
-<rbs-field-boolean property="displayPrices"
-	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'displayPrices'), ['ucf']) }}">
+<rbs-field-boolean property="displayPricesWithoutTax"
+	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'displayPricesWithoutTax'), ['ucf']) }}">
 </rbs-field-boolean>
 
 <rbs-field-boolean property="displayPricesWithTax"

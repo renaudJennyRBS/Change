@@ -23,6 +23,9 @@
 	"store_select_orderprocess":{
 		"message":"selectionner un processus de commande"
 	},
+	"store_select_favoritewebsiteid":{
+		"message":"selectionner le site web favoris"
+	},
 	"web_store_selector_label":{
 		"message":"sélecteur de boutique et zone de tarification"
 	},
