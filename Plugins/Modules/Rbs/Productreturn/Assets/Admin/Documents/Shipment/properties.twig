@@ -1,0 +1,124 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title"><i class="icon-edit"></i>
+			{{ i18n('m.rbs.order.admin.shipment_general_information', ['ucf']) }}
+		</h3>
+	</div>
+	<div class="panel-body">
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'orderId'), ['ucf']) }}"
+			ng-disabled="true">
+			<p class="form-control-static">
+				<a href="javascript:;" data-ng-href="Rbs/Order/Order/(= data.order.id =)">
+					(= data.order.label =)
+				</a>
+			</p>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'productReturnId'), ['ucf']) }}"
+			ng-disabled="true">
+			<p class="form-control-static">
+				<a href="javascript:;" data-ng-href="Rbs/Productreturn/ProductReturn/(= data.order.id =)">
+					(= data.productReturn.label =)
+				</a>
+			</p>
+		</rbs-field>
+
+		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'shippingModeCode'), ['ucf']) }}"
+			ng-disabled="true">
+			<p class="form-control-static">(= document.shippingModeCode =)</p>
+		</rbs-field>
+
+		<rbs-field-text property="code" label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'code'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="parcelCode" label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'parcelCode'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="trackingCode" label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'trackingCode'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-text property="carrierStatus" label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'carrierStatus'), ['ucf']) }}">
+		</rbs-field-text>
+
+		<rbs-field-date data-ng-if="document.prepared" property="shippingDate"
+				label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'shippingDate'), ['ucf']) }}">
+		</rbs-field-date>
+
+		<rbs-field-date data-ng-if="document.prepared" property="deliveryDate"
+				label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'deliveryDate'), ['ucf']) }}">
+		</rbs-field-date>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title"><i class="icon-envelope"></i>
+			{{ i18n('m.rbs.order.admin.shipment_shipping_address', ['ucf']) }}
+		</h3>
+	</div>
+	<address class="panel-body no-bottom-margin">
+		<strong>(= document.address.lines[0] =)</strong>
+		<div data-ng-repeat="addressLine in document.address.lines track by $index" data-ng-if="!$first">(= addressLine =)</div>
+	</address>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="icon-list"></i>
+			{{ i18n('m.rbs.order.admin.order_lines', ['ucf', 'lab']) }} (= document.lines.length =) &mdash;
+			{{ i18n('m.rbs.order.admin.order_articles', ['ucf', 'lab']) }} (= document.itemCount =)
+		</h3>
+	</div>
+	<div class="panel-body" data-ng-if="!document.prepared">
+		<div data-ng-if="document.lines.length == 0">
+			{{ i18n('m.rbs.order.admin.shipment_no_line', ['ucf']) }}
+		</div>
+		<div data-ng-show="document.lines.length > 0">
+			<table class="document-list table table-condensed table-bordered table-striped table-hover margin-top">
+				<thead>
+					<tr>
+						<th>{{ i18n('m.rbs.order.admin.shipment_line_number', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.admin.shipment_designation', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.admin.shipment_sku', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.admin.shipment_quantity', ['ucf']) }}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr data-ng-repeat="shipmentLine in document.lines" class="normal-row">
+						<td>(= $index + 1 =)</td>
+						<td>(= shipmentLine.designation =)</td>
+						<td>(= shipmentLine.codeSKU =)</td>
+						<td style="width: 100px;">
+							<input type="number" min="0" class="form-control" data-ng-model="shipmentLine.quantity" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="panel-body" data-ng-if="document.prepared">
+		<div data-ng-if="document.lines.length == 0">
+			{{ i18n('m.rbs.order.admin.shipment_no_line', ['ucf']) }}
+		</div>
+		<table data-ng-if="document.lines.length > 0"
+			class="document-list table table-condensed table-bordered table-striped table-hover">
+			<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.order.admin.shipment_line_number', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.admin.shipment_designation', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.admin.shipment_sku', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.order.admin.shipment_quantity', ['ucf']) }}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="shipmentLine in document.lines" class="normal-row">
+					<td>(= $index + 1 =)</td>
+					<td>(= shipmentLine.designation =)</td>
+					<td>(= shipmentLine.codeSKU =)</td>
+					<td>(= shipmentLine.quantity =)</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

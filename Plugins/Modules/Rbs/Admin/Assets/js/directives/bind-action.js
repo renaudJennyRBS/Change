@@ -80,7 +80,7 @@
 							params.$embedDialog = attrs.embedDialog ? jQuery('#' + attrs.embedDialog) : null;
 
 							if (actionObject.loading) {
-								iconElm = jQuery(elm).find('i[class^="icon-"]').first();
+								iconElm = jQuery(elm).find('i[class^="icon-"], span[class^="icon-"]').first();
 								iconElmClass = iconElm.attr('class');
 								iconElm.removeClass(iconElmClass).addClass('icon-spinner icon-spin');
 								elm.attr('disabled', 'disabled');

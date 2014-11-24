@@ -37,9 +37,9 @@ trait ContextParameters
 	}
 
 	/**
-	 * @param \Rbs\Store\Documents\WebStore $webStore
-	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
-	 * @param string $zone
+	 * @param \Rbs\Store\Documents\WebStore|null $webStore
+	 * @param \Rbs\Price\Tax\BillingAreaInterface|null $billingArea
+	 * @param string|null $zone
 	 * @param Parameters $parameters
 	 */
 	protected function setDetailedCommerceContextParameters($webStore, $billingArea, $zone, $parameters)

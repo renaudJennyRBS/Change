@@ -10,7 +10,7 @@
 			scope.productData = $window['__change'][cacheKey];
 		}
 
-		this.setPictograms = function (productData) {
+		this.setPictograms = function(productData) {
 			scope.pictograms = null;
 			if (productData && productData.common && productData.common.attributes && productData.common.attributes.pictograms) {
 				var attr = productData.attributes[productData.common.attributes.pictograms];
@@ -26,6 +26,7 @@
 			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
 		};
 	}
+
 	RbsCatalogProductItemController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
 
@@ -38,6 +39,7 @@
 			link: productDataLink
 		}
 	}
+
 	app.directive('rbsCatalogAddListItemProductToCart', rbsCatalogAddListItemProductToCart);
 
 	function productDataLink(scope, elm, attrs) {
@@ -47,7 +49,8 @@
 				var cart = productData.cart;
 				if (attrs.hasOwnProperty('productQuantity')) {
 					cart.quantity = parseInt(attrs['productQuantity']);
-				} else {
+				}
+				else {
 					cart.quantity = (cart.minQuantity) ? cart.minQuantity : 1;
 				}
 				if (attrs.modalId) {
@@ -122,14 +125,14 @@
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductPictograms.tpl',
 			replace: false,
-			scope: {pictograms: '=', pictogramFormat: '='},
+			scope: { pictograms: '=', pictogramFormat: '=' },
 			link: function(scope, elm, attrs) {
 
 			}
 		}
 	}
-	app.directive('rbsCatalogProductPictograms', rbsCatalogProductPictograms);
 
+	app.directive('rbsCatalogProductPictograms', rbsCatalogProductPictograms);
 
 	function extractVisuals(productData) {
 		if (productData && productData.common && productData.common.visuals) {
@@ -141,7 +144,7 @@
 		return null;
 	}
 
-	//use scope.visuals
+	// Uses scope.visuals.
 	function rbsCatalogProductVisuals() {
 		return {
 			restrict: 'A',
@@ -152,7 +155,7 @@
 				scope.showVisual = function(event) {
 					var jNode = jQuery(event.currentTarget);
 					var visualId = jNode.attr('data-index');
-					jQuery('[id^="' + scope.fullBaseId +'"]').hide();
+					jQuery('[id^="' + scope.fullBaseId + '"]').hide();
 					jQuery('#' + scope.fullBaseId + visualId).show();
 					return false;
 				};
@@ -168,25 +171,28 @@
 					var scaleY = (bigImage.height() / image.height());
 					var offset = image.offset();
 
-					jNode.mousemove(function(e){
+					jNode.mousemove(function(e) {
 						bigImage.css({
-							top: Math.max(zoomDiv.height() - bigImage.height(), Math.min(0, zoomDiv.height()/2 - (e.pageY - offset.top)*scaleY)),
-							left: Math.max(zoomDiv.width() - bigImage.width(), Math.min(0, zoomDiv.width()/2 - (e.pageX - offset.left)*scaleX))
+							top: Math.max(zoomDiv.height() - bigImage.height(),
+								Math.min(0, zoomDiv.height() / 2 - (e.pageY - offset.top) * scaleY)),
+							left: Math.max(zoomDiv.width() - bigImage.width(),
+								Math.min(0, zoomDiv.width() / 2 - (e.pageX - offset.left) * scaleX))
 						});
 					});
 
-					jNode.mouseout(function () {
+					jNode.mouseout(function() {
 						jQuery('.zoomDiv').remove();
 						jNode.unbind('mousemove');
 						jNode.unbind('mouseout');
 					});
 
 					// Disable the link on the image.
-					jNode.click(function () { return false });
+					jNode.click(function() { return false });
 				};
 			}
 		}
 	}
+
 	app.directive('rbsCatalogProductVisuals', rbsCatalogProductVisuals);
 
 	function RbsCatalogSimpleProductController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
@@ -219,7 +225,6 @@
 	RbsCatalogSimpleProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogSimpleProductController', RbsCatalogSimpleProductController);
 
-
 	function rbsCatalogAddSimpleProductToCart() {
 		return {
 			restrict: 'A',
@@ -229,33 +234,29 @@
 			link: productDataLink
 		}
 	}
+
 	app.directive('rbsCatalogAddSimpleProductToCart', rbsCatalogAddSimpleProductToCart);
-
-
 
 	function RbsCatalogVariantProductController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
 		scope.productData = {};
-		scope.originalProductData = {};
-		scope.rootProductData = null;
 		scope.pictograms = null;
 		scope.visuals = null;
-
-		scope.selectedAxesValues = [];
-		scope.axesItems = [];
-
 		scope.parameters = {};
 
-		scope.loadProductId = null;
-		scope.loadedProducts = {};
+		scope.productAjaxData = {};
+		scope.productAjaxParams = {};
 
 		var cacheKey = $element.attr('data-cache-key');
 		if (cacheKey) {
 			scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
 			if (angular.isObject($window['__change']) && $window['__change'][cacheKey]) {
 				scope.productData = $window['__change'][cacheKey];
-				scope.originalProductData = scope.productData;
-				scope.rootProductData = scope.productData.rootProduct || scope.productData;
 			}
+
+			scope.productAjaxData.webStoreId = scope.parameters.webStoreId;
+			scope.productAjaxData.billingAreaId = scope.parameters.billingAreaId;
+			scope.productAjaxData.zone = scope.parameters.zone;
+			scope.productAjaxParams.visualFormats = scope.parameters.imageFormats;
 		}
 
 		scope.$watch('productData', function(productData) {
@@ -273,7 +274,8 @@
 				if (productData && productData.cart && !productData.cart.quantity) {
 					if (productData.cart.minQuantity) {
 						productData.cart.quantity = productData.cart.minQuantity;
-					} else {
+					}
+					else {
 						productData.cart.quantity = 1;
 					}
 				}
@@ -283,185 +285,224 @@
 		scope.addLine = function() {
 			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
 		};
+	}
 
-		function compareAxesValues(axesValues, expectedValues, compareType) {
-			var i;
-			if (!compareType || compareType == '=') {
-				if (axesValues.length == expectedValues.length) {
-					for(i = 0; i < axesValues.length; i++) {
-						if (axesValues[i] != expectedValues[i]) {
-							return false;
-						}
-					}
-					return true;
-				}
-				return false;
-			} else if (compareType == '<') {
-				if (axesValues.length == expectedValues.length - 1) {
-					for(i = 0; i < axesValues.length; i++) {
-						if (axesValues[i] != expectedValues[i]) {
-							return false;
-						}
-					}
-					return true;
-				}
-				return false;
-			} else if (compareType == '<<') {
-				if (axesValues.length < expectedValues.length) {
-					for(i = 0; i < axesValues.length; i++) {
-						if (axesValues[i] != expectedValues[i]) {
-							return false;
-						}
-					}
-					return true;
-				}
-				return false;
-			}
-			return false;
-		}
+	RbsCatalogVariantProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window',
+		'RbsChange.AjaxAPI'];
+	app.controller('RbsCatalogVariantProductController', RbsCatalogVariantProductController);
 
-		function getChildrenAxesValues(axesValue) {
-			var indexedValues = {}, childrenValues = [], childAxisIndex = axesValue.length,
-				variantProducts = scope.rootProductData.variants.products, variantAxesValue, i, axisValue;
-			for (i = 0; i < variantProducts.length; i++) {
-				variantAxesValue = variantProducts[i].axesValues;
-				if (compareAxesValues(axesValue, variantAxesValue, '<<')) {
-					axisValue = variantAxesValue[childAxisIndex];
-					if (!indexedValues.hasOwnProperty(axisValue)) {
-						indexedValues[axisValue] = true;
-						childrenValues.push(axisValue);
-					}
-				}
-			}
-			return childrenValues;
-		}
+	function rbsCatalogVariantSelector(AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogVariantSelector.tpl',
+			replace: false,
+			scope: {
+				'productData': '=',
+				'ajaxData': '=',
+				'ajaxParams': '='
+			},
 
+			link: function(scope) {
+				scope.selectedAxesValues = [];
+				scope.axesItems = [];
 
-		function getAxisItem(axesValue) {
-			var index = axesValue.length - 1,
-				axisItem = {value: axesValue[index], title: axesValue[index],
-					lastAxis: axesValue.length == scope.rootProductData.variants.axes.length},
-			 variantProducts = scope.rootProductData.variants.products, variantAxesValue, i;
-			for (i = 0; i < variantProducts.length; i++) {
-				if (compareAxesValues(axesValue, variantProducts[i].axesValues, '=')) {
-					variantAxesValue = variantProducts[i];
-					angular.extend(axisItem, variantAxesValue);
-				}
-			}
-			var axis = scope.rootProductData.variants.axes[index];
-			if (axis.defaultItems && axis.defaultItems.length) {
-				for (i = 0; i < axis.defaultItems.length; i++) {
-					if (axis.defaultItems[i].value == axisItem.value) {
-						axisItem.title = axis.defaultItems[i].title;
-						break;
-					}
-				}
-			}
-			return axisItem;
-		}
+				scope.loadProductId = null;
+				scope.loadedProducts = {};
 
-		function getAxisItems(axesValue, values) {
-			var axisItems = [];
-			for (i = 0; i< values.length; i++) {
-				axesValue.push(values[i]);
-				axisItems.push(getAxisItem(axesValue));
-				axesValue.pop();
-			}
-			return axisItems;
-		}
+				scope.originalProductData = null;
+				scope.rootProductData = {};
 
-		scope.$watchCollection('selectedAxesValues', function(definedAxes) {
-			var axesDefinition =  scope.rootProductData.variants.axes;
-			var variantProducts = scope.rootProductData.variants.products;
-			scope.axesItems = [];
-
-			var processingAxesValue = [], currentAxesValue = [], axisIndex, values, i, axisItems;
-			for (axisIndex = 0; axisIndex < axesDefinition.length; axisIndex++) {
-				if (definedAxes[axisIndex]) {
-					values = getChildrenAxesValues(currentAxesValue);
-					axisItems = getAxisItems(currentAxesValue, values);
-					scope.axesItems.push(axisItems);
-					currentAxesValue.push(definedAxes[axisIndex]);
-				} else if (axisIndex == definedAxes.length) {
-					values = getChildrenAxesValues(currentAxesValue);
-					axisItems = getAxisItems(currentAxesValue, values);
-					scope.axesItems.push(axisItems);
-
-					if (values.length == 1) {
-						definedAxes.push(values[0]);
-						currentAxesValue.push(definedAxes[axisIndex]);
-					}
-				} else {
-					scope.axesItems.push([]);
-				}
-			}
-
-			if (definedAxes.length) {
-				var variant = getVariantByAxesValue(definedAxes);
-				if (variant && variant.id != scope.productData.common.id) {
-					selectProduct(variant.id);
-				}
-			} else {
-				scope.productData = scope.rootProductData;
-			}
-		});
-
-		scope.variantChanged = function(axisIndex) {
-			scope.selectedAxesValues.length = axisIndex + (scope.selectedAxesValues[axisIndex] !== null ? 1 : 0);
-		};
-
-		function selectProduct(productId) {
-			if (scope.loadedProducts[productId]) {
-				scope.productData = scope.loadedProducts[productId];
-			} else if (productId == scope.originalProductData.common.id) {
-				scope.productData = scope.originalProductData;
-			} else if (productId == scope.rootProductData.common.id) {
-				scope.productData = scope.rootProductData;
-			} else if (scope.loadProductId != productId) {
-				scope.loadProductId = productId;
-				var blockParameters = scope.parameters;
-				var data = {
-					webStoreId: blockParameters.webStoreId,
-					billingAreaId: blockParameters.billingAreaId,
-					zone: blockParameters.zone
-				};
-				var params = {visualFormats: blockParameters.imageFormats};
-				var request = AjaxAPI.getData('Rbs/Catalog/Product/' + productId, data, params);
-				request.success(function(data, status, headers, config) {
-					var productData = data.dataSets, loadProductId = productData.common.id;
-					productData.rootProduct = scope.rootProductData;
-					scope.loadedProducts[loadProductId] = productData;
-					if (loadProductId == scope.loadProductId) {
+				scope.$watch('productData', function(productData) {
+					if (scope.originalProductData === null && angular.isObject(productData)
+						&& angular.isObject(productData.common)) {
 						scope.productData = productData;
+						scope.originalProductData = scope.productData;
+						scope.rootProductData = scope.productData.rootProduct || scope.productData;
+
+						scope.$watchCollection('selectedAxesValues', function(definedAxes) {
+							var axesDefinition = scope.rootProductData.variants.axes;
+							scope.axesItems = [];
+
+							var currentAxesValue = [], axisIndex, values, axisItems;
+							for (axisIndex = 0; axisIndex < axesDefinition.length; axisIndex++) {
+								if (definedAxes[axisIndex]) {
+									values = getChildrenAxesValues(currentAxesValue);
+									axisItems = getAxisItems(currentAxesValue, values);
+									scope.axesItems.push(axisItems);
+									currentAxesValue.push(definedAxes[axisIndex]);
+								}
+								else if (axisIndex == definedAxes.length) {
+									values = getChildrenAxesValues(currentAxesValue);
+									axisItems = getAxisItems(currentAxesValue, values);
+									scope.axesItems.push(axisItems);
+
+									if (values.length == 1) {
+										definedAxes.push(values[0]);
+										currentAxesValue.push(definedAxes[axisIndex]);
+									}
+								}
+								else {
+									scope.axesItems.push([]);
+								}
+							}
+
+							if (definedAxes.length) {
+								var variant = getVariantByAxesValue(definedAxes);
+								if (variant && variant.id != scope.productData.common.id) {
+									selectProduct(variant.id);
+								}
+							}
+							else {
+								scope.productData = scope.rootProductData;
+							}
+						});
+
+						if (scope.rootProductData !== scope.productData) {
+							for (var i = 0; i < scope.rootProductData.variants.products.length; i++) {
+								if (scope.rootProductData.variants.products[i].id == scope.productData.common.id) {
+									scope.selectedAxesValues = angular.copy(scope.rootProductData.variants.products[i].axesValues);
+									break;
+								}
+							}
+						}
 					}
-				}).error(function(data, status, headers, config) {
-					scope.error = data.message;
-					console.log('error', data, status);
 				});
-			}
-		}
 
-		function getVariantByAxesValue(axesValue) {
-			var	variantProducts = scope.rootProductData.variants.products, i;
-			for (i = 0; i < variantProducts.length; i++) {
-				if (compareAxesValues(axesValue, variantProducts[i].axesValues, '=')) {
-					return  variantProducts[i]
+				function compareAxesValues(axesValues, expectedValues, compareType) {
+					var i;
+					if (!compareType || compareType == '=') {
+						if (axesValues.length == expectedValues.length) {
+							for (i = 0; i < axesValues.length; i++) {
+								if (axesValues[i] != expectedValues[i]) {
+									return false;
+								}
+							}
+							return true;
+						}
+						return false;
+					}
+					else if (compareType == '<') {
+						if (axesValues.length == expectedValues.length - 1) {
+							for (i = 0; i < axesValues.length; i++) {
+								if (axesValues[i] != expectedValues[i]) {
+									return false;
+								}
+							}
+							return true;
+						}
+						return false;
+					}
+					else if (compareType == '<<') {
+						if (axesValues.length < expectedValues.length) {
+							for (i = 0; i < axesValues.length; i++) {
+								if (axesValues[i] != expectedValues[i]) {
+									return false;
+								}
+							}
+							return true;
+						}
+						return false;
+					}
+					return false;
 				}
-			}
-			return null;
-		}
 
-		if (scope.rootProductData !== scope.productData) {
-			for (var i = 0; i < scope.rootProductData.variants.products.length; i++) {
-				if (scope.rootProductData.variants.products[i].id == scope.productData.common.id) {
-					scope.selectedAxesValues = angular.copy(scope.rootProductData.variants.products[i].axesValues);
-					break;
+				function getChildrenAxesValues(axesValue) {
+					var indexedValues = {}, childrenValues = [], childAxisIndex = axesValue.length,
+						variantProducts = scope.rootProductData.variants.products, variantAxesValue, axisValue;
+					for (var i = 0; i < variantProducts.length; i++) {
+						variantAxesValue = variantProducts[i].axesValues;
+						if (compareAxesValues(axesValue, variantAxesValue, '<<')) {
+							axisValue = variantAxesValue[childAxisIndex];
+							if (!indexedValues.hasOwnProperty(axisValue)) {
+								indexedValues[axisValue] = true;
+								childrenValues.push(axisValue);
+							}
+						}
+					}
+					return childrenValues;
+				}
+
+				function getAxisItem(axesValue) {
+					var index = axesValue.length - 1,
+						axisItem = {
+							value: axesValue[index], title: axesValue[index],
+							lastAxis: axesValue.length == scope.rootProductData.variants.axes.length
+						},
+						variantProducts = scope.rootProductData.variants.products, variantAxesValue;
+					for (var i = 0; i < variantProducts.length; i++) {
+						if (compareAxesValues(axesValue, variantProducts[i].axesValues, '=')) {
+							variantAxesValue = variantProducts[i];
+							angular.extend(axisItem, variantAxesValue);
+						}
+					}
+					var axis = scope.rootProductData.variants.axes[index];
+					if (axis.defaultItems && axis.defaultItems.length) {
+						for (i = 0; i < axis.defaultItems.length; i++) {
+							if (axis.defaultItems[i].value == axisItem.value) {
+								axisItem.title = axis.defaultItems[i].title;
+								break;
+							}
+						}
+					}
+					return axisItem;
+				}
+
+				function getAxisItems(axesValue, values) {
+					var axisItems = [];
+					for (var i = 0; i < values.length; i++) {
+						axesValue.push(values[i]);
+						axisItems.push(getAxisItem(axesValue));
+						axesValue.pop();
+					}
+					return axisItems;
+				}
+
+				scope.variantChanged = function(axisIndex) {
+					scope.selectedAxesValues.length = axisIndex + (scope.selectedAxesValues[axisIndex] !== null ? 1 : 0);
+				};
+
+				function selectProduct(productId) {
+					if (scope.loadedProducts[productId]) {
+						scope.productData = scope.loadedProducts[productId];
+					}
+					else if (productId == scope.originalProductData.common.id) {
+						scope.productData = scope.originalProductData;
+					}
+					else if (productId == scope.rootProductData.common.id) {
+						scope.productData = scope.rootProductData;
+					}
+					else if (scope.loadProductId != productId) {
+						scope.loadProductId = productId;
+						var request = AjaxAPI.getData('Rbs/Catalog/Product/' + productId, scope.ajaxData, scope.ajaxParams);
+						request.success(function(data) {
+							var productData = data.dataSets, loadProductId = productData.common.id;
+							productData.rootProduct = scope.rootProductData;
+							scope.loadedProducts[loadProductId] = productData;
+							if (loadProductId == scope.loadProductId) {
+								scope.productData = productData;
+							}
+						}).error(function(data, status) {
+							scope.error = data.message;
+							console.log('error', data, status);
+						});
+					}
+				}
+
+				function getVariantByAxesValue(axesValue) {
+					var variantProducts = scope.rootProductData.variants.products;
+					for (var i = 0; i < variantProducts.length; i++) {
+						if (compareAxesValues(axesValue, variantProducts[i].axesValues, '=')) {
+							return variantProducts[i]
+						}
+					}
+					return null;
 				}
 			}
 		}
 	}
-	RbsCatalogVariantProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
-	app.controller('RbsCatalogVariantProductController', RbsCatalogVariantProductController);
+
+	rbsCatalogVariantSelector.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsCatalogVariantSelector', rbsCatalogVariantSelector);
 
 	function rbsCatalogAddVariantProductToCart() {
 		return {
@@ -472,6 +513,7 @@
 			link: productDataLink
 		}
 	}
+
 	app.directive('rbsCatalogAddVariantProductToCart', rbsCatalogAddVariantProductToCart);
 
 	function rbsCatalogAxisOptionClass($parse) {
@@ -498,6 +540,7 @@
 			}
 		};
 	}
+
 	app.directive('rbsCatalogAxisOptionClass', ['$parse', rbsCatalogAxisOptionClass]);
 
 	function rbsCatalogProductAvailability() {
@@ -509,8 +552,8 @@
 			}
 		}
 	}
-	app.directive('rbsCatalogProductAvailability', rbsCatalogProductAvailability);
 
+	app.directive('rbsCatalogProductAvailability', rbsCatalogProductAvailability);
 
 	function RbsCatalogProductSetController(scope, $element, AjaxAPI) {
 		scope.productData = {};
@@ -565,12 +608,12 @@
 			}
 		}
 	}
+
 	app.directive('rbsCatalogProductPrice', rbsCatalogProductPrice);
 
-
-	app.filter('rbsCatalogGetAttribute', function () {
-		function filter (productData, name) {
-			if (!angular.isObject(productData) || !angular.isString(name) ) {
+	app.filter('rbsCatalogGetAttribute', function() {
+		function filter(productData, name) {
+			if (!angular.isObject(productData) || !angular.isString(name)) {
 				return null;
 			}
 			if (angular.isObject(productData['common']) && angular.isObject(productData['common']['attributes']) &&
@@ -597,7 +640,7 @@
 			restrict: 'A',
 			templateUrl: '/rbsCatalogAttributeValue.tpl',
 			replace: false,
-			scope: {attribute:'='},
+			scope: { attribute: '=' },
 			link: function(scope, elm, attrs) {
 
 				scope.isArrayValue = function(attribute) {
@@ -645,7 +688,7 @@
 				scope.isString = function(attribute) {
 					attribute = attribute || scope.attribute;
 					return (attribute && !scope.isDocument(attribute) && !scope.isArrayValue(attribute)
-					&& !scope.isHtml(attribute) && !scope.isDate(attribute) && !scope.isDateTime(attribute));
+						&& !scope.isHtml(attribute) && !scope.isDate(attribute) && !scope.isDateTime(attribute));
 				};
 
 				scope.trustHtml = function(html) {
@@ -654,18 +697,18 @@
 			}
 		}
 	}
+
 	rbsCatalogAttributeValue.$inject = ['$sce'];
 	app.directive('rbsCatalogAttributeValue', rbsCatalogAttributeValue);
 
-
-	function rbsCatalogSectionAttributes($sce, $compile) {
+	function rbsCatalogSectionAttributes($sce) {
 		return {
 			restrict: 'A',
 			template: '<div></div>',
-			scope: {productData: '='},
-			compile: function (elm, attrs) {
+			scope: { productData: '=' },
+			compile: function(elm, attrs) {
 				var displayMode = attrs['displayMode'] || 'table';
-				var displayDirective = '<div data-rbs-catalog-attributes-'+ displayMode +'=""></div>';
+				var displayDirective = '<div data-rbs-catalog-attributes-' + displayMode + '=""></div>';
 				elm.html(displayDirective);
 
 				return function(scope, elm, attrs) {
@@ -704,9 +747,8 @@
 									scope.sections.push(section);
 									scope.sectionsAttributes[section] = [];
 								}
-								else
-								{
-									for (var i = 0; i< scope.sectionsAttributes[section].length; i++) {
+								else {
+									for (var i = 0; i < scope.sectionsAttributes[section].length; i++) {
 										if (attribute.id == scope.sectionsAttributes[section][i].id) {
 											scope.sectionsAttributes[section][i] = attribute;
 											return;
@@ -718,14 +760,15 @@
 						})
 					}
 
-					scope.$watch('productData', function(productData, oldValue) {
+					scope.$watch('productData', function(productData) {
 						buildAttributes(productData);
 					});
 				}
 			}
 		}
 	}
-	rbsCatalogSectionAttributes.$inject = ['$sce', '$compile'];
+
+	rbsCatalogSectionAttributes.$inject = ['$sce'];
 	app.directive('rbsCatalogSectionAttributes', rbsCatalogSectionAttributes);
 
 	function rbsCatalogAttributesTable() {
@@ -737,9 +780,9 @@
 
 				scope.$watch('sectionsAttributes', function(sectionsAttributes) {
 					scope.tableRows = [];
-					angular.forEach(scope.sections, function (section) {
-						scope.tableRows.push({isSectionTitle: true, section: section});
-						angular.forEach(scope.sectionsAttributes[section], function (attribute) {
+					angular.forEach(scope.sections, function(section) {
+						scope.tableRows.push({ isSectionTitle: true, section: section });
+						angular.forEach(sectionsAttributes[section], function(attribute) {
 							scope.tableRows.push(attribute);
 						})
 					});
@@ -747,6 +790,7 @@
 			}
 		}
 	}
+
 	app.directive('rbsCatalogAttributesTable', rbsCatalogAttributesTable);
 
 	function rbsCatalogAttributesAccordion() {
@@ -758,6 +802,7 @@
 			}
 		}
 	}
+
 	app.directive('rbsCatalogAttributesAccordion', rbsCatalogAttributesAccordion);
 
 	function rbsCatalogAttributesFlat() {
@@ -768,8 +813,8 @@
 				scope.flatRows = [];
 				scope.$watch('sectionsAttributes', function(sectionsAttributes) {
 					scope.flatRows = [];
-					angular.forEach(scope.sections, function (section) {
-						angular.forEach(scope.sectionsAttributes[section], function (attribute) {
+					angular.forEach(scope.sections, function(section) {
+						angular.forEach(sectionsAttributes[section], function(attribute) {
 							scope.flatRows.push(attribute);
 						})
 					});
@@ -777,6 +822,7 @@
 			}
 		}
 	}
+
 	app.directive('rbsCatalogAttributesFlat', rbsCatalogAttributesFlat);
 
 	function rbsCatalogAttributesTabs() {
@@ -788,5 +834,6 @@
 			}
 		}
 	}
+
 	app.directive('rbsCatalogAttributesTabs', rbsCatalogAttributesTabs);
 })(jQuery);

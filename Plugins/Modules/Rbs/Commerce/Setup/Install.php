@@ -47,9 +47,11 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Rbs/Commerce/Events/PriceManager/Rbs_Commerce', '\Rbs\Commerce\Events\PriceManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Geo/Events/GeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\GeoManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Mail/Events/MailManager/Rbs_Commerce', '\Rbs\Commerce\Events\MailManager\Listeners');
+		$configuration->addPersistentEntry('Rbs/Order/Events/OrderManager/Rbs_Commerce', '\Rbs\Commerce\Events\OrderManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Payment/Events/PaymentManager/Rbs_Commerce', '\Rbs\Commerce\Events\PaymentManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Admin/Events/AdminManager/Rbs_Commerce', '\Rbs\Commerce\Events\AdminManager\Listeners');
+		$configuration->addPersistentEntry('Rbs/Productreturn/Events/ReturnManager/Rbs_Commerce', '\Rbs\Commerce\Events\ReturnManager\Listeners');
 
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/cartItem', '160x120');
 

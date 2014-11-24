@@ -108,7 +108,6 @@ class InstallBase
 	 */
 	public function executeDbSchema($plugin, $schemaManager)
 	{
-
 	}
 
 	/**

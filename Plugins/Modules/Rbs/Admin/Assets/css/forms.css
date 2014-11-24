@@ -191,7 +191,9 @@ a.editor-menu-item.active:after {
 }
 
 a.editor-menu-item i[class^="icon-"],
-a.editor-menu-item i[class*=" icon-"] {
+a.editor-menu-item span[class^="icon-"],
+a.editor-menu-item i[class*=" icon-"],
+a.editor-menu-item span[class*=" icon-"] {
 	font-size: 20pt;
 	height: 10px;
 	line-height: 10px;
@@ -203,12 +205,16 @@ a.editor-menu-item i[class*=" icon-"] {
 }
 
 a.editor-menu-item i[class^="icon-"]:before,
-a.editor-menu-item i[class*=" icon-"]:before {
+a.editor-menu-item span[class^="icon-"]:before,
+a.editor-menu-item i[class*=" icon-"]:before,
+a.editor-menu-item span[class*=" icon-"]:before {
 	width: 36px;
 }
 
 a.editor-menu-item.active i[class^="icon-"],
-a.editor-menu-item.active i[class*=" icon-"] {
+a.editor-menu-item.active span[class^="icon-"],
+a.editor-menu-item.active i[class*=" icon-"],
+a.editor-menu-item.active span[class*=" icon-"] {
 	color: #2790b0;
 	opacity: 0.5;
 }

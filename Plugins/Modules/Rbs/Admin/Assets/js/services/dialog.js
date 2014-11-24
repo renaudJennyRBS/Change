@@ -367,7 +367,7 @@
 						'<button class="btn btn-primary ' + options.primaryButtonClass + '" type="button" data-ng-click="rbsChangeDialogConfirmEmbed_confirm()">';
 
 					if (!options.primaryButtonIcon && options.pointedElement) {
-						var icon = options.pointedElement.find('i[class^="icon-"]').first();
+						var icon = options.pointedElement.find('i[class^="icon-"], span[class^="icon-"]').first();
 						if (icon.length) {
 							var classes = icon.attr('class').split(/\s+/);
 							for (var i=0 ; i<classes.length ; i++) {

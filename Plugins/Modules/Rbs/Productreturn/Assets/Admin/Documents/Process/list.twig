@@ -1,0 +1,26 @@
+<div class="row">
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div data-rbs-main-column="">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.productreturn.admin.process_list', ['ucf']) }}"></rbs-page-header>
+		<rbs-document-filter-panel open-by-default="false" filter="filter"
+			model="Rbs_Productreturn_Process"></rbs-document-filter-panel>
+
+		<div class="add-elements-bar">
+			{% for newDocumentLink in attributes['newDocumentLinks'] %}
+				<a href="javascript:;" data-ng-href="(= '{{ newDocumentLink.modelName }}' | rbsURL:'new' =)">
+					{{ newDocumentLink.label }}
+				</a>
+			{% endfor %}
+		</div>
+
+		<rbs-document-list data-dlid="DLRbsProductreturnProcess"
+			model="Rbs_Productreturn_Process"
+			activable="true" filter-collection="filter">
+			<rbs-column name="label" primary="true"></rbs-column>
+		</rbs-document-list>
+	</div>
+</div>

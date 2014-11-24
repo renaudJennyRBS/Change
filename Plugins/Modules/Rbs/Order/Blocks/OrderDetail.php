@@ -16,6 +16,8 @@ use Change\Presentation\Blocks\Standard\Block;
  */
 class OrderDetail extends Block
 {
+	use \Rbs\Commerce\Blocks\Traits\ContextParameters;
+
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -26,15 +28,10 @@ class OrderDetail extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('accessorId');
-		$parameters->addParameterMeta('orderId');
-		$parameters->addParameterMeta('cartIdentifier');
-		$parameters->addParameterMeta('displayPricesWithoutTax');
-		$parameters->addParameterMeta('displayPricesWithTax');
-
+		$parameters->addParameterMeta('imageFormats', 'cartItem');
+		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
-
 
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		$userId = $user->authenticated() ? $user->getId() : null;
@@ -82,11 +79,16 @@ class OrderDetail extends Block
 			$parameters->setParameterValue('accessorId', $userId);
 		}
 
+		/** @var \Rbs\Store\Documents\WebStore $webStore */
 		$webStore = $documentManager->getDocumentInstance($order->getWebStoreId());
+		$this->setDetailedCommerceContextParameters($webStore, $order->getBillingAreaIdInstance(), $order->getZone(), $parameters );
 		if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 		{
-			$parameters->setParameterValue('displayPricesWithoutTax', $webStore->getDisplayPricesWithoutTax());
-			$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
+			$returnProcess = $webStore->getReturnProcess();
+			if ($returnProcess instanceof \Rbs\Productreturn\Documents\Process && $returnProcess->getActive())
+			{
+				$parameters->setParameterValue('enableReturns', true);
+			}
 		}
 		return $parameters;
 	}
@@ -120,12 +122,9 @@ class OrderDetail extends Block
 			$parameters->setParameterValue('accessorId', $userId);
 		}
 
+		/** @var \Rbs\Store\Documents\WebStore $webStore */
 		$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
-		if ($webStore instanceof \Rbs\Store\Documents\WebStore)
-		{
-			$parameters->setParameterValue('displayPricesWithoutTax', $webStore->getDisplayPricesWithoutTax());
-			$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
-		}
+		$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(), $parameters );
 		return $parameters;
 	}
 
@@ -177,8 +176,31 @@ class OrderDetail extends Block
 			return null;
 		}
 
+		// TODO: migrate.
 		$options = [ 'withTransactions' => true, 'withShipments' => true ];
 		$attributes['order'] = $commerceServices->getOrderManager()->getOrderPresentation($order, $options);
+
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+		$context->setWebsite($event->getParam('website'));
+		$cartData = $commerceServices->getOrderManager()->getOrderData($order, $context->toArray());
+		$attributes['orderData'] = $cartData;
 		return 'order-detail.twig';
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Presentation\Blocks\Parameters $parameters
+	 * @return \Change\Http\Ajax\V1\Context
+	 */
+	protected function populateContext($application, $documentManager, $parameters)
+	{
+		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
+		$context->setDetailed(true);
+		$context->setVisualFormats($parameters->getParameter('imageFormats'));
+		$context->setURLFormats(['canonical']);
+		$context->setDataSetNames(['shipments', 'returns']);
+		return $context;
 	}
 }

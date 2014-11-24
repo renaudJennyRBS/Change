@@ -1,0 +1,23 @@
+<script type="text/javascript">
+	window.__change['{{ cacheKey }}'] = {
+		'productReturnsData': {{ productReturnsData | json_encode | raw}}
+	};
+</script>
+
+<div data-ng-controller="RbsProductreturnReturnListController">
+	{% for return in productReturnsData %}
+		{% block returnDetails %}
+			{% include 'Rbs_Productreturn/return-details.twig' with {'return': return, 'blockId': blockId, 'showOrderLink': true} %}
+		{% endblock returnDetails %}
+
+		{% block returnSeparator %}
+			{% if not loop.last %}
+				<hr />
+			{% endif %}
+		{% endblock returnSeparator %}
+	{% endfor %}
+</div>
+
+{% block footer %}
+	{% include 'Rbs_Generic/pagination.twig' with {'pageCount': pagination.pageCount, 'pageNumber': pagination.pageNumber, 'blockId': blockId} %}
+{% endblock footer %}

@@ -39,8 +39,6 @@ class Collections
 		}
 	}
 
-
-
 	/**
 	 * @param \Change\Events\Event $event
 	 */

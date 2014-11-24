@@ -249,7 +249,9 @@ h3.panel-title {
 }
 
 .dropdown-menu i[class^="icon-"],
-.dropdown-menu i[class*=" icon-"] {
+.dropdown-menu span[class^="icon-"],
+.dropdown-menu i[class*=" icon-"],
+.dropdown-menu span[class*=" icon-"] {
 	display: inline-block;
 	text-align: center;
 	width: 16px;
@@ -355,7 +357,8 @@ h4.list-group-item:first-child {
 	overflow: hidden;
 }
 
-.btn.btn-headline i[class^="icon-"] {
+.btn.btn-headline i[class^="icon-"],
+.btn.btn-headline span[class^="icon-"] {
 	font-size: 32px;
 	float: left;
 	margin-right: 5px;
@@ -363,7 +366,8 @@ h4.list-group-item:first-child {
 	width: 32px;
 }
 
-.btn.btn-headline.no-text i[class^="icon-"] {
+.btn.btn-headline.no-text i[class^="icon-"],
+.btn.btn-headline.no-text span[class^="icon-"] {
 	margin-right: 0;
 	float: none;
 }
@@ -717,4 +721,9 @@ rbs-uploader .img-thumbnail {
 	width: auto;
 	border-top-left-radius: inherit;
 	border-bottom-left-radius: inherit;
+}
+
+/* Long string: handle new lines without replacing them with <br /> */
+.long-string {
+	white-space: pre-wrap;
 }

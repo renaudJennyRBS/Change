@@ -8,8 +8,6 @@
  */
 namespace Change\Http\Ajax;
 
-use Zend\Stdlib\Parameters;
-
 /**
  * @name \Change\Http\Ajax\Request
  */
@@ -48,7 +46,7 @@ class Request extends \Change\Http\Request
 		}
 		catch (\Exception $e)
 		{
-			//Header not found
+			// Header not found.
 			return;
 		}
 
@@ -65,7 +63,6 @@ class Request extends \Change\Http\Request
 				}
 			}
 		}
-
 	}
 
 	/**

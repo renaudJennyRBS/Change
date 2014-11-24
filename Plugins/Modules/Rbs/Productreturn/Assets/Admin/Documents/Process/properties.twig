@@ -1,0 +1,18 @@
+<rbs-field-text property="label" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Process', 'label'), ['ucf']) }}">
+</rbs-field-text>
+
+<rbs-field-picker-multiple property="reasons"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Process', 'reasons'), ['ucf']) }}"
+	accepted-model="Rbs_Productreturn_Reason">
+</rbs-field-picker-multiple>
+
+<rbs-field-picker-multiple property="reshippingModes"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Process', 'reshippingModes'), ['ucf']) }}"
+	accepted-model="Rbs_Shipping_Mode">
+</rbs-field-picker-multiple>
+
+<rbs-field-picker-multiple property="returnModes"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Process', 'returnModes'), ['ucf']) }}"
+	accepted-model="Rbs_Productreturn_ReturnMode">
+</rbs-field-picker-multiple>

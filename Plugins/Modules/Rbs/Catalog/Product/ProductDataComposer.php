@@ -313,6 +313,16 @@ class ProductDataComposer
 						$this->dataSets['attributes'][$key] = $value;
 					}
 				}
+
+				if ($this->hasDataSet('rootProduct'))
+				{
+					$this->dataSets['rootProduct'] = $this->catalogManager->getProductData($variantGroup->getRootProduct(),
+						$this->getRootProductContext());
+				}
+				else
+				{
+					$this->dataSets['rootProduct'] = ['id' => $variantGroup->getRootProductId()];
+				}
 			}
 		}
 	}

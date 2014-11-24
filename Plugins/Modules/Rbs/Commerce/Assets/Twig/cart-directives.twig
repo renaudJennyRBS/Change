@@ -96,90 +96,102 @@
 {% endblock cartStructure %}
 
 {% block cartLine %}
-<script type="text/ng-template" id="/rbsCommerceCartLineDefault.tpl">
-	<tr>
-		<td>
-			<a title="(= line.product.common.title =)" href="javascript:"
-					data-ng-href="(= line.product.common.URL.canonical =)">
-				<img data-ng-show="line.product.common.visuals[0].cartItem"
-						alt="(= line.product.common.title =)" data-ng-src="(= line.product.common.visuals[0].cartItem =)" />
-				<div class="text-left text-muted" data-ng-hide="line.product.common.visuals[0].cartItem">
+	<script type="text/ng-template" id="/rbsCommerceCartLineDefault.tpl">
+		<tr>
+			<td>
+				<div data-rbs-commerce-cart-line-visual="" data-product="line.product"></div>
+			</td>
+			<td>
+				<ul class="list-unstyled">
+					<li data-ng-bind="line.product.common.title"></li>
+					<li data-ng-show="line.product.common.reference" data-ng-bind="line.product.common.reference"></li>
+				</ul>
+				<dl class="dl-inline-items" data-ng-if="line.options.axesInfo.length">
+					<dt data-ng-repeat-start="(index, axisInfo) in line.options.axesInfo">(= axisInfo.name =)</dt>
+					<dd data-ng-repeat-end="">(= axisInfo.value =)</dd>
+				</dl>
+			</td>
+			<td  style="min-width: 150px">
+				<div class="form-inline">
+					<input type="number" min="(=line.product.cart.minQuantity =)" max="(= line.product.cart.maxQuantity =)"
+							step="(= line.product.cart.quantityIncrement =)" data-ng-disabled="disabledQuantity()"
+							data-ng-model="quantity" class="form-control"  style="width:75px;"/>
+					<button type="button" data-ng-click="updateQuantity()" data-ng-hide="quantity == line.quantity"
+							class="btn btn-icon btn-default btn-primary"
+							title="{{ i18nAttr('m.rbs.commerce.front.update', ['ucf']) }}">
+						<i class="glyphicon glyphicon-refresh"></i>
+					</button>
+				</div>
+				<a href="javascript:" data-ng-click="remove()">{{ i18n('m.rbs.commerce.front.remove', ['ucf']) }}</a>
+			</td>
+			<td data-ng-if="showPrices" class="text-right">
+				<ul class="list-unstyled" data-ng-show="line.quantity != 1">
+					<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
+						<del class="text-muted">(= line.quantity =) x (= line.unitBasedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
+							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+							</abbr>
+						</del>
+
+					</li>
+					<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
+						<del class="text-muted">(= line.quantity =) x (= line.unitBasedAmountWithTaxes | rbsFormatPrice:currencyCode =)</del>
+					</li>
+					<li class="price" data-ng-show="parameters.displayPricesWithoutTax">
+						<span class="text-muted">(= quantity =) x (= line.unitAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
+							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+							</abbr>
+						</span>
+					</li>
+					<li class="price" data-ng-show="parameters.displayPricesWithTax">
+						<span class="text-muted">(= line.quantity =) x (= line.unitAmountWithTaxes | rbsFormatPrice:currencyCode =)</span>
+					</li>
+				</ul>
+			</td>
+			<td data-ng-if="showPrices" class="text-right">
+				<ul class="list-unstyled main-price">
+					<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
+						<del>(= line.basedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
+							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+							</abbr>
+						</del>
+					</li>
+					<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
+						<del>(= line.basedAmountWithTaxes | rbsFormatPrice:currencyCode =)</del>
+					</li>
+					<li class="price" data-ng-show="parameters.displayPricesWithoutTax">
+						<span>(= line.amountWithoutTaxes | rbsFormatPrice:currencyCode =)
+							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+							</abbr>
+						</span>
+					</li>
+					<li class="price" data-ng-show="parameters.displayPricesWithTax">
+						<span>(= line.amountWithTaxes | rbsFormatPrice:currencyCode =)</span>
+					</li>
+				</ul>
+			</td>
+		</tr>
+	</script>
+
+	{% block rbsCommerceCartLineVisual %}
+		<script type="text/ng-template" id="/rbsCommerceCartLineVisual.tpl">
+			<a data-ng-if="product" title="(= product.common.title =)"
+				href="javascript:" data-ng-href="(= product.common.URL.canonical =)">
+				<img data-ng-show="product.common.visuals[0].cartItem" src=""
+					alt="(= product.common.title =)" data-ng-src="(= product.common.visuals[0].cartItem =)" />
+				<img data-ng-show="!product.common.visuals[0].cartItem && product.rootProduct.common.visuals[0].cartItem" src=""
+					alt="(= product.common.title =)" data-ng-src="(= product.rootProduct.common.visuals[0].cartItem =)" />
+				<div data-ng-show="!product.common.visuals[0].cartItem && !product.rootProduct.common.visuals[0].cartItem"
+					class="text-left text-muted">
 					<span class="glyphicon glyphicon-camera" style="font-size:80px"></span>
 				</div>
 			</a>
-		</td>
-		<td>
-			<ul class="list-unstyled">
-				<li data-ng-bind="line.product.common.title"></li>
-				<li data-ng-show="line.product.common.reference" data-ng-bind="line.product.common.reference"></li>
-			</ul>
-			<dl class="dl-inline-items" data-ng-if="line.options.axesInfo.length">
-				<dt data-ng-repeat-start="(index, axisInfo) in line.options.axesInfo">(= axisInfo.name =)</dt>
-				<dd data-ng-repeat-end="">(= axisInfo.value =)</dd>
-			</dl>
-		</td>
-		<td  style="min-width: 150px">
-			<div class="form-inline">
-				<input type="number" min="(=line.product.cart.minQuantity =)" max="(= line.product.cart.maxQuantity =)"
-						step="(= line.product.cart.quantityIncrement =)" data-ng-disabled="disabledQuantity()"
-						data-ng-model="quantity" class="form-control"  style="width:75px;"/>
-				<button type="button" data-ng-click="updateQuantity()" data-ng-hide="quantity == line.quantity"
-						class="btn btn-icon btn-default btn-primary"
-						title="{{ i18nAttr('m.rbs.commerce.front.update', ['ucf']) }}">
-					<i class="glyphicon glyphicon-refresh"></i>
-				</button>
+			<div class="text-left text-muted" data-ng-if="!product">
+				<span class="glyphicon glyphicon-camera" style="font-size:80px"></span>
 			</div>
-			<a href="javascript:" data-ng-click="remove()">{{ i18n('m.rbs.commerce.front.remove', ['ucf']) }}</a>
-		</td>
-		<td data-ng-if="showPrices" class="text-right">
-			<ul class="list-unstyled" data-ng-show="line.quantity != 1">
-				<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
-					<del class="text-muted">(= line.quantity =) x (= line.unitBasedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
-						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-						</abbr>
-					</del>
-
-				</li>
-				<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
-					<del class="text-muted">(= line.quantity =) x (= line.unitBasedAmountWithTaxes | rbsFormatPrice:currencyCode =)</del>
-				</li>
-				<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.unitAmountWithoutTaxes">
-					<span class="text-muted">(= quantity =) x (= line.unitAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
-						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-						</abbr>
-					</span>
-				</li>
-				<li class="price" data-ng-show="parameters.displayPricesWithTax && line.unitAmountWithTaxes">
-					<span class="text-muted">(= line.quantity =) x (= line.unitAmountWithTaxes | rbsFormatPrice:currencyCode =)</span>
-				</li>
-			</ul>
-		</td>
-		<td data-ng-if="showPrices" class="text-right">
-			<ul class="list-unstyled main-price">
-				<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
-					<del>(= line.basedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
-						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-						</abbr>
-					</del>
-				</li>
-				<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
-					<del>(= line.basedAmountWithTaxes | rbsFormatPrice:currencyCode =)</del>
-				</li>
-				<li class="price" data-ng-show="parameters.displayPricesWithoutTax">
-					<span>(= line.amountWithoutTaxes | rbsFormatPrice:currencyCode =)
-						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-						</abbr>
-					</span>
-				</li>
-				<li class="price" data-ng-show="parameters.displayPricesWithTax">
-					<span>(= line.amountWithTaxes | rbsFormatPrice:currencyCode =)</span>
-				</li>
-			</ul>
-		</td>
-	</tr>
-</script>
+		</script>
+	{% endblock rbsCommerceCartLineVisual %}
 {% endblock cartLine %}

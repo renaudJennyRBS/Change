@@ -48,9 +48,11 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getOrderPresentation', [$this, 'onCartGetOrderPresentation'], 10);
 		$eventManager->attach('getOrderPresentation', [$this, 'onArrayGetOrderPresentation'], 5);
 		$eventManager->attach('getOrderStatusInfo', [$this, 'onDefaultGetOrderStatusInfo'], 5);
+		$eventManager->attach('getShipmentStatusInfo', [$this, 'onDefaultGetShipmentStatusInfo'], 5);
 		$eventManager->attach('getAvailableCreditNotesInfo', [$this, 'onDefaultGetAvailableCreditNotesInfo'], 5);
 
 		$eventManager->attach('getOrderData', [$this, 'onDefaultGetOrderData'], 5);
+		$eventManager->attach('getShipmentData', [$this, 'onDefaultGetShipmentData'], 5);
 	}
 
 	/**
@@ -218,7 +220,9 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onProcessingGetByUser(\Change\Events\Event $event)
 	{
-		if ($event->getParam('paginator') || $event->getParam('processingStatus') != \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
+		if ($event->getParam('paginator')
+			|| $event->getParam('processingStatus') != \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING
+		)
 		{
 			return;
 		}
@@ -252,14 +256,16 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 				$orderPresentations[] = $this->getOrderPresentation($cart);
 			}
 
-			usort($orderPresentations, function (\Rbs\Order\Presentation\OrderPresentation $a, \Rbs\Order\Presentation\OrderPresentation $b)
-			{
-				if ($a->getDate() == $b->getDate())
+			usort($orderPresentations,
+				function (\Rbs\Order\Presentation\OrderPresentation $a, \Rbs\Order\Presentation\OrderPresentation $b)
 				{
-					return 0;
+					if ($a->getDate() == $b->getDate())
+					{
+						return 0;
+					}
+					return ($a->getDate() > $b->getDate()) ? -1 : 1;
 				}
-				return ($a->getDate() > $b->getDate()) ? -1 : 1;
-			});
+			);
 
 			$totalCount = count($orderPresentations);
 			$itemsPerPage = $event->getParam('itemsPerPage', null);
@@ -489,7 +495,8 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * Options:
 	 *  - userId
-	 *  - orderId
+	 *  - ownerIds
+	 *  - order
 	 *  - cartIdentifier
 	 * @api
 	 * @param array $options
@@ -519,7 +526,12 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$userId = $event->getParam('userId');
-		if ($userId && ($order->getAuthorId() == $userId || $order->getOwnerId() == $userId))
+		$ownerIds = $event->getParam('ownerIds');
+		if (!is_array($ownerIds) || !count($ownerIds))
+		{
+			$ownerIds = [$userId];
+		}
+		if ($userId && ($order->getAuthorId() == $userId || in_array($order->getOwnerId(), $ownerIds)))
 		{
 			$event->setParam('canViewOrder', true);
 			return;
@@ -544,7 +556,12 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$userId = $event->getParam('userId');
-		if ($userId && ($cart->getUserId() == $userId || $cart->getOwnerId() == $userId))
+		$ownerIds = $event->getParam('ownerIds');
+		if (!is_array($ownerIds) || !count($ownerIds))
+		{
+			$ownerIds = [$userId];
+		}
+		if ($userId && ($cart->getUserId() == $userId || in_array($cart->getOwnerId(), $ownerIds)))
 		{
 			$event->setParam('canViewOrder', true);
 			return;
@@ -575,7 +592,8 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		if ($order instanceof \Rbs\Commerce\Cart\Cart) {
+		if ($order instanceof \Rbs\Commerce\Cart\Cart)
+		{
 			$statusInfo = ['code' => 'PAYMENT_VALIDATING',
 				'title' => $i18nManager->trans('m.rbs.order.front.payment_validating', ['ucf'])];
 			$event->setParam('statusInfo', $statusInfo);
@@ -648,14 +666,16 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 						}
 					}
 				}
-				if ($code === null) {
+				if ($code === null)
+				{
 					$code = 'PROCESS_WAITING';
 				}
 
 				if ($code)
 				{
 					$statusInfo = ['code' => $code, 'title' => $code];
-					switch ($code) {
+					switch ($code)
+					{
 						case 'PROCESS_WAITING':
 							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.process_waiting', ['ucf']);
 							break;
@@ -666,8 +686,6 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.prepared', ['ucf']);
 							break;
 						case 'SHIPPED':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.shipped', ['ucf']);
-							break;
 						case 'PARTIALLY_SHIPPED':
 							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.partially_shipped', ['ucf']);
 							break;
@@ -679,6 +697,86 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			{
 				$statusInfo = ['code' => 'EDITION',
 					'title' => $i18nManager->trans('m.rbs.order.front.edition', ['ucf'])];
+				$event->setParam('statusInfo', $statusInfo);
+			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Order\Documents\Shipment|integer $shipment
+	 * @return array
+	 */
+	public function getShipmentStatusInfo($shipment)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['shipment' => $shipment, 'statusInfo' => ['code' => null, 'title' => null]]);
+		$this->getEventManager()->trigger('getShipmentStatusInfo', $this, $args);
+		return $args['statusInfo'];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetShipmentStatusInfo(\Change\Events\Event $event)
+	{
+		$shipment = $event->getParam('shipment');
+		if (is_numeric($shipment))
+		{
+			$shipment = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($shipment);
+		}
+
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
+		if ($shipment instanceof \Rbs\Order\Documents\Shipment)
+		{
+			$code = null;
+			if ($shipment->getPrepared())
+			{
+				$now = new \DateTime();
+				$shippingDate = $shipment->getShippingDate();
+				$deliveryDate = $shipment->getDeliveryDate();
+				if ($deliveryDate && $deliveryDate <= $now)
+				{
+					$code = 'DELIVERED';
+				}
+				elseif ($shippingDate && $shippingDate <= $now)
+				{
+					$code = 'SHIPPED';
+				}
+				else
+				{
+					$code = 'PREPARED';
+				}
+			}
+			else
+			{
+				$code = 'PREPARATION';
+			}
+
+			if ($code)
+			{
+				$statusInfo = ['code' => $code, 'title' => $code];
+				switch ($code)
+				{
+					case 'PREPARATION':
+						$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.preparation', ['ucf']);
+						break;
+					case 'PREPARED':
+						$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.prepared', ['ucf']);
+						break;
+					case 'SHIPPED':
+						if ($shipment->getCarrierStatus())
+						{
+							$statusInfo['title'] = $shipment->getCarrierStatus();
+						}
+						else
+						{
+							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.shipped', ['ucf']);
+						}
+						break;
+					case 'DELIVERED':
+						$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.delivered', ['ucf']);
+						break;
+				}
 				$event->setParam('statusInfo', $statusInfo);
 			}
 		}
@@ -745,14 +843,13 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
-
 	/**
 	 * Default context:
 	 *  - *dataSetNames, *visualFormats, *URLFormats
 	 *  - website, websiteUrlManager, section, page, detailed
 	 *  - *data
 	 * @api
-	 * @param \Rbs\Commerce\Cart\Cart|string $order
+	 * @param \Rbs\Order\Documents\Order|integer $order
 	 * @param array $context
 	 * @return array
 	 */
@@ -793,12 +890,68 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 * Output param: orderData
 	 * @param \Change\Events\Event $event
 	 */
-	public function  onDefaultGetOrderData(\Change\Events\Event $event)
+	public function onDefaultGetOrderData(\Change\Events\Event $event)
 	{
 		if (!$event->getParam('orderData'))
 		{
 			$orderDataComposer = new \Rbs\Order\OrderDataComposer($event);
 			$event->setParam('orderData', $orderDataComposer->toArray());
+		}
+	}
+
+	/**
+	 * Default context:
+	 *  - *dataSetNames, *visualFormats, *URLFormats
+	 *  - website, websiteUrlManager, section, page, detailed
+	 *  - *data
+	 * @api
+	 * @param \Rbs\Order\Documents\Shipment|integer $shipment
+	 * @param array $context
+	 * @return array
+	 */
+	public function getShipmentData($shipment, array $context)
+	{
+		$em = $this->getEventManager();
+		if (is_numeric($shipment))
+		{
+			$shipment = $this->getDocumentManager()->getDocumentInstance($shipment);
+		}
+
+		if ($shipment instanceof \Rbs\Order\Documents\Shipment)
+		{
+			$eventArgs = $em->prepareArgs(['shipment' => $shipment, 'context' => $context]);
+			$em->trigger('getShipmentData', $this, $eventArgs);
+			if (isset($eventArgs['shipmentData']))
+			{
+				$shipmentData = $eventArgs['shipmentData'];
+				if (is_object($shipmentData))
+				{
+					$callable = [$shipmentData, 'toArray'];
+					if (is_callable($callable))
+					{
+						$shipmentData = call_user_func($callable);
+					}
+				}
+				if (is_array($shipmentData))
+				{
+					return $shipmentData;
+				}
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * Input params: order, context
+	 * Output param: orderData
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetShipmentData(\Change\Events\Event $event)
+	{
+		if (!$event->getParam('shipmentData'))
+		{
+			$shipmentDataComposer = new \Rbs\Order\Shipment\ShipmentDataComposer($event);
+			$event->setParam('shipmentData', $shipmentDataComposer->toArray());
 		}
 	}
 }

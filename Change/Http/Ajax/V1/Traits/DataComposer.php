@@ -73,7 +73,7 @@ trait DataComposer
 	 */
 	protected function setContext(array $context)
 	{
-		//Set default context values
+		// Set default context values.
 		$context += ['visualFormats' => [], 'URLFormats' => [], 'dataSetNames' => [], 'data' => [],
 			'website' => null, 'websiteUrlManager' => null, 'section' => null, 'detailed' => false];
 

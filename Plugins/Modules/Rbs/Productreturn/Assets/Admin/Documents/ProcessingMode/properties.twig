@@ -1,0 +1,13 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_ProcessingMode', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Productreturn_ProcessingMode', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<rbs-field-boolean property="impliesReshipment"
+	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_ProcessingMode', 'impliesReshipment'), ['ucf']) }}">
+</rbs-field-boolean>
+
+<div data-ng-if="document.impliesReshipment">
+	<rbs-field-boolean property="allowVariantSelection"
+		label="{{ i18nAttr(propertyKey('Rbs_Productreturn_ProcessingMode', 'allowVariantSelection'), ['ucf']) }}">
+	</rbs-field-boolean>
+</div>

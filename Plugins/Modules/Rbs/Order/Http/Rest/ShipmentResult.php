@@ -26,6 +26,7 @@ class ShipmentResult
 		$request = $event->getRequest();
 		$startIndex = intval($request->getQuery('offset', 0));
 		$maxResults = intval($request->getQuery('limit', 10));
+		$includeReturnRelated = intval($request->getQuery('includeReturnRelated', false));
 		$orderId = intval($event->getParam('documentId'));
 
 		$sort = $request->getQuery('sort');
@@ -44,6 +45,13 @@ class ShipmentResult
 
 		$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
 		$query->andPredicates($query->eq('orderId', $orderId));
+		if (!$includeReturnRelated)
+		{
+			$model = $event->getApplicationServices()->getModelManager()->getModelByName('Rbs_Productreturn_Shipment');
+			$query->andPredicates(
+				$query->notIn('model', array_merge(['Rbs_Productreturn_Shipment'], $model->getDescendantsNames()))
+			);
+		}
 		$query->addOrder($sort, !$desc);
 		$result->setSort($sort);
 		$result->setDesc($desc);

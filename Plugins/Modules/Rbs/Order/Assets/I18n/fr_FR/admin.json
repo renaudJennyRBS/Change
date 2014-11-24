@@ -236,8 +236,11 @@
 	"shipment_quantity":{
 		"message":"quantité"
 	},
+	"shipment_no_line":{
+		"message":"Cette expédition est vide."
+	},
 	"shipment_line_number":{
-		"message":"numéro de ligne"
+		"message":"ligne"
 	},
 	"shipment_remove_lines":{
 		"message":"retirer de l'expédition"
@@ -383,6 +386,9 @@
 	"billing_management":{
 		"message":"gestion des paiements"
 	},
+	"return_management":{
+		"message":"gestion des retours"
+	},
 	"creditnote_list":{
 		"message":"avoirs"
 	},
@@ -443,8 +449,11 @@
 	"invalid_query_order_invoices":{
 		"message":"La requête d'obtention des factures de la commande est invalide."
 	},
+	"invalid_query_order_credit_notes":{
+		"message":"La requête d'obtention des avoirs de la commande est invalide."
+	},
 	"invalid_query_order":{
-		"message":"la requête pour récupérer la commande est invalide"
+		"message":"la requête d'obtention de la commande est invalide"
 	},
 	"order_add_invoice":{
 		"message":"ajouter une facture"

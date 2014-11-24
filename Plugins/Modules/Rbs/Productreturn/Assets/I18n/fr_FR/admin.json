@@ -1,0 +1,173 @@
+{
+	"module_name":{
+		"message":"retours produit"
+	},
+	"process_list":{
+		"message":"processus de retour"
+	},
+	"process_create":{
+		"message":"ajouter un processus de retour"
+	},
+	"reason_list":{
+		"message":"motifs"
+	},
+	"reason_create":{
+		"message":"ajouter un motif"
+	},
+	"reason_extraTimeAfterShipping_help":{
+		"message":"Lorsque la date de réception n'est pas connue, le délai est appliqué à partir de la date d'expédition. Un délai supplémentaire correspondant au temps d'expédition estimé est alors ajouté."
+	},
+	"processingMode_list":{
+		"message":"modes de traitement"
+	},
+	"processingMode_create":{
+		"message":"ajouter un mode de traitement"
+	},
+	"returnMode_list":{
+		"message":"modes de retour"
+	},
+	"returnModeStatic_create":{
+		"message":"ajouter un mode de retour à étiquette constante"
+	},
+	"productReturn_list":{
+		"message":"retours"
+	},
+	"shipment_list":{
+		"message":"réexpéditions"
+	},
+	"unit_days":{
+		"message":"jours"
+	},
+	"order_no_product_return_yet":{
+		"message":"Cette commande n'a encore donné lieu à aucun retour."
+	},
+	"productReturn_no_shipment_yet":{
+		"message":"Ce retour n'a encore donné lieu à aucune réexpédition."
+	},
+	"productReturn_no_credit_notes_yet":{
+		"message":"Ce retour n'a encore donné lieu à aucune création d'avoir."
+	},
+	"invalid_query_order_product_returns":{
+		"message":"La requête d'obtention des retours de la commande est invalide."
+	},
+	"invalid_query_product_return_shipments":{
+		"message":"La requête d'obtention des réexpédition du retour est invalide."
+	},
+	"invalid_query_product_return_credit_notes":{
+		"message":"La requête d'obtention des avoirs du retour est invalide."
+	},
+	"return_process_function":{
+		"message":"effectuer un retour"
+	},
+	"return_process_label":{
+		"message":"effectuer un retour"
+	},
+	"return_list_function":{
+		"message":"liste des retour"
+	},
+	"return_list_label":{
+		"message":"liste des retour"
+	},
+	"return_list_items_per_page":{
+		"message":"éléments par page"
+	},
+	"productreturn_general_information":{
+		"message":"informations générales"
+	},
+	"productreturn_lines_information":{
+		"message":"articles"
+	},
+	"productreturn_reshipment_information":{
+		"message":"informations de réexpédition"
+	},
+	"productReturn_attached_file":{
+		"message":"fichier joint"
+	},
+	"productReturn_line_number":{
+		"message":"ligne"
+	},
+	"productReturn_line_product":{
+		"message":"désignation"
+	},
+	"productReturn_line_sku":{
+		"message":"code SKU"
+	},
+	"productReturn_line_quntity":{
+		"message":"quantité"
+	},
+	"productReturn_line_reason":{
+		"message":"motif"
+	},
+	"productReturn_line_reason_precisions":{
+		"message":"précisions"
+	},
+	"productReturn_line_preferred_processing_mode":{
+		"message":"traitement souhaité"
+	},
+	"productReturn_line_unit_price":{
+		"message":"prix unitaire"
+	},
+	"productReturn_line_total_price":{
+		"message":"prix total"
+	},
+	"productreturn_reshipment_address":{
+		"message":"adresse"
+	},
+	"productreturn_processingComment_help":{
+		"message":"Ce commentaire sera visible par le client. Il est obligatoire en cas de refus ou d'annulation."
+	},
+	"productReturn_create_shipment":{
+		"message":"réexpédier"
+	},
+	"productReturn_create_credit_note":{
+		"message":"créditer un avoir"
+	},
+	"invalid_query_product_return":{
+		"message":"la requête d'obtention du retour est invalide"
+	},
+	"productReturn_validate_request_button":{
+		"message":"valider <small>la demande</small>"
+	},
+	"productReturn_refuse_request_button":{
+		"message":"refuser <small>la demande</small>"
+	},
+	"productReturn_validate_reception_button":{
+		"message":"valider <small>la réception</small>"
+	},
+	"productReturn_cancel_button":{
+		"message":"annuler <small>la demande</small>"
+	},
+	"productReturn_finalize_button":{
+		"message":"finaliser <small>le retour</small>"
+	},
+	"productReturn_update_status_confirm_title_reception":{
+		"message":"valider la demande"
+	},
+	"productReturn_update_status_confirm_message_reception":{
+		"message":"Une fois la demande de retour validée, le client pourra renvoyer son colis."
+	},
+	"productReturn_update_status_confirm_title_refused":{
+		"message":"refuser la demande"
+	},
+	"productReturn_update_status_confirm_message_refused":{
+		"message":"Une fois la demande de retour refusée, le client pourra au besoin en faire une autre."
+	},
+	"productReturn_update_status_confirm_title_processing":{
+		"message":"valider la réception"
+	},
+	"productReturn_update_status_confirm_message_processing":{
+		"message":"Une fois la réception de retour validée, le traitement du retour pourra commencer."
+	},
+	"productReturn_update_status_confirm_title_canceled":{
+		"message":"annuler la demande"
+	},
+	"productReturn_update_status_confirm_message_canceled":{
+		"message":"Une fois la demande de retour annulée, le client pourra au besoin en faire une autre."
+	},
+	"productReturn_update_status_confirm_title_finalized":{
+		"message":"finaliser le retour"
+	},
+	"productReturn_update_status_confirm_message_finalized":{
+		"message":"Vous vous apprêtez à finaliser le retour."
+	}
+}

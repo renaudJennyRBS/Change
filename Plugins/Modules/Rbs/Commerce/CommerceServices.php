@@ -174,6 +174,14 @@ class CommerceServices extends Di
 			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+		//ReturnManager: Application, DocumentManager
+		$returnManagerClassName = $this->getInjectedClassName('ReturnManager', '\Rbs\Productreturn\ReturnManager');
+		$classDefinition = $this->getClassDefinition($returnManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
+		$classDefinition->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 
 		$im = $this->instanceManager();
@@ -220,6 +228,9 @@ class CommerceServices extends Di
 			array('application' => $application));
 
 		$im->addAlias('WishlistManager', $wishlistManagerClassName,
+			array('application' => $application, 'documentManager' => $documentManager));
+
+		$im->addAlias('ReturnManager', $returnManagerClassName,
 			array('application' => $application, 'documentManager' => $documentManager));
 	}
 
@@ -326,5 +337,13 @@ class CommerceServices extends Di
 	public function getWishlistManager()
 	{
 		return $this->get('WishlistManager');
+	}
+
+	/**
+	 * @return \Rbs\Productreturn\ReturnManager
+	 */
+	public function getReturnManager()
+	{
+		return $this->get('ReturnManager');
 	}
 }

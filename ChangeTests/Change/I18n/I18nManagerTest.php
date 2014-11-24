@@ -464,8 +464,8 @@ class I18nManagerTest extends \ChangeTests\Change\TestAssets\TestCase
 	{
 		$manager = $this->getApplicationServices()->getI18nManager();
 		$date = $manager->getLocalDateTime('2012-10-16 09:00:00');
-		$this->assertEquals('dd/MM/yyyy HH:mm', $manager->getDateTimeFormat($manager->getLCID()));
-		$this->assertEquals('16/10/2012 09:00', $manager->transDateTime($date));
+		$this->assertEquals('dd/MM/yyyy à HH:mm', $manager->getDateTimeFormat($manager->getLCID()));
+		$this->assertEquals('16/10/2012 à 09:00', $manager->transDateTime($date));
 	}
 
 	// File sizes.

@@ -184,7 +184,8 @@ class Listeners implements ListenerAggregateInterface
 			}
 			else if (preg_match('#^resources/Rbs/Order/Order/([0-9]+)/Transactions/?$#', $relativePath, $matches))
 			{
-				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Payment_Transaction');
+				$event->getController()->getActionResolver()
+					->setAuthorization($event, 'Consumer', null, 'Rbs_Payment_Transaction');
 				$event->setParam('documentId', intval($matches[1]));
 				$event->setAction(function ($event)
 				{
@@ -202,7 +203,18 @@ class Listeners implements ListenerAggregateInterface
 					$cr->orderInvoiceCollection($event);
 				});
 			}
-			else if (preg_match('#^resources/Rbs/Payment/Transaction/([0-9]+)/(validatePayment|refusePayment)/?$#', $relativePath, $matches))
+			else if (preg_match('#^resources/Rbs/Order/Order/([0-9]+)/ProductReturns/?$#', $relativePath, $matches))
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Productreturn_ProductReturn');
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Productreturn\Http\Rest\ProductReturnResult();
+					$cr->orderProductReturnCollection($event);
+				});
+			}
+			else if (preg_match('#^resources/Rbs/Payment/Transaction/([0-9]+)/(validatePayment|refusePayment)/?$#', $relativePath,
+				$matches))
 			{
 				if ($request->isPost())
 				{
@@ -223,6 +235,40 @@ class Listeners implements ListenerAggregateInterface
 						->notAllowedError($request->getMethod(), [\Change\Http\Request::METHOD_POST]);
 					$event->setResult($result);
 				}
+			}
+			else if ($relativePath === 'rbs/productreturn/getRefundDataForReturn')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Productreturn\Http\Rest\Actions\GetRefundDataForReturn())->execute($event);
+				});
+			}
+			else if ($relativePath === 'rbs/productreturn/getReshippingDataForReturn')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Productreturn\Http\Rest\Actions\GetReshippingDataForReturn())->execute($event);
+				});
+			}
+			else if (preg_match('#^resources/Rbs/Productreturn/ProductReturn/([0-9]+)/CreditNotes/?$#', $relativePath, $matches))
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Order_CreditNote');
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Productreturn\Http\Rest\CreditNoteResult();
+					$cr->productReturnCreditNotesCollection($event);
+				});
+			}
+			else if (preg_match('#^resources/Rbs/Productreturn/ProductReturn/([0-9]+)/Shipments/?$#', $relativePath, $matches))
+			{
+				$event->getController()->getActionResolver()->setAuthorization($event, 'Consumer', null, 'Rbs_Productreturn_Shipment');
+				$event->setParam('documentId', intval($matches[1]));
+				$event->setAction(function ($event)
+				{
+					$cr = new \Rbs\Productreturn\Http\Rest\ShipmentResult();
+					$cr->productReturnShipmentCollection($event);
+				});
 			}
 			else if (preg_match('#^resources/Rbs/Stock/Sku/([0-9]+)/movement/?$#', $relativePath, $matches))
 			{

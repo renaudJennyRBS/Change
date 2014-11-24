@@ -71,7 +71,7 @@
 					);
 					console.error(error);
 				};
-				REST.call(transactionsLink, { column: [ 'formattedAmount', 'formattedProcessingStatus', 'processingDate'] })
+				REST.call(transactionsLink, { column: ['formattedAmount', 'formattedProcessingStatus', 'processingDate'] })
 					.then(successCallback, errorCallback);
 			}
 		}
@@ -89,7 +89,7 @@
 					);
 					console.error(error);
 				};
-				REST.call(invoicesLink, { column: [ 'code', 'formattedAmountWithTax', 'creationDate'] })
+				REST.call(invoicesLink, { column: ['code', 'formattedAmountWithTax', 'creationDate'] })
 					.then(successCallback, errorCallback);
 			}
 		}
@@ -101,11 +101,11 @@
 					"and": [
 						{
 							"op": "eq",
-							"lexp" : {
-								"property" : 'targetIdentifier'
+							"lexp": {
+								"property": 'targetIdentifier'
 							},
-							"rexp" : {
-								"value" : scope.document.identifier
+							"rexp": {
+								"value": scope.document.identifier
 							}
 						}
 					]
@@ -117,13 +117,13 @@
 			};
 			var errorCallback = function(error) {
 				NotificationCenter.error(
-					i18n.trans('m.rbs.order.admin.invalid_query_order_invoices | ucf'),
+					i18n.trans('m.rbs.order.admin.invalid_query_order_credit_notes | ucf'),
 					ErrorFormatter.format(error)
 				);
 				console.error(error);
 			};
 
-			REST.query(loadQuery, {column: [ 'label', 'amount', 'amountNotApplied'] })
+			REST.query(loadQuery, { column: ['label', 'amount', 'amountNotApplied'] })
 				.then(successCallback, errorCallback);
 		}
 	}

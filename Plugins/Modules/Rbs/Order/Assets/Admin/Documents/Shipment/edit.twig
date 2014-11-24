@@ -24,7 +24,7 @@
 
 			<rbs-document-editor-button-bar>
 				<button type="button" data-ng-if="!document.prepared" data-ng-click="validatePreparation($event)"
-					class="btn btn-headline btn-success" data-ng-disabled="document.data.length === 0 || !isUnchanged()">
+					class="btn btn-headline btn-success" data-ng-disabled="document.lines.length === 0 || !isUnchanged()">
 					<i class="icon-archive"></i>{{ i18n('m.rbs.order.admin.shipment_prepare_button', ['ucf']) | raw }}
 				</button>
 			</rbs-document-editor-button-bar>

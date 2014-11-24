@@ -17,5 +17,11 @@
 				<i class="icon-archive"></i> {{ i18n('m.rbs.order.admin.shipment_list', ['ucf']) }}
 			</a>
 		</li>
+		<li{% if currentRouteName == 'productReturns' %} class="active"{% endif %}>
+			<a href="javascript:;" data-ng-href="(= document | rbsURL:'productReturns' =)">
+				<i class="icon-undo"></i>
+				{{ i18n('m.rbs.productreturn.admin.productReturn_list', ['ucf']) }}
+			</a>
+		</li>
 	</ul>
 </nav>

@@ -71,6 +71,9 @@
 	"shipment_shippingDate":{
 		"message":"date d'expédition"
 	},
+	"shipment_deliveryDate":{
+		"message":"date de réception"
+	},
 	"creditnote":{
 		"message":"avoir"
 	},

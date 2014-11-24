@@ -48,7 +48,10 @@
 		"message":"préparé"
 	},
 	"shipped":{
-		"message":"partiellement expédié"
+		"message":"expédié"
+	},
+	"delivered":{
+		"message":"réceptionné"
 	},
 	"partially_shipped":{
 		"message":"partiellement expédié"
@@ -176,17 +179,20 @@
 	"transaction_status_failed":{
 		"message":"échoué"
 	},
-	"shipment_code":{
-		"message":"code"
+	"shipment_mode":{
+		"message":"mode de livraison"
 	},
-	"shipment_articles":{
-		"message":"articles"
+	"shipment_products":{
+		"message":"produits"
 	},
-	"shipment_carrier_infos":{
-		"message":"informations transporteur"
+	"shipment_status":{
+		"message":"statut"
 	},
 	"shipment_address":{
 		"message":"adresse"
+	},
+	"shipment_tracking":{
+		"message":"suivi du colis"
 	},
 	"credit_note_summary_title":{
 		"message":"avoirs"
@@ -199,5 +205,8 @@
 	},
 	"credit_note_available_amounts_by_currency":{
 		"message":"montant total des avoirs disponibles par devise"
+	},
+	"order_title":{
+		"message":"commande n°$code$ du $date$"
 	}
 }

@@ -1,20 +1,8 @@
 {% if parameters.webStoreId %}
 	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
-		{% set rootProduct = productData.rootProduct | default(productData) %}
 		{% block variants %}
-			<div class="form-group">
-				{% for axis in rootProduct.variants.axes %}
-					{% set i = loop.index0 %}
-					<label for="selectedVariant_{{ blockId }}_{{ i }}">{{ axis.title }}</label>
-					<select id="selectedVariant_{{ blockId }}_{{ i }}" data-ng-show="axesItems[{{ i }}].length != 1" data-ng-cloak=""
-							class="form-control" data-ng-model="selectedAxesValues[{{ i }}]"
-						data-ng-options="axisItem.value as axisItem.title for axisItem in axesItems[{{ i }}]" data-ng-change="variantChanged({{ i }})"
-						data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
-						{% if i > 0 %}data-ng-disabled="!selectedAxesValues[{{ i - 1}}]"{% endif %}>
-						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
-					</select>
-					<div data-ng-show="axesItems[{{ i }}].length == 1" data-ng-cloak="" class="form-control-static">(= axesItems[{{ i }}][0].title =)</div>
-				{% endfor %}
+			<div data-rbs-catalog-variant-selector="" data-product-data="productData" data-ajax-data="productAjaxData"
+				data-ajax-params="productAjaxParams">
 			</div>
 
 			<div data-ng-hide="productData.stock.sku" data-ng-cloak="" class="alert warning">{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}</div>

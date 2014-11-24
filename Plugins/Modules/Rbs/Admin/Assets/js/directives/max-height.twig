@@ -1,0 +1,11 @@
+<div class="max-height">
+	<div class="max-height-container">
+		<div class="max-height-content" data-ng-transclude=""></div>
+	</div>
+	<div data-ng-show="showButtonsFunction()" class="text-center max-height-button">
+		<button type="button" data-ng-click="toggle()" class="btn btn-default btn-sm btn-icon">
+			<span data-ng-hide="deployed" class="glyphicon glyphicon-chevron-down"></span>
+			<span data-ng-show="deployed" class="glyphicon glyphicon-chevron-up"></span>
+		</button>
+	</div>
+</div>

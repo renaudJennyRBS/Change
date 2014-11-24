@@ -1,0 +1,46 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Productreturn_ProductReturn">
+	<div class="col-md-12">
+		{% set currentRouteName = 'edit' %}
+		{% include '@Rbs_Productreturn/Documents/ProductReturn/header.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-full-width="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-productreturn-product-return-edit="">
+			{% include '@Rbs_Productreturn/Documents/ProductReturn/properties.twig' %}
+
+			<rbs-document-editor-button-bar>
+				<button type="button" data-ng-if="document.processingStatus == 'validation'"
+					data-ng-click="updateProcessingStatus('reception', $event)" class="btn btn-headline btn-success"
+					data-ng-disabled="!canProcess('reception')">
+					<span class="icon-ok-sign"></span>
+					{{ i18n('m.rbs.productreturn.admin.productReturn_validate_request_button', ['ucf']) | raw }}
+				</button>
+				<button type="button" data-ng-if="document.processingStatus == 'validation'"
+					data-ng-click="updateProcessingStatus('refused', $event)" class="btn btn-headline btn-danger"
+					data-ng-disabled="!canProcess('refused')">
+					<span class="icon-remove-sign"></span>
+					{{ i18n('m.rbs.productreturn.admin.productReturn_refuse_request_button', ['ucf']) | raw }}
+				</button>
+				<button type="button" data-ng-if="document.processingStatus == 'reception'"
+					data-ng-click="updateProcessingStatus('processing', $event)" class="btn btn-headline btn-success"
+					data-ng-disabled="!canProcess('processing')">
+					<span class="icon-ok-sign"></span>
+					{{ i18n('m.rbs.productreturn.admin.productReturn_validate_reception_button', ['ucf']) | raw }}
+				</button>
+				<button type="button" data-ng-if="document.processingStatus == 'reception' || document.processingStatus == 'validation'"
+					data-ng-click="updateProcessingStatus('canceled', $event)" class="btn btn-headline btn-danger"
+					data-ng-disabled="!canProcess('canceled')">
+					<span class="icon-remove-sign"></span>
+					{{ i18n('m.rbs.productreturn.admin.productReturn_cancel_button', ['ucf']) | raw }}
+				</button>
+				<button type="button" data-ng-if="document.processingStatus == 'processing'"
+					data-ng-click="updateProcessingStatus('finalized', $event)" class="btn btn-headline btn-success"
+					data-ng-disabled="!canProcess('finalized')">
+					<span class="icon-ok-sign"></span>
+					{{ i18n('m.rbs.productreturn.admin.productReturn_finalize_button', ['ucf']) | raw }}
+				</button>
+			</rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>
