@@ -3,9 +3,14 @@
 {% set showPrices = parameters.displayPricesWithoutTax or parameters.displayPricesWithTax %}
 {% set columnCount = showPrices ? 5 : 3 %}
 {% set lineTrNgClass = "{
-	'active': isEditing(shipmentIndex, lineIndex),
-	'success': hasReturnLine(shipmentIndex, lineIndex) && !isEditing(shipmentIndex, lineIndex)
+	'active': isEditingLine(shipmentIndex, lineIndex),
+	'success': hasReturnLine(shipmentIndex, lineIndex) && !isEditingLine(shipmentIndex, lineIndex)
 }"%}
+
+{% block geoDirectives %}
+	{% use 'Rbs_Geo/address-editor.twig' %}
+	{{ block('addressEditor') }}
+{% endblock geoDirectives %}
 
 {% block productDirectives %}
 	{% include 'Rbs_Catalog/product-directives.twig' %}
@@ -16,8 +21,14 @@
 	{{ block('rbsCommerceCartLineVisual') }}
 {% endblock cartDirectives %}
 
+{% block orderProcessDirectives %}
+	{% use 'Rbs_Commerce/process-directives.twig' %}
+	{{ block('processShippingStep') }}
+{% endblock orderProcessDirectives %}
+
 {% block returnProcessDirectives %}
 	{% use 'Rbs_Productreturn/return-process-directives.twig' %}
+	{{ block('rbsProductreturnProcess') }}
 	{{ block('rbsProductreturnShipmentLine') }}
 	{{ block('rbsProductreturnReturnLine') }}
 	{{ block('rbsProductreturnReshipping') }}
@@ -47,55 +58,7 @@
 <h2>{{ i18n('m.rbs.productreturn.front.return_request', ['ucf']) }}</h2>
 
 <div data-ng-controller="RbsProductreturnReturnProcessController" data-cache-key="{{ cacheKey }}">
-	<div data-ng-repeat="(shipmentIndex, shipment) in returnData.shipments">
-		<h3>
-			{{ i18n('m.rbs.productreturn.front.expedition_of', ['ucf']) }} (= shipment.shipmentData.common.shippingDate | rbsDate =)
-		</h3>
-		<div class="table-responsive return-process">
-			<table class="table table-striped table-vertical-middle">
-				{% block shipmentLinesHead %}
-					<thead>
-						<tr>
-							<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
-							<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
-							<th>{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}</th>
-							{% if showPrices %}
-								<th class="text-right" colspan="2">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
-							{% endif %}
-						</tr>
-					</thead>
-				{% endblock shipmentLinesHead %}
-				{% block shipmentLines %}
-					<tbody data-rbs-productreturn-shipment-lines=""></tbody>
-				{% endblock shipmentLines %}
-			</table>
-		</div>
-	</div>
-
-	<div data-ng-show="hasReturnLine()">
-		<form name="{{ commonFormName }}">
-			<div class="form-group">
-				<h3>{{ i18n('m.rbs.productreturn.front.you_want', ['ucf']) }}</h3>
-				<div class="radio" data-ng-repeat="mode in processData.returnModes">
-					<label>
-						<input type="radio" name="returnMode" data-ng-model="returnData.returnMode" value="(= mode.id =)"
-							data-ng-required="!value" />
-						(= mode.title =)
-					</label>
-				</div>
-			</div>
-
-			<div class="form-group" data-ng-show="needsReshipment()">
-				<h3>{{ i18n('m.rbs.productreturn.front.reshipment', ['ucf']) }}</h3>
-				<div data-rbs-productreturn-reshipping-modes=""></div>
-			</div>
-
-			<button type="button" class="btn btn-primary"
-				data-ng-disabled="{{ commonFormName }}.$invalid || isEditing()"
-				data-ng-click="sendReturnRequest('{{ i18nAttr('m.rbs.productreturn.front.please_wait_saving_request', ['ucf', 'etc']) }}')">
-				<span class="glyphicon glyphicon-ok"></span>
-				{{ i18n('m.rbs.productreturn.front.send_return_request', ['ucf']) }}
-			</button>
-		</form>
+	<div data-rbs-commerce-process=""
+		data-loading-message="{{ i18n('m.rbs.commerce.front.please_wait_loading', ['ucf', 'etc']) }}">
 	</div>
 </div>

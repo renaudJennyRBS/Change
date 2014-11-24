@@ -131,6 +131,44 @@ class ProductReturn extends \Compilation\Rbs\Productreturn\Documents\ProductRetu
 	}
 
 	/**
+	 * @var \Zend\Stdlib\Parameters
+	 */
+	protected $reshippingConfiguration;
+
+	/**
+	 * @param array $reshippingConfiguration
+	 * @return $this
+	 */
+	public function setReshippingConfiguration($reshippingConfiguration = null)
+	{
+		$this->reshippingConfiguration = new \Zend\Stdlib\Parameters();
+		if (is_array($reshippingConfiguration))
+		{
+			$this->reshippingConfiguration->fromArray($reshippingConfiguration);
+		}
+		elseif ($reshippingConfiguration instanceof \Traversable)
+		{
+			foreach ($reshippingConfiguration as $n => $v)
+			{
+				$this->reshippingConfiguration->set($n, $v);
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @return \Zend\Stdlib\Parameters
+	 */
+	public function getReshippingConfiguration()
+	{
+		if ($this->reshippingConfiguration === null)
+		{
+			$this->setReshippingConfiguration($this->getReshippingConfigurationData());
+		}
+		return $this->reshippingConfiguration;
+	}
+
+	/**
 	 * @param \Zend\EventManager\EventManagerInterface $eventManager
 	 */
 	protected function attachEvents($eventManager)
@@ -167,6 +205,12 @@ class ProductReturn extends \Compilation\Rbs\Productreturn\Documents\ProductRetu
 			$this->setContextData($this->context->toArray());
 			$this->context = null;
 		}
+
+		if ($this->reshippingConfiguration instanceof \Zend\Stdlib\Parameters)
+		{
+			$this->setReshippingConfigurationData($this->reshippingConfiguration->toArray());
+			$this->reshippingConfiguration = null;
+		}
 	}
 
 	/**
@@ -196,6 +240,9 @@ class ProductReturn extends \Compilation\Rbs\Productreturn\Documents\ProductRetu
 
 			$context = $this->getContext()->toArray();
 			$restResult->setProperty('context', (count($context)) ? $context : null);
+
+			$reshippingConfig = $this->getReshippingConfiguration()->toArray();
+			$restResult->setProperty('reshippingConfiguration', (count($reshippingConfig)) ? $reshippingConfig : null);
 
 			$lines = [];
 			foreach ($this->getLines() as $line)

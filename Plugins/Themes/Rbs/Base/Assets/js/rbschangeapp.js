@@ -131,7 +131,6 @@
 			blockParameters = {};
 
 		this.$get = ['$http', '$location', '$rootScope', '$window', function($http, $location, $rootScope, $window) {
-
 			if (angular.isObject($window.__change)) {
 				if (angular.isObject($window.__change.navigationContext)) {
 					var data = $window.__change.navigationContext;
@@ -198,7 +197,6 @@
 			}
 
 			function getData(actionPath, data, params) {
-
 				var config = getHttpConfig('GET', actionPath);
 
 				var defaultParams = getDefaultParams();

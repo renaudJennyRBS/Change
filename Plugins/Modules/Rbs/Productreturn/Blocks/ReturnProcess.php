@@ -25,7 +25,7 @@ class ReturnProcess extends \Change\Presentation\Blocks\Standard\Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('imageFormats', 'cartItem');
+		$parameters->addParameterMeta('imageFormats', 'cartItem,detailThumbnail');
 		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 

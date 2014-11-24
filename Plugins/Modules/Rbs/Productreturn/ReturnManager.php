@@ -208,84 +208,9 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			elseif ($processingStatus === \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
 			{
-				// TODO
-				$code = null;
-				$now = new \DateTime();
-				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
-				$query->andPredicates($query->eq('orderId', $return->getId()));
-				$query->addOrder('id', true);
-				/** @var $shipment \Rbs\Order\Documents\Shipment */
-				foreach ($query->getDocuments() as $shipment)
-				{
-					if ($shipment->getPrepared())
-					{
-						$shippingDate = $shipment->getShippingDate();
-						if ($shippingDate && $shippingDate <= $now)
-						{
-							if ($code === null)
-							{
-								$code = 'SHIPPED';
-							}
-							elseif ($code != 'SHIPPED')
-							{
-								$code = 'PARTIALLY_SHIPPED';
-								break;
-							}
-						}
-						else
-						{
-							if ($code === null)
-							{
-								$code = 'PREPARED';
-							}
-							elseif ($code == 'SHIPPED')
-							{
-								$code = 'PARTIALLY_SHIPPED';
-								break;
-							}
-						}
-					}
-					else
-					{
-						if ($code === null)
-						{
-							$code = 'PREPARATION';
-						}
-						elseif ($code == 'SHIPPED')
-						{
-							$code = 'PARTIALLY_SHIPPED';
-							break;
-						}
-					}
-				}
-				if ($code === null)
-				{
-					$code = 'PROCESS_WAITING';
-				}
-
-				if ($code)
-				{
-					$statusInfo = ['code' => $code, 'title' => $code];
-					switch ($code)
-					{
-						case 'PROCESS_WAITING':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.process_waiting', ['ucf']);
-							break;
-						case 'PREPARATION':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.preparation', ['ucf']);
-							break;
-						case 'PREPARED':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.prepared', ['ucf']);
-							break;
-						case 'SHIPPED':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.shipped', ['ucf']);
-							break;
-						case 'PARTIALLY_SHIPPED':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.partially_shipped', ['ucf']);
-							break;
-					}
-					$event->setParam('statusInfo', $statusInfo);
-				}
+				$statusInfo = ['code' => 'PROCESSING',
+					'title' => $i18nManager->trans('m.rbs.productreturn.front.status_processing', ['ucf'])];
+				$event->setParam('statusInfo', $statusInfo);
 			}
 			elseif ($processingStatus === \Rbs\Order\Documents\Order::PROCESSING_STATUS_EDITION)
 			{
@@ -924,17 +849,16 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			}
 
 			$return->setReshippingModeCode($reshippingMode->getCode());
-			$return->getContext()->set('reshippingModeId', $reshippingMode->getId());
-			$return->getContext()->set('reshippingModeTitle', $reshippingMode->getCurrentLocalization()->getTitle());
-			// TODO: validate address.
+			$return->getReshippingConfiguration()->set('id', $reshippingMode->getId());
+			$return->getReshippingConfiguration()->set('title', $reshippingMode->getCurrentLocalization()->getTitle());
 			if (isset($data['reshippingData']['address']) && is_array($data['reshippingData']['address']))
 			{
 				$address = new \Rbs\Geo\Address\BaseAddress($data['reshippingData']['address']);
-				$return->getContext()->set('reshippingAddress', $address->toArray());
+				$return->getReshippingConfiguration()->set('address', $address->toArray());
 			}
 			if (isset($data['reshippingData']['options']) && is_array($data['reshippingData']['options']))
 			{
-				$return->getContext()->set('reshippingOptions', $data['reshippingData']['options']);
+				$return->getReshippingConfiguration()->set('options', $data['reshippingData']['options']);
 			}
 		}
 
@@ -1317,9 +1241,12 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			'productReturnId' => $return->getId(),
 			'orderId' => $return->getOrderId(),
 			'shippingModeCode' => $return->getReshippingModeCode(),
-			'address' => $return->getContext()->get('reshippingAddress'),
+			'address' => $return->getReshippingConfiguration()->get('address'),
 			'lines' => $lines,
-			'context' => [ 'shippingModeId' => $return->getContext()->get('reshippingModeId') ]
+			'context' => [
+				'shippingModeId' => $return->getReshippingConfiguration()->get('id'),
+				'shippingModeTitle' => $return->getReshippingConfiguration()->get('title')
+			]
 		];
 		$event->setParam('reshippingData', $reshippingData);
 	}

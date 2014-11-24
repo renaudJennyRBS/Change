@@ -97,7 +97,7 @@
 	</div>
 	<div class="panel-footer" data-ng-show="document.processingStatus == 'processing'">
 		<a data-ng-href="(= 'Rbs_Productreturn_Shipment'|rbsURL:'new' =)?productReturnId=(= document.id =)"
-			data-ng-show="document.context.reshippingModeId" href="javascript:;" class="btn btn-default">
+			data-ng-show="document.reshippingConfiguration.id" href="javascript:;" class="btn btn-default">
 			<span class="icon-archive"></span>
 			{{ i18n('m.rbs.productreturn.admin.productReturn_create_shipment', ['ucf']) }}
 		</a>
@@ -120,15 +120,16 @@
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_ProductReturn', 'reshippingModeCode'), ['ucf']) }}"
 			ng-disabled="true">
 			<p class="form-control-static">
-				(= document.context.reshippingModeTitle || document.reshippingModeCode =)
+				(= document.reshippingConfiguration.title || document.reshippingModeCode =)
 			</p>
 		</rbs-field>
 
 		<rbs-field label="{{ i18nAttr('m.rbs.productreturn.admin.productreturn_reshipment_address', ['ucf']) }}"
 			ng-disabled="true">
-			<address data-ng-if="document.context.reshippingAddress.lines.length" class="no-bottom-margin form-control-static">
-				<strong>(= document.context.reshippingAddress.lines[0] =)</strong>
-				<div data-ng-repeat="addressLine in document.context.reshippingAddress.lines track by $index"
+			<address data-ng-if="document.reshippingConfiguration.address.lines.length"
+				class="no-bottom-margin form-control-static">
+				<strong>(= document.reshippingConfiguration.address.lines[0] =)</strong>
+				<div data-ng-repeat="addressLine in document.reshippingConfiguration.address.lines track by $index"
 					data-ng-if="!$first">(= addressLine =)</div>
 			</address>
 		</rbs-field>

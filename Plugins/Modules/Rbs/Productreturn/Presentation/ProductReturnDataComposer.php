@@ -114,9 +114,9 @@ class ProductReturnDataComposer
 			$this->generateReturnModeDataSet();
 		}
 
-		if ($this->detailed || $this->hasDataSet('reshipping'))
+		if ($this->detailed || $this->hasDataSet('reshippingConfiguration'))
 		{
-			$this->generateReshippingDataSet();
+			$this->generateReshippingConfigurationDataSet();
 		}
 
 		if ($this->hasDataSet('shipments'))
@@ -253,24 +253,39 @@ class ProductReturnDataComposer
 		}
 	}
 
-	protected function generateReshippingDataSet()
+	protected function generateReshippingConfigurationDataSet()
 	{
-		$this->dataSets['reshippingMode'] = [
-			'code' => $this->return->getReshippingModeCode()
-		];
-
-		// TODO reshipping data.
-
-		$reshippingMode = $this->documentManager->getDocumentInstance($this->return->getContext()->get('reshippingModeId'));
-		if ($reshippingMode instanceof \Rbs\Productreturn\Documents\ReturnMode)
+		$this->dataSets['reshippingConfiguration'] = [];
+		if (!$this->return->getReshippingModeCode())
 		{
-			$this->dataSets['reshippingMode']['id'] = $reshippingMode->getId();
-			$this->dataSets['reshippingMode']['title'] = $reshippingMode->getCurrentLocalization()->getTitle();
+			return;
 		}
-		else
+		$this->dataSets['reshippingConfiguration']['code'] = $this->return->getReshippingModeCode();
+
+		$reshippingConfiguration = $this->return->getReshippingConfiguration();
+
+		$id = $reshippingConfiguration->get('id');
+		if ($id && is_numeric($id))
 		{
-			$this->dataSets['reshippingMode']['id'] = $this->return->getContext()->get('reshippingModeId');
-			$this->dataSets['reshippingMode']['title'] = $this->return->getContext()->get('reshippingModeTitle');
+			$this->dataSets['reshippingConfiguration']['id'] = intval($id);
+		}
+
+		$title = $reshippingConfiguration->get('title');
+		if ($title && is_string($title))
+		{
+			$this->dataSets['reshippingConfiguration']['title'] = $title;
+		}
+
+		$address = $reshippingConfiguration->get('address');
+		if ($address && is_array($address))
+		{
+			$this->dataSets['reshippingConfiguration']['address'] = (new \Rbs\Geo\Address\BaseAddress($address))->toArray();
+		}
+
+		$options = $reshippingConfiguration->get('options');
+		if ($options && is_array($options))
+		{
+			$this->dataSets['reshippingConfiguration']['options'] = $options;
 		}
 	}
 

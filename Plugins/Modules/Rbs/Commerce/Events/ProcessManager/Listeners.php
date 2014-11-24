@@ -25,7 +25,13 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$events->attach('getNewCode', function(\Change\Events\Event $event) {(new \Rbs\Order\CodeBuilder())->onGetNewCode($event);}, 5);
+		$events->attach('getNewCode', function(\Change\Events\Event $event) {
+			(new \Rbs\Order\CodeBuilder())->onGetNewCode($event);
+		}, 5);
+
+		$events->attach('getShippingModesDataByAddress', function ($event) {
+			(new \Rbs\Productreturn\Events\ProcessManager())->onReturnGetShippingModesDataByAddress($event);
+		}, 5);
 	}
 
 	/**

@@ -6,7 +6,12 @@
 	 * Return process controller.
 	 */
 	function RbsProductreturnReturnProcessController(scope, $element, $window, $sce, AjaxAPI) {
-		scope.returnData = { 'shipments': [], 'returnMode': null, 'reshippingData': {'mode': {'id': null}, 'address': null } };
+		scope.returnData = {
+			'shipments': [],
+			'returnMode': null,
+			'reshippingData': {'mode': {'id': null}, 'address': null },
+			'orderData': {}
+		};
 		scope.orderData = {};
 		scope.data = { 'editingLine': null, 'productAjaxData': {}, 'productAjaxParams': {} };
 
@@ -34,6 +39,7 @@
 			if (angular.isObject($window['__change']) && $window['__change'][cacheKey]) {
 				var data = $window['__change'][cacheKey];
 				scope.orderData = data.orderData;
+				scope.returnData.orderData = data.orderData;
 				scope.processData = data.processData;
 
 				for (var reasonIndex = 0; reasonIndex < scope.processData['reasons'].length; reasonIndex++) {
@@ -128,7 +134,21 @@
 			return false;
 		};
 
-		scope.isEditing = function isEditing(shipmentIndex, lineIndex, returnLineIndex) {
+		scope.$watch('returnData.shipments', function () {
+			scope.stepsData.reshipping.isEnabled = scope.needsReshipment();
+		}, true);
+
+		scope.isEditing = function isEditing() {
+			var editingStep = false;
+			angular.forEach(scope.stepsData, function (step) {
+				if (step.isEnabled && (!step.isChecked || step.isCurrent)) {
+					editingStep = true;
+				}
+			});
+			return editingStep || scope.isEditingLine();
+		};
+
+		scope.isEditingLine = function isEditingLine(shipmentIndex, lineIndex, returnLineIndex) {
 			if (lineIndex === undefined) {
 				return scope.data.editingLine !== null;
 			}
@@ -288,6 +308,124 @@
 
 	RbsProductreturnReturnProcessController.$inject = ['$scope', '$element', '$window', '$sce', 'RbsChange.AjaxAPI'];
 	app.controller('RbsProductreturnReturnProcessController', RbsProductreturnReturnProcessController);
+
+	function rbsCommerceProcess($compile, $http) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsProductreturnProcess.tpl',
+			controller : ['$scope', '$element', function(scope) {
+				scope.loading = false;
+				scope.stepsData = {
+					reshipping: { name: 'reshipping', isCurrent: true, isEnabled: false, isChecked: false }
+				};
+				this.loading = function(loading) {
+					if (angular.isDefined(loading)) {
+						scope.loading = (loading == true);
+					}
+					return scope.loading;
+				};
+
+				this.loadObjectData = function(withProcessData) {
+					console.log('loadObjectData', withProcessData);
+					return null;
+				};
+
+				this.updateObjectData = function(actions) {
+					console.log('updateObjectData', actions);
+					if (actions.hasOwnProperty('setReshippingData')) {
+						scope.returnData.reshippingData = actions.setReshippingData;
+					}
+					if (actions.hasOwnProperty('setStepValid')) {
+						scope.stepsData[actions.setStepValid].isChecked = true;
+					}
+					if (actions.hasOwnProperty('setNotCurrentStep')) {
+						scope.stepsData[actions.setStepValid].isCurrent = false;
+					}
+
+					return null;
+				};
+
+				this.getObjectData = function() {
+					return scope.returnData;
+				};
+
+				this.showPrices = function() {
+					return false;
+				};
+
+				this.getCurrencyCode = function() {
+					return null;
+				};
+
+				this.parameters = function(name) {
+					if (scope.parameters) {
+						if (angular.isUndefined(name)) {
+							return scope.parameters;
+						} else {
+							return scope.parameters[name];
+						}
+					}
+					return null;
+				};
+
+				this.getProcessInfo = function() {
+					return scope.processData;
+				};
+
+				this.replaceChildren = function(parentNode, scope, html) {
+					var collection = parentNode.children();
+					collection.each(function() {
+						var isolateScope = angular.element(this).isolateScope();
+						if (isolateScope) {
+							isolateScope.$destroy();
+						}
+					});
+					collection.remove();
+					if (html != '') {
+						$compile(html)(scope, function (clone) {
+							parentNode.append(clone);
+						});
+					}
+				};
+
+				this.nextStep = function () {
+					console.log('nextStep');
+					return null;
+				};
+
+				this.getNextStep = function (step) {
+					console.log('getNextStep', step);
+					return null;
+				};
+
+				this.setCurrentStep = function(currentStep) {
+					console.log('setCurrentStep', currentStep);
+					scope.stepsData[currentStep].isCurrent = true;
+				};
+
+				this.getStepProcessData = function(step) {
+					console.log('getStepProcessData', step);
+					if (scope.stepsData.hasOwnProperty(step)) {
+						return scope.stepsData[step];
+					}
+					return {name: step, isCurrent: false, isEnabled: false, isChecked: false};
+				};
+			}],
+
+			link: function(scope, elem, attrs, controller) {
+				scope.showPrices = controller.showPrices();
+				scope.isStepEnabled = function(step) {
+					return controller.getStepProcessData(step).isEnabled;
+				};
+				scope.isStepChecked = function(step) {
+					return controller.getStepProcessData(step).isChecked;
+				};
+			}
+		}
+	}
+
+	rbsCommerceProcess.$inject = ['$compile', '$http'];
+	app.directive('rbsCommerceProcess', rbsCommerceProcess);
 
 	function rbsProductreturnReturnLineSummary() {
 		return {
@@ -590,190 +728,118 @@
 
 	// Reshipping mode.
 
-	function rbsProductreturnReshippingModes(AjaxAPI) {
+	function rbsProductreturnReshippingStep(AjaxAPI) {
 		return {
 			restrict: 'A',
-			templateUrl: '/rbsProductreturnReshippingModes.tpl',
-			scope: true,
-
-			link: function(scope) {
+			templateUrl: '/rbsCommerceShippingStep.tpl',
+			require: '^rbsCommerceProcess',
+			scope: {},
+			link: function(scope, elem, attrs, processController) {
+				scope.hideStepTitle = true;
+				scope.processData = processController.getStepProcessData('reshipping');
+				scope.processData.errors = [];
 				scope.userAddresses = [];
+				scope.shippingZone = null;
+				scope.taxesZones = null;
 
-				scope.hasCategory = function(category) {
-					return scope.processData['reshippingModes'].hasOwnProperty(category);
-				};
-
-				scope.getModesByCategory = function(category) {
-					return scope.hasCategory(category) ? scope.processData['reshippingModes'][category] : [];
-				};
-
-				scope.isCategory = function(category) {
-					var shippingModes = scope.getModesByCategory(category);
-					for (var i = 0; i < shippingModes.length; i++) {
-						if (shippingModes[i].common.id == scope.returnData['reshippingData'].mode.id) {
-							return true;
+				scope.isCategory = function(shippingMode, category) {
+					if (scope.shippingModesInfo.hasOwnProperty(category)) {
+						var shippingModes = scope.shippingModesInfo[category];
+						for (var i = 0; i < shippingModes.length; i++) {
+							if (shippingModes[i].common.id == shippingMode.id) {
+								return true;
+							}
 						}
 					}
 					return false;
 				};
 
-				scope.isReshippingModeValid = function() {
-					return !!scope.returnData.reshippingData.mode.id;
+				scope.hasCategory = function(category) {
+					return scope.shippingModesInfo.hasOwnProperty(category);
+				};
+
+				scope.getModesByCategory = function(category) {
+					return scope.shippingModesInfo.hasOwnProperty(category) ? scope.shippingModesInfo[category] : [];
 				};
 
 				scope.loadUserAddresses = function() {
-					if (scope.accessorId) {
-						AjaxAPI.getData('Rbs/Geo/Address/', { userId: scope.accessorId })
+					if (scope.processData.userId) {
+						AjaxAPI.getData('Rbs/Geo/Address/',
+							{ userId: scope.processData.userId, matchingZone: scope.shippingZone })
 							.success(function(data) {
 								scope.userAddresses = data.items;
 							})
-							.error(function(data, status, headers) {
-								console.log('error getting addresses', data, status, headers);
+							.error(function(data, status, headers, config) {
+								console.error('loadUserAddresses', data, status, headers, config);
 								scope.userAddresses = [];
-							});
+							})
 					}
 					else {
 						scope.userAddresses = [];
 					}
 				};
 
-				scope.cleanupAddress = function(address) {
-					if (address) {
-						if (address.common) {
-							address.common = { addressFieldsId: address.common.addressFieldsId };
-						}
-						if (address.default) {
-							delete address.default
-						}
-					}
-					return address;
+				scope.setCurrentStep = function() {
+					processController.setCurrentStep('reshipping');
 				};
 
-				function initializeProcessData() {
-					scope.loadUserAddresses();
-				}
-
-				initializeProcessData();
-			}
-		}
-	}
-
-	rbsProductreturnReshippingModes.$inject = ['RbsChange.AjaxAPI'];
-	app.directive('rbsProductreturnReshippingModes', rbsProductreturnReshippingModes);
-
-	function rbsProductreturnReshippingAtHome(AjaxAPI, $sce) {
-		return {
-			restrict: 'A',
-			templateUrl: '/rbsProductreturnReshippingAtHome.tpl',
-			scope: {
-				reshippingData: "=",
-				reshippingModeDefinitions: "=",
-				userId: "=",
-				userAddresses: "="
-			},
-			link: function(scope) {
-				if (!angular.isObject(scope.reshippingData)) {
-					scope.reshippingData = {};
-				}
-				scope.loadShippingModes = true;
-
-				scope.getDefaultUserAddress = function(userAddresses) {
-					var defaultUserAddress = null, address;
-					if (angular.isArray(userAddresses)) {
-						for (var i = 0; i < userAddresses.length; i++) {
-							address = userAddresses[i];
-							if (address['default']) {
-								if (address['default']['shipping']) {
-									return address;
-								}
-								else if (address['default']['default']) {
-									defaultUserAddress = address;
-								}
-							}
-						}
-					}
-					return defaultUserAddress;
-				};
-
-				scope.isEmptyAddress = function(address) {
-					if (angular.isObject(address) && !angular.isArray(address)) {
-						if (address.fields && address.fields.countryCode && address.lines && address.lines.length) {
+				scope.shippingModesValid = function() {
+					for (var i = 0; i < scope.processData.shippingModes.length; i++) {
+						var shippingMode = scope.processData.shippingModes[i];
+						if (!angular.isFunction(shippingMode.valid) || !shippingMode.valid()) {
 							return false;
 						}
 					}
 					return true;
 				};
 
-				scope.$watchCollection('userAddresses', function(userAddresses) {
-					if (scope.isEmptyAddress(scope.reshippingData.address)) {
-						var defaultUserShippingAddress = scope.getDefaultUserAddress(userAddresses);
-						if (defaultUserShippingAddress) {
-							scope.selectUserAddress(defaultUserShippingAddress);
-							return;
-						}
-						scope.editAddress();
-					}
-				});
-
-				scope.$watch('reshippingData.mode.id', function(id) {
-					if (id) {
-						angular.forEach(scope.reshippingModeDefinitions, function(modeInfo) {
-							if (modeInfo.common.id == id) {
-								scope.reshippingData.mode.title = modeInfo.common.title;
-								if (!angular.isObject(scope.reshippingData.options) ||
-									angular.isArray(scope.reshippingData.options)) {
-									scope.reshippingData.options = {};
-								}
-								scope.reshippingData.options.category = modeInfo.common.category;
-							}
-						});
-					}
-				});
-
-				scope.trustHtml = function(html) {
-					return $sce.trustAsHtml(html);
+				scope.next = function() {
+					scope.saveMode();
 				};
 
-				scope.editAddress = function() {
-					scope.reshippingData.edition = true;
-				};
-
-				scope.selectUserAddress = function(address) {
-					scope.reshippingData.address = angular.copy(address);
-					scope.reshippingData.edition = false;
-				};
-
-				scope.useAddress = function() {
-					var address = angular.copy(scope.reshippingData.address);
-					if (scope.userId && address.common && address.common['useName'] && address.common.name) {
-						delete address.common.id;
-						delete address.default;
-						AjaxAPI.postData('Rbs/Geo/Address/', address)
-							.success(function(data) {
-								var addedAddress = data.dataSets;
-								scope.userAddresses.push(addedAddress);
-								scope.reshippingData.address = addedAddress;
-								scope.reshippingData.edition = false;
-							})
-							.error(function(data, status, headers) {
-								console.log('useAddress error', data, status, headers);
-							});
+				scope.saveMode = function() {
+					var shippingMode = scope.processData.shippingModes[0];
+					if (!angular.isFunction(shippingMode.valid) || !shippingMode.valid()) {
+						return;
 					}
-					else {
-						AjaxAPI.postData('Rbs/Geo/ValidateAddress', { address: address })
-							.success(function(data) {
-								scope.reshippingData.address = data.dataSets;
-								scope.reshippingData.edition = false;
-							})
-							.error(function(data, status, headers) {
-								console.log('validateAddress error', data, status, headers);
-							});
+					var validData = shippingMode.valid(true);
+					shippingMode.address = validData.address;
+					shippingMode.options = validData.options;
+					var actions = {
+						setReshippingData: {
+							'mode': { 'id': validData.id, title: validData.title },
+							'address': validData.address,
+							'options': validData.options
+						},
+						setStepValid: 'reshipping',
+						setNotCurrentStep: 'reshipping'
+					};
+					return processController.updateObjectData(actions);
+				};
+
+				function initializeProcessData() {
+					var returnData = processController.getObjectData();
+					scope.processData.userId = returnData.orderData.common.userId;
+
+					var processInfo = processController.getProcessInfo();
+					scope.processData.processId = processInfo.common.id;
+					scope.shippingModesInfo = processInfo && processInfo['reshippingModes'] ? processInfo['reshippingModes'] : {};
+					scope.shippingZone = returnData.orderData.common.zone;
+
+					if (!scope.processData.shippingModes) {
+						var shippingMode = angular.copy(returnData['reshippingData']);
+						shippingMode.shippingZone = scope.shippingZone;
+						shippingMode.options = {};
+						scope.processData.shippingModes = [ shippingMode ];
 					}
 				}
+
+				initializeProcessData();
+				scope.loadUserAddresses();
 			}
 		}
 	}
 
-	rbsProductreturnReshippingAtHome.$inject = ['RbsChange.AjaxAPI', '$sce'];
-	app.directive('rbsProductreturnReshippingAtHome', rbsProductreturnReshippingAtHome);
+	rbsProductreturnReshippingStep.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsProductreturnReshippingStep', rbsProductreturnReshippingStep);
 })();
