@@ -79,6 +79,14 @@ class ProductDataComposer
 	}
 
 	/**
+	 * @return integer[]|null
+	 */
+	protected function getTargetIds()
+	{
+		return isset($this->data['targetIds']) && is_array($this->data['targetIds']) ? $this->data['targetIds'] : null;
+	}
+
+	/**
 	 * @return integer
 	 */
 	protected function getQuantity()
@@ -584,7 +592,9 @@ class ProductDataComposer
 		$webStoreId = $this->getWebStoreId();
 		if ($billingArea && $webStoreId)
 		{
-			$price = $priceManager->getPriceBySku($sku, ['webStore' => $webStoreId, 'billingArea' => $billingArea]);
+			$price = $priceManager->getPriceBySku($sku, ['webStore' => $webStoreId, 'billingArea' => $billingArea,
+				'targetIds' => $this->getTargetIds()]);
+
 			if ($price && $price->getValue() !== null)
 			{
 				$currencyCode = $billingArea->getCurrencyCode();
@@ -708,8 +718,7 @@ class ProductDataComposer
 			$billingArea = $this->getBillingArea();
 			if ($billingArea && $webStore)
 			{
-
-				$options = ['webStore' => $webStore, 'billingArea' => $billingArea];
+				$options = ['webStore' => $webStore, 'billingArea' => $billingArea, 'targetIds' => $this->getTargetIds()];
 
 				/** @var \Rbs\Price\PriceInterface $lowestPrice */
 				$lowestPrice = null;

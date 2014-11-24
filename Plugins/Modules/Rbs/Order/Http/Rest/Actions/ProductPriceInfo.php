@@ -80,7 +80,7 @@ class ProductPriceInfo
 				if ($sku)
 				{
 					$productInfo['boInfo']['sku'] = (new DocumentLink($urlManager, $sku, DocumentLink::MODE_PROPERTY))->toArray();
-					$price = $pm->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
+					$price = $pm->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea, 'targetIds' => [0]]);
 					if ($price instanceof AbstractDocument)
 					{
 						$productInfo['boInfo']['price'] = (new DocumentLink($urlManager, $price, DocumentLink::MODE_PROPERTY, $priceProperties))->toArray();

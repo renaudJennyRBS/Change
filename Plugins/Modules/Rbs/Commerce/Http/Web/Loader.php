@@ -105,6 +105,8 @@ class Loader
 			$cart = null;
 		}
 		$context->setCartIdentifier($cart ? $cart->getIdentifier() : null);
+
+		$context->setPriceTargetIds($session['priceTargetIds']);
 	}
 
 	/**
@@ -125,9 +127,8 @@ class Loader
 		$session['billingAreaId'] = ($billingArea instanceof \Rbs\Price\Documents\BillingArea) ? $billingArea->getId() : 0;
 		$session['zone'] = $context->getZone();
 		$session['cartIdentifier'] = $context->getCartIdentifier();
+		$session['priceTargetIds'] = $context->getPriceTargetIds();
 	}
-
-
 
 	/**
 	 * @param \Change\Events\Event $event
@@ -255,11 +256,26 @@ class Loader
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 			$context = $commerceServices->getContext();
-			$saveProfile = false;
 
+			$query = $documentManager->getNewQuery('Rbs_Price_UserGroup');
+			$userQuery = $query->getPropertyModelBuilder('id', 'Rbs_User_User', 'groups');
+			$userQuery->andPredicates($userQuery->eq('id', $user->getId()));
+			$priceTargetIds = array_merge([0], $query->getDocumentIds());
+			$context->setPriceTargetIds($priceTargetIds);
+
+			$saveProfile = false;
 			$cartManager = $commerceServices->getCartManager();
 			$cartIdentifier = $context->getCartIdentifier();
 			$currentCart = $cartIdentifier ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
+			if ($currentCart && $currentCart->getUserId() && $currentCart->getUserId() != $user->getId())
+			{
+				$currentCart = null;
+				$cartIdentifier = null;
+			}
+			else if (!$currentCart)
+			{
+				$cartIdentifier = null;
+			}
 
 			$contextWebStore = $context->getWebStore();
 			if (!$contextWebStore)
@@ -323,6 +339,7 @@ class Loader
 			{
 				$cartIdentifier = $currentCart->getIdentifier();
 				$currentCart->setUserId($user->getId());
+				$currentCart->setPriceTargetIds($context->getPriceTargetIds());
 				$documentUser = $documentManager->getDocumentInstance($user->getId());
 				if ($documentUser instanceof \Rbs\User\Documents\User)
 				{
@@ -330,6 +347,10 @@ class Loader
 				}
 				$cartManager->normalize($currentCart);
 				$cartManager->saveCart($currentCart);
+			}
+			else
+			{
+				$cartIdentifier = null;
 			}
 
 			$context->setCartIdentifier($cartIdentifier);
@@ -407,20 +428,19 @@ class Loader
 			$keepCart = false;
 		}
 
+		$context = $commerceServices->getContext();
+		$context->setPriceTargetIds(null);
+
 		if (!$keepCart)
 		{
-			$context = $commerceServices->getContext();
 			if ($context->getCartIdentifier())
 			{
 				$context->setCartIdentifier(null);
-				$context->save();
 			}
 		}
 		else
 		{
 			$cartManager = $commerceServices->getCartManager();
-
-			$context = $commerceServices->getContext();
 			$contextCartIdentifier = $context->getCartIdentifier();
 			$currentCart = $contextCartIdentifier ? $cartManager->getCartByIdentifier($contextCartIdentifier) : null;
 
@@ -431,10 +451,11 @@ class Loader
 				$newCart->setEmail(null);
 				$newCart->getContext()->set('userName', null);
 				$context->setCartIdentifier($newCart->getIdentifier());
-				$context->save();
 				$cartManager->normalize($newCart);
 				$cartManager->saveCart($newCart);
 			}
 		}
+		
+		$context->save();
 	}
 }

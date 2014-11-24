@@ -60,7 +60,8 @@ class OrderProcess extends Block
 				$documentManager = $event->getApplicationServices()->getDocumentManager();
 				/** @var \Rbs\Store\Documents\WebStore $webStore */
 				$webStore = $documentManager->getDocumentInstance($cart->getWebStoreId());
-				$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(), $parameters);
+				$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(),
+					$cart->getPriceTargetIds(), $parameters);
 			}
 		}
 

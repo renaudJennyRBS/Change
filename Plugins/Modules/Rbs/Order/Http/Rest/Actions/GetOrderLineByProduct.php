@@ -73,7 +73,7 @@ class GetOrderLineByProduct
 				$item = new \Rbs\Order\OrderLineItem(['codeSKU' => $sku->getCode()]);
 				if ($webStore && $billingArea)
 				{
-					$price = $priceManager->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea]);
+					$price = $priceManager->getPriceBySku($sku, ['webStore' => $webStore, 'billingArea' => $billingArea, 'targetIds' => [0]]);
 					$item->setPrice($price);
 				}
 				else

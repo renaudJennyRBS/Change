@@ -945,7 +945,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 	 * Output param: productsData, pagination
 	 * @param \Change\Events\Event $event
 	 */
-	public function  onDefaultGetProductsArrayData(\Change\Events\Event $event)
+	public function onDefaultGetProductsArrayData(\Change\Events\Event $event)
 	{
 		$products = $event->getParam('products');
 		$context = $event->getParam('context');

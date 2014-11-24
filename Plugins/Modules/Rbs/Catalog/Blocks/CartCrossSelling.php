@@ -59,7 +59,8 @@ class CartCrossSelling extends Block
 		{
 			/** @var \Rbs\Store\Documents\WebStore $webStore */
 			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
-			$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(), $parameters);
+			$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(),
+				$cart->getPriceTargetIds(), $parameters);
 		}
 
 		return $parameters;

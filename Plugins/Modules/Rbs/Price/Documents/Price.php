@@ -27,6 +27,16 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 	 */
 	protected $contextualValue = false;
 
+
+
+	protected function attachEvents($eventManager)
+	{
+		parent::attachEvents($eventManager);
+		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
+		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
+	}
+
+
 	/**
 	 * @param boolean|float|null $contextualValue
 	 * @return $this
@@ -126,18 +136,20 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		}
 	}
 
-	protected function attachEvents($eventManager)
-	{
-		parent::attachEvents($eventManager);
-		$eventManager->attach(Event::EVENT_CREATE, array($this, 'onDefaultCreate'), 10);
-		$eventManager->attach(Event::EVENT_UPDATE, array($this, 'onDefaultUpdate'), 10);
-	}
 
 	/**
 	 * @param Event $event
 	 */
 	public function onDefaultCreate(Event $event)
 	{
+		$targetInstance = $this->getTargetIdInstance();
+		if ($targetInstance instanceof UserGroup)
+		{
+			if ($targetInstance->getDefaultPriority())
+			{
+				$this->setPriority($targetInstance->getDefaultPriority());
+			}
+		}
 		if ($this->getPriority() === null)
 		{
 			$this->setPriority(intval($this->getDocumentModel()->getProperty('priority')->getDefaultValue()));
@@ -159,10 +171,7 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 	 */
 	public function onDefaultUpdate(Event $event)
 	{
-		if ($this->getPriority() === null)
-		{
-			$this->setPriority(intval($this->getDocumentModel()->getProperty('priority')->getDefaultValue()));
-		}
+
 		if ($this->getStartActivation() === null)
 		{
 			$this->setStartActivation(new \DateTime());
@@ -183,6 +192,27 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 			// Save meta on price
 			$this->setMeta('Job_UpdateTax', $job->getId());
 			$this->saveMetas();
+		}
+
+		if ($this->isPropertyModified('targetId') && !$this->isPropertyModified('priority'))
+		{
+			$targetInstance = $this->getTargetIdInstance();
+			if ($targetInstance instanceof UserGroup)
+			{
+				if ($targetInstance->getDefaultPriority())
+				{
+					$this->setPriority($targetInstance->getDefaultPriority());
+				}
+			}
+			else if ($targetInstance === null)
+			{
+				$this->setPriority(intval($this->getDocumentModel()->getProperty('priority')->getDefaultValue()));
+			}
+		}
+
+		if ($this->getPriority() === null)
+		{
+			$this->setPriority(intval($this->getDocumentModel()->getProperty('priority')->getDefaultValue()));
 		}
 	}
 

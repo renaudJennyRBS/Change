@@ -170,11 +170,9 @@ class Cart
 		{
 			if ((!$cart || $cart->isLocked()))
 			{
-				$cart = $cartManager->getNewCart($commerceContext->getWebStore(), $commerceContext->getBillingArea(), $commerceContext->getZone());
-
-				$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
-				$cart->setUserId($currentUser->authenticated() ? $currentUser->getId() : 0);
-
+				$cart = $cartManager->getNewCart($commerceContext->getWebStore(),
+					$commerceContext->getBillingArea(), $commerceContext->getZone(),
+					['user' => $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()]);
 				$commerceContext->setCartIdentifier($cart->getIdentifier());
 				$commerceContext->save();
 			}
@@ -264,7 +262,7 @@ class Cart
 			'data' =>[
 				'webStoreId' => $cart->getWebStoreId(),
 				'billingAreaId' => $cart->getBillingArea() ? $cart->getBillingArea()->getId() : 0,
-				'zone' => $cart->getZone()]];
+				'zone' => $cart->getZone(), 'targetIds' => $cart->getPriceTargetIds()]];
 
 		foreach ($productsData as $productLineData)
 		{

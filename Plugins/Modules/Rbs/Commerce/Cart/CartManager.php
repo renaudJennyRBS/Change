@@ -128,9 +128,15 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$eventManager->attach('getNewCart', [$this, 'onDefaultGetNewCart'], 5);
+		$eventManager->attach('getNewCart', [$this, 'onDefaultGetNewCart'], 15);
+		$eventManager->attach('getNewCart', [$this, 'onDefaultInitNewCart'], 10);
+		$eventManager->attach('getNewCart', [$this, 'onDefaultSetCartUserContext'], 5);
+
+		$eventManager->attach('getCartByIdentifier', [$this, 'onDefaultGetCartByIdentifier'], 10);
+		$eventManager->attach('getCartByIdentifier', [$this, 'onDefaultSetCartUserContext'], 5);
+
 		$eventManager->attach('saveCart', [$this, 'onDefaultSaveCart'], 5);
-		$eventManager->attach('getCartByIdentifier', [$this, 'onDefaultGetCartByIdentifier'], 5);
+
 		$eventManager->attach('getLastCartIdentifier', [$this, 'onDefaultGetLastCartIdentifier'], 5);
 		$eventManager->attach('mergeCart', [$this, 'onDefaultMergeCart'], 5);
 		$eventManager->attach('getUnlockedCart', [$this, 'onDefaultGetUnlockedCart'], 5);
@@ -148,11 +154,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Rbs\Store\Documents\WebStore $webStore
 	 * @param \Rbs\Price\Tax\BillingAreaInterface $billingArea
 	 * @param string $zone
-	 * @param array $context
+	 * @param array $context : user
 	 * @throws \RuntimeException
 	 * @return \Rbs\Commerce\Cart\Cart
 	 */
-	public function getNewCart($webStore = null, $billingArea = null, $zone = null, array $context = array())
+	public function getNewCart($webStore = null, $billingArea = null, $zone = null, array $context = [])
 	{
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(['webStore' => $webStore, 'billingArea' => $billingArea, 'zone' => $zone,
@@ -160,33 +166,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$this->getEventManager()->trigger('getNewCart', $this, $args);
 		if (isset($args['cart']) && $args['cart'] instanceof \Rbs\Commerce\Cart\Cart)
 		{
-			/** @var $cart \Rbs\Commerce\Cart\Cart */
-			$cart = $args['cart'];
-			if ($webStore instanceof \Rbs\Store\Documents\WebStore)
-			{
-				$cart->setWebStoreId($webStore->getId());
-				$cart->setPricesValueWithTax($webStore->getPricesValueWithTax());
-			}
-
-			if ($billingArea instanceof \Rbs\Price\Tax\BillingAreaInterface)
-			{
-				$cart->setBillingArea($billingArea);
-			}
-
-			$cart->setZone($zone);
-
-			if (count($context))
-			{
-				foreach ($context as $key => $value)
-				{
-					if (is_string($key) && isset($value))
-					{
-						$cart->getContext()->set($key, $value);
-					}
-				}
-			}
-			$cart->getContext()->set('LCID', $this->getDocumentManager()->getLCID());
-			return $cart;
+			return $args['cart'];
 		}
 		throw new \RuntimeException('Unable to get a new cart', 999999);
 	}
@@ -238,7 +218,7 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$uq->bindParameter('id', $storageId);
 			$uq->execute();
 
-			$this->cachedCarts = array();
+			$this->cachedCarts = [];
 			$tm->commit();
 		}
 		catch (\Exception $e)
@@ -248,6 +228,55 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		$event->setParam('cart', $cart);
 	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 * @throws \Exception
+	 */
+	public function onDefaultInitNewCart(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		if ($cart instanceof Cart)
+		{
+			$webStore = $event->getParam('webStore');
+			if ($webStore instanceof \Rbs\Store\Documents\WebStore)
+			{
+				$cart->setWebStoreId($webStore->getId());
+				$cart->setPricesValueWithTax($webStore->getPricesValueWithTax());
+			}
+
+			$billingArea = $event->getParam('billingArea');
+			if ($billingArea instanceof \Rbs\Price\Tax\BillingAreaInterface)
+			{
+				$cart->setBillingArea($billingArea);
+				$zone = $event->getParam('zone');
+				$cart->setZone($zone);
+			}
+
+			$context = $event->getParam('context');
+			if (is_array($context) && count($context))
+			{
+				$user = isset($context['user']) ? $context['user'] : null;
+				if ($user instanceof \Change\User\UserInterface)
+				{
+					$cart->setUserId($user->authenticated() ? $user->getId() : 0);
+					unset($context['user']);
+				}
+
+				if (count($context))
+				{
+					foreach ($context as $key => $value)
+					{
+						if (is_string($key) && isset($value))
+						{
+							$cart->getContext()->set($key, $value);
+						}
+					}
+				}
+			}
+
+			$cart->getContext()->set('LCID', $this->getDocumentManager()->getLCID());
+		}
+	}
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 */
@@ -414,7 +443,6 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Change\Events\Event $event
-	 * @throws \Exception
 	 */
 	public function onDefaultGetCartByIdentifier(\Change\Events\Event $event)
 	{
@@ -471,6 +499,32 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultSetCartUserContext(\Change\Events\Event $event)
+	{
+		$cart = $event->getParam('cart');
+		if ($cart instanceof Cart)
+		{
+			$user = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+			if ($user->authenticated())
+			{
+				if ($user->getId() == $cart->getUserId())
+				{
+					$commerceServices = $event->getServices('commerceServices');
+					if ($commerceServices instanceof \Rbs\Commerce\CommerceServices)
+					{
+						$cart->setPriceTargetIds($commerceServices->getContext()->getPriceTargetIds());
+					}
+				}
+			}
+			else if ($cart->getUserId() == 0)
+			{
+				$cart->setPriceTargetIds([]);
+			}
+		}
+	}
 
 	/**
 	 * Default context:
@@ -611,8 +665,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
 			$newCart = $this->getNewCart($webStore, $cart->getBillingArea(), $cart->getZone());
 			$newCart->getContext()->set('lockedCart', $cart->getIdentifier());
+
 			$newCart->setUserId($cart->getUserId());
+			$newCart->setPriceTargetIds($cart->getPriceTargetIds());
 			$newCart->setOwnerId($cart->getOwnerId());
+
 			foreach ($cart->getLines() as $line)
 			{
 				$this->addLine($newCart, $newCart->getNewLine($line->toArray()));
@@ -662,18 +719,8 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			/** @var $webStore \Rbs\Store\Documents\WebStore */
 			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
-			$newCart = $this->getNewCart($webStore, $cart->getBillingArea(), $cart->getZone());
+			$newCart = $this->getNewCart($webStore, $cart->getBillingArea(), $cart->getZone(), ['user' => $user]);
 			$newCart->getContext()->set('fromCart', $cart->getIdentifier());
-			$newCart->setUserId($user->getId());
-			if (!$user->authenticated())
-			{
-				$newCart->setUserId(0);
-			}
-			else
-			{
-				$newCart->setUserId($user->getId());
-			}
-
 			foreach ($cart->getLines() as $line)
 			{
 				$this->addLine($newCart, $newCart->getNewLine($line->toArray()));
@@ -681,10 +728,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 
 			// Transfer reservations
 			$this->getStockManager()->transferReservations($cart->getIdentifier(), $newCart->getIdentifier());
-
 			$event->setParam('newCart', $newCart);
 		}
 	}
+
+
 
 	/**
 	 * @api
@@ -1320,7 +1368,8 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			return;
 		}
-
+		$options = ['webStore' => $webStore, 'billingArea' => $billingArea, 'targetIds' => $cart->getPriceTargetIds(),
+			'cart' => $cart, 'line' => $line];
 		$pricesValueWithTax = $cart->getPricesValueWithTax();
 		foreach ($line->getItems() as $item)
 		{
@@ -1329,8 +1378,8 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 				$sku = $this->getStockManager()->getSkuByCode($item->getCodeSKU());
 				if ($sku)
 				{
-					$price = $this->getPriceManager()->getPriceBySku($sku,
-						['webStore' => $webStore, 'billingArea' => $billingArea, 'cart' => $cart, 'line' => $line, 'lineItem' => $item]);
+					$options['lineItem'] = $item;
+					$price = $this->getPriceManager()->getPriceBySku($sku, $options);
 					$item->setPrice($price);
 				}
 				else

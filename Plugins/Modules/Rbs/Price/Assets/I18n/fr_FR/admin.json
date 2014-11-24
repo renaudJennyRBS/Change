@@ -130,5 +130,8 @@
 	},
 	"amount_greater_or_equals":{
 		"message":"Montant des lignes >= à"
+	},
+	"usergroup_create":{
+		"message":"ajouter un groupe tarifaire"
 	}
 }

@@ -978,7 +978,8 @@ class Order extends \Compilation\Rbs\Order\Documents\Order
 				if ($webStore && $billingArea && $sku)
 				{
 					$price = $priceManager->getPriceBySku($sku,
-						['webStore' => $webStore, 'billingArea' => $billingArea, 'order' => $order, 'orderLine' => $line]);
+						['webStore' => $webStore, 'billingArea' => $billingArea, 'targetIds' => [0],
+							'order' => $order, 'orderLine' => $line]);
 					$item->setPrice($price);
 				}
 				else

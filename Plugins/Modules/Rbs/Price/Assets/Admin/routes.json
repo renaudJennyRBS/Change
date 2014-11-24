@@ -117,5 +117,53 @@
 	},
 	"/Rbs/Price/Tax/": false,
 	"/Rbs/Price/Tax/:id": false,
-	"/Rbs/Price/Tax/new": false
+	"/Rbs/Price/Tax/new": false,
+	"/Rbs/Price/UserGroup/:id": false,
+	"/Rbs/Price/UserGroup/new": false,
+	"/Rbs/User/PriceUserGroup/": {
+		"model": "Rbs_Price_UserGroup",
+		"name": "list",
+		"rule": {
+			"redirectTo": "/Rbs/User/Group/",
+			"labelKey": "m.rbs.user.admin.group_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/PriceUserGroup/:id": {
+		"model": "Rbs_Price_UserGroup",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/UserGroup/edit.twig",
+			"labelKey": "m.rbs.price.documents.usergroup | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/User/PriceUserGroup/:id/GroupUsers/": {
+		"model": "Rbs_Price_UserGroup",
+		"name": "groupUsers",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/Group/group-users.twig",
+			"labelKey": "m.rbs.user.admin.users_in_group | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/PriceUserGroup/:id/Permissions/": {
+		"model": "Rbs_Price_UserGroup",
+		"name": "permissions",
+		"rule": {
+			"templateUrl": "Document/Rbs/User/User/permissions.twig",
+			"labelKey": "m.rbs.user.admin.permissions | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/User/PriceUserGroup/new": {
+		"model": "Rbs_Price_UserGroup",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Price/UserGroup/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	}
 }

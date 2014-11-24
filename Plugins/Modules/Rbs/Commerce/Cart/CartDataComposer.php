@@ -76,10 +76,11 @@ class CartDataComposer
 		$cart = $this->cart;
 		$this->dataSets['common'] = [
 			'identifier' =>$cart->getIdentifier(),
-			'userId' =>$cart->getUserId(),
-			'ownerId' =>$cart->getOwnerId(),
-			'currencyCode' =>$cart->getCurrencyCode(),
-			'webStoreId' =>$cart->getWebStoreId(),
+			'userId' => $cart->getUserId(),
+			'priceTargetIds' => $cart->getPriceTargetIds(),
+			'ownerId' => $cart->getOwnerId(),
+			'currencyCode' => $cart->getCurrencyCode(),
+			'webStoreId' => $cart->getWebStoreId(),
 			'zone' => $cart->getZone(),
 		 	'lastUpdate' => $this->formatDate($cart->lastUpdate())
 		];
@@ -169,9 +170,12 @@ class CartDataComposer
 	 */
 	protected function getProductLineContext()
 	{
+		$cart = $this->cart;
+		$billingAreaId = $cart->getBillingArea() ? $cart->getBillingArea()->getId() : 0;
 		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats,
 			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
-			'data' => ['webStoreId' => $this->cart->getWebStoreId()], 'detailed' => false];
+			'data' => ['webStoreId' => $cart->getWebStoreId(), 'billingAreaId' => $billingAreaId,
+				'zone' => $cart->getZone(), 'targetIds' => $cart->getPriceTargetIds()], 'detailed' => false];
 	}
 
 	protected function generateLinesDataSet()

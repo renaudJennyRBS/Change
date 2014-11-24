@@ -175,8 +175,11 @@ class User extends \Compilation\Rbs\User\Documents\User
 	 */
 	public function setPassword($password)
 	{
-		$this->password = $password;
-		$this->setPasswordHash($this->hashPassword($this->password));
+		if (!\Change\Stdlib\String::isEmpty($password))
+		{
+			$this->password = $password;
+			$this->setPasswordHash($this->hashPassword($this->password));
+		}
 		return $this;
 	}
 

@@ -22,6 +22,7 @@ trait ContextParameters
 		$parameters->addParameterMeta('webStoreId', 0);
 		$parameters->addParameterMeta('billingAreaId', 0);
 		$parameters->addParameterMeta('zone', null);
+		$parameters->addParameterMeta('targetIds', null);
 
 		$parameters->addParameterMeta('displayPricesWithoutTax', false);
 		$parameters->addParameterMeta('displayPricesWithTax', false);
@@ -33,22 +34,25 @@ trait ContextParameters
 	 */
 	protected function setCommerceContextParameters($commerceContext, $parameters)
 	{
-		$this->setDetailedCommerceContextParameters($commerceContext->getWebStore(), $commerceContext->getBillingArea(), $commerceContext->getZone(), $parameters);
+		$this->setDetailedCommerceContextParameters($commerceContext->getWebStore(), $commerceContext->getBillingArea(),
+			$commerceContext->getZone(), $commerceContext->getPriceTargetIds(), $parameters);
 	}
 
 	/**
 	 * @param \Rbs\Store\Documents\WebStore|null $webStore
 	 * @param \Rbs\Price\Tax\BillingAreaInterface|null $billingArea
 	 * @param string|null $zone
+	 * @param integer[]|null $targetIds
 	 * @param Parameters $parameters
 	 */
-	protected function setDetailedCommerceContextParameters($webStore, $billingArea, $zone, $parameters)
+	protected function setDetailedCommerceContextParameters($webStore, $billingArea, $zone, $targetIds, $parameters)
 	{
 		if ($webStore)
 		{
 			$parameters->setParameterValue('webStoreId', $webStore->getId());
 			if ($billingArea)
 			{
+				$parameters->setParameterValue('targetIds', $targetIds);
 				$parameters->setParameterValue('billingAreaId', $billingArea->getId());
 				$parameters->setParameterValue('displayPricesWithoutTax', $webStore->getDisplayPricesWithoutTax());
 				$parameters->setParameterValue('displayPricesWithTax', $webStore->getDisplayPricesWithTax());
