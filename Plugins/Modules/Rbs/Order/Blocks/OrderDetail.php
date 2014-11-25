@@ -81,7 +81,7 @@ class OrderDetail extends Block
 
 		/** @var \Rbs\Store\Documents\WebStore $webStore */
 		$webStore = $documentManager->getDocumentInstance($order->getWebStoreId());
-		$this->setDetailedCommerceContextParameters($webStore, $order->getBillingAreaIdInstance(), $order->getZone(), $parameters );
+		$this->setDetailedCommerceContextParameters($webStore, $order->getBillingAreaIdInstance(), $order->getZone(), [0], $parameters);
 		if ($webStore instanceof \Rbs\Store\Documents\WebStore)
 		{
 			$returnProcess = $webStore->getReturnProcess();
@@ -124,7 +124,7 @@ class OrderDetail extends Block
 
 		/** @var \Rbs\Store\Documents\WebStore $webStore */
 		$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
-		$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(), $parameters );
+		$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(), [0], $parameters );
 		return $parameters;
 	}
 

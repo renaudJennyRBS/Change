@@ -44,6 +44,11 @@ class Cart implements \Serializable
 	protected $userId = 0;
 
 	/**
+	 * @var integer[]
+	 */
+	protected $priceTargetIds = 0;
+
+	/**
 	 * @var integer
 	 */
 	protected $ownerId = 0;
@@ -309,6 +314,24 @@ class Cart implements \Serializable
 	public function getUserId()
 	{
 		return $this->userId;
+	}
+
+	/**
+	 * @return integer[]
+	 */
+	public function getPriceTargetIds()
+	{
+		return $this->priceTargetIds;
+	}
+
+	/**
+	 * @param integer[] $priceTargetIds
+	 * @return $this
+	 */
+	public function setPriceTargetIds($priceTargetIds)
+	{
+		$this->priceTargetIds = $priceTargetIds;
+		return $this;
 	}
 
 	/**
@@ -934,6 +957,7 @@ class Cart implements \Serializable
 				case 'zone': $this->zone = $v; break;
 				case 'webStoreId': $this->webStoreId = $v; break;
 				case 'userId': $this->userId = $v; break;
+				case 'priceTargetIds': $this->priceTargetIds = $v; break;
 				case 'ownerId': $this->ownerId = $v; break;
 				case 'locked': $this->locked = $v; break;
 				case 'processing': $this->processing = $v; break;
@@ -1169,6 +1193,7 @@ class Cart implements \Serializable
 			'paymentAmount' => $this->getPaymentAmount(),
 
 			'userId' => $this->userId,
+			'priceTargetIds' => $this->priceTargetIds,
 			'ownerId' => $this->ownerId,
 			'email' => $this->email,
 			'locked' => $this->locked,

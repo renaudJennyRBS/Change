@@ -1,8 +1,11 @@
-{% block productDirectives %}
-	{% include 'Rbs_Catalog/product-directives.twig' %}
-{% endblock %}
+{% block rbsCatalogProductListUse %}
+	{% use 'Rbs_Catalog/product-directives.twig' %}
+	{{ block('rbsCatalogAddToCartPopin') }}
+	{{ block('rbsCatalogAddToCartListItem') }}
+	{{ block('rbsCatalogProductPictograms') }}
+{% endblock rbsCatalogProductListUse %}
 
-{% block header %}
+{% block rbsCatalogProductListHeader %}
 	{% if parameters.showOrdering %}
 		<div class="input-group result-sorting-method">
 		<span class="input-group-addon">
@@ -34,24 +37,24 @@
 			</div>
 		</div>
 	{% endif %}
-{% endblock %}
+{% endblock rbsCatalogProductListHeader %}
 
-{% block productList %}
+{% block rbsCatalogProductList %}
 	{% spaceless %}
 		<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered grid-list-align-top product-list">
 			{% for productData in productsData %}
 				<li>
 					<div class="grid-list-cell">
-						{% block productItem %}
+						{% block rbsCatalogProductItem %}
 							{% include 'Rbs_Catalog/product-list-item.twig' %}
-						{% endblock %}
+						{% endblock rbsCatalogProductItem %}
 					</div>
 				</li>
 			{% endfor %}
 		</ul>
 	{% endspaceless %}
-{% endblock %}
+{% endblock rbsCatalogProductList %}
 
-{% block footer %}
+{% block rbsCatalogProductListFooter %}
 	{% include 'Rbs_Generic/pagination.twig' with {'pageCount': pagination.pageCount, 'pageNumber': pagination.pageNumber, 'blockId': blockId} %}
-{% endblock %}
+{% endblock rbsCatalogProductListFooter %}

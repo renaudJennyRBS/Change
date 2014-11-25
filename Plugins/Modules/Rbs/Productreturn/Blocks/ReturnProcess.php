@@ -69,7 +69,7 @@ class ReturnProcess extends \Change\Presentation\Blocks\Standard\Block
 			$parameters->setParameterValue('pageId', $page->getId());
 		}
 
-		$this->setDetailedCommerceContextParameters($webStore, $order->getBillingAreaIdInstance(), $order->getZone(), $parameters);
+		$this->setDetailedCommerceContextParameters($webStore, $order->getBillingAreaIdInstance(), $order->getZone(), [0],$parameters);
 		return $parameters;
 	}
 

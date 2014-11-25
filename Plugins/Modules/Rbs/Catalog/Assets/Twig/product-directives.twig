@@ -1,4 +1,4 @@
-{% block addToCart %}
+{% block rbsCatalogAddToCartPopin %}
 <div class="modal fade" id="addToCartConfirmationModal-{{ blockId }}" tabindex="-1" role="dialog"
 		aria-labelledby="addToCartConfirmationModalLabel-{{ blockId }}" aria-hidden="true">
 	<div class="modal-dialog">
@@ -23,14 +23,18 @@
 		</div>
 	</div>
 </div>
+{% endblock rbsCatalogAddToCartPopin %}
 
+{% block rbsCatalogAddToCartListItem %}
 <script type="text/ng-template" id="/rbsCatalogAddListItemProductToCart.tpl">
 	<button type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()">
 		<i class="glyphicon glyphicon-shopping-cart"></i>
 		{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
 	</button>
 </script>
+{% endblock rbsCatalogAddToCartListItem %}
 
+{% block rbsCatalogAddToCartSimpleProduct %}
 <script type="text/ng-template" id="/rbsCatalogAddSimpleProductToCart.tpl">
 	<div data-ng-show="productData.stock.sku">
 		<div class="form-group">
@@ -50,7 +54,9 @@
 		{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
 	</button>
 </script>
+{% endblock rbsCatalogAddToCartSimpleProduct %}
 
+{% block rbsCatalogAddToCartVariantProduct %}
 <script type="text/ng-template" id="/rbsCatalogAddVariantProductToCart.tpl">
 	<div data-ng-show="productData.stock.sku">
 		<div class="form-group" data-ng-show="productData.cart.key">
@@ -70,7 +76,9 @@
 		</button>
 	</div>
 </script>
+{% endblock rbsCatalogAddToCartVariantProduct %}
 
+{% block rbsCatalogAddToCartSetItemProduct %}
 <script type="text/ng-template" id="/rbsCatalogAddSetItemProductToCart.tpl">
 	<div data-ng-show="productData.stock.sku">
 		<button type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()">
@@ -82,10 +90,9 @@
 		{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
 	</button>
 </script>
+{% endblock rbsCatalogAddToCartSetItemProduct %}
 
-{% endblock addToCart %}
-
-{% block pictograms %}
+{% block rbsCatalogProductPictograms %}
 <script type="text/ng-template" id="/rbsCatalogProductPictograms.tpl">
 	<div data-ng-show="pictograms"  class="pictograms-container">
 		{% spaceless %}
@@ -97,9 +104,9 @@
 		{% endspaceless %}
 	</div>
 </script>
-{% endblock pictograms %}
+{% endblock rbsCatalogProductPictograms %}
 
-{% block attributes %}
+{% block rbsCatalogAttributes %}
 <script type="text/ng-template" id="/rbsCatalogAttributeValue.tpl">
 	<span data-ng-if="isArrayValue()">
 		<span data-ng-repeat="item in attribute.value track by $index">
@@ -194,18 +201,18 @@
 		</div>
 	</div>
 </script>
-{% endblock attributes %}
+{% endblock rbsCatalogAttributes %}
 
-{% block stock %}
+{% block rbsCatalogProductAvailability %}
 <script type="text/ng-template" id="/rbsCatalogProductAvailability.tpl">
 	<div data-ng-show="productData.stock.thresholdTitle" class="alert availability text-center stock-(= productData.stock.threshold | lowercase =)"
 			data-ng-class="{'alert-success': productData.stock.threshold == 'AVAILABLE', 'alert-danger': productData.stock.threshold == 'UNAVAILABLE'}">
 		<h4 itemprop="availability" data-ng-bind="productData.stock.thresholdTitle"></h4>
 	</div>
 </script>
-{% endblock stock %}
+{% endblock rbsCatalogProductAvailability %}
 
-{% block price %}
+{% block rbsCatalogProductPrice %}
 <script type="text/ng-template" id="/rbsCatalogProductPrice.tpl">
 	<div data-ng-show="productData.price.currencyCode && (displayWithoutTax || displayWithTax)">
 		<meta itemprop="priceCurrency" content="(= productData.price.currencyCode =)" />
@@ -236,35 +243,35 @@
 					(= productData.price.baseValueWithTax | rbsFormatPrice:productData.price.currencyCode =)
 				</del>
 			</li>
-			<li class="small" data-ng-show="productData.price.ecoTax">
+			<li class="small" data-ng-show="productData.price.options.ecoTax">
 				{{ i18n('m.rbs.catalog.front.including', ['ucf']) }} {{ i18n('m.rbs.catalog.front.ecotax') }}
-				(= productData.price.ecoTax | rbsFormatPrice:productData.price.currencyCode =)
+				(= productData.price.options.ecoTax | rbsFormatPrice:productData.price.currencyCode =)
 			</li>
 		</ul>
 	</div>
 </script>
-{% endblock price %}
+{% endblock rbsCatalogProductPrice %}
 
-{% block variantSelector %}
-	<script type="text/ng-template" id="/rbsCatalogVariantSelector.tpl">
-		<div class="form-horizontal">
-			<div class="form-group" data-ng-repeat="axis in rootProductData.variants.axes">
-				<label for="selectedVariant_{{ blockId }}_(= $index =)" class="col-sm-4 col-md-3 control-label">
-					(= axis.title =)
-				</label>
-				<div class="col-sm-8 col-md-9">
-					<select id="selectedVariant_{{ blockId }}_(= $index =)" data-ng-show="axesItems[$index].length != 1"
-						data-ng-cloak="" class="form-control" data-ng-model="selectedAxesValues[$index]"
-						data-ng-options="axisItem.value as axisItem.title for axisItem in axesItems[$index]"
-						data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
-						data-ng-change="variantChanged($index)" data-ng-disabled="$index > 0 && !selectedAxesValues[$index - 1]">
-						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
-					</select>
-					<div data-ng-show="axesItems[$index].length == 1" data-ng-cloak="" class="form-control-static">
-						(= axesItems[$index][0].title =)
-					</div>
+{% block rbsCatalogProductVariantSelector %}
+<script type="text/ng-template" id="/rbsCatalogVariantSelector.tpl">
+	<div class="form-horizontal">
+		<div class="form-group" data-ng-repeat="axis in rootProductData.variants.axes">
+			<label for="selectedVariant_{{ blockId }}_(= $index =)" class="col-sm-4 col-md-3 control-label">
+				(= axis.title =)
+			</label>
+			<div class="col-sm-8 col-md-9">
+				<select id="selectedVariant_{{ blockId }}_(= $index =)" data-ng-show="axesItems[$index].length != 1"
+					data-ng-cloak="" class="form-control" data-ng-model="selectedAxesValues[$index]"
+					data-ng-options="axisItem.value as axisItem.title for axisItem in axesItems[$index]"
+					data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
+					data-ng-change="variantChanged($index)" data-ng-disabled="$index > 0 && !selectedAxesValues[$index - 1]">
+					<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
+				</select>
+				<div data-ng-show="axesItems[$index].length == 1" data-ng-cloak="" class="form-control-static">
+					(= axesItems[$index][0].title =)
 				</div>
 			</div>
 		</div>
-	</script>
-{% endblock variantSelector %}
+	</div>
+</script>
+{% endblock rbsCatalogProductVariantSelector %}

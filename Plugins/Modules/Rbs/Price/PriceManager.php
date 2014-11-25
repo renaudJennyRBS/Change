@@ -110,8 +110,11 @@ class PriceManager implements \Zend\EventManager\EventsCapableInterface
 			$context = $this->getContext();
 			$webStore = $event->getParam('webStore', $context->getWebStore());
 			$billingArea = $event->getParam('billingArea', $context->getBillingArea());
-			$targetIds = $event->getParam('targetIds', [0]);
-			if ($webStore && $billingArea && is_array($targetIds))
+			$targetIds = $event->getParam('targetIds', $context->getPriceTargetIds());
+			if (!is_array($targetIds)) {
+				$targetIds = [];
+			}
+			if ($webStore && $billingArea)
 			{
 				if (count($targetIds) === 0)
 				{

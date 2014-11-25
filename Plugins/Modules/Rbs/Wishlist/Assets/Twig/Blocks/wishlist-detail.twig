@@ -1,6 +1,9 @@
-{% block productDirectives %}
-	{% include 'Rbs_Catalog/product-directives.twig' %}
-{% endblock %}
+{% block rbsCatalogProductListUse %}
+	{% use 'Rbs_Catalog/product-directives.twig' %}
+	{{ block('rbsCatalogAddToCartPopin') }}
+	{{ block('rbsCatalogAddToCartListItem') }}
+	{{ block('rbsCatalogProductPictograms') }}
+{% endblock rbsCatalogProductListUse %}
 
 {% if unauthorized %}
 	<p>{{ i18n('m.rbs.wishlist.front.wishlist_detail_unauthorized') }}</p>

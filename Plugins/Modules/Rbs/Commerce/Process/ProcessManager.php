@@ -508,7 +508,8 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 							$priceManager = $commerceServices->getPriceManager();
 
 							$price = $priceManager->getPriceBySku($fee->getSku(),
-								['webStore' => $webStore, 'billingArea' => $billingArea, 'cart' => $cart,
+								['webStore' => $webStore, 'billingArea' => $billingArea,
+									'targetIds' => $cart->getPriceTargetIds(), 'cart' => $cart,
 									'shippingMode' => $shippingMode, 'fee' => $fee]);
 
 							if ($price && ($feesValue = $price->getValue()) > 0)

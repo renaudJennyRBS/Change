@@ -1,0 +1,240 @@
+{% block rbsCatalogProductDataLoading %}
+	<div data-ng-show="productLoading" data-ng-cloak="" class="product-loading">
+		<div class="product-loading-indicator">
+			<p><img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" /></p>
+			<p><span class="label label-default">{{ i18n('m.rbs.catalog.front.loading_data', ['ucf', 'etc']) }}</span></p>
+		</div>
+	</div>
+{% endblock rbsCatalogProductDataLoading %}
+
+{% block rbsCatalogProductHeader %}
+<div data-rbs-catalog-product-pictograms="" data-pictogram-format="'pictogram'" data-pictograms="pictograms" class="pull-right">
+</div>
+<meta itemprop="url" content="{{ productData.common.URL['canonical'] }}" />
+<h1 itemprop="name">{{ productData.common.title }}</h1>
+{% spaceless %}
+	{% if productData.stock.sku %}<meta itemprop="sku" content="{{ productData.stock.sku }}" />{% endif %}
+	<dl class="list-inline list-divided">
+		{% if (productData.common.reference) %}
+			<dt>{{ i18n('m.rbs.catalog.front.reference', ['ucf']) }}</dt>
+			<dd>{{ productData.common.reference }}</dd>
+		{% endif %}
+		{% set brandAttribute = getAttributeByName(productData, 'brand') %}
+		{% if brandAttribute.value %}
+			<dt>{{ i18n('m.rbs.catalog.front.brand', ['ucf']) }}</dt>
+			<dd>
+				<a itemprop="brand" href="{{ brandAttribute.value.URL.canonical }}">{{ brandAttribute.value.title }}</a>
+			</dd>
+		{% endif %}
+	</dl>
+{% endspaceless %}
+{% endblock rbsCatalogProductHeader %}
+
+{% block rbsCatalogProductVisuals %}
+<div data-rbs-catalog-product-visuals="" data-visuals="visuals" data-visual-formats="['detail', 'detailThumbnail']" data-full-base-id="full-visual-{{ blockId }}-">
+	<div data-ng-show="visuals" class="visuals" id="visuals-{{ blockId }}">
+		<ul class="list-unstyled full-visuals">
+			<li data-ng-repeat="visual in visuals track by $index" id="full-visual-{{ blockId }}-(= $index =)">
+				{% if parameters.activateZoom -%}
+				<a data-ng-href="(= visual.original =)" data-ng-mouseover="startZoom($event)">
+					{%- endif -%}
+					<img itemprop="image" data-ng-src="(= visual.detail =)" alt="(= visual.alt =)" />
+					{%- if parameters.activateZoom -%}
+				</a>
+				{%- endif %}
+			</li>
+		</ul>
+		<ul data-ng-if="visuals.length > 1" class="list-inline thumbnail-visuals">
+			<li data-ng-repeat="visual in visuals track by $index" class="thumbnail" id="thumbnail-visual-{{ blockId }}-(= $index =)"
+					title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
+				<img data-ng-src="(= visual.detailThumbnail =)" alt="(= visual.alt =)" data-index="(= $index =)"
+						data-ng-click="showVisual($event)" />
+			</li>
+		</ul>
+	</div>
+	<div data-ng-show="!visuals" class="text-center text-muted">
+		<span class="glyphicon glyphicon-camera" style="font-size: 200px"></span><br />
+		<span>{{ i18n('m.rbs.catalog.front.no_visual', ['ucf']) }}</span>
+	</div>
+</div>
+{% endblock rbsCatalogProductVisuals %}
+
+{% block rbsCatalogProductDescription %}
+	<div data-ng-if="productData | rbsCatalogGetAttribute:'description'" >
+		<h2>{{ i18n('m.rbs.catalog.front.full_description', ['ucf']) }}</h2>
+		<div itemprop="description" data-rbs-catalog-attribute-value="" data-attribute="productData | rbsCatalogGetAttribute:'description'"></div>
+	</div>
+{% endblock rbsCatalogProductDescription %}
+
+{% block rbsCatalogProductAttributes %}
+{% if parameters.attributesDisplayMode %}
+	<div data-rbs-catalog-section-attributes="" data-product-data="productData"
+			data-visibility="specifications" data-display-mode="{{ parameters.attributesDisplayMode }}" data-block-id="{{ blockId }}">
+	</div>
+{% endif %}
+{% endblock rbsCatalogProductAttributes %}
+
+{% block rbsCatalogProductOfferSimple %}
+{% if parameters.webStoreId %}
+	<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
+		{% block rbsCatalogProductOfferSimpleAvailability %}
+			{% if productData.stock.thresholdTitle %}
+				{% set threshold = productData.stock.threshold %}
+				<div class="alert availability text-center stock-{{ threshold|lower }}{% if threshold == 'AVAILABLE' %} alert-success{% elseif threshold == 'UNAVAILABLE' %} alert-danger{% endif %}" >
+					<h4 itemprop="availability">{{ productData.stock.thresholdTitle }}</h4>
+				</div>
+			{% endif %}
+		{% endblock rbsCatalogProductOfferSimpleAvailability %}
+
+		{% block rbsCatalogProductOfferSimplePrices %}
+			{% set currencyCode = productData.price.currencyCode %}
+			{% if productData.price and (parameters.displayPricesWithoutTax or productData.price.valueWithTax) %}
+				{% if currencyCode %}<meta itemprop="priceCurrency" content="{{ currencyCode }}" />{% endif %}
+				<ul class="list-unstyled main-price">
+					{% if parameters.displayPricesWithoutTax and productData.price.valueWithoutTax %}
+						<li class="price">
+							{% if not (parameters.displayPricesWithTax and productData.price.valueWithTax) %}
+								<span itemprop="price">{{ formatPrice(productData.price.valueWithoutTax, currencyCode) }}</span>
+							{% else %}
+								{{ formatPrice(productData.price.valueWithoutTax, currencyCode) }}
+							{% endif %}
+							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
+							{% if productData.price.baseValueWithoutTax %}
+								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
+									{{ formatPrice(productData.price.baseValueWithoutTax, currencyCode) }}
+								</del>
+							{% endif %}
+						</li>
+					{% endif %}
+					{% if parameters.displayPricesWithTax and productData.price.valueWithTax %}
+						<li class="price">
+							<span itemprop="price">{{ formatPrice(productData.price.valueWithTax, currencyCode) }}</span>
+							{% if productData.price.baseValueWithTax %}
+								<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
+									{{ formatPrice(productData.price.baseValueWithTax, currencyCode) }}
+								</del>
+							{% endif %}
+						</li>
+					{% endif %}
+					{% if productData.price.options.ecoTax %}
+						<li class="small">
+							{{ i18n('m.rbs.catalog.front.including', ['ucf']) }} {{ i18n('m.rbs.catalog.front.ecotax') }} {{ formatPrice(productData.price.options.ecoTax, currencyCode) }}
+						</li>
+					{% endif %}
+				</ul>
+			{% endif %}
+		{% endblock rbsCatalogProductOfferSimplePrices %}
+
+		{% block rbsCatalogProductOfferSimpleAddToCart %}
+			{% if productData.stock.sku %}
+				<div data-rbs-catalog-add-simple-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+			{% endif %}
+		{% endblock rbsCatalogProductOfferSimpleAddToCart %}
+	</div>
+{% endif %}
+{% endblock rbsCatalogProductOfferSimple %}
+
+{% block rbsCatalogProductOfferSet %}
+	<ul class="grid-list grid-list-1 grid-list-bordered grid-list-align-top product-list">
+		{% for subProductData in productData.productSet.products %}
+			{% set subProductURL = subProductData.common.URL['contextual'] | default(subProductData.common.URL['canonical']) %}
+			<li>
+				<div class="grid-list-cell">
+					{% block rbsCatalogProductOfferSetVisual %}
+						<div class="product-visual">
+							<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: subProductData.common.title}) }}"
+									href="{{ productURL }}">
+								{% set visualData = subProductData.common.visuals[0] %}
+								{% if visualData %}
+									<img alt="{{ visualData.alt }}" src="{{ visualData.detailThumbnail }}" />
+								{% else %}
+									<div class="text-center text-muted">
+										<span class="glyphicon glyphicon-camera" style="font-size: 100px"></span>
+									</div>
+								{% endif %}
+							</a>
+						</div>
+					{% endblock rbsCatalogProductOfferSetVisual %}
+					{% block rbsCatalogProductOfferSetInfo %}
+					<div class="product-label">
+						<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: subProductData.common.title}) }}"
+								href="{{ subProductURL }}">{{ subProductData.common.title }}</a>
+					</div>
+					<div class="product-availability">
+						{{ subProductData.stock.thresholdTitle }}
+					</div>
+					{% endblock rbsCatalogProductOfferSetInfo %}
+
+					{% if parameters.webStoreId %}
+						{% block rbsCatalogProductOfferSetPrices %}
+							{% if subProductData.price.currencyCode %}
+								{% if parameters.displayPricesWithoutTax %}
+									<div class="product-price price">
+										{% if subProductData.price.hasDifferentPrices %}
+											{{ i18n('m.rbs.catalog.front.from') }}
+										{% endif %}
+										{{ formatPrice(subProductData.price.valueWithoutTax, subProductData.price.currencyCode) }}
+										<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+											{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+										</abbr>
+										{% if subProductData.price.baseValueWithoutTax %}
+											<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
+												{{- formatPrice(subProductData.price.baseValueWithoutTax, subProductData.price.currencyCode) -}}
+											</del>
+										{% endif %}
+									</div>
+								{% endif %}
+								{% if parameters.displayPricesWithTax %}
+									<div class="product-price price">
+										{% if subProductData.price.hasDifferentPrices %}
+											{{ i18n('m.rbs.catalog.front.from') }}
+										{% endif %}
+										{{ formatPrice(subProductData.price.valueWithTax, subProductData.price.currencyCode) }}
+										{% if subProductData.price.baseValueWithTax %}
+											<del title="{{ i18nAttr('m.rbs.catalog.front.old_price') }}">
+												{{- formatPrice(subProductData.price.baseValueWithTax, subProductData.price.currencyCode ) -}}
+											</del>
+										{% endif %}
+									</div>
+								{% endif %}
+								<div class="product-add">
+									<div data-rbs-catalog-add-set-item-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}"
+											data-product-data="productData.productSet.products[{{ loop.index0 }}]" >
+									</div>
+								</div>
+							{% endif %}
+						{% endblock rbsCatalogProductOfferSetPrices %}
+					{% endif %}
+				</div>
+			</li>
+		{% endfor %}
+	</ul>
+{% endblock rbsCatalogProductOfferSet %}
+
+{% block rbsCatalogProductOfferVariant %}
+	{% if parameters.webStoreId %}
+		<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
+			{% block rbsCatalogProductOfferVariantAxes %}
+				<div data-rbs-catalog-variant-selector="" data-product-data="productData" data-ajax-data="productAjaxData"
+						data-ajax-params="productAjaxParams">
+				</div>
+				<div data-ng-hide="productData.stock.sku" data-ng-cloak="" class="alert warning">{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}</div>
+			{% endblock rbsCatalogProductOfferVariantAxes %}
+
+			{% block rbsCatalogProductOfferVariantAvailability %}
+				<div data-ng-show="productData.stock.sku" data-rbs-catalog-product-availability=""></div>
+			{% endblock rbsCatalogProductOfferVariantAvailability %}
+
+			{% block rbsCatalogProductOfferVariantPrices %}
+				<div data-rbs-catalog-product-price=""
+						data-display-without-tax="{{ parameters.displayPricesWithoutTax }}"
+						data-display-with-tax="{{ parameters.displayPricesWithTax }}">
+				</div>
+			{% endblock rbsCatalogProductOfferVariantPrices %}
+
+			{% block rbsCatalogProductOfferVariantAddToCart %}
+				<div data-rbs-catalog-add-variant-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+			{% endblock rbsCatalogProductOfferVariantAddToCart %}
+		</div>
+	{% endif %}
+{% endblock rbsCatalogProductOfferVariant %}

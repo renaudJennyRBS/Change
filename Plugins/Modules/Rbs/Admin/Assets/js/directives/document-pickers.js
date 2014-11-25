@@ -296,7 +296,7 @@
 			}
 		});
 
-		var selectedModelName;
+		var selectedModelName = attrs.defaultModel;
 
 		function selectModelName(modelName) {
 			if (!modelName) {

@@ -52,13 +52,36 @@
 	 * @param $routeParams
 	 * @param REST
 	 * @param $http
+	 * @param Navigation
 	 * @constructor
 	 */
-	function GroupUsersController($scope, $routeParams, REST, $http) {
+	function GroupUsersController($scope, $routeParams, REST, $http, Navigation) {
 		$scope.data = {
 			usersToAdd: []
 		};
 		$scope.disableAdd = true;
+
+		$scope.$on('Navigation.saveContext', function (event, args) {
+			var data = {
+				usersToAdd: $scope.data.usersToAdd
+			};
+			args.context.label($scope.document.label);
+			args.context.savedData('GroupUsers', data);
+		});
+
+		function initContextData() {
+			var currentContext = Navigation.getCurrentContext();
+			if (currentContext) {
+				var data = currentContext.savedData('GroupUsers');
+				if (angular.isObject(data)) {
+					$scope.data.usersToAdd = data.usersToAdd;
+				}
+			}
+		}
+
+		//Init from context
+		initContextData();
+
 
 		REST.resource($routeParams.id).then(function (group) {
 			$scope.document = group;
@@ -107,7 +130,7 @@
 			};
 
 			$scope.$watch('data.usersToAdd', function (usersToAdd) {
-				$scope.disableAdd = usersToAdd.length > 0;
+				$scope.disableAdd = !usersToAdd || !usersToAdd.length;
 			});
 
 			$scope.addUsersFromPicker = function () {
@@ -127,6 +150,6 @@
 		});
 	}
 
-	GroupUsersController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', '$http'];
+	GroupUsersController.$inject = ['$scope', '$routeParams', 'RbsChange.REST', '$http', 'RbsChange.Navigation'];
 	app.controller('Rbs_User_Group_GroupUsersController', GroupUsersController);
 })();

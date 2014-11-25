@@ -114,8 +114,8 @@ class Fee extends \Compilation\Rbs\Commerce\Documents\Fee
 
 			$priceManager = $commerceServices->getPriceManager();
 			$price = $commerceServices->getPriceManager()->getPriceBySku($fee->getSku(),
-				['webStore' => $value->getWebStoreId(), 'billingArea' => $value->getBillingArea(), 'cart' => $value,
-					'fee' => $fee]);
+				['webStore' => $value->getWebStoreId(), 'billingArea' => $value->getBillingArea(),
+					'targetIds' => $value->getPriceTargetIds(), 'cart' => $value, 'fee' => $fee]);
 			if (!$price)
 			{
 				//fee has no price

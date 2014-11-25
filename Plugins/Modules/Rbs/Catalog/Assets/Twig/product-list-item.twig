@@ -2,9 +2,10 @@
 <script type="application/javascript">
 	window.__change['{{ cacheKey }}'] = {{ productData | json_encode | raw }};
 </script>
+
 <div data-ng-controller="RbsCatalogProductItemController" data-cache-key="{{ cacheKey }}">
 {% set productURL = parameters.contextualUrls ? productData.common.URL['contextual'] : productData.common.URL['canonical'] %}
-{% block visual %}
+{% block rbsCatalogProductItemVisual %}
 	<div class="product-visual">
 		<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productData.common.title}) }}"
 				href="{{ productURL }}">
@@ -19,7 +20,9 @@
 		</a>
 		<div data-rbs-catalog-product-pictograms="" data-pictogram-format="'pictogram'" data-pictograms="pictograms"></div>
 	</div>
-{% endblock %}
+{% endblock rbsCatalogProductItemVisual %}
+
+{% block rbsCatalogProductItemInfo %}
 <div class="product-label">
 	<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productData.common.title}) }}"
 			href="{{ productURL }}">{{ productData.common.title }}</a>
@@ -27,8 +30,10 @@
 <div class="product-availability">
 	{{ productData.stock.thresholdTitle }}
 </div>
+{% endblock rbsCatalogProductItemInfo %}
+
 {% if parameters.webStoreId %}
-	{% block prices %}
+	{% block rbsCatalogProductItemPrices %}
 		{% if productData.price.currencyCode %}
 			{% if parameters.displayPricesWithoutTax %}
 				<div class="product-price price">
@@ -60,9 +65,9 @@
 				</div>
 			{% endif %}
 		{% endif %}
-	{% endblock %}
+	{% endblock rbsCatalogProductItemPrices %}
 
-	{% block addToCart %}
+	{% block rbsCatalogProductItemAddToCart %}
 		<div class="product-add">
 			{% if productData.stock.sku %}
 				{% if productData.cart.key %}
@@ -84,6 +89,6 @@
 				</div>
 			{% endif %}
 		</div>
-	{% endblock %}
+	{% endblock rbsCatalogProductItemAddToCart %}
 {% endif %}
 </div>

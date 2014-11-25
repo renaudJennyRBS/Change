@@ -218,8 +218,11 @@ class ProductManager implements \Zend\EventManager\EventsCapableInterface
 					break;
 				case ProductManager::MOST_EXPENSIVE_PRODUCT:
 					$lines = $cart->getLines();
-					usort($lines, array($this, "mostExpensiveUnitPrice"));
-					$line = $lines[0];
+					if (count($lines))
+					{
+						usort($lines, array($this, "mostExpensiveUnitPrice"));
+						$line = $lines[0];
+					}
 					break;
 			}
 			if ($line)

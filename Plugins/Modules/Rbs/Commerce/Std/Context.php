@@ -35,6 +35,10 @@ class Context implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $cartIdentifier;
 
+	/**
+	 * @var integer[]|null
+	 */
+	protected $priceTargetIds;
 
 	/**
 	 * @var \Zend\Stdlib\Parameters
@@ -173,6 +177,26 @@ class Context implements \Zend\EventManager\EventsCapableInterface
 	{
 		$this->ensureLoaded();
 		return $this->cartIdentifier;
+	}
+
+	/**
+	 * @return integer[]|null
+	 */
+	public function getPriceTargetIds()
+	{
+		$this->ensureLoaded();
+		return $this->priceTargetIds;
+	}
+
+	/**
+	 * @param integer[]|null $priceTargetIds
+	 * @return $this
+	 */
+	public function setPriceTargetIds($priceTargetIds)
+	{
+		$this->ensureLoaded();
+		$this->priceTargetIds = $priceTargetIds;
+		return $this;
 	}
 
 	/**

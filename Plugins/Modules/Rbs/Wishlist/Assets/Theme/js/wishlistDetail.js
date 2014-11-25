@@ -1,4 +1,8 @@
-angular.module('RbsChangeApp').controller('RbsWishlistDetailCtrl', function($scope, $http, $rootScope) {
+(function() {
+	"use strict";
+	var app = angular.module('RbsChangeApp');
+
+	function RbsWishlistDetailCtrl($scope, $http, $rootScope, AjaxAPI) {
 	$scope.changingTitle = false;
 	$scope.loading = true;
 	$scope.selectedProducts = {};
@@ -81,12 +85,23 @@ angular.module('RbsChangeApp').controller('RbsWishlistDetailCtrl', function($sco
 	};
 
 	$scope.addProductsToCart = function() {
-		$http.post('Action/Rbs/Wishlist/AddProductsToCart', {
-			productIds: $scope.selectedProducts
-		}).success(function(resultData) {
-			$rootScope.$broadcast('rbsRefreshCart', {'cart': resultData.cart});
-		}).error(function(data) {
-			$scope.errorMessage = data.error;
+		var addProducts = [];
+
+		angular.forEach($scope.selectedProducts, function(product, productId) {
+			addProducts.push({productId: productId});
 		});
+
+		if (addProducts.length) {
+			var request = AjaxAPI.putData('Rbs/Commerce/Cart', {addProducts:addProducts}, {detailed:false});
+			request.success(function(resultData) {
+				var cart = resultData.dataSets;
+				$rootScope.$broadcast('rbsRefreshCart', {'cart': cart});
+			}).error(function(data, status, headers) {
+				console.log('error', data, status, headers);
+			});
+		}
 	};
-});
+}
+	RbsWishlistDetailCtrl.$inject = ['$scope', '$http', '$rootScope', 'RbsChange.AjaxAPI'];
+	app.controller('RbsWishlistDetailCtrl', RbsWishlistDetailCtrl);
+})();

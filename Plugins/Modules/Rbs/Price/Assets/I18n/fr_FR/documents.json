@@ -76,5 +76,11 @@
 	},
 	"price_valuemodifiername":{
 		"message":"modificateur du prix"
+	},
+	"usergroup":{
+		"message":"groupe tarifaire"
+	},
+	"usergroup_defaultpriority":{
+		"message":"priorité par défaut"
 	}
 }
