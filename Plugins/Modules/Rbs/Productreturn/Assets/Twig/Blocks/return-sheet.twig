@@ -1,0 +1,107 @@
+{% block rbsProductreturnReturnListUse %}
+	{% use 'Rbs_Productreturn/return-details-templates.twig' %}
+{% endblock rbsProductreturnReturnListUse %}
+
+{% block rbsProductreturnReturnSheetHeader %}
+	<h1>{{ i18n('m.rbs.productreturn.front.return_sheet_title', ['ucf'], {'code': returnData.common.code}) }}</h1>
+	<div class="row">
+		<div class="col-sm-6">
+			<h2>
+				{{ i18n('m.rbs.productreturn.front.order', ['ucf']) }}
+			</h2>
+			<dl class="dl-inline-items">
+				<dt>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</dt>
+				<dd>{{ returnData.order.common.code }}</dd>
+				<dt>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</dt>
+				<dd>{{ returnData.order.common.date | transDateTime }}</dd>
+			</dl>
+			<h2>
+				{{ i18n('m.rbs.productreturn.front.return', ['ucf']) }}
+			</h2>
+			<dl class="dl-inline-items">
+				<dt>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</dt>
+				<dd>{{ returnData.common.code }}</dd>
+				<dt>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</dt>
+				<dd>{{ returnData.common.date | transDateTime }}</dd>
+			</dl>
+		</div>
+		<div class="col-sm-6">
+			<h2>
+				{{ i18n('m.rbs.order.front.order_billing_address', ['ucf']) }}
+			</h2>
+			{% set lines = returnData.order.process.address.lines %}
+			<address>
+				<strong>{{ lines[0] }}</strong>
+				{% for line in lines %}
+					{% if not loop.first %}<br />{{ line }}{% endif %}
+				{% endfor %}
+			</address>
+			<dl class="dl-inline-items">
+				<dt>{{ i18n('m.rbs.order.front.order_email_address', ['ucf']) }}</dt>
+				<dd>{{ returnData.common.email }}</dd>
+			</dl>
+		</div>
+	</div>
+{% endblock rbsProductreturnReturnSheetHeader %}
+
+{% block rbsProductreturnReturnSheetMain %}
+	<div class="table-responsive return-lines">
+		<table class="table table-striped table-vertical-middle">
+			<thead>
+				{% block rbsProductreturnReturnSheetLineHeader %}
+					<tr>
+						<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.productreturn.front.reason', ['ucf']) }}</th>
+					</tr>
+				{% endblock rbsProductreturnReturnSheetLineHeader %}
+			</thead>
+			<tbody>
+				{% for line in returnData.lines %}
+					{% block rbsProductreturnReturnSheetLine %}
+						<tr>
+							<td>
+								{% set designation = line.designation %}
+								{% set product = line.product %}
+								{% set axesInfo = line.options.orderLineOptions.axesInfo %}
+								{{ block('rbsProductreturnDetailsProduct') }}
+							</td>
+							<td class="form-inline">
+								{{ line.quantity }}
+							</td>
+							<td>
+								<ul class="list-unstyled">
+									<li><strong>{{ line.options.reasonTitle }}</strong></li>
+									{% if line.reasonPrecisions %}
+										{{ i18n('m.rbs.productreturn.front.precisions', ['ucf', 'lab']) }}
+										<span class="long-string">{{ line.reasonPrecisions }}</span>
+									{% endif %}
+									{% if line.reasonAttachedFileURL %}
+										<li>
+											<a href="{{ line.reasonAttachedFileURL }}" target="_blank">
+												{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}
+											</a>
+										</li>
+									{% endif %}
+									<li>
+										{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf', 'lab']) }}
+										{{ line.options.preferredProcessingModeTitle }}
+									</li>
+									{% if line.options.reshippingProductId %}
+										<li>
+											{{ i18n('m.rbs.productreturn.front.reshipping_product', ['ucf', 'lab']) }}
+											{% set designation = line.options.reshippingProductTitle %}
+											{% set product = line.reshippingProduct %}
+											{% set axesInfo = line.options.reshippingProductAxesInfos %}
+											{{ block('rbsProductreturnDetailsProduct') }}
+										</li>
+									{% endif %}
+								</ul>
+							</td>
+						</tr>
+					{% endblock rbsProductreturnReturnSheetLine %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock rbsProductreturnReturnSheetMain %}

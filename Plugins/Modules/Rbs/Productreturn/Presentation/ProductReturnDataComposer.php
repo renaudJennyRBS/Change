@@ -153,7 +153,7 @@ class ProductReturnDataComposer
 	{
 		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats, 'dataSetNames' => $this->dataSetNames,
 			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
-			'data' => $this->data, 'detailed' => false];
+			'data' => $this->data, 'detailed' => $this->detailed];
 	}
 
 	protected function generateOrderFullDataSet()
@@ -238,17 +238,25 @@ class ProductReturnDataComposer
 		$returnMode = $this->return->getReturnModeIdInstance();
 		if ($returnMode instanceof \Rbs\Productreturn\Documents\ReturnMode)
 		{
+			$options = [];
+			if ($this->page && $this->page->getTemplate())
+			{
+				$options['themeName'] = $this->page->getTemplate()->getTheme()->getName();
+			}
+
 			$this->dataSets['returnMode']['title'] = $returnMode->getCurrentLocalization()->getTitle();
 			$this->dataSets['returnMode']['instructions'] = $this->formatRichText($returnMode->getCurrentLocalization()->getInstructions());
 			$this->dataSets['returnMode']['stickerURL'] = $this->returnManager->getReturnStickerURL(
 				$returnMode,
 				$this->return,
-				$this->websiteUrlManager
+				$this->websiteUrlManager,
+				$options
 			);
 			$this->dataSets['returnMode']['sheetURL'] = $this->returnManager->getReturnSheetURL(
 				$returnMode,
 				$this->return,
-				$this->websiteUrlManager
+				$this->websiteUrlManager,
+				$options
 			);
 		}
 	}

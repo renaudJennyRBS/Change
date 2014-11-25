@@ -53,6 +53,11 @@ trait DataComposer
 	protected $section;
 
 	/**
+	 * @var \Rbs\Website\Documents\Page
+	 */
+	protected $page;
+
+	/**
 	 * @var \Change\Documents\DocumentManager
 	 */
 	protected $documentManager;
@@ -75,7 +80,7 @@ trait DataComposer
 	{
 		// Set default context values.
 		$context += ['visualFormats' => [], 'URLFormats' => [], 'dataSetNames' => [], 'data' => [],
-			'website' => null, 'websiteUrlManager' => null, 'section' => null, 'detailed' => false];
+			'website' => null, 'websiteUrlManager' => null, 'section' => null, 'page' => null, 'detailed' => false];
 
 		$this->visualFormats = $context['visualFormats'];
 		$this->URLFormats = $context['URLFormats'];
@@ -84,6 +89,7 @@ trait DataComposer
 		$this->website = $context['website'];
 		$this->websiteUrlManager = $context['websiteUrlManager'];
 		$this->section = $context['section'];
+		$this->page = $context['page'];
 		$this->data = $context['data'];
 
 		return $this;

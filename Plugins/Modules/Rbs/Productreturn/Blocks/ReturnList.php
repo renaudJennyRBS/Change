@@ -94,11 +94,11 @@ class ReturnList extends \Change\Presentation\Blocks\Standard\Block
 		$context->setPage($parameters->getParameter('pageId'));
 		$context->setVisualFormats($parameters->getParameter('imageFormats'));
 		$context->setURLFormats(['canonical']);
+		$context->setDataSetNames(['shipments', 'reshippingConfiguration']);
 
 		$limit = $parameters->getParameter('itemsPerPage');
 		$offset = ($parameters->getParameter('pageNumber') - 1) * $limit;
 		$context->setPagination(['offset' => $offset, 'limit' => $limit]);
 		return $context;
 	}
-
 }

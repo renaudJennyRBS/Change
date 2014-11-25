@@ -6,59 +6,67 @@
 	'active': isEditingLine(shipmentIndex, lineIndex),
 	'success': hasReturnLine(shipmentIndex, lineIndex) && !isEditingLine(shipmentIndex, lineIndex)
 }"%}
-
-{% block geoDirectives %}
-	{% use 'Rbs_Geo/address-editor.twig' %}
-	{{ block('addressEditor') }}
-{% endblock geoDirectives %}
-
-{% block productDirectives %}
-	{% include 'Rbs_Catalog/product-directives.twig' %}
-{% endblock productDirectives %}
-
-{% block cartDirectives %}
-	{% use 'Rbs_Commerce/cart-directives.twig' %}
-	{{ block('rbsCommerceCartLineVisual') }}
-{% endblock cartDirectives %}
-
-{% block orderProcessDirectives %}
-	{% use 'Rbs_Commerce/process-directives.twig' %}
-	{{ block('processShippingStep') }}
-{% endblock orderProcessDirectives %}
-
-{% block returnProcessDirectives %}
-	{% use 'Rbs_Productreturn/return-process-directives.twig' %}
-	{{ block('rbsProductreturnProcess') }}
-	{{ block('rbsProductreturnShipmentLine') }}
-	{{ block('rbsProductreturnReturnLine') }}
-	{{ block('rbsProductreturnReshipping') }}
-{% endblock returnProcessDirectives %}
-
 {% set cacheKey = blockId %}
-<script type="text/javascript">
-	window.__change['{{ cacheKey }}'] = {
-		'orderData': {{ orderData | json_encode | raw}},
-		'processData': {{ processData | json_encode | raw}}
-	};
-</script>
 
-<h1>
-	<span class="pull-right">{{ orderData.common.statusInfos.title }}</span>
-	{{ i18n('m.rbs.order.front.order_title', ['ucf'], {'code': orderData.common.code, 'date': orderData.common.date|transDateTime}) }}
-</h1>
+{% block rbsProductreturnReturnProcessUse %}
+	{% block geoDirectives %}
+		{% use 'Rbs_Geo/address-editor.twig' %}
+		{{ block('addressEditor') }}
+	{% endblock geoDirectives %}
 
-<ul class="pull-right text-right list-unstyled">
-	<li>
-		<a href="{{ functionURL('Rbs_Order_OrderDetail', {'orderId': orderData.common.id}) }}" class="btn btn-default">
-			{{ i18n('m.rbs.productreturn.front.cancel_request', ['ucf']) }}
-		</a>
-	</li>
-</ul>
+	{% block productDirectives %}
+		{% include 'Rbs_Catalog/product-directives.twig' %}
+	{% endblock productDirectives %}
 
-<h2>{{ i18n('m.rbs.productreturn.front.return_request', ['ucf']) }}</h2>
+	{% block cartDirectives %}
+		{% use 'Rbs_Commerce/cart-directives.twig' %}
+		{{ block('rbsCommerceCartLineVisual') }}
+	{% endblock cartDirectives %}
 
-<div data-ng-controller="RbsProductreturnReturnProcessController" data-cache-key="{{ cacheKey }}">
-	<div data-rbs-commerce-process=""
-		data-loading-message="{{ i18n('m.rbs.commerce.front.please_wait_loading', ['ucf', 'etc']) }}">
+	{% block orderProcessDirectives %}
+		{% use 'Rbs_Commerce/process-directives.twig' %}
+		{{ block('processShippingStep') }}
+	{% endblock orderProcessDirectives %}
+
+	{% block returnProcessDirectives %}
+		{% use 'Rbs_Productreturn/return-process-directives.twig' %}
+		{{ block('rbsProductreturnProcess') }}
+		{{ block('rbsProductreturnShipmentLine') }}
+		{{ block('rbsProductreturnReturnLine') }}
+		{{ block('rbsProductreturnReshipping') }}
+	{% endblock returnProcessDirectives %}
+{% endblock rbsProductreturnReturnProcessUse %}
+
+{% block rbsProductreturnReturnProcessDataCache %}
+	<script type="text/javascript">
+		window.__change['{{ cacheKey }}'] = {
+			'orderData': {{ orderData | json_encode | raw}},
+			'processData': {{ processData | json_encode | raw}}
+		};
+	</script>
+{% endblock rbsProductreturnReturnProcessDataCache %}
+
+{% block rbsProductreturnReturnProcessHeader %}
+	<h1>
+		<span class="pull-right">{{ orderData.common.statusInfos.title }}</span>
+		{{ i18n('m.rbs.order.front.order_title', ['ucf'], {'code': orderData.common.code, 'date': orderData.common.date|transDateTime}) }}
+	</h1>
+
+	<ul class="pull-right text-right list-unstyled">
+		<li>
+			<a href="{{ functionURL('Rbs_Order_OrderDetail', {'orderId': orderData.common.id}) }}" class="btn btn-default">
+				{{ i18n('m.rbs.productreturn.front.cancel_request', ['ucf']) }}
+			</a>
+		</li>
+	</ul>
+
+	<h2>{{ i18n('m.rbs.productreturn.front.return_request', ['ucf']) }}</h2>
+{% endblock rbsProductreturnReturnProcessHeader %}
+
+{% block rbsProductreturnReturnProcessMain %}
+	<div data-ng-controller="RbsProductreturnReturnProcessController" data-cache-key="{{ cacheKey }}">
+		<div data-rbs-commerce-process=""
+			data-loading-message="{{ i18n('m.rbs.commerce.front.please_wait_loading', ['ucf', 'etc']) }}">
+		</div>
 	</div>
-</div>
+{% endblock rbsProductreturnReturnProcessMain %}

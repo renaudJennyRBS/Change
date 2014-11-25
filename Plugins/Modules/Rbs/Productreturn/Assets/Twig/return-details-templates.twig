@@ -1,0 +1,192 @@
+{# Used parameters: designation, product, axesInfo #}
+{% block rbsProductreturnDetailsProduct %}
+	<ul class="list-unstyled{% if not (axesInfo | length) %} no-bottom-margin{% endif %}">
+		{% if product %}
+			<li>
+				{% if product.common.URL.canonical %}
+					<a href="{{ product.common.URL.canonical }}">{{ product.common.title }}</a>
+				{% else %}
+					{{ product.common.title }}
+				{% endif %}
+			</li>
+			{% if product.common.reference %}
+				<li>{{ product.common.reference }}</li>
+			{% endif %}
+		{% else %}
+			<li>{{ designation }}</li>
+		{% endif %}
+	</ul>
+	{% if axesInfo | length %}
+		<dl class="dl-inline-items no-bottom-margin">
+			{% for axisInfo in axesInfo %}
+				<dt>{{ axisInfo.name }}</dt>
+				<dd>{{ axisInfo.value }}</dd>
+			{% endfor %}
+		</dl>
+	{% endif %}
+{% endblock rbsProductreturnDetailsProduct %}
+
+{# Used parameter: return, blockId, showOrderLink #}
+{% block rbsProductreturnDetails %}
+	{% block rbsProductreturnDetailsHeader %}
+		<h2 id="return-details-{{ return.common.id }}">
+			{% if return.common.cancellable %}
+				<span class="pull-right">
+					<button class="btn btn-default" type="button" data-ng-click="cancelReturn({{ return.common.id }}, '{{ i18nAttr('m.rbs.productreturn.front.please_wait_ongoing_treatment', ['ucf', 'etc']) }}')">
+						{{ i18n('m.rbs.productreturn.front.cancel_request', ['ucf']) }}
+					</button>
+				</span>
+			{% endif %}
+			{{ i18n('m.rbs.productreturn.front.return_title', ['ucf'], {'code': return.common.code}) }}
+		</h2>
+		{% if showOrderLink and return.order.common.id %}
+			<p>
+				<a href="{{ functionURL('Rbs_Order_OrderDetail', {'orderId': return.order.common.id}) }}">
+					{{ i18n('m.rbs.productreturn.front.for_order_link', ['ucf'], {'code': return.order.common.code, 'date': return.order.common.date | transDateTime}) }}
+				</a>
+			</p>
+		{% endif %}
+		<div class="row">
+			<dl class="dl-horizontal col-md-6">
+				<dt>{{ i18n('m.rbs.productreturn.front.request_date', ['ucf']) }}</dt>
+				<dd>{{ return.common.date | transDateTime }}</dd>
+				<dt>{{ i18n('m.rbs.productreturn.front.status', ['ucf']) }}</dt>
+				<dd>{{ return.common.statusInfos.title }}</dd>
+			</dl>
+			{% if return.common.processingComment %}
+				<dl class="col-md-6">
+					<dt>{{ i18n('m.rbs.productreturn.front.return_processingComment', ['ucf']) }}</dt>
+					<dd>
+						<div data-rbs-max-height="70">
+							<div class="long-string">{{ return.common.processingComment }}</div>
+						</div>
+					</dd>
+				</dl>
+			{% endif %}
+		</div>
+	{% endblock rbsProductreturnDetailsHeader %}
+
+	{% block rbsProductreturnDetailsInstructions %}
+		{% if return.common.statusInfos.code == 'VALIDATION' %}
+			<div class="panel panel-default">
+				<div class="panel-heading">{{ i18n('m.rbs.productreturn.front.return_instructions', ['ucf']) }}</div>
+				<div class="panel-body">
+					{{ i18n('m.rbs.productreturn.front.wait_for_validation', ['ucf']) }}
+				</div>
+			</div>
+		{% elseif return.common.statusInfos.code == 'RECEPTION' %}
+			<div class="panel panel-primary">
+				<div class="panel-heading">{{ i18n('m.rbs.productreturn.front.return_instructions', ['ucf']) }}</div>
+				<div class="panel-body">
+					{{ return.returnMode.instructions }}
+				</div>
+				{% if return.returnMode.sheetURL %}
+					<div class="panel-body">
+						<a class="btn btn-default" href="{{ return.returnMode.sheetURL }}" target="_blank">
+							{{ i18n('m.rbs.productreturn.front.print_the_return_sheet', ['ucf']) }}
+						</a>
+					</div>
+				{% endif %}
+				{% if return.returnMode.stickerURL %}
+					<div class="panel-body">
+						<a class="btn btn-default" href="{{ return.returnMode.stickerURL }}" target="_blank">
+							{{ i18n('m.rbs.productreturn.front.print_the_return_sticker', ['ucf']) }}
+						</a>
+					</div>
+				{% endif %}
+			</div>
+		{% endif %}
+	{% endblock rbsProductreturnDetailsInstructions %}
+
+	{% block rbsProductreturnDetailsLines %}
+		<div class="table-responsive return-lines">
+			<table class="table table-striped table-vertical-middle">
+				<thead>
+					<tr>
+						<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.productreturn.front.reason', ['ucf']) }}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for line in return.lines %}
+						{% block returnLine %}
+							<tr>
+								<td>
+									{% if line.product %}
+										<a title="{{ line.product.common.title }}" href="{{ line.product.common.URL.canonical }}">
+											{% if line.product.common.visuals|length %}
+												<img alt="{{ line.product.common.visuals[0].alt }}"
+													src="{{ line.product.common.visuals[0].cartItem }}" />
+											{% else %}
+												<div class="text-left text-muted">
+													<span class="glyphicon glyphicon-camera" style="font-size: 80px"></span>
+												</div>
+											{% endif %}
+										</a>
+									{% else %}
+										<div class="text-left text-muted">
+											<span class="glyphicon glyphicon-camera" style="font-size: 80px"></span>
+										</div>
+									{% endif %}
+								</td>
+								<td>
+									{% set designation = line.designation %}
+									{% set product = line.product %}
+									{% set axesInfo = line.options.orderLineOptions.axesInfo %}
+									{{ block('rbsProductreturnDetailsProduct') }}
+								</td>
+								<td class="form-inline">
+									{{ line.quantity }}
+								</td>
+								<td>
+									<ul class="list-unstyled">
+										<li><strong>{{ line.options.reasonTitle }}</strong></li>
+										{% if line.reasonPrecisions %}
+											<li data-rbs-max-height="70">
+												{{ i18n('m.rbs.productreturn.front.precisions', ['ucf', 'lab']) }}
+												<span class="long-string">{{ line.reasonPrecisions }}</span>
+											</li>
+										{% endif %}
+										{% if line.reasonAttachedFileURL %}
+											<li>
+												<a href="{{ line.reasonAttachedFileURL }}" target="_blank">
+													{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}
+												</a>
+											</li>
+										{% endif %}
+										<li>
+											{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf', 'lab']) }}
+											{% if not line.options.reshippingProductId %}
+												{{ line.options.preferredProcessingModeTitle }}
+											{% else %}
+												<span class="dropdown">
+													<a href="javascript:;" data-toggle="dropdown">
+														{{ line.options.preferredProcessingModeTitle }}  <span class="caret"></span>
+													</a>
+													<span class="dropdown-menu dropdown-menu-no-list">
+														{% set designation = line.options.reshippingProductTitle %}
+														{% set product = line.reshippingProduct %}
+														{% set axesInfo = line.options.reshippingProductAxesInfos %}
+														{{ block('rbsProductreturnDetailsProduct') }}
+													</span>
+												</span>
+											{% endif %}
+										</li>
+									</ul>
+								</td>
+							</tr>
+						{% endblock returnLine %}
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endblock rbsProductreturnDetailsLines %}
+
+	{% block rbsProductreturnDetailsShipments %}
+		{% if return.shipments | length %}
+			{% include 'Rbs_Order/shipment-list.twig' with {'shipments': return.shipments, 'blockId': blockId} %}
+		{% endif %}
+	{% endblock rbsProductreturnDetailsShipments %}
+{% endblock rbsProductreturnDetails %}

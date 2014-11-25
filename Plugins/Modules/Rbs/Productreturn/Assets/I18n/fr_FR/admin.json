@@ -62,6 +62,12 @@
 	"return_process_label":{
 		"message":"effectuer un retour"
 	},
+	"return_sheet_function":{
+		"message":"bon de retour imprimmable"
+	},
+	"return_sheet_label":{
+		"message":"bon de retour imprimmable"
+	},
 	"return_list_function":{
 		"message":"liste des retour"
 	},

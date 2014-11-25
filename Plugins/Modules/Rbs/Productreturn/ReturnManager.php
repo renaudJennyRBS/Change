@@ -126,7 +126,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onDefaultCanViewReturn(\Change\Events\Event $event)
 	{
-		$return = $event->getParam('return');
+		$return = $event->getParam('productReturn');
 		if (is_numeric($return))
 		{
 			$return = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($return);
@@ -1003,12 +1003,18 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Rbs\Productreturn\Documents\ReturnMode $returnMode
 	 * @param \Rbs\Productreturn\Documents\ProductReturn $return
 	 * @param \Change\Http\Web\UrlManager $urlManager
+	 * @param array $options
 	 * @return string|null
 	 */
-	public function getReturnStickerURL($returnMode, $return, $urlManager)
+	public function getReturnStickerURL($returnMode, $return, $urlManager, array $options)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(['returnMode' => $returnMode, 'productReturn' => $return, 'urlManager' => $urlManager]);
+		$args = $em->prepareArgs([
+			'returnMode' => $returnMode,
+			'productReturn' => $return,
+			'urlManager' => $urlManager,
+			'options' => $options
+		]);
 		$em->trigger('getReturnStickerURL', $this, $args);
 		if (isset($args['stickerURL']))
 		{
@@ -1033,7 +1039,8 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 
 		$urlManager = $event->getParam('urlManager');
 		$returnMode = $event->getParam('returnMode');
-		if (!$urlManager || !($returnMode instanceof \Rbs\Productreturn\Documents\ReturnModeStatic))
+		if (!($urlManager instanceof \Change\Http\Web\UrlManager)
+			|| !($returnMode instanceof \Rbs\Productreturn\Documents\ReturnModeStatic))
 		{
 			return;
 		}
@@ -1050,12 +1057,18 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Rbs\Productreturn\Documents\ReturnMode $returnMode
 	 * @param \Rbs\Productreturn\Documents\ProductReturn $return
 	 * @param \Change\Http\Web\UrlManager $urlManager
+	 * @param array $options
 	 * @return string|null
 	 */
-	public function getReturnSheetURL($returnMode, $return, $urlManager)
+	public function getReturnSheetURL($returnMode, $return, $urlManager, array $options)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(['returnMode' => $returnMode, 'productReturn' => $return, 'urlManager' => $urlManager]);
+		$args = $em->prepareArgs([
+			'returnMode' => $returnMode,
+			'productReturn' => $return,
+			'urlManager' => $urlManager,
+			'options' => $options
+		]);
 		$em->trigger('getReturnSheetURL', $this, $args);
 		if (isset($args['sheetURL']))
 		{
@@ -1079,8 +1092,25 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$urlManager = $event->getParam('urlManager');
-		$returnMode = $event->getParam('returnMode');
-		// TODO
+		$return = $event->getParam('productReturn');
+		if (!($urlManager instanceof \Change\Http\Web\UrlManager)
+			|| !($return instanceof \Rbs\Productreturn\Documents\ProductReturn))
+		{
+			return;
+		}
+
+		$params = ['documentId' => $return->getId()];
+		$options = $event->getParam('options');
+		if (is_array($options) && isset($options['themeName']))
+		{
+			$params['themeName'] = $options['themeName'];
+		}
+
+		$uri = $urlManager->getByFunction('Rbs_Productreturn_ReturnSheet', $params);
+		if ($uri)
+		{
+			$event->setParam('sheetURL', $uri->normalize()->toString());
+		}
 	}
 
 	/**

@@ -1,4 +1,7 @@
 {
+	"return": {
+		"message": "retour"
+	},
 	"make_a_return": {
 		"message": "effectuer un retour"
 	},
@@ -127,5 +130,17 @@
 	},
 	"please_wait_loading_data": {
 		"message": "Chargement des données du produit. Merci de patienter."
+	},
+	"return_sheet_title": {
+		"message": "bon de retour n°$code$"
+	},
+	"reshipping_product": {
+		"message": "produit de remplacement"
+	},
+	"order": {
+		"message": "commande"
+	},
+	"customer": {
+		"message": "client"
 	}
 }
