@@ -999,6 +999,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			try
 			{
 				$this->getTransactionManager()->begin();
+				/** @var \Rbs\Catalog\Documents\ProductListItem $item */
 				foreach ($items as $item)
 				{
 					$this->updateItemOrdering($item, $options);
@@ -1012,6 +1013,9 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
+	/**
+	 * @var array
+	 */
 	protected $cachedVariantProductsData = [];
 
 	/**

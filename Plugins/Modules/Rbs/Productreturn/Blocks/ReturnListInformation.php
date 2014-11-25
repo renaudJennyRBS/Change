@@ -25,9 +25,5 @@ class ReturnListInformation extends \Change\Presentation\Blocks\Information
 		$this->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_list_label', $ucf));
 		$this->addInformationMeta('itemsPerPage', \Change\Documents\Property::TYPE_INTEGER, true, 5)
 			->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_list_items_per_page', $ucf));
-
-		// Declare your parameters here.
-		//$this->addInformationMeta('myParameterName', \Change\Documents\Property::TYPE_INTEGER)
-		//	->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_list_my_parameter_name', $ucf));
 	}
 }

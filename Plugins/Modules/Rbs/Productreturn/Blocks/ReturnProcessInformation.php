@@ -23,9 +23,5 @@ class ReturnProcessInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.productreturn.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_process_label', $ucf));
-
-		// Declare your parameters here.
-		//$this->addInformationMeta('myParameterName', \Change\Documents\Property::TYPE_INTEGER)
-		//	->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_process_my_parameter_name', $ucf));
 	}
 }

@@ -17,7 +17,6 @@ use Change\Http\Web\Result\Resource;
  */
 class Download
 {
-
 	const EVENT_GET_DOWNLOAD_URI = "getDownloadUri";
 
 	function __invoke()
@@ -112,4 +111,4 @@ class Download
 		return null;
 	}
 
-} 
+}

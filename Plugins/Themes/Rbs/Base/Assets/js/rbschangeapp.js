@@ -66,7 +66,6 @@
 				if (isNaN(scope.maxHeight) || scope.maxHeight < 0) {
 					scope.maxHeight = 0;
 				}
-				console.log(angular.copy(scope.maxHeight));
 
 				scope.toggle = function() {
 					scope.deployed = !scope.deployed;
