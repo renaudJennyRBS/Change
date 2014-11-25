@@ -46,8 +46,8 @@
 									<a href="" ng-if="$first" ng-click="applyValueOnAll(sku.price.value)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
 								</td>
 								<td>
-									<input type="text" rbs-smart-float="" class="form-control input-sm" ng-model="sku.price.ecoTax"/>
-									<a href="" ng-if="$first" ng-click="applyEcoTaxOnAll(sku.price.ecoTax)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
+									<input type="text" rbs-smart-float="" class="form-control input-sm" ng-model="sku.price.options.ecoTax"/>
+									<a href="" ng-if="$first" ng-click="applyEcoTaxOnAll(sku.price.options.ecoTax)">{{ i18n('m.rbs.catalog.admin.variantgroup_apply_on_all', ['ucf']) }}</a>
 								</td>
 								<td>
 									<table>

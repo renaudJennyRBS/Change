@@ -1,9 +1,13 @@
-{% use 'Rbs_Commerce/cart-directives.twig' %}
+{% block rbsCommerceCartUse %}
+	{% use 'Rbs_Commerce/cart-directives.twig' %}
+{% endblock rbsCommerceCartUse %}
 
 {% if cartData %}
+	{% block rbsCommerceCartDataCache %}
 	<script type="text/javascript">
 		window.__change['cartData'] = {{ cartData | json_encode | raw}};
 	</script>
+	{% endblock rbsCommerceCartDataCache %}
 
 	{{ block('cartStructure') }}
 	{{ block('cartLine') }}

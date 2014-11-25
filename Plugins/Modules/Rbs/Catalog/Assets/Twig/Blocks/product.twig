@@ -1,16 +1,100 @@
-{% block productDirectives %}
-	{% include 'Rbs_Catalog/product-directives.twig' %}
-{% endblock %}
+{% block rbsCatalogProductUse %}
+	{% use 'Rbs_Catalog/product-directives.twig' %}
+	{{ block('rbsCatalogAddToCartPopin') }}
+	{{ block('rbsCatalogProductPictograms') }}
+	{{ block('rbsCatalogAttributes') }}
+	{{ block('rbsCatalogProductAvailability') }}
+	{{ block('rbsCatalogProductPrice') }}
+
+	{% use 'Rbs_Catalog/product-detail.twig' %}
+{% endblock rbsCatalogProductUse %}
+
+{% block rbsCatalogProductDataCache %}
+	<script type="text/javascript">
+		window.__change['{{ blockId }}'] = {{ productData | json_encode | raw}};
+	</script>
+{% endblock rbsCatalogProductDataCache %}
+
 {% if productData.common.type == 'variant' %}
-	{% block variantProduct %}
-		{% include 'Rbs_Catalog/Blocks/Product/detail-variant.twig' %}
-	{% endblock %}
+	{% block rbsCatalogVariantProduct %}
+		{{ block('rbsCatalogAddToCartVariantProduct') }}
+		{{ block('rbsCatalogProductVariantSelector') }}
+		<article itemscope="" itemtype="http://schema.org/Product" class="product-details"
+				data-ng-controller="RbsCatalogVariantProductController" data-cache-key="{{ blockId }}">
+			{{ block('rbsCatalogProductDataLoading') }}
+			<div class="row">
+				<div class="col-sm-12">
+					<header>{{ block('rbsCatalogProductHeader') }}</header>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6 col-md-8">
+					{{ block('rbsCatalogProductVisuals') }}
+				</div>
+				<div class="col-sm-6 col-md-4">
+					{{ block('rbsCatalogProductOfferVariant') }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					{{ block('rbsCatalogProductDescription') }}
+					{{ block('rbsCatalogProductAttributes') }}
+				</div>
+			</div>
+		</article>
+	{% endblock rbsCatalogVariantProduct %}
 {% elseif productData.common.type == 'set' %}
-	{% block productSet %}
-		{% include 'Rbs_Catalog/Blocks/Product/detail-set.twig' %}
-	{% endblock %}
+	{% block rbsCatalogProductSet %}
+		{{ block('rbsCatalogAddToCartSetItemProduct') }}
+		<article itemscope="" itemtype="http://schema.org/Product" class="product-details"
+				data-ng-controller="RbsCatalogProductSetController" data-cache-key="{{ blockId }}">
+			{{ block('rbsCatalogProductDataLoading') }}
+			<div class="row">
+				<div class="col-sm-12">
+					<header>{{ block('rbsCatalogProductHeader') }}</header>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6 col-md-8">
+					{{ block('rbsCatalogProductVisuals') }}
+				</div>
+				<div class="col-sm-6 col-md-4">
+					{{ block('rbsCatalogProductOfferSet') }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					{{ block('rbsCatalogProductDescription') }}
+					{{ block('rbsCatalogProductAttributes') }}
+				</div>
+			</div>
+		</article>
+	{% endblock rbsCatalogProductSet %}
 {% else %}
-	{% block simpleProduct %}
-		{% include 'Rbs_Catalog/Blocks/Product/detail-simple.twig' %}
-	{% endblock %}
+	{% block rbsCatalogSimpleProduct %}
+		{{ block('rbsCatalogAddToCartSimpleProduct') }}
+		<article itemscope="" itemtype="http://schema.org/Product" class="product-details"
+				data-ng-controller="RbsCatalogSimpleProductController" data-cache-key="{{ blockId }}">
+			{{ block('rbsCatalogProductDataLoading') }}
+			<div class="row">
+				<div class="col-sm-12">
+					<header>{{ block('rbsCatalogProductHeader') }}</header>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6 col-md-8">
+					{{ block('rbsCatalogProductVisuals') }}
+				</div>
+				<div class="col-sm-6 col-md-4">
+					{{ block('rbsCatalogProductOfferSimple') }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					{{ block('rbsCatalogProductDescription') }}
+					{{ block('rbsCatalogProductAttributes') }}
+				</div>
+			</div>
+		</article>
+	{% endblock rbsCatalogSimpleProduct %}
 {% endif %}

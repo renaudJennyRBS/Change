@@ -134,6 +134,14 @@ class Price extends \Compilation\Rbs\Price\Documents\Price implements \Rbs\Price
 		{
 			$this->options->fromArray($optionsData);
 		}
+
+		if ($this->getEcoTax()) {
+			$this->options->set('ecoTax', $this->getEcoTax());
+		}
+
+		if ($this->getDiscountDetail()) {
+			$this->options->set('discountDetail', $this->getDiscountDetail());
+		}
 	}
 
 

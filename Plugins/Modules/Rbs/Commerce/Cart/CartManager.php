@@ -1381,6 +1381,11 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 					$options['lineItem'] = $item;
 					$price = $this->getPriceManager()->getPriceBySku($sku, $options);
 					$item->setPrice($price);
+					if ($price)
+					{
+						$priceOptions = $price->getOptions()->toArray();
+						$line->getOptions()->set('price', count($priceOptions) ? $priceOptions : null);
+					}
 				}
 				else
 				{

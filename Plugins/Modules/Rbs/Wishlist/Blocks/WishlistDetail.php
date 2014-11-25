@@ -32,15 +32,13 @@ class WishlistDetail extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
+		$parameters->addParameterMeta('imageFormats', 'listItem,pictogram');
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
 
 		$parameters->addParameterMeta('displayPricesWithoutTax');
 		$parameters->addParameterMeta('displayPricesWithTax');
-		$parameters->addParameterMeta('imageFormats', 'listItem,pictogram');
-
 		$parameters->addParameterMeta('userId');
-
 		$parameters->addParameterMeta('webStoreId');
 		$parameters->addParameterMeta('billingAreaId');
 		$parameters->addParameterMeta('zone');

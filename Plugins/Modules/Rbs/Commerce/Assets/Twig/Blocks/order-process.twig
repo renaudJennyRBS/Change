@@ -1,17 +1,22 @@
-{% use 'Rbs_Commerce/cart-directives.twig' %}
-{% use 'Rbs_Commerce/process-directives.twig' %}
-{% use 'Rbs_Geo/address-editor.twig' %}
+{% block rbsCommerceProcessUse %}
+	{% use 'Rbs_Commerce/cart-directives.twig' %}
+	{% use 'Rbs_Commerce/process-directives.twig' %}
+	{% use 'Rbs_Geo/address-editor.twig' %}
+
+	{{ block('addressEditor') }}
+	{{ block('processMenu') }}
+	{{ block('processStructure') }}
+	{{ block('processLine') }}
+	{{ block('processIdentificationStep') }}
+	{{ block('processShippingStep') }}
+	{{ block('processPaymentStep') }}
+{% endblock rbsCommerceProcessUse %}
+
+{% block rbsCommerceCartDataCache %}
 <script type="text/javascript">
 	window.__change['cartData'] = {{ cartData | json_encode | raw}};
 </script>
-
-{{ block('addressEditor') }}
-{{ block('processMenu') }}
-{{ block('processStructure') }}
-{{ block('processLine') }}
-{{ block('processIdentificationStep') }}
-{{ block('processShippingStep') }}
-{{ block('processPaymentStep') }}
+{% endblock rbsCommerceCartDataCache %}
 
 {% block process %}
 	{% if not cartData.context.acceptTermsAndConditions %}

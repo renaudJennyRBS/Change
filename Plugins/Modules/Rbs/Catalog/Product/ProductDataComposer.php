@@ -610,12 +610,9 @@ class ProductDataComposer
 				$baseValue = $price->getBasePriceValue();
 				$zone = $this->getZone();
 
-				if ($price instanceof \Rbs\Price\Documents\Price)
-				{
-					if ($price->getEcoTax())
-					{
-						$this->dataSets['price']['ecoTax'] = $price->getEcoTax();
-					}
+				$options = $price->getOptions()->toArray();
+				if (count($options)) {
+					$this->dataSets['price']['options'] = $options;
 				}
 
 				if ($zone)

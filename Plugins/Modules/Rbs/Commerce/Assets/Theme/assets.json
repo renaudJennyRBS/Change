@@ -2,8 +2,7 @@
 	"blocks" : {
 		"Cart": {
 			"jsAssets": [
-				"Theme/Rbs/Base/Rbs_Commerce/js/cart.js",
-				"Theme/Rbs/Base/Rbs_Commerce/js/shipping-fees-evaluation.js"
+				"Theme/Rbs/Base/Rbs_Commerce/js/cart.js"
 			]
 		},
 		"OrderProcess": {

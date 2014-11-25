@@ -1,9 +1,16 @@
-{% block productDirectives %}
-	{% include 'Rbs_Catalog/product-directives.twig' %}
-{% endblock %}
-
 {% if rows %}
+	{% block rbsCatalogProductListUse %}
+		{% use 'Rbs_Catalog/product-directives.twig' %}
+		{{ block('rbsCatalogAddToCartPopin') }}
+		{{ block('rbsCatalogAddToCartListItem') }}
+		{{ block('rbsCatalogProductPictograms') }}
+	{% endblock rbsCatalogProductListUse %}
+
+	{% block rbsCatalogProductListHeader %}
 	<h1 id="product-list-title">{{ parameters.title }}</h1>
+	{% endblock rbsCatalogProductListHeader %}
+
+	{% block rbsCatalogProductList %}
 	<div id="myCarousel{{ blockId }}" class="carousel slide" data-ride="carousel">
 		<div class="carousel-inner">
 			{% for i in range(0,slideCount-1) %}
@@ -14,9 +21,9 @@
 							{% for row in rows|slice(slideNumber * itemsPerSlide, itemsPerSlide) %}
 								<li>
 									<div class="grid-list-cell">
-										{% block productItem %}
+										{% block rbsCatalogProductItem %}
 											{% include 'Rbs_Catalog/product-list-item.twig' with {'productData': row} %}
-										{% endblock %}
+										{% endblock rbsCatalogProductItem %}
 									</div>
 								</li>
 							{% endfor %}
@@ -25,6 +32,7 @@
 				</div>
 			{% endfor %}
 		</div>
+		{% block rbsCatalogProductListControls %}
 		<!-- Controls -->
 		<a class="left carousel-control" href="#myCarousel{{ blockId }}" data-slide="prev">
 			<span class="icon-prev"></span>
@@ -32,5 +40,7 @@
 		<a class="right carousel-control" href="#myCarousel{{ blockId }}" data-slide="next">
 			<span class="icon-next"></span>
 		</a>
+		{% endblock rbsCatalogProductListControls %}
 	</div>
+	{% endblock rbsCatalogProductList %}
 {% endif %}
