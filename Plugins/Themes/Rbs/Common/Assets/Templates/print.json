@@ -1,0 +1,17 @@
+{
+	"editableContent": {
+		"themeSelector": {
+			"id": "themeSelector",
+			"type": "block",
+			"name": "Rbs_Theme_ThemeSelector",
+			"visibility": "raw",
+			"parameters": { "TTL": 3600 }
+		},
+		"mainContent": {
+			"id": "mainContent",
+			"grid": 12,
+			"type": "container",
+			"parameters": {}
+		}
+	}
+}
