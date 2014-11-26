@@ -79,7 +79,7 @@
 				};
 
 				this.getCartData = function() {
-					return scope.cartData = cartData;
+					return scope.cartData;
 				};
 
 				this.setCartData = function(cartData) {

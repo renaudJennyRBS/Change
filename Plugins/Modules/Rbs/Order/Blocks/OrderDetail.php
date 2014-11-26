@@ -188,7 +188,11 @@ class OrderDetail extends Block
 
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
-		$context->setWebsite($event->getParam('website'));
+		$section = $event->getParam('section');
+		if ($section)
+		{
+			$context->setSection($section);
+		}
 		$orderData = $commerceServices->getOrderManager()->getOrderData($order, $context->toArray());
 		$attributes['orderData'] = $orderData;
 
@@ -204,7 +208,6 @@ class OrderDetail extends Block
 				}
 			}
 		}
-
 		return 'order-detail.twig';
 	}
 

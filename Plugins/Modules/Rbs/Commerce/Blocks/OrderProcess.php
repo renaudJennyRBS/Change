@@ -99,7 +99,12 @@ class OrderProcess extends Block
 			if ($cart && !$cart->isEmpty())
 			{
 				$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
-				$context->setWebsite($event->getParam('website'));
+				$section = $event->getParam('section');
+				if ($section)
+				{
+					$context->setSection($section);
+				}
+				$context->setPage($event->getParam('page'));
 				$contextArray = $context->toArray();
 
 				$cartData = $commerceServices->getCartManager()->getCartData($cartIdentifier, $contextArray);

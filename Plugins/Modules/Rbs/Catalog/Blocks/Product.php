@@ -47,7 +47,6 @@ class Product extends Block
 			$parameters->setParameterValue('pageId', $page->getId());
 		}
 
-
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		$this->setCommerceContextParameters($commerceServices->getContext(), $parameters);
@@ -95,6 +94,11 @@ class Product extends Block
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 			$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+			$section = $event->getParam('section');
+			if ($section)
+			{
+				$context->setSection($section);
+			}
 
 			$productData = $catalogManager->getProductData($productId, $context->toArray());
 

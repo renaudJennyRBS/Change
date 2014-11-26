@@ -188,7 +188,11 @@ class ProductList extends Block
 			$commerceServices = $event->getServices('commerceServices');
 
 			$context = $this->populateContext($application, $documentManager, $parameters);
-
+			$section = $event->getParam('section');
+			if ($section)
+			{
+				$context->setSection($section);
+			}
 			$context->addData('listId', $productList->getId());
 
 			$contextArray = $context->toArray();
@@ -226,6 +230,7 @@ class ProductList extends Block
 		$limit = $parameters->getParameter('itemsPerPage');
 		$offset = ($pageNumber - 1) * $limit;
 		$context->setPagination([$offset, $limit]);
+
 		$context->setPage($parameters->getParameter('pageId'));
 
 		$context->addData('webStoreId', $parameters->getParameter('webStoreId'));
