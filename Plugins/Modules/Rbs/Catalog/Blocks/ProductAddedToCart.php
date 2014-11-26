@@ -79,6 +79,12 @@ class ProductAddedToCart extends \Change\Presentation\Blocks\Standard\Block
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
 			$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+			$section = $event->getParam('section');
+			if ($section)
+			{
+				$context->setSection($section);
+			}
+
 			$productData = $catalogManager->getProductData($productId, $context->toArray());
 
 			$attributes['productData'] = $productData;
@@ -100,7 +106,6 @@ class ProductAddedToCart extends \Change\Presentation\Blocks\Standard\Block
 		$context->setDetailed(false);
 		$context->setVisualFormats($parameters->getParameter('imageFormats'));
 		$context->setPage($parameters->getParameter('pageId'));
-
 		$context->addData('webStoreId', $parameters->getParameter('webStoreId'));
 		$context->addData('billingAreaId', $parameters->getParameter('billingAreaId'));
 		$context->addData('zone', $parameters->getParameter('zone'));

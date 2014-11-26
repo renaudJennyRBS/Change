@@ -74,7 +74,12 @@ class Cart extends Block
 			$commerceServices = $event->getServices('commerceServices');
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
-			$context->setWebsite($event->getParam('website'));
+			$section = $event->getParam('section');
+			if ($section)
+			{
+				$context->setSection($section);
+			}
+			$context->setPage($event->getParam('page'));
 			$cartData = $commerceServices->getCartManager()->getCartData($cartIdentifier, $context->toArray());
 			$attributes['cartData'] = $cartData;
 		}
