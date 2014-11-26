@@ -1,5 +1,5 @@
 {% block processMenu %}
-<script type="text/ng-template" id="/menu.static.tpl">
+<script type="text/ng-template" id="/rbsCommerceProcessMenu.tpl">
 	<ol class="nav nav-stacked nav-pills">
 		<li>
 			<a href="{{ currentURL(null, 'cart') }}" data-target="#cart">
@@ -65,7 +65,7 @@
 			<div data-ng-show="loading" class="modal" style="display: block;">
 				<div class="modal-dialog">
 					<div class="modal-content text-center well">
-						<p>{{ i18n('m.rbs.commerce.front.please_wait_loading', ['ucf', 'etc']) | raw }}</p>
+						<p>{{ i18n('m.rbs.commerce.front.please_wait_loading', ['ucf', 'etc']) }}</p>
 						<img alt="" src="data:image/gif;base64,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" />
 					</div>
 				</div>
@@ -204,7 +204,7 @@
 
 {% block processIdentificationStep %}
 	<script type="text/ng-template" id="/rbsCommerceIdentificationStep.tpl">
-		<h2>{{ i18n('m.rbs.commerce.front.process_step_identification', ['ucf']) }}</h2>
+		<h2 data-ng-hide="hideStepTitle">{{ i18n('m.rbs.commerce.front.process_step_identification', ['ucf']) }}</h2>
 		<ul class="text-danger" data-ng-if="processData.errors.length">
 			<li data-ng-repeat="error in processData.errors">(= error =)</li>
 		</ul>
@@ -292,7 +292,8 @@
 								<input id="rbs-order-process-confirm-email" data-ng-model="processData.confirmEmail"
 										type="email" name="confirmEmail" required="required" class="form-control"
 										placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
-								<p class="text-danger" data-ng-show="emailForm.confirmEmail.$dirty && emailForm.confirmEmail.$invalid">
+								<p class="text-danger"
+									data-ng-show="emailForm.confirmEmail.$dirty && emailForm.confirmEmail.$invalid">
 									{{ i18n('c.constraints.emailaddressinvalid', ['ucf']) }}
 								</p>
 								<p class="text-danger" data-ng-show="!emailForm.$invalid && !canSetEmail()">
@@ -339,7 +340,7 @@
 
 {% block processShippingStep %}
 	<script type="text/ng-template" id="/rbsCommerceShippingStep.tpl">
-		<h2>{{ i18n('m.rbs.commerce.front.process_step_shipping', ['ucf']) }}</h2>
+		<h2 data-ng-hide="hideStepTitle">{{ i18n('m.rbs.commerce.front.process_step_shipping', ['ucf']) }}</h2>
 		<div data-ng-if="processData.isCurrent">
 			<ul class="text-danger" data-ng-if="processData.errors.length">
 				<li data-ng-repeat="error in processData.errors">(= error =)</li>
@@ -350,23 +351,23 @@
 				<div class="panel-body" data-ng-if="hasCategory('store')">
 					<h3>{{ i18n('m.rbs.commerce.front.store_delivery', ['ucf']) }}</h3>
 					<div data-rbs-commerce-shipping-other-step="" data-shipping-mode="shippingModeData"
-							data-user-id="processData.userId" data-user-addresses="userAddresses"
-							data-process-id="processData.processId"
-							data-shipping-modes-info="shippingModesInfo.store"></div>
+						data-user-id="processData.userId" data-user-addresses="userAddresses"
+						data-process-id="processData.processId"
+						data-shipping-modes-info="shippingModesInfo.store"></div>
 				</div>
 				<div class="panel-body" data-ng-if="hasCategory('relay')">
 					<h3>{{ i18n('m.rbs.commerce.front.relay_delivery', ['ucf']) }}</h3>
 					<div data-rbs-commerce-shipping-other-step="" data-shipping-mode="shippingModeData"
-							data-user-id="processData.userId" data-user-addresses="userAddresses"
-							data-process-id="processData.processId"
-							data-shipping-modes-info="shippingModesInfo.relay"></div>
+						data-user-id="processData.userId" data-user-addresses="userAddresses"
+						data-process-id="processData.processId"
+						data-shipping-modes-info="shippingModesInfo.relay"></div>
 				</div>
 				<div class="panel-body" data-ng-if="hasCategory('atHome')">
 					<h3>{{ i18n('m.rbs.commerce.front.at_home_delivery', ['ucf']) }}</h3>
 					<div data-rbs-commerce-shipping-at-home-step="" data-shipping-mode="shippingModeData"
-							data-user-id="processData.userId" data-user-addresses="userAddresses"
-							data-process-id="processData.processId"
-							data-shipping-modes-info="shippingModesInfo.atHome"></div>
+						data-user-id="processData.userId" data-user-addresses="userAddresses"
+						data-process-id="processData.processId"
+						data-shipping-modes-info="shippingModesInfo.atHome"></div>
 				</div>
 			</div>
 			<button class="btn pull-right btn-primary" data-ng-click="next()" data-ng-disabled="!shippingModesValid()">
@@ -381,20 +382,20 @@
 				<div class="panel-body" data-ng-if="isCategory(shippingModeData, 'store')">
 					<h3>{{ i18n('m.rbs.commerce.front.store_delivery', ['ucf']) }}</h3>
 					<div data-rbs-commerce-shipping-other-step="" data-summary="true"
-							data-shipping-mode="shippingModeData"
-							data-shipping-modes-info="shippingModesInfo.store"></div>
+						data-shipping-mode="shippingModeData"
+						data-shipping-modes-info="shippingModesInfo.store"></div>
 				</div>
 				<div class="panel-body" data-ng-if="isCategory(shippingModeData, 'relay')">
 					<h3>{{ i18n('m.rbs.commerce.front.relay_delivery', ['ucf']) }}</h3>
 					<div data-rbs-commerce-shipping-other-step="" data-summary="true"
-							data-shipping-mode="shippingModeData"
-							data-shipping-modes-info="shippingModesInfo.relay"></div>
+						data-shipping-mode="shippingModeData"
+						data-shipping-modes-info="shippingModesInfo.relay"></div>
 				</div>
 				<div class="panel-body" data-ng-if="isCategory(shippingModeData, 'atHome')">
 					<h3>{{ i18n('m.rbs.commerce.front.at_home_delivery', ['ucf']) }}</h3>
 					<div data-rbs-commerce-summary-shipping-at-home-step=""
-							data-shipping-mode="shippingModeData"
-							data-shipping-modes-info="shippingModesInfo.atHome"></div>
+						data-shipping-mode="shippingModeData"
+						data-shipping-modes-info="shippingModesInfo.atHome"></div>
 				</div>
 			</div>
 			<div class="clearfix">
@@ -410,15 +411,16 @@
 	{% block rbsCommerceModeSelector %}
 		<script type="text/ng-template" id="/rbsCommerceModeSelector.tpl">
 			<img class="pull-right" data-ng-show="shippingModeInfo.presentation.visual"
-					alt="(= shippingModeInfo.presentation.visual.alt =)"
-					data-ng-src="(= shippingModeInfo.presentation.visual.detailThumbnail =)" />
+				alt="(= shippingModeInfo.presentation.visual.alt =)"
+				data-ng-src="(= shippingModeInfo.presentation.visual.detailThumbnail =)" />
 			<label>
 				<input type="radio" data-ng-model="shippingMode.id" data-ng-value="shippingModeInfo.common.id" />
 				(= shippingModeInfo.common.title =)
 			</label>
 			<div data-ng-show="showPrices">
 				<span>{{ i18n('m.rbs.commerce.front.shipping_fee', ['ucf', 'lab']) }}</span>
-					<span class="price" data-ng-show="showPrices.displayPricesWithoutTax && shippingModeInfo.fee.amountWithoutTaxes">
+					<span data-ng-show="showPrices.displayPricesWithoutTax && shippingModeInfo.fee.amountWithoutTaxes"
+						class="price">
 						(= shippingModeInfo.fee.amountWithoutTaxes | rbsFormatPrice:showPrices.currencyCode =)
 						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
 							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
@@ -437,261 +439,270 @@
 	{%  endblock rbsCommerceModeSelector %}
 
 	{% block rbsCommerceShippingAtHomeStep %}
-	<script type="text/ng-template" id="/rbsCommerceSummaryShippingAtHomeStep.tpl">
-		<div class="row">
-			<div class="col-md-4">
-				<address class="no-bottom-margin" data-ng-show="shippingMode.address">
-					<strong>(= shippingMode.address.lines[0] =)</strong>
-					<div data-ng-repeat="addressLine in shippingMode.address.lines track by $index" data-ng-show="!$first">(= addressLine =)</div>
-				</address>
-			</div>
-			<div class="col-md-8">
-				<img class="pull-right" data-ng-show="shippingModeInfo.presentation.visual"
+		<script type="text/ng-template" id="/rbsCommerceSummaryShippingAtHomeStep.tpl">
+			<div class="row">
+				<div class="col-md-4">
+					<address class="no-bottom-margin" data-ng-show="shippingMode.address">
+						<strong>(= shippingMode.address.lines[0] =)</strong>
+						<div data-ng-repeat="addressLine in shippingMode.address.lines track by $index" data-ng-show="!$first">
+							(= addressLine =)
+						</div>
+					</address>
+				</div>
+				<div class="col-md-8">
+					<img class="pull-right" data-ng-show="shippingModeInfo.presentation.visual"
 						alt="(= shippingModeInfo.presentation.visual.alt =)"
 						data-ng-src="(= shippingModeInfo.presentation.visual.detailThumbnail =)" >
-				<label>
-					(= shippingModeInfo.common.title =)
-				</label>
-				<div class="small" data-ng-bind-html="trustHtml(shippingModeInfo.presentation.description)"></div>
+					<label>
+						(= shippingModeInfo.common.title =)
+					</label>
+					<div class="small" data-ng-bind-html="trustHtml(shippingModeInfo.presentation.description)"></div>
+				</div>
 			</div>
-		</div>
-	</script>
+		</script>
 
-<script type="text/ng-template" id="/rbsCommerceShippingAtHomeStep.tpl">
-	<div data-ng-hide="shippingMode.edition">
-		<div class="row">
-			<div class="col-md-4">
-				<address class="no-bottom-margin" data-ng-show="atHomeAddress.lines.length">
-					<strong>(= atHomeAddress.lines[0] =)</strong>
-					<div data-ng-repeat="addressLine in atHomeAddress.lines track by $index" data-ng-show="!$first">(= addressLine =)</div>
-				</address>
-				<button class="btn btn-default" data-ng-click="editAddress()">
-					{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
-				</button>
-			</div>
-			<div class="col-md-8">
-				<div data-ng-show="!loadShippingModes && !shippingMode.allowedShippingModesInfo.length">
-					{{ i18n('m.rbs.commerce.front.no_shipping_mode_available', ['ucf']) }}
-				</div>
-				<div data-ng-repeat="allowedShippingModeInfo in shippingMode.allowedShippingModesInfo track by $index">
-					<div rbs-commerce-mode-selector="" data-show-prices="showPrices"
-							data-shipping-mode="shippingMode" data-shipping-mode-info="allowedShippingModeInfo"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div data-ng-show="shippingMode.edition">
-		<div data-ng-show="userAddresses.length" class="row">
-			<div data-ng-repeat-start="address in userAddresses" class="col-md-6 col-lg-4">
-				<h4>(= address.common.name =)</h4>
-				<address>
-					<strong>(= address.lines[0] =)</strong>
-					<div data-ng-repeat="line in address.lines track by $index" data-ng-show="!$first">
-						(= line =)
+		<script type="text/ng-template" id="/rbsCommerceShippingAtHomeStep.tpl">
+			<div data-ng-hide="shippingMode.edition">
+				<div class="row">
+					<div class="col-md-4">
+						<address class="no-bottom-margin" data-ng-show="atHomeAddress.lines.length">
+							<strong>(= atHomeAddress.lines[0] =)</strong>
+							<div data-ng-repeat="addressLine in atHomeAddress.lines track by $index" data-ng-show="!$first">
+								(= addressLine =)
+							</div>
+						</address>
+						<button class="btn btn-default" data-ng-click="editAddress()">
+							{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+						</button>
 					</div>
-				</address>
-				<p>
-					<button type="button" class="btn btn-sm btn-primary"
-							data-ng-click="selectUserAddress(address)" >
-						{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
-					</button>
-				</p>
-			</div>
-			<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg-block"></div>
-			<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md-block"></div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<ul class="text-danger" data-ng-if="matchingZoneError">
-					<li>(= matchingZoneError =)</li>
-				</ul>
-				<div data-rbs-geo-address-editor="" data-address="atHomeAddress"
-						data-manage-name="(= userId ? 'optional' : 'none' =)"
-						data-zone-code="shippingMode.shippingZone" data-valid="atHomeAddressIsValid">
+					<div class="col-md-8">
+						<div data-ng-show="!loadShippingModes && !shippingMode.allowedShippingModesInfo.length">
+							{{ i18n('m.rbs.commerce.front.no_shipping_mode_available', ['ucf']) }}
+						</div>
+						<div data-ng-repeat="allowedShippingModeInfo in shippingMode.allowedShippingModesInfo track by $index">
+							<div data-rbs-commerce-mode-selector="" data-show-prices="showPrices"
+								data-shipping-mode="shippingMode" data-shipping-mode-info="allowedShippingModeInfo"></div>
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3">
-				<button type="button" class="btn btn-sm btn-primary" data-ng-click="useAddress()" data-ng-disabled="!atHomeAddressIsValid">
-					{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
-				</button>
+			<div data-ng-show="shippingMode.edition">
+				<div data-ng-show="userAddresses.length" class="row">
+					<div data-ng-repeat-start="address in userAddresses" class="col-md-6 col-lg-4">
+						<h4>(= address.common.name =)</h4>
+						<address>
+							<strong>(= address.lines[0] =)</strong>
+							<div data-ng-repeat="line in address.lines track by $index" data-ng-show="!$first">
+								(= line =)
+							</div>
+						</address>
+						<p>
+							<button type="button" class="btn btn-sm btn-primary"data-ng-click="selectUserAddress(address)">
+								{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
+							</button>
+						</p>
+					</div>
+					<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg-block"></div>
+					<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md-block"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<ul class="text-danger" data-ng-if="matchingZoneError">
+							<li>(= matchingZoneError =)</li>
+						</ul>
+						<div data-rbs-geo-address-editor="" data-address="atHomeAddress"
+							data-manage-name="(= userId ? 'optional' : 'none' =)"
+							data-zone-code="shippingMode.shippingZone" data-valid="atHomeAddressIsValid">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3">
+						<button type="button" class="btn btn-sm btn-primary" data-ng-click="useAddress()"
+							data-ng-disabled="!atHomeAddressIsValid">
+							{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
+						</button>
+					</div>
+				</div>
 			</div>
-		</div>
-	</div>
-</script>
+		</script>
 	{% endblock rbsCommerceShippingAtHomeStep %}
 {% endblock processShippingStep %}
 
-
 {% block processPaymentStep %}
-<script type="text/ng-template" id="/rbsCommercePaymentStep.tpl">
+	<script type="text/ng-template" id="/rbsCommercePaymentStep.tpl">
+		<h2 data-ng-hide="hideStepTitle">{{ i18n('m.rbs.commerce.front.process_step_payment', ['ucf']) }}</h2>
+		<ul class="text-danger" data-ng-if="processData.errors.length">
+			<li data-ng-repeat="error in processData.errors">(= error =)</li>
+		</ul>
 
-	<h2>{{ i18n('m.rbs.commerce.front.process_step_payment', ['ucf']) }}</h2>
-	<ul class="text-danger" data-ng-if="processData.errors.length">
-		<li data-ng-repeat="error in processData.errors">(= error =)</li>
-	</ul>
-
-	<div class="panel panel-default">
-		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.coupons', ['ucf']) }}</div>
-		<div class="panel-body form-horizontal">
-			<div class="form-group" data-ng-if="processData.coupons.length > 0">
-				<label class="col-sm-6 col-md-4 control-label">
-					{{ i18n('m.rbs.commerce.front.applied_coupons', ['ucf']) }}
-				</label>
-				<div class="col-sm-6 col-md-8">
-					<p class="form-control-static" data-ng-repeat="coupon in processData.coupons">
-						(= coupon.code =)
-						<span data-ng-if="coupon.title && (coupon.title != coupon.code)">((= coupon.title =))</span>
-						<button class="btn btn-default btn-xs" data-ng-click="removeCoupon($index)" data-ng-if="!hasTransaction()"
-								title="{{ i18n('m.rbs.commerce.front.remove', ['ucf', 'attr']) }}">
-							<i class="glyphicon glyphicon-remove"></i>
-						</button>
-					</p>
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.coupons', ['ucf']) }}</div>
+			<div class="panel-body form-horizontal">
+				<div class="form-group" data-ng-if="processData.coupons.length > 0">
+					<label class="col-sm-6 col-md-4 control-label">
+						{{ i18n('m.rbs.commerce.front.applied_coupons', ['ucf']) }}
+					</label>
+					<div class="col-sm-6 col-md-8">
+						<p class="form-control-static" data-ng-repeat="coupon in processData.coupons">
+							(= coupon.code =)
+							<span data-ng-if="coupon.title && (coupon.title != coupon.code)">((= coupon.title =))</span>
+							<button class="btn btn-default btn-xs" data-ng-click="removeCoupon($index)"
+								data-ng-if="!hasTransaction()" title="{{ i18n('m.rbs.commerce.front.remove', ['ucf', 'attr']) }}">
+								<i class="glyphicon glyphicon-remove"></i>
+							</button>
+						</p>
+					</div>
 				</div>
-			</div>
-			<div data-ng-if="!hasTransaction()" class="form-group no-bottom-margin">
-				<label for="newCouponCode" class="col-sm-6 col-md-4 control-label">
-					{{ i18n('m.rbs.commerce.front.add_code', ['ucf']) }}
-				</label>
-				<div class="col-sm-6 col-md-8">
-					<div class="input-group">
-						<input id="newCouponCode" type="text" class="form-control" data-ng-model="processData.newCouponCode" />
-					<span class="input-group-btn">
-						<button class="btn btn-primary" type="button" data-ng-click="addCoupon()"
-								data-ng-disabled="processData.newCouponCode.length < 1">
-							<i class="glyphicon glyphicon-ok"></i>
-							{{ i18n('m.rbs.commerce.front.ok', ['ucf']) }}
-						</button>
-					</span>
+				<div data-ng-if="!hasTransaction()" class="form-group no-bottom-margin">
+					<label for="newCouponCode" class="col-sm-6 col-md-4 control-label">
+						{{ i18n('m.rbs.commerce.front.add_code', ['ucf']) }}
+					</label>
+					<div class="col-sm-6 col-md-8">
+						<div class="input-group">
+							<input id="newCouponCode" type="text" class="form-control"
+								data-ng-model="processData.newCouponCode" />
+							<span class="input-group-btn">
+								<button class="btn btn-primary" type="button" data-ng-click="addCoupon()"
+									data-ng-disabled="processData.newCouponCode.length < 1">
+									<i class="glyphicon glyphicon-ok"></i>
+									{{ i18n('m.rbs.commerce.front.ok', ['ucf']) }}
+								</button>
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="panel panel-default">
-		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.process_step_payment_title', ['ucf']) }}</div>
-		<div class="panel-body" data-ng-if="!processData.addressEdition">
-			<div class="row">
-				<div class="col-md-4">
-					<h3>{{ i18n('m.rbs.commerce.front.billing_address', ['ucf']) }}</h3>
-					<address class="no-bottom-margin" data-ng-show="processData.address">
-						<strong>(= processData.address.lines[0] =)</strong>
-						<div data-ng-repeat="addressLine in processData.address.lines track by $index" data-ng-show="!$first">(= addressLine =)</div>
-					</address>
-					<button class="btn btn-default" data-ng-click="editAddress()" data-ng-if="!hasTransaction()">
-						{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
-					</button>
-				</div>
-				<div class="col-md-8">
-					<table summary="{{ i18nAttr('m.rbs.commerce.front.payment_amounts', ['ucf']) }}" class="table">
-						<tbody class="text-right">
-							<tr data-ng-if="linesProducts">
-								<td>(= linesProducts =) <span data-ng-show="linesProducts == 1">{{ i18n('m.rbs.commerce.front.article') }}</span>
-									<span data-ng-show="linesProducts > 1">{{ i18n('m.rbs.commerce.front.articles') }}</span></td>
-								<td>(= linesAmount =)</td>
-							</tr>
-							<tr data-ng-repeat="amountLine in amountLines">
-								<td>(= amountLine.title =)</td>
-								<td>(= amountLine.amount =)</td>
-							</tr>
-							<tr data-ng-if="taxesAmount" class="text-muted">
-								<td>{{ i18n('m.rbs.commerce.front.payment_taxes', ['ucf']) }}</td>
-								<td>(= taxesAmount =)</td>
-							</tr>
-							<tr data-ng-if="creditNotesAmount">
-								<td>{{ i18n('m.rbs.commerce.front.credit_notes_total_amounts', ['ucf']) }}</td>
-								<td>(= creditNotesAmount =)</td>
-							</tr>
-							<tr>
-								<td><strong>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</strong></td>
-								<td class="price">(= paymentAmount =)</td>
-							</tr>
-						</tbody>
-					</table>
+		<div class="panel panel-default">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.process_step_payment_title', ['ucf']) }}</div>
+			<div class="panel-body" data-ng-if="!processData.addressEdition">
+				<div class="row">
+					<div class="col-md-4">
+						<h3>{{ i18n('m.rbs.commerce.front.billing_address', ['ucf']) }}</h3>
+						<address class="no-bottom-margin" data-ng-show="processData.address">
+							<strong>(= processData.address.lines[0] =)</strong>
+							<div data-ng-repeat="addressLine in processData.address.lines track by $index" data-ng-show="!$first">
+								(= addressLine =)
+							</div>
+						</address>
+						<button class="btn btn-default" data-ng-click="editAddress()" data-ng-if="!hasTransaction()">
+							{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+						</button>
+					</div>
+					<div class="col-md-8">
+						<table summary="{{ i18nAttr('m.rbs.commerce.front.payment_amounts', ['ucf']) }}" class="table">
+							<tbody class="text-right">
+								<tr data-ng-if="linesProducts">
+									<td>(= linesProducts =)
+										<span data-ng-show="linesProducts == 1">{{ i18n('m.rbs.commerce.front.article') }}</span>
+										<span data-ng-show="linesProducts > 1">{{ i18n('m.rbs.commerce.front.articles') }}</span>
+									</td>
+									<td>(= linesAmount =)</td>
+								</tr>
+								<tr data-ng-repeat="amountLine in amountLines">
+									<td>(= amountLine.title =)</td>
+									<td>(= amountLine.amount =)</td>
+								</tr>
+								<tr data-ng-if="taxesAmount" class="text-muted">
+									<td>{{ i18n('m.rbs.commerce.front.payment_taxes', ['ucf']) }}</td>
+									<td>(= taxesAmount =)</td>
+								</tr>
+								<tr data-ng-if="creditNotesAmount">
+									<td>{{ i18n('m.rbs.commerce.front.credit_notes_total_amounts', ['ucf']) }}</td>
+									<td>(= creditNotesAmount =)</td>
+								</tr>
+								<tr>
+									<td><strong>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</strong></td>
+									<td class="price">(= paymentAmount =)</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="panel-body" data-ng-if="processData.addressEdition">
-			<h3>{{ i18n('m.rbs.commerce.front.billing_address', ['ucf']) }}</h3>
-			<div data-ng-show="userAddresses.length" class="row">
-				<div data-ng-repeat-start="address in userAddresses" class="col-md-6 col-lg-4">
-					<h4>(= address.common.name =)</h4>
-					<address>
-						<strong>(= address.lines[0] =)</strong>
-						<div data-ng-repeat="line in address.lines track by $index" data-ng-show="!$first">
-							(= line =)
+			<div class="panel-body" data-ng-if="processData.addressEdition">
+				<h3>{{ i18n('m.rbs.commerce.front.billing_address', ['ucf']) }}</h3>
+				<div data-ng-show="userAddresses.length" class="row">
+					<div data-ng-repeat-start="address in userAddresses" class="col-md-6 col-lg-4">
+						<h4>(= address.common.name =)</h4>
+						<address>
+							<strong>(= address.lines[0] =)</strong>
+							<div data-ng-repeat="line in address.lines track by $index" data-ng-show="!$first">
+								(= line =)
+							</div>
+						</address>
+						<p>
+							<button type="button" class="btn btn-sm btn-primary"
+									data-ng-click="selectUserAddress(address)" >
+								{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
+							</button>
+						</p>
+					</div>
+					<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg-block"></div>
+					<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md-block"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div data-rbs-geo-address-editor="" data-address="processData.address"
+								data-manage-name="(= processData.userId ? 'optional' : 'none' =)"
+								data-accept-zones=""
+								data-valid="processData.addressIsValid">
 						</div>
-					</address>
-					<p>
-						<button type="button" class="btn btn-sm btn-primary"
-								data-ng-click="selectUserAddress(address)" >
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3">
+						<button type="button" class="btn btn-sm btn-primary" data-ng-click="useAddress()"
+							data-ng-disabled="!processData.addressIsValid">
 							{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
 						</button>
-					</p>
-				</div>
-				<div data-ng-if="($index % 3) == 2" class="clearfix visible-lg-block"></div>
-				<div data-ng-repeat-end="" data-ng-if="($index % 2) == 1" class="clearfix visible-md-block"></div>
-			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div data-rbs-geo-address-editor="" data-address="processData.address"
-							data-manage-name="(= processData.userId ? 'optional' : 'none' =)"
-							data-accept-zones=""
-							data-valid="processData.addressIsValid">
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3">
-					<button type="button" class="btn btn-sm btn-primary" data-ng-click="useAddress()" data-ng-disabled="!processData.addressIsValid">
-						{{ i18n('m.rbs.commerce.front.button_use_this_address', ['ucf']) }}
-					</button>
-				</div>
-			</div>
 		</div>
-	</div>
 
-	<div class="text-right">
-		<p data-ng-if="!hasTransaction()">
-			<button class="btn btn-lg btn-primary" type="button" data-ng-click="savePayment()" data-ng-disabled="isEmptyAddress(processData.address)">
-				{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
-			</button>
-		</p>
-		<p data-ng-if="hasTransaction()">
-			<button class="btn btn-default" type="button" data-ng-click="modify()">
-				{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
-			</button>
-		</p>
-	</div>
+		<div class="text-right">
+			<p data-ng-if="!hasTransaction()">
+				<button class="btn btn-lg btn-primary" type="button" data-ng-click="savePayment()"
+					data-ng-disabled="isEmptyAddress(processData.address)">
+					{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
+				</button>
+			</p>
+			<p data-ng-if="hasTransaction()">
+				<button class="btn btn-default" type="button" data-ng-click="modify()">
+					{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+				</button>
+			</p>
+		</div>
 
-	<div data-ng-if="hasTransaction()">
-		<div class="panel panel-default" data-ng-if="paymentConnectorsInfo.length">
-			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_connector', ['ucf']) }}</div>
-			<div class="panel-body">
-				{{ i18n('m.rbs.commerce.front.select_payment_connector', ['ucf']) }}
-			</div>
-			<div class="list-group">
-				<a data-ng-repeat="(index, connector) in paymentConnectorsInfo" href="javascript:" class="list-group-item"
-						data-ng-class="{active: connector.common.id == processData.id}" data-ng-click="selectConnector(index)">
-					<div class="row">
-						<div class="col-sm-7 col-md-8 col-lg-9">
-							<input type="radio" data-ng-checked="connector.common.id == processData.id" />
-							(= connector.common.title =)<br />
-							<div class="small" data-ng-bind-html="trustHtml(connector.presentation.description)"></div>
-						</div>
-						<div class="col-sm-5 col-md-4 col-lg-3">
-							<img data-ng-show="connector.presentation.visual"
+		<div data-ng-if="hasTransaction()">
+			<div class="panel panel-default" data-ng-if="paymentConnectorsInfo.length">
+				<div class="panel-heading">{{ i18n('m.rbs.commerce.front.payment_connector', ['ucf']) }}</div>
+				<div class="panel-body">
+					{{ i18n('m.rbs.commerce.front.select_payment_connector', ['ucf']) }}
+				</div>
+				<div class="list-group">
+					<a data-ng-repeat="(index, connector) in paymentConnectorsInfo" href="javascript:" class="list-group-item"
+						data-ng-class="{active: connector.common.id == processData.id}"data-ng-click="selectConnector(index)">
+						<div class="row">
+							<div class="col-sm-7 col-md-8 col-lg-9">
+								<input type="radio" data-ng-checked="connector.common.id == processData.id" />
+								(= connector.common.title =)<br />
+								<div class="small" data-ng-bind-html="trustHtml(connector.presentation.description)"></div>
+							</div>
+							<div class="col-sm-5 col-md-4 col-lg-3">
+								<img data-ng-show="connector.presentation.visual"
 									alt="(= connector.presentation.visual.alt =)"
 									data-ng-src="(= connector.presentation.visual.detailThumbnail =)" />
+							</div>
 						</div>
-					</div>
-				</a>
+					</a>
+				</div>
 			</div>
+			<div data-role="connector-configuration-zone"></div>
 		</div>
-		<div data-role="connector-configuration-zone"></div>
-	</div>
-</script>
+	</script>
 {% endblock processPaymentStep %}
 

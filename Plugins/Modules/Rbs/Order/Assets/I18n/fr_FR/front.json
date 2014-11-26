@@ -113,6 +113,12 @@
 	"order_personal_information":{
 		"message":"informations personnelles"
 	},
+	"order_billing_address":{
+		"message":"adresse de facturation"
+	},
+	"order_email_address":{
+		"message":"adresse e-mail"
+	},
 	"order_payment":{
 		"message":"paiement"
 	},

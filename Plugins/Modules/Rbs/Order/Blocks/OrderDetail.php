@@ -33,6 +33,12 @@ class OrderDetail extends Block
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();
 
+		$page = $event->getParam('page');
+		if ($page instanceof \Rbs\Website\Documents\Page)
+		{
+			$parameters->setParameterValue('pageId', $page->getId());
+		}
+
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		$userId = $user->authenticated() ? $user->getId() : null;
 		$orderId = $event->getHttpRequest()->getQuery('orderId');
@@ -183,8 +189,22 @@ class OrderDetail extends Block
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
 		$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
 		$context->setWebsite($event->getParam('website'));
-		$cartData = $commerceServices->getOrderManager()->getOrderData($order, $context->toArray());
-		$attributes['orderData'] = $cartData;
+		$orderData = $commerceServices->getOrderManager()->getOrderData($order, $context->toArray());
+		$attributes['orderData'] = $orderData;
+
+		$attributes['canReturn'] = false;
+		if ($parameters->getParameter('enableReturns'))
+		{
+			foreach ($orderData['shipments'] as $shipment)
+			{
+				if (isset($shipment['common']['shippingDate']))
+				{
+					$attributes['canReturn'] = true;
+					break;
+				}
+			}
+		}
+
 		return 'order-detail.twig';
 	}
 
@@ -201,6 +221,7 @@ class OrderDetail extends Block
 		$context->setVisualFormats($parameters->getParameter('imageFormats'));
 		$context->setURLFormats(['canonical']);
 		$context->setDataSetNames(['shipments', 'returns']);
+		$context->setPageId($parameters->getParameter('pageId'));
 		return $context;
 	}
 }

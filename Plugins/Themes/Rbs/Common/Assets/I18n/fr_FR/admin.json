@@ -7,5 +7,8 @@
 	},
 	"popin_label":{
 		"message":"fenêtre popin"
+	},
+	"print_label":{
+		"message":"page imprimmable sans habillage"
 	}
 }

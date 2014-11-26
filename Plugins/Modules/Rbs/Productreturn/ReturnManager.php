@@ -126,7 +126,7 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onDefaultCanViewReturn(\Change\Events\Event $event)
 	{
-		$return = $event->getParam('return');
+		$return = $event->getParam('productReturn');
 		if (is_numeric($return))
 		{
 			$return = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($return);
@@ -208,84 +208,9 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			elseif ($processingStatus === \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING)
 			{
-				// TODO
-				$code = null;
-				$now = new \DateTime();
-				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
-				$query->andPredicates($query->eq('orderId', $return->getId()));
-				$query->addOrder('id', true);
-				/** @var $shipment \Rbs\Order\Documents\Shipment */
-				foreach ($query->getDocuments() as $shipment)
-				{
-					if ($shipment->getPrepared())
-					{
-						$shippingDate = $shipment->getShippingDate();
-						if ($shippingDate && $shippingDate <= $now)
-						{
-							if ($code === null)
-							{
-								$code = 'SHIPPED';
-							}
-							elseif ($code != 'SHIPPED')
-							{
-								$code = 'PARTIALLY_SHIPPED';
-								break;
-							}
-						}
-						else
-						{
-							if ($code === null)
-							{
-								$code = 'PREPARED';
-							}
-							elseif ($code == 'SHIPPED')
-							{
-								$code = 'PARTIALLY_SHIPPED';
-								break;
-							}
-						}
-					}
-					else
-					{
-						if ($code === null)
-						{
-							$code = 'PREPARATION';
-						}
-						elseif ($code == 'SHIPPED')
-						{
-							$code = 'PARTIALLY_SHIPPED';
-							break;
-						}
-					}
-				}
-				if ($code === null)
-				{
-					$code = 'PROCESS_WAITING';
-				}
-
-				if ($code)
-				{
-					$statusInfo = ['code' => $code, 'title' => $code];
-					switch ($code)
-					{
-						case 'PROCESS_WAITING':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.process_waiting', ['ucf']);
-							break;
-						case 'PREPARATION':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.preparation', ['ucf']);
-							break;
-						case 'PREPARED':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.prepared', ['ucf']);
-							break;
-						case 'SHIPPED':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.shipped', ['ucf']);
-							break;
-						case 'PARTIALLY_SHIPPED':
-							$statusInfo['title'] = $i18nManager->trans('m.rbs.order.front.partially_shipped', ['ucf']);
-							break;
-					}
-					$event->setParam('statusInfo', $statusInfo);
-				}
+				$statusInfo = ['code' => 'PROCESSING',
+					'title' => $i18nManager->trans('m.rbs.productreturn.front.status_processing', ['ucf'])];
+				$event->setParam('statusInfo', $statusInfo);
 			}
 			elseif ($processingStatus === \Rbs\Order\Documents\Order::PROCESSING_STATUS_EDITION)
 			{
@@ -924,17 +849,16 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			}
 
 			$return->setReshippingModeCode($reshippingMode->getCode());
-			$return->getContext()->set('reshippingModeId', $reshippingMode->getId());
-			$return->getContext()->set('reshippingModeTitle', $reshippingMode->getCurrentLocalization()->getTitle());
-			// TODO: validate address.
+			$return->getReshippingConfiguration()->set('id', $reshippingMode->getId());
+			$return->getReshippingConfiguration()->set('title', $reshippingMode->getCurrentLocalization()->getTitle());
 			if (isset($data['reshippingData']['address']) && is_array($data['reshippingData']['address']))
 			{
 				$address = new \Rbs\Geo\Address\BaseAddress($data['reshippingData']['address']);
-				$return->getContext()->set('reshippingAddress', $address->toArray());
+				$return->getReshippingConfiguration()->set('address', $address->toArray());
 			}
 			if (isset($data['reshippingData']['options']) && is_array($data['reshippingData']['options']))
 			{
-				$return->getContext()->set('reshippingOptions', $data['reshippingData']['options']);
+				$return->getReshippingConfiguration()->set('options', $data['reshippingData']['options']);
 			}
 		}
 
@@ -1079,12 +1003,18 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Rbs\Productreturn\Documents\ReturnMode $returnMode
 	 * @param \Rbs\Productreturn\Documents\ProductReturn $return
 	 * @param \Change\Http\Web\UrlManager $urlManager
+	 * @param array $options
 	 * @return string|null
 	 */
-	public function getReturnStickerURL($returnMode, $return, $urlManager)
+	public function getReturnStickerURL($returnMode, $return, $urlManager, array $options)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(['returnMode' => $returnMode, 'productReturn' => $return, 'urlManager' => $urlManager]);
+		$args = $em->prepareArgs([
+			'returnMode' => $returnMode,
+			'productReturn' => $return,
+			'urlManager' => $urlManager,
+			'options' => $options
+		]);
 		$em->trigger('getReturnStickerURL', $this, $args);
 		if (isset($args['stickerURL']))
 		{
@@ -1109,7 +1039,8 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 
 		$urlManager = $event->getParam('urlManager');
 		$returnMode = $event->getParam('returnMode');
-		if (!$urlManager || !($returnMode instanceof \Rbs\Productreturn\Documents\ReturnModeStatic))
+		if (!($urlManager instanceof \Change\Http\Web\UrlManager)
+			|| !($returnMode instanceof \Rbs\Productreturn\Documents\ReturnModeStatic))
 		{
 			return;
 		}
@@ -1126,12 +1057,18 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param \Rbs\Productreturn\Documents\ReturnMode $returnMode
 	 * @param \Rbs\Productreturn\Documents\ProductReturn $return
 	 * @param \Change\Http\Web\UrlManager $urlManager
+	 * @param array $options
 	 * @return string|null
 	 */
-	public function getReturnSheetURL($returnMode, $return, $urlManager)
+	public function getReturnSheetURL($returnMode, $return, $urlManager, array $options)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(['returnMode' => $returnMode, 'productReturn' => $return, 'urlManager' => $urlManager]);
+		$args = $em->prepareArgs([
+			'returnMode' => $returnMode,
+			'productReturn' => $return,
+			'urlManager' => $urlManager,
+			'options' => $options
+		]);
 		$em->trigger('getReturnSheetURL', $this, $args);
 		if (isset($args['sheetURL']))
 		{
@@ -1155,8 +1092,25 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$urlManager = $event->getParam('urlManager');
-		$returnMode = $event->getParam('returnMode');
-		// TODO
+		$return = $event->getParam('productReturn');
+		if (!($urlManager instanceof \Change\Http\Web\UrlManager)
+			|| !($return instanceof \Rbs\Productreturn\Documents\ProductReturn))
+		{
+			return;
+		}
+
+		$params = ['documentId' => $return->getId()];
+		$options = $event->getParam('options');
+		if (is_array($options) && isset($options['themeName']))
+		{
+			$params['themeName'] = $options['themeName'];
+		}
+
+		$uri = $urlManager->getByFunction('Rbs_Productreturn_ReturnSheet', $params);
+		if ($uri)
+		{
+			$event->setParam('sheetURL', $uri->normalize()->toString());
+		}
 	}
 
 	/**
@@ -1317,9 +1271,12 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			'productReturnId' => $return->getId(),
 			'orderId' => $return->getOrderId(),
 			'shippingModeCode' => $return->getReshippingModeCode(),
-			'address' => $return->getContext()->get('reshippingAddress'),
+			'address' => $return->getReshippingConfiguration()->get('address'),
 			'lines' => $lines,
-			'context' => [ 'shippingModeId' => $return->getContext()->get('reshippingModeId') ]
+			'context' => [
+				'shippingModeId' => $return->getReshippingConfiguration()->get('id'),
+				'shippingModeTitle' => $return->getReshippingConfiguration()->get('title')
+			]
 		];
 		$event->setParam('reshippingData', $reshippingData);
 	}

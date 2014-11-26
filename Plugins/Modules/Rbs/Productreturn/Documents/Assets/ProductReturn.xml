@@ -16,7 +16,7 @@
 		<property name="returnModeId" type="DocumentId" document-type="Rbs_Productreturn_ReturnMode" />
 		<property name="linesData" type="JSON" internal="true" />
 		<property name="reshippingModeCode" type="String" />
-		<property name="reshippingData" type="JSON" />
+		<property name="reshippingConfigurationData" type="JSON" internal="true" />
 		<property name="contextData" type="JSON" internal="true" />
 	</properties>
 </document>

@@ -4,49 +4,52 @@
 {% endblock emptyCart %}
 
 {% block cartStructure %}
-
 	{% block rbsCommerceShippingFeesEvaluation %}
-	<script type="text/ng-template" id="/rbsCommerceShippingFeesEvaluation.tpl">
-		<div data-ng-show="data" class="vertical-if-animation panel panel-default">
-			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_fees_evaluation', ['ucf']) }}</div>
-			<div class="panel-body">
-				<div class="row">
-					<div class="col-xs-12">
-						<select data-ng-show="data.countriesCount > 1" data-ng-cloak="" data-ng-model="currentCountry" class="form-control"
-								data-ng-options="c.code as c.title for c in data.countries">
-							<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
-						</select>
-						<div data-ng-hide="data.countriesCount > 1" data-ng-cloak="" class="form-control-static">(= data.countries[0].title =)</div>
-					</div>
-				</div>
-				<div class="row" data-ng-repeat="mode in currentShippingModes track by $index">
-					<div class="col-xs-6 col-md-4">
-						<img data-ng-show="mode.presentation.visual"
-								alt="(= mode.presentation.visual.alt =)"
-								data-ng-src="(= mode.presentation.visual.detailThumbnail =)" class="img-responsive" />
-					</div>
-					<div class="col-xs-6 col-md-8">
-						<div class="row">
-							<div class="col-xs-6">
-								<strong>(= mode.common.title =)</strong>
-							</div>
-							<div class="col-xs-6 price" data-ng-show="displayPricesWithoutTax || displayPricesWithTax">
-						<span data-ng-show="displayPricesWithoutTax && mode.fee.amountWithoutTaxes">(= mode.fee.amountWithoutTaxes | rbsFormatPrice:mode.fee.currencyCode  =)
-							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr></span>
-								<span data-ng-show="displayPricesWithTax && mode.fee.amountWithTaxes">(= mode.fee.amountWithTaxes | rbsFormatPrice:mode.fee.currencyCode =)</span>
-						<span data-ng-hide="mode.fee.amountWithoutTaxes || mode.fee.amountWithTaxes">
-								{{ i18n('m.rbs.commerce.front.shipping_fees_evaluation_free', ['ucf']) }}
-						</span>
-							</div>
+		<script type="text/ng-template" id="/rbsCommerceShippingFeesEvaluation.tpl">
+			<div data-ng-show="data" class="vertical-if-animation panel panel-default">
+				<div class="panel-heading">{{ i18n('m.rbs.commerce.front.shipping_fees_evaluation', ['ucf']) }}</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-xs-12">
+							<select data-ng-show="data.countriesCount > 1" data-ng-cloak="" data-ng-model="currentCountry"
+								class="form-control" data-ng-options="c.code as c.title for c in data.countries">
+								<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
+							</select>
+							<div data-ng-hide="data.countriesCount > 1" data-ng-cloak="" class="form-control-static">(= data.countries[0].title =)</div>
 						</div>
-						<div class="row">
-							<div class="col-xs-12" data-ng-bind-html="trustHtml(mode.presentation.description)"></div>
+					</div>
+					<div class="row" data-ng-repeat="mode in currentShippingModes track by $index">
+						<div class="col-xs-6 col-md-4">
+							<img data-ng-show="mode.presentation.visual" alt="(= mode.presentation.visual.alt =)"
+								data-ng-src="(= mode.presentation.visual.detailThumbnail =)" class="img-responsive" />
+						</div>
+						<div class="col-xs-6 col-md-8">
+							<div class="row">
+								<div class="col-xs-6">
+									<strong>(= mode.common.title =)</strong>
+								</div>
+								<div class="col-xs-6 price" data-ng-show="displayPricesWithoutTax || displayPricesWithTax">
+							<span data-ng-show="displayPricesWithoutTax && mode.fee.amountWithoutTaxes">
+								(= mode.fee.amountWithoutTaxes | rbsFormatPrice:mode.fee.currencyCode  =)
+								<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+									{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
+							</span>
+							<span data-ng-show="displayPricesWithTax && mode.fee.amountWithTaxes">
+								(= mode.fee.amountWithTaxes | rbsFormatPrice:mode.fee.currencyCode =)
+							</span>
+							<span data-ng-hide="mode.fee.amountWithoutTaxes || mode.fee.amountWithTaxes">
+									{{ i18n('m.rbs.commerce.front.shipping_fees_evaluation_free', ['ucf']) }}
+							</span>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-12" data-ng-bind-html="trustHtml(mode.presentation.description)"></div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</script>
+		</script>
 	{% endblock rbsCommerceShippingFeesEvaluation %}
 
 	<script type="text/ng-template" id="/rbsCommerceCart.tpl">
@@ -73,22 +76,22 @@
 			</div>
 		{% endblock cartErrors %}
 
-	{% block cartLines %}
-		<div class="table-responsive" data-ng-show="cartData">
-			<table summary="{{ i18nAttr('m.rbs.commerce.front.cart_contents', ['ucf']) }}" class="table table-striped table-vertical-middle">
-				<thead>
-				<tr>
-					<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
-					<th>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
-					<th data-ng-if="showPrices" colspan="2">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
-				</tr>
-				</thead>
-				<tbody data-role="cart-lines">
-				</tbody>
-			</table>
-		</div>
-	{% endblock cartLines %}
+		{% block cartLines %}
+			<div class="table-responsive" data-ng-show="cartData">
+				<table summary="{{ i18nAttr('m.rbs.commerce.front.cart_contents', ['ucf']) }}" class="table table-striped table-vertical-middle">
+					<thead>
+					<tr>
+						<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
+						<th data-ng-if="showPrices" colspan="2">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
+					</tr>
+					</thead>
+					<tbody data-role="cart-lines">
+					</tbody>
+				</table>
+			</div>
+		{% endblock cartLines %}
 
 		<div class="row" data-ng-if="showPrices"  data-ng-show="cartData">
 			<div class="col-md-6">
@@ -100,41 +103,42 @@
 				{% endblock cartFeesEvaluation %}
 			</div>
 			<div class="col-md-6">
-	{% block cartAmounts %}
-				<table summary="" class="table table-striped table-bordered">
-					<tbody>
-					{% if parameters.displayPricesWithoutTax and cartData.amounts.linesAmountWithoutTaxes %}<tr>
-						<td>{{ i18n('m.rbs.commerce.front.amount_without_tax', ['ucf']) }}</td>
-						<td class="price">(= cartData.amounts.linesAmountWithoutTaxes | rbsFormatPrice:currencyCode =)</td>
-					</tr>{% endif %}
-					{% if parameters.displayPricesWithTax and cartData.amounts.linesAmountWithTaxes %}<tr>
-						<td>{{ i18n('m.rbs.commerce.front.amount_with_tax', ['ucf']) }}</td>
-						<td class="price">(= cartData.amounts.linesAmountWithTaxes | rbsFormatPrice:currencyCode =)</td>
-					</tr>{% endif %}
-					</tbody>
-				</table>
-	{% endblock cartAmounts %}
+				{% block cartAmounts %}
+					<table summary="" class="table table-striped table-bordered">
+						<tbody>
+						{% if parameters.displayPricesWithoutTax and cartData.amounts.linesAmountWithoutTaxes %}<tr>
+							<td>{{ i18n('m.rbs.commerce.front.amount_without_tax', ['ucf']) }}</td>
+							<td class="price">(= cartData.amounts.linesAmountWithoutTaxes | rbsFormatPrice:currencyCode =)</td>
+						</tr>{% endif %}
+						{% if parameters.displayPricesWithTax and cartData.amounts.linesAmountWithTaxes %}<tr>
+							<td>{{ i18n('m.rbs.commerce.front.amount_with_tax', ['ucf']) }}</td>
+							<td class="price">(= cartData.amounts.linesAmountWithTaxes | rbsFormatPrice:currencyCode =)</td>
+						</tr>{% endif %}
+						</tbody>
+					</table>
+				{% endblock cartAmounts %}
 			</div>
 		</div>
 
-		<div class="clearfix text-right">
+		<div class="clearfix">
 			{% block startOrderProcess %}
-			<p>
-				<label>
-					<input type="checkbox" data-ng-model="acceptTermsAndConditions" />
-					{% block acceptTermsAndConditionsText %}
-						{% set linkHref = functionURL('Rbs_Commerce_TermsAndConditions') %}
-						{% set linkTitle = i18nAttr('m.rbs.commerce.front.will_open_new_tab', ['ucf']) %}
-						{% set linkOpen = '<a href="' ~ linkHref ~ '" target="_blank" title="' ~ linkTitle ~ '">' %}
-						{{ i18n('m.rbs.commerce.front.accept_terms_and_conditions', ['ucf'], {'LINK_OPEN': linkOpen, 'LINK_CLOSE': '</a>'})|raw }}
-					{% endblock acceptTermsAndConditionsText %}
-				</label>
-			</p>
-			<p>
-				<a class="btn btn-primary btn-lg" href="{{ functionURL('Rbs_Commerce_OrderProcess') }}" data-ng-disabled="!canOrder()">
-					{{ i18n('m.rbs.commerce.front.proceed_to_checkout', ['ucf']) }}
-				</a>
-			</p>
+				<p class=" text-right">
+					<label>
+						<input type="checkbox" data-ng-model="acceptTermsAndConditions" />
+						{% block acceptTermsAndConditionsText %}
+							{% set linkHref = functionURL('Rbs_Commerce_TermsAndConditions') %}
+							{% set linkTitle = i18nAttr('m.rbs.commerce.front.will_open_new_tab', ['ucf']) %}
+							{% set linkOpen = '<a href="' ~ linkHref ~ '" target="_blank" title="' ~ linkTitle ~ '">' %}
+							{{ i18n('m.rbs.commerce.front.accept_terms_and_conditions', ['ucf'], {'LINK_OPEN': linkOpen, 'LINK_CLOSE': '</a>'})|raw }}
+						{% endblock acceptTermsAndConditionsText %}
+					</label>
+				</p>
+				<p class=" text-right">
+					<a class="btn btn-primary btn-lg" href="{{ functionURL('Rbs_Commerce_OrderProcess') }}"
+						data-ng-disabled="!canOrder()">
+						{{ i18n('m.rbs.commerce.front.proceed_to_checkout', ['ucf']) }}
+					</a>
+				</p>
 			{% endblock startOrderProcess %}
 		</div>
 	</script>
@@ -172,7 +176,8 @@
 			<td data-ng-if="showPrices" class="text-right">
 				<ul class="list-unstyled" data-ng-show="line.quantity != 1">
 					<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
-						<del class="text-muted">(= line.quantity =) x (= line.unitBasedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
+						<del class="text-muted">
+							(= line.quantity =) x (= line.unitBasedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
 								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
 							</abbr>
@@ -180,17 +185,22 @@
 
 					</li>
 					<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
-						<del class="text-muted">(= line.quantity =) x (= line.unitBasedAmountWithTaxes | rbsFormatPrice:currencyCode =)</del>
+						<del class="text-muted">
+							(= line.quantity =) x (= line.unitBasedAmountWithTaxes | rbsFormatPrice:currencyCode =)
+						</del>
 					</li>
 					<li class="price" data-ng-show="parameters.displayPricesWithoutTax">
-						<span class="text-muted">(= quantity =) x (= line.unitAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
+						<span class="text-muted">
+							(= quantity =) x (= line.unitAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
 								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
 							</abbr>
 						</span>
 					</li>
 					<li class="price" data-ng-show="parameters.displayPricesWithTax">
-						<span class="text-muted">(= line.quantity =) x (= line.unitAmountWithTaxes | rbsFormatPrice:currencyCode =)</span>
+						<span class="text-muted">
+							(= line.quantity =) x (= line.unitAmountWithTaxes | rbsFormatPrice:currencyCode =)
+						</span>
 					</li>
 				</ul>
 			</td>

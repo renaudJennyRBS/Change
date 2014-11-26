@@ -43,6 +43,7 @@ class Listeners implements ListenerAggregateInterface
 		new RegisterByBlockName('Rbs_Payment_CreateAccountForTransaction', true, $events);
 		new RegisterByBlockName('Rbs_Productreturn_ReturnList', true, $events);
 		new RegisterByBlockName('Rbs_Productreturn_ReturnProcess', true, $events);
+		new RegisterByBlockName('Rbs_Productreturn_ReturnSheet', true, $events);
 		new RegisterByBlockName('Rbs_Store_WebStoreSelector', true, $events);
 		new RegisterByBlockName('Rbs_Wishlist_WishlistButton', true, $events);
 		new RegisterByBlockName('Rbs_Wishlist_WishlistDetail', true, $events);

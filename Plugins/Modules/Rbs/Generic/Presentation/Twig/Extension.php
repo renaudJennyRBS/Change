@@ -259,7 +259,6 @@ class Extension implements \Twig_ExtensionInterface
 
 	/**
 	 * @param \Change\Documents\AbstractDocument|integer $document
-	 * @param \Change\Presentation\Interfaces\Website|integer|null $website
 	 * @param array $query
 	 * @param string|null $LCID
 	 * @return string|null

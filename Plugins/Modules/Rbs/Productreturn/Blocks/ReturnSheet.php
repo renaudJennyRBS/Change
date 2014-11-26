@@ -9,11 +9,11 @@
 namespace Rbs\Productreturn\Blocks;
 
 /**
- * @name \Rbs\Productreturn\Blocks\ReturnProcess
+ * @name \Rbs\Productreturn\Blocks\ReturnSheet
  */
-class ReturnProcess extends \Change\Presentation\Blocks\Standard\Block
+class ReturnSheet extends \Change\Presentation\Blocks\Standard\Block
 {
-	use \Rbs\Commerce\Blocks\Traits\ContextParameters;
+	//use \Rbs\Commerce\Blocks\Traits\ContextParameters;
 
 	/**
 	 * Event Params 'website', 'document', 'page'
@@ -26,42 +26,41 @@ class ReturnProcess extends \Change\Presentation\Blocks\Standard\Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('imageFormats', 'cartItem,detailThumbnail');
-		$this->initCommerceContextParameters($parameters);
+		//$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		$order = $documentManager->getDocumentInstance($event->getHttpRequest()->getQuery('orderId'));
-		if (!($order instanceof \Rbs\Order\Documents\Order))
+		$return = $documentManager->getDocumentInstance($event->getHttpRequest()->getQuery('documentId'));
+		if (!($return instanceof \Rbs\Productreturn\Documents\ProductReturn))
 		{
 			return $this->setInvalidParameters($parameters);
 		}
+
+		/*order = $return->getOrderIdInstance();
+		if (!($order instanceof \Rbs\Order\Documents\Order))
+		{
+			return $this->setInvalidParameters($parameters);
+		}*/
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		$userId = $user->authenticated() ? $user->getId() : null;
-		$options = [ 'userId' => $userId, 'order' => $order ];
-		if (!$userId || !$commerceServices->getOrderManager()->canViewOrder($options))
+		$options = [ 'userId' => $userId, 'productReturn' => $return ];
+		if (!$userId || !$commerceServices->getReturnManager()->canViewReturn($options))
 		{
 			return $this->setInvalidParameters($parameters);
 		}
 
-		$webStore = $documentManager->getDocumentInstance($order->getWebStoreId());
+		/*$webStore = $documentManager->getDocumentInstance($order->getWebStoreId());
 		if (!($webStore instanceof \Rbs\Store\Documents\WebStore))
 		{
 			return $this->setInvalidParameters($parameters);
-		}
+		}*/
 
-		$returnProcess = $webStore->getReturnProcess();
-		if (!($returnProcess instanceof \Rbs\Productreturn\Documents\Process) || !$returnProcess->getActive())
-		{
-			return $this->setInvalidParameters($parameters);
-		}
-
-		$parameters->setParameterValue('orderId', $order->getId());
-		$parameters->setParameterValue('webStoreId', $order->getWebStoreId());
+		$parameters->setParameterValue('productReturnId', $return->getId());
+		//$parameters->setParameterValue('webStoreId', $order->getWebStoreId());
 		$parameters->setParameterValue('accessorId', $userId);
-		$parameters->setParameterValue('processId', $returnProcess->getId());
 
 		$page = $event->getParam('page');
 		if ($page instanceof \Rbs\Website\Documents\Page)
@@ -69,7 +68,7 @@ class ReturnProcess extends \Change\Presentation\Blocks\Standard\Block
 			$parameters->setParameterValue('pageId', $page->getId());
 		}
 
-		$this->setDetailedCommerceContextParameters($webStore, $order->getBillingAreaIdInstance(), $order->getZone(), [0],$parameters);
+		//$this->setDetailedCommerceContextParameters($webStore, $order->getBillingAreaIdInstance(), $order->getZone(), $parameters);
 		return $parameters;
 	}
 
@@ -79,10 +78,9 @@ class ReturnProcess extends \Change\Presentation\Blocks\Standard\Block
 	 */
 	protected function setInvalidParameters($parameters)
 	{
-		$parameters->setParameterValue('orderId', 0);
+		$parameters->setParameterValue('productReturnId', 0);
 		$parameters->setParameterValue('webStoreId', 0);
 		$parameters->setParameterValue('accessorId', 0);
-		$parameters->setParameterValue('returnProcessId', 0);
 		return $parameters;
 	}
 
@@ -95,25 +93,19 @@ class ReturnProcess extends \Change\Presentation\Blocks\Standard\Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$orderId = $parameters->getParameter('orderId');
-		$processId = $parameters->getParameter('processId');
-		if ($orderId && $processId)
+		$returnId = $parameters->getParameter('productReturnId');
+		if ($returnId)
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			$orderManager = $commerceServices->getOrderManager();
 			$productReturnManager = $commerceServices->getReturnManager();
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
-			$orderContext = $this->populateOrderContext($event->getApplication(), $documentManager, $parameters);
-			$orderData = $orderManager->getOrderData($orderId, $orderContext->toArray());
-			$attributes['orderData'] = $orderData;
+			$returnContext = $this->populateProductReturnContext($event->getApplication(), $documentManager, $parameters);
+			$returnData = $productReturnManager->getProductReturnData($returnId, $returnContext->toArray());
+			$attributes['returnData'] = $returnData;
 
-			$processContext = $this->populateProcessContext($event->getApplication(), $documentManager, $parameters);
-			$processData = $productReturnManager->getProcessData($processId, $processContext->toArray());
-			$attributes['processData'] = $processData;
-
-			return 'return-process.twig';
+			return 'return-sheet.twig';
 		}
 		return null;
 	}
@@ -124,32 +116,14 @@ class ReturnProcess extends \Change\Presentation\Blocks\Standard\Block
 	 * @param \Change\Presentation\Blocks\Parameters $parameters
 	 * @return \Change\Http\Ajax\V1\Context
 	 */
-	protected function populateOrderContext($application, $documentManager, $parameters)
+	protected function populateProductReturnContext($application, $documentManager, $parameters)
 	{
 		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
 		$context->setDetailed(true);
 		$context->setPage($parameters->getParameter('pageId'));
 		$context->setVisualFormats($parameters->getParameter('imageFormats'));
 		$context->setURLFormats(['canonical']);
-		$context->setDataSetNames(['shipments', 'returns']);
-		// Reshipped products can be returned again.
-		$context->setData(['includeReturnRelatedShipments' => true]);
-		return $context;
-	}
-
-	/**
-	 * @param \Change\Application $application
-	 * @param \Change\Documents\DocumentManager $documentManager
-	 * @param \Change\Presentation\Blocks\Parameters $parameters
-	 * @return \Change\Http\Ajax\V1\Context
-	 */
-	protected function populateProcessContext($application, $documentManager, $parameters)
-	{
-		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
-		$context->setDetailed(true);
-		$context->setPage($parameters->getParameter('pageId'));
-		$context->setVisualFormats($parameters->getParameter('imageFormats'));
-		$context->setURLFormats(['canonical']);
+		$context->setDataSetNames(['order']);
 		return $context;
 	}
 }

@@ -294,6 +294,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			$event->setParam('shippingModes', $shippingModes);
 		}
 	}
+
 	/**
 	 * @api
 	 * Default context:
@@ -443,7 +444,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			$context = [];
 		}
 
-		//Set default context values
+		// Set default context values.
 		$context += ['visualFormats' => [], 'website' => null, 'data' => [], 'detailed' => false, 'dataSetNames' => []];
 
 		$applicationServices = $event->getApplicationServices();

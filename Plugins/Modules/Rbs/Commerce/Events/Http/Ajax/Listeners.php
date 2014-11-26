@@ -288,7 +288,7 @@ class Listeners implements ListenerAggregateInterface
 							return false;
 						}
 						$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
-						return $commerceServices->getReturnManager()->canViewReturn(['userId' => $currentUser->getId(), 'return' => $return]);
+						return $commerceServices->getReturnManager()->canViewReturn(['userId' => $currentUser->getId(), 'productReturn' => $return]);
 					});
 				}
 			}
@@ -310,7 +310,7 @@ class Listeners implements ListenerAggregateInterface
 							return false;
 						}
 						$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
-						return $commerceServices->getReturnManager()->canViewReturn(['userId' => $currentUser->getId(), 'return' => $return]);
+						return $commerceServices->getReturnManager()->canViewReturn(['userId' => $currentUser->getId(), 'productReturn' => $return]);
 					});
 				}
 			}

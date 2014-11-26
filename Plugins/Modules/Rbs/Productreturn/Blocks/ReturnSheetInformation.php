@@ -9,9 +9,9 @@
 namespace Rbs\Productreturn\Blocks;
 
 /**
- * @name \Rbs\Productreturn\Blocks\ReturnListInformation
+ * @name \Rbs\Productreturn\Blocks\ReturnSheetInformation
  */
-class ReturnListInformation extends \Change\Presentation\Blocks\Information
+class ReturnSheetInformation extends \Change\Presentation\Blocks\Information
 {
 	/**
 	 * @param \Change\Events\Event $event
@@ -22,8 +22,6 @@ class ReturnListInformation extends \Change\Presentation\Blocks\Information
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.productreturn.admin.module_name', $ucf));
-		$this->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_list_label', $ucf));
-		$this->addInformationMeta('itemsPerPage', \Change\Documents\Property::TYPE_INTEGER, true, 5)
-			->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_list_items_per_page', $ucf));
+		$this->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_sheet_label', $ucf));
 	}
 }

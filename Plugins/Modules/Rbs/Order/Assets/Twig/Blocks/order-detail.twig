@@ -1,6 +1,10 @@
-{% if (parameters.enableReturns and orderData.shipments | length) or orderData.returns | length %}
+{% block rbsOrderOrderDetailUse %}
+	{% use 'Rbs_Productreturn/return-details-templates.twig' %}
+{% endblock rbsOrderOrderDetailUse %}
+
+{% if canReturn or orderData.returns | length %}
 	<ul class="pull-right text-right list-unstyled">
-		{% if parameters.enableReturns and orderData.shipments | length %}
+		{% if canReturn %}
 			<li>
 				<a href="{{ functionURL('Rbs_Productreturn_ReturnProcess', {'orderId': orderData.common.id}) }}" class="btn btn-default">
 					{{ i18n('m.rbs.productreturn.front.make_a_return', ['ucf']) }}
@@ -299,7 +303,8 @@
 	<div id="return-list-{{ blockId }}" data-ng-controller="RbsProductreturnReturnListController">
 		{% for return in orderData.returns %}
 			{% block returnDetails %}
-				{% include 'Rbs_Productreturn/return-details.twig' with {'return': return, 'blockId': blockId, 'showOrderLink': false} %}
+				{% set showOrderLink = true %}
+				{{ block('rbsProductreturnDetails') }}
 			{% endblock returnDetails %}
 
 			{% block returnSeparator %}

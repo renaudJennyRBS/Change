@@ -6,19 +6,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Media\Http\Web;
+namespace Rbs\Productreturn\Http\Web;
 
 use Change\Http\Web\Event;
 use Zend\Http\Response as HttpResponse;
 use Change\Http\Web\Result\Resource;
 
 /**
- * @name \Rbs\Media\Http\Web\Download
+ * @name \Rbs\Productreturn\Http\Web\ReturnSheet
  */
-class Download
+class ReturnSheet
 {
-	const EVENT_GET_DOWNLOAD_URI = "getDownloadUri";
-
 	function __invoke()
 	{
 		if (func_num_args() === 1)
@@ -41,9 +39,8 @@ class Download
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$documentId = $event->getRequest()->getQuery('documentId');
-			$media = $documentManager->getDocumentInstance($documentId);
-
-			if ($media != null)
+			$return = $documentManager->getDocumentInstance($documentId);
+			if ($return instanceof \Rbs\Productreturn\Documents\ProductReturn)
 			{
 				/** @var $media \Change\Documents\AbstractDocument */
 				$em = $media->getEventManager();
@@ -67,7 +64,7 @@ class Download
 					}
 					$event->setResult($result);
 				}
-			}	
+			}
 		}
 	}
 

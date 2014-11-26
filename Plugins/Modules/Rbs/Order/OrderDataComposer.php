@@ -493,7 +493,7 @@ class OrderDataComposer
 		}
 		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats, 'dataSetNames' => $dataSetNames,
 			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
-			'data' => ['webStoreId' => $this->order->getWebStoreId()], 'detailed' => $this->detailed];
+			'page' => $this->page, 'data' => ['webStoreId' => $this->order->getWebStoreId()], 'detailed' => $this->detailed];
 	}
 
 	protected function generateMinimalReturnsDataSet()
