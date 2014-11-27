@@ -564,6 +564,24 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * This method returns false if the return should not be taken into account to calculate the quantities that should be
+	 * returned. For example: canceled and refused returns should not be taken into account.
+	 * @param \Rbs\Productreturn\Documents\ProductReturn $return
+	 * @return boolean
+	 */
+	protected function shouldReturnBeTakenIntoAccount($return)
+	{
+		switch ($return->getProcessingStatus())
+		{
+			case \Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_EDITION:
+			case \Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_CANCELED:
+			case \Rbs\Productreturn\Documents\ProductReturn::PROCESSING_STATUS_REFUSED:
+				return false;
+		}
+		return true;
+	}
+
+	/**
 	 * @api
 	 * @param \Rbs\Productreturn\Documents\Process|integer $process
 	 * @param array $data
@@ -719,8 +737,10 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 				/* @var $existingReturn \Rbs\Productreturn\Documents\ProductReturn */
 				foreach ($existingReturn->getLines() as $existingLine)
 				{
-					if ($shipment->getId() == $existingLine->getShipmentId()
-						&& $lineData['shipmentLineIndex'] == $existingLine->getShipmentLineIndex())
+					if ($this->shouldReturnBeTakenIntoAccount($existingReturn)
+						&& $shipment->getId() == $existingLine->getShipmentId()
+						&& $lineData['shipmentLineIndex'] == $existingLine->getShipmentLineIndex()
+					)
 					{
 						$availableQuantity -= $existingLine->getQuantity();
 					}
@@ -826,7 +846,8 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		$returnModeId = $data['common']['returnModeId'];
 		$returnMode = $documentManager->getDocumentInstance($returnModeId);
 		if (!($returnMode instanceof \Rbs\Productreturn\Documents\ReturnMode)
-			|| !in_array($returnModeId, $process->getReturnModesIds()))
+			|| !in_array($returnModeId, $process->getReturnModesIds())
+		)
 		{
 			throw new \RuntimeException('Invalid return mode.', 999999);
 		}
@@ -1040,7 +1061,8 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		$urlManager = $event->getParam('urlManager');
 		$returnMode = $event->getParam('returnMode');
 		if (!($urlManager instanceof \Change\Http\Web\UrlManager)
-			|| !($returnMode instanceof \Rbs\Productreturn\Documents\ReturnModeStatic))
+			|| !($returnMode instanceof \Rbs\Productreturn\Documents\ReturnModeStatic)
+		)
 		{
 			return;
 		}
@@ -1094,7 +1116,8 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		$urlManager = $event->getParam('urlManager');
 		$return = $event->getParam('productReturn');
 		if (!($urlManager instanceof \Change\Http\Web\UrlManager)
-			|| !($return instanceof \Rbs\Productreturn\Documents\ProductReturn))
+			|| !($return instanceof \Rbs\Productreturn\Documents\ProductReturn)
+		)
 		{
 			return;
 		}
@@ -1168,7 +1191,8 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$processingMode = $documentManager->getDocumentInstance($line->getPreferredProcessingModeId());
 			if ($processingMode instanceof \Rbs\Productreturn\Documents\ProcessingMode
-				&& !$processingMode->getImpliesReshipment())
+				&& !$processingMode->getImpliesReshipment()
+			)
 			{
 				$amount += $line->getOptions()->get('unitAmountWithTaxes') * $line->getQuantity();
 			}
@@ -1240,7 +1264,8 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$processingMode = $documentManager->getDocumentInstance($line->getPreferredProcessingModeId());
 			if ($processingMode instanceof \Rbs\Productreturn\Documents\ProcessingMode
-				&& $processingMode->getImpliesReshipment())
+				&& $processingMode->getImpliesReshipment()
+			)
 			{
 				if ($processingMode->getAllowVariantSelection())
 				{

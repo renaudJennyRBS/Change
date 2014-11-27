@@ -1,0 +1,212 @@
+{
+	"documents": [
+		{
+			"_id": "rbs_productreturn_status_accepted",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_productreturn_status_accepted",
+			"substitutions": ["website", "fullName", "orderCode", "orderId", "productReturnCode", "productReturnId", "processingComment"],
+			"label": "Acceptation de demande de retour",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 2, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Cher{fullName},\n\n Nous avons le plaisir de vous confirmer que votre demande de retour n°{productReturnCode} sur votre commande n°{orderCode} a été acceptée."
+										},
+										"TTL": 0
+									}
+								},
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 3, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Vous pouvez consulter Les instructions pour le renvoi de votre colis : [{link}]({link} \"Retour {productReturnCode}\")"
+										},
+										"TTL": 0
+									}
+								},
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 4, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+										},
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Votre demande de retour n°{productReturnCode} est acceptée"
+				}
+			}
+		},
+		{
+			"_id": "rbs_productreturn_status_received",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_productreturn_status_received",
+			"substitutions": ["website", "fullName", "orderCode", "orderId", "productReturnCode", "productReturnId", "processingComment"],
+			"label": "Réception d'un retour",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 1, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Cher{fullName},\n\nNous vous confirmons que votre retour n°{productReturnCode} sur votre commande n°{orderCode} a bien été réceptionné. Il sera traité dans les prochains jours.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+										},
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Votre retour n°{productReturnCode} a bien été réceptionné"
+				}
+			}
+		},
+		{
+			"_id": "rbs_productreturn_status_finalized",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_productreturn_status_finalized",
+			"substitutions": ["website", "fullName", "orderCode", "orderId", "productReturnCode", "productReturnId", "processingComment"],
+			"label": "Retour traité",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 1, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Cher{fullName},\n\nNous vous informons que votre retour n°{productReturnCode} sur votre commande n°{orderCode} a été traité.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+										},
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Votre retour n°{productReturnCode} a été traité"
+				}
+			}
+		},
+		{
+			"_id": "rbs_productreturn_status_canceled",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_productreturn_status_canceled",
+			"substitutions": ["website", "fullName", "orderCode", "orderId", "productReturnCode", "productReturnId", "processingComment"],
+			"label": "Retour annulé",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 1, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Cher{fullName},\n\nNous vous informons que votre retour n°{productReturnCode} sur votre commande n°{orderCode} a été annulé.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+										},
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Votre retour n°{productReturnCode} a été annulé"
+				}
+			}
+		},
+		{
+			"_id": "rbs_productreturn_status_refused",
+			"_model": "Rbs_Mail_Mail",
+			"useCache": false,
+			"TTL": 0,
+			"code": "rbs_productreturn_status_refused",
+			"substitutions": ["website", "fullName", "orderCode", "orderId", "productReturnCode", "productReturnId", "processingComment"],
+			"label": "Retour refusé",
+			"versionOfId": 0,
+			"template":{"_id": "mail_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent":
+						{
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items":[
+								{
+									"type": "block", "name": "Rbs_Mail_Richtext", "id": 1, "label": "Rbs_Mail_Richtext",
+									"parameters": {
+										"content": {
+											"e": "Markdown",
+											"h": null,
+											"t": "Cher{fullName},\n\nNous vous informons que votre retour n°{productReturnCode} sur votre commande n°{orderCode} a été refusé pour les raisons suivantes :\n\n{processingComment}\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+										},
+										"TTL": 0
+									}
+								}
+							]
+						}
+					},
+					"subject": "Votre retour n°{productReturnCode} a été refusé"
+				}
+			}
+		}
+	],
+	"contextId": "Rbs Mail Install"
+}

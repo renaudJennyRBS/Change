@@ -87,8 +87,8 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	{
 		parent::attachEvents($eventManager);
 		$eventManager->attach(array(DocumentEvent::EVENT_CREATE, DocumentEvent::EVENT_UPDATE), array($this, 'onDefaultSave'), 10);
-		$eventManager->attach(array(DocumentEvent::EVENT_CREATE), array($this, 'sendNotificationMailShipmentUnderPreparation'), 1);
-		$eventManager->attach(array(DocumentEvent::EVENT_UPDATE), array($this, 'sendNotificationMailShipmentFinalized'), 1);
+		$eventManager->attach(array(DocumentEvent::EVENT_CREATED), array($this, 'sendNotificationMailShipmentUnderPreparation'), 1);
+		$eventManager->attach(array(DocumentEvent::EVENT_UPDATED), array($this, 'sendNotificationMailShipmentFinalized'), 1);
 	}
 
 	/**
@@ -227,7 +227,7 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	{
 		$jobManager = $event->getApplicationServices()->getJobManager();
 		$argument = ['notificationName' => 'rbs_commerce_order_shipment_under_preparation', 'targetId' => $this->getId()];
-		$jobManager->createNewJob('Rbs_Notification_ProcessTransactionalNotification', $argument);
+		$jobManager->createNewJob('Rbs_Commerce_Notification', $argument);
 	}
 
 	/**
@@ -237,7 +237,7 @@ class Shipment extends \Compilation\Rbs\Order\Documents\Shipment
 	{
 		$jobManager = $event->getApplicationServices()->getJobManager();
 		$argument = ['notificationName' => 'rbs_commerce_order_shipment_sent', 'targetId' => $this->getId()];
-		$jobManager->createNewJob('Rbs_Notification_ProcessTransactionalNotification', $argument);
+		$jobManager->createNewJob('Rbs_Commerce_Notification', $argument);
 	}
 
 	/**

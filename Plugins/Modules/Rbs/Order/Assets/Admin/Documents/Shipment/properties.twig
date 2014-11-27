@@ -18,7 +18,7 @@
 		<rbs-field ng-if="!canEdit.order" label="{{ i18nAttr(propertyKey('Rbs_Order_Shipment', 'orderId'), ['ucf']) }}"
 			ng-disabled="true">
 			<p class="form-control-static">
-				<a href="javascript:;" data-ng-href="Rbs/Order/Order/(= data.order.id =)">
+				<a href="javascript:;" data-ng-href="(= data.order | rbsURL =)">
 					(= data.order.label =)
 				</a>
 			</p>

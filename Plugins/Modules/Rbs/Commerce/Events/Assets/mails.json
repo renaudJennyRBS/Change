@@ -6,7 +6,7 @@
 			"useCache": false,
 			"TTL": 0,
 			"code": "rbs_commerce_order_confirmation",
-			"substitutions": ["website", "fullname", "total", "orderCode", "orderId"],
+			"substitutions": ["website", "fullName", "total", "orderCode", "orderId"],
 			"label": "Confirmation de commande",
 			"versionOfId": 0,
 			"template":{"_id": "mail_template"},
@@ -25,7 +25,7 @@
 										"content": {
 											"e": "Markdown",
 											"h": null,
-											"t": "Cher{fullname},\n\n Nous avons le plaisir de vous confirmer que votre commande n°{orderCode} d’un montant de {total} a bien été enregistrée."
+											"t": "Cher{fullName},\n\n Nous avons le plaisir de vous confirmer que votre commande n°{orderCode} d’un montant de {total} a bien été enregistrée."
 										},
 										"TTL": 0
 									}
@@ -65,7 +65,7 @@
 			"useCache": false,
 			"TTL": 0,
 			"code": "rbs_commerce_order_canceled",
-			"substitutions": ["website", "fullname", "total", "orderCode", "orderId"],
+			"substitutions": ["website", "fullName", "total", "orderCode", "orderId"],
 			"label": "Annulation de commande",
 			"versionOfId": 0,
 			"template":{"_id": "mail_template"},
@@ -84,7 +84,7 @@
 										"content": {
 											"e": "Markdown",
 											"h": null,
-											"t": "Cher{fullname},\n\nNous vous confirmons que votre commande n°{orderCode} d’un montant de {total} a bien été annulée.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+											"t": "Cher{fullName},\n\nNous vous confirmons que votre commande n°{orderCode} d’un montant de {total} a bien été annulée.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
 										},
 										"TTL": 0
 									}
@@ -102,7 +102,7 @@
 			"useCache": false,
 			"TTL": 0,
 			"code": "rbs_commerce_order_shipment_under_preparation",
-			"substitutions": ["website", "fullname", "orderCode", "orderId", "shipmentCode", "shipmentId"],
+			"substitutions": ["website", "fullName", "orderCode", "orderId", "shipmentCode", "shipmentId"],
 			"label": "Préparation d'expédition",
 			"versionOfId": 0,
 			"template":{"_id": "mail_template"},
@@ -121,7 +121,7 @@
 										"content": {
 											"e": "Markdown",
 											"h": null,
-											"t": "Cher{fullname},\n\nNous vous informons qu'une expédition pour votre commande n°{orderCode} est en préparation.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+											"t": "Cher{fullName},\n\nNous vous informons qu'une expédition pour votre commande n°{orderCode} est en préparation.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
 										},
 										"TTL": 0
 									}
@@ -139,7 +139,7 @@
 			"useCache": false,
 			"TTL": 0,
 			"code": "rbs_commerce_order_shipment_sent",
-			"substitutions": ["website", "fullname", "orderCode", "orderId", "shipmentCode", "shipmentId"],
+			"substitutions": ["website", "fullName", "orderCode", "orderId", "shipmentCode", "shipmentId"],
 			"label": "Expédition finalisée",
 			"versionOfId": 0,
 			"template":{"_id": "mail_template"},
@@ -158,7 +158,7 @@
 										"content": {
 											"e": "Markdown",
 											"h": null,
-											"t": "Cher{fullname},\n\nNous vous informons que l'expédition {shipmentCode} pour votre commande n°{orderCode} a été expédiée.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
+											"t": "Cher{fullName},\n\nNous vous informons que l'expédition {shipmentCode} pour votre commande n°{orderCode} a été expédiée.\n\nPour toute information complémentaire, n’hésitez pas à contacter votre Service Clientèle\n\nA très bientôt sur la boutique en ligne de {website}.\n\nVotre Service Clientèle"
 										},
 										"TTL": 0
 									}

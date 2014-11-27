@@ -122,9 +122,10 @@ class Listeners implements ListenerAggregateInterface
 
 		$callBack = function ($event)
 		{
-			(new \Rbs\Commerce\Job\ProcessTransactionalNotification())->execute($event);
+			(new \Rbs\Commerce\Job\Notification())->execute($event);
+			(new \Rbs\Productreturn\Job\Notification())->execute($event);
 		};
-		$events->attach('process_Rbs_Notification_ProcessTransactionalNotification', $callBack, 5);
+		$events->attach('process_Rbs_Commerce_Notification', $callBack, 5);
 	}
 
 	/**

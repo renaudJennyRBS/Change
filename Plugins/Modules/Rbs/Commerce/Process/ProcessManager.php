@@ -1132,6 +1132,18 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 				$order->setPaymentAmount($cart->getPaymentAmount());
 
 				$order->setProcessingStatus(\Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING);
+
+				// If there is a transaction, get the website id and add it to context. This is useful for mail sending.
+				$transaction = $documentManager->getDocumentInstance($cart->getTransactionId());
+				if ($transaction instanceof \Rbs\Payment\Documents\Transaction)
+				{
+					$transactionContext = $transaction->getContextData();
+					if (is_array($transactionContext) && isset($transactionContext['websiteId']))
+					{
+						$order->getContext()->set('websiteId', $transactionContext['websiteId']);
+					}
+				}
+
 				$order->save();
 
 				$orderIdentifier = $order->getIdentifier();
@@ -1199,7 +1211,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$jobManager = $event->getApplicationServices()->getJobManager();
 			$argument = ['notificationName' => 'rbs_commerce_order_confirmation', 'targetId' => $order->getId()];
-			$jobManager->createNewJob('Rbs_Notification_ProcessTransactionalNotification', $argument);
+			$jobManager->createNewJob('Rbs_Commerce_Notification', $argument);
 		}
 	}
 

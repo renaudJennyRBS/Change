@@ -8,7 +8,7 @@
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'orderId'), ['ucf']) }}"
 			ng-disabled="true">
 			<p class="form-control-static">
-				<a href="javascript:;" data-ng-href="Rbs/Order/Order/(= data.order.id =)">
+				<a href="javascript:;" data-ng-href="(= data.order | rbsURL =)">
 					(= data.order.label =)
 				</a>
 			</p>
@@ -17,7 +17,7 @@
 		<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'productReturnId'), ['ucf']) }}"
 			ng-disabled="true">
 			<p class="form-control-static">
-				<a href="javascript:;" data-ng-href="Rbs/Productreturn/ProductReturn/(= data.order.id =)">
+				<a href="javascript:;" data-ng-href="(= data.productReturn | rbsURL =)">
 					(= data.productReturn.label =)
 				</a>
 			</p>
@@ -41,11 +41,11 @@
 		</rbs-field-text>
 
 		<rbs-field-date data-ng-if="document.prepared" property="shippingDate"
-				label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'shippingDate'), ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'shippingDate'), ['ucf']) }}">
 		</rbs-field-date>
 
 		<rbs-field-date data-ng-if="document.prepared" property="deliveryDate"
-				label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'deliveryDate'), ['ucf']) }}">
+			label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Shipment', 'deliveryDate'), ['ucf']) }}">
 		</rbs-field-date>
 	</div>
 </div>
