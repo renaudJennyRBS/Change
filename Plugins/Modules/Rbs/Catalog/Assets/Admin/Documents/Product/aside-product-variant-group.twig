@@ -8,7 +8,7 @@
 				data-ng-href="(= document.variantGroup | rbsURL:'variant-list':{productId:document.variantGroup.rootProductId}=)">
 				<i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_variant_list', ['ucf']) | raw }}
 			</a>
-			<a data-ng-show="! document.variant && ! document.variantGroup.rootProductId" href="javascript:;"
+			<a data-ng-show="!document.variant && !document.variantGroup.rootProductId" href="javascript:;"
 				data-ng-href="(= 'Rbs_Catalog_VariantGroup' | rbsURL:'new':{productId:document.id}=)">
 				<i class="icon-arrow-right"></i> {{ i18n('m.rbs.catalog.admin.variantgroup_aside_link', ['ucf']) | raw }}
 			</a>

@@ -1,0 +1,70 @@
+<div class="row">
+	<div data-rbs-aside-column="">
+		{% set currentRootName = 'variant-sections' %}
+		{% include '@Rbs_Catalog/Documents/VariantGroup/variant-aside-column.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<rbs-page-header document="document" sub-title="{{ i18nAttr(modelKey('Rbs_Catalog_VariantGroup'), ['ucf']) }}"></rbs-page-header>
+
+		<div data-ng-show="loaded">
+			<div class="well" style="margin-top: 20px;" data-ng-show="hasJobs">
+				{{ i18n('m.rbs.catalog.admin.variantgroup_jobs_infos', ['ucf']) | raw}}
+			</div>
+
+			<div rbs-document-editor-rbs-catalog-variant-group-sections="" data-ng-hide="hasJobs">
+					<form name="form" ng-submit="save()" class="form-horizontal">
+						<div>
+							<button class="btn btn-default" type="button" ng-click="selectAll()">{{ i18n('m.rbs.catalog.admin.select_all', ['ucf']) }}</button>
+							<button class="btn btn-default" type="button" ng-click="selectCategorizable()">{{ i18n('m.rbs.catalog.admin.select_categorizable', ['ucf']) }}</button>
+
+							<button class="btn btn-default" type="button" ng-click="toggleSelection()">{{ i18n('m.rbs.catalog.admin.inverse_selection', ['ucf']) }}</button>
+							<button class="btn btn-default" type="button" ng-click="clearSelection()">{{ i18n('m.rbs.catalog.admin.empty_selection', ['ucf']) }}</button>
+						</div>
+
+						<table class="table table-striped">
+							<thead>
+								<td></td>
+								<td>{{ i18n('m.rbs.catalog.admin.product_product', ['ucf']) }}</td>
+								<td>{{ i18n('m.rbs.catalog.documents.product_categorizable', ['ucf']) }}</td>
+								<td>{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'publicationSections'), ['ucf']) }}</td>
+							</thead>
+
+							<tr ng-repeat="variant in variants">
+								<td><input type="checkbox" ng-model="selectedVariants[variant.id]" ng-value="variant.id" /> </td>
+								<td>
+									<span ng-repeat="axis in variant.axesValues" ng-hide="$first">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+									<a href ng-href="(= variant.model | rbsURL:'edit':{id:variant.id} =)">(= variant.label =)</a>
+								</td>
+								<td>(= variant.categorizable | rbsBoolean =) </td>
+								<td>
+									<span ng-repeat="section in variant.publicationSections">
+										<span class="label label-default" data-ng-bind-html="section.label"></span>
+									</span>
+								</td>
+							</tr>
+						</table>
+
+
+						<div class="control-group property">
+							<label class="control-label">{{ i18n('m.rbs.catalog.admin.selected_sections', ['ucf']) }}</label>
+							<div class="controls">
+								<rbs-document-picker-multiple ng-model="publication.sections" value-ids="true"
+										select-model="{ancestors:'Rbs_Website_Section', abstract:false}"
+										property-label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'publicationSections'), ['ucf']) }}"
+										master-label="(= document.label =)">
+								</rbs-document-picker-multiple>
+							</div>
+						</div>
+
+						<div class="confirmation-area"></div>
+						<button class="btn btn-headline btn-primary" ng-class="{'btn-success':saveProgress.success && isChanged, 'btn-danger':saveProgress.error}"
+								data-role="save" type="submit" ng-disabled="!isChanged || saveProgress.running">
+							<i class="icon-white icon-ok" ng-class="{'icon-spinner': saveProgress.running, 'icon-ok': ! saveProgress.running, 'icon-remove': saveProgress.error}">
+							</i>{{ i18n('m.rbs.admin.admin.btnSave', ['ucf']) | raw }}
+						</button>
+					</form>
+			</div>
+		</div>
+	</div>
+</div>

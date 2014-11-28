@@ -153,7 +153,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 		if ($product instanceof Product)
 		{
 			// Section product list synchronization.
-			if ($product->getPublicationSectionsCount())
+			if ($product->getCategorizable() && $product->getPublicationSectionsCount())
 			{
 				$product->synchronizeSectionDocumentLists();
 			}
@@ -210,9 +210,12 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 		}
 
 		// Section product list synchronization.
-		if (in_array('publicationSections', $modifiedPropertyNames))
+		if (in_array('publicationSections', $modifiedPropertyNames) || in_array('categorizable', $modifiedPropertyNames))
 		{
-			$product->synchronizeSectionDocumentLists();
+			if ($product->getCategorizable())
+			{
+				$product->synchronizeSectionDocumentLists();
+			}
 		}
 
 		if (in_array('variantGroup', $modifiedPropertyNames))
@@ -227,6 +230,7 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 
 	protected function synchronizeSectionDocumentLists()
 	{
+
 		$dm = $this->getDocumentManager();
 
 		if ($this->getPublicationSectionsCount())
@@ -331,27 +335,6 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			}
 		}
 		return null;
-	}
-
-
-
-
-	/**
-	 * @return \Change\Documents\DocumentArrayProperty|\Rbs\Website\Documents\Section[]
-	 */
-	public function getPublicationSections()
-	{
-		$publicationSections = parent::getPublicationSections();
-		if ($publicationSections instanceof \Change\Documents\DocumentArrayProperty && !$publicationSections->count()
-			&& !$publicationSections->isModified())
-		{
-			$rootProduct = $this->getRelatedRootProduct();
-			if ($rootProduct instanceof Product)
-			{
-				$publicationSections->setDefaultIds($rootProduct->getPublicationSections()->getIds());
-			}
-		}
-		return $publicationSections;
 	}
 
 	/**

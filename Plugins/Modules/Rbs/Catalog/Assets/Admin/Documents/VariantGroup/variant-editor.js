@@ -748,4 +748,149 @@
 					}
 				}
 			}]);
+
+	angular.module('RbsChange').directive('rbsDocumentEditorRbsCatalogVariantGroupSections',
+		['RbsChange.REST', '$routeParams', 'RbsChange.i18n', 'RbsChange.Utils', '$http', 'RbsChange.NotificationCenter',
+			'RbsChange.Dialog', 'RbsChange.ErrorFormatter', 'RbsChange.Navigation',
+			function Editor(REST, $routeParams, i18n, Utils, $http, NotificationCenter, Dialog, ErrorFormatter, Navigation) {
+				return {
+					restrict: 'A',
+					link: function(scope, element) {
+						scope.variants = [];
+						scope.publication = {sections:[]};
+						scope.selectedVariants = {};
+
+						scope.isChanged = false;
+						scope.saveProgress = {};
+						scope.loaded = false;
+						scope.hasJobs = false;
+
+						var documentId;
+
+						if ($routeParams.hasOwnProperty('id')) {
+							documentId = parseInt($routeParams.id, 10);
+						}
+						console.log('GroupSections', documentId);
+
+
+						if (!isNaN(documentId) && documentId > 0) {
+							REST.resource(documentId).then(function(doc) {
+								scope.document = doc;
+								scope.hasJobs = (angular.isArray(doc.jobs) && doc.jobs.length > 0);
+								scope.loaded = true;
+							});
+						}
+
+						function setVariantSections(restResult) {
+							console.log('setVariantSections', restResult);
+							scope.publication.sections = restResult.publicationSections;
+							scope.variants = restResult.variants;
+						}
+
+						function loadVariantSections() {
+							var url = Utils.makeUrl('rbs/catalog/variantsections', {variantGroupId: documentId});
+							$http.get(REST.getBaseUrl(url)).success(function(restResult) {
+								setVariantSections(restResult);
+							});
+						}
+
+						scope.$watch('selectedVariants', function(newValue) {
+							scope.isChanged = false;
+							angular.forEach(newValue, function(value, key) {
+								if (value) {
+									scope.isChanged = true;
+								}
+							});
+						}, true);
+
+						scope.save = function() {
+							var messages = [];
+							scope.saveProgress.running = true;
+							var params = {variantGroupId: documentId, publicationSections: scope.publication.sections, variants: []};
+							angular.forEach(scope.selectedVariants, function(selected, productId) {
+								if (selected) {
+									params.variants.push(productId);
+								}
+							});
+
+							$http.post(REST.getBaseUrl('rbs/catalog/savevariantsections'), params)
+								.success(function(data) {
+									scope.saveProgress.running = null;
+									scope.saveProgress.error = null;
+									scope.clearSelection();
+									messages.push(i18n.trans('m.rbs.catalog.adminjs.variant_group_sections_updated | ucf'));
+
+									NotificationCenter.info(i18n.trans('m.rbs.catalog.adminjs.variant_group_sections_update | ucf'),
+										messages,
+										'rbs_catalog_update_variants', 5000);
+
+									setVariantSections(data);
+								})
+								.error(function(r) {
+									scope.saveProgress.running = null;
+									scope.saveProgress.error = true;
+
+									messages.push(i18n.trans('m.rbs.catalog.adminjs.impossible_to_update_sections_of_variant_group | ucf'));
+									messages.push(ErrorFormatter.format(r));
+
+									NotificationCenter.error(i18n.trans('m.rbs.catalog.adminjs.variant_group_sections_update | ucf'),
+										messages, 'rbs_catalog_update_variants');
+								});
+						};
+
+						scope.clearSelection = function() {
+							scope.selectedVariants = {};
+						};
+
+						scope.selectAll = function() {
+							scope.selectedVariants = {};
+							angular.forEach(scope.variants, function(variant) {
+								scope.selectedVariants[variant.id] = true;
+							})
+						};
+
+						scope.toggleSelection = function() {
+							var oldSelection = scope.selectedVariants;
+							scope.selectedVariants = {};
+							angular.forEach(scope.variants, function(variant) {
+								scope.selectedVariants[variant.id] = !oldSelection[variant.id];
+							})
+						};
+
+						scope.selectCategorizable = function() {
+							scope.selectedVariants = {};
+							angular.forEach(scope.variants, function(variant) {
+								scope.selectedVariants[variant.id] = (variant.categorizable == true);
+							})
+						};
+
+
+
+						scope.$on('Navigation.saveContext', function (event, args) {
+							var data = {
+								selectedVariants: scope.selectedVariants,
+								variants: scope.variants
+							};
+							args.context.label(scope.document.label);
+							args.context.savedData('VariantGroupSections', data);
+						});
+
+						function initContextData() {
+							var currentContext = Navigation.getCurrentContext();
+							if (currentContext) {
+								var data = currentContext.savedData('VariantGroupSections');
+								if (angular.isObject(data)) {
+									scope.selectedVariants = data.selectedVariants;
+									scope.variants = data.variants;
+									return;
+								}
+							}
+							loadVariantSections();
+						}
+
+						//Init from context
+						initContextData();
+					}
+				}
+			}]);
 })();
