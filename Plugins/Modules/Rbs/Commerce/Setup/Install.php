@@ -54,6 +54,7 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Rbs/Productreturn/Events/ReturnManager/Rbs_Commerce', '\Rbs\Commerce\Events\ReturnManager\Listeners');
 
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/cartItem', '160x120');
+		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/shortCartItem', '80x120');
 
 		$configuration->addPersistentEntry('Rbs/Commerce/Cart/CleanupTTL', 60 * 60);
 	}

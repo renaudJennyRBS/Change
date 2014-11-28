@@ -74,7 +74,14 @@
 			}
 
 			scope.modalContentLoading = true;
-			var request = AjaxAPI.putData('Rbs/Commerce/Cart', {addProducts:[data]}, {detailed:false});
+
+			var cartParams = {
+				detailed: false,
+				URLFormats: 'canonical',
+				visualFormats: 'shortCartItem'
+			};
+
+			var request = AjaxAPI.putData('Rbs/Commerce/Cart', {addProducts:[data]}, cartParams);
 			request.success(function(resultData) {
 					var cart = resultData.dataSets;
 					$rootScope.$broadcast('rbsRefreshCart', {'cart': cart});

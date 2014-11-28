@@ -2,49 +2,92 @@
 	"use strict";
 	var app = angular.module('RbsChangeApp');
 
-	function rbsShortCart($rootScope, AjaxAPI) {
+	function rbsCommerceShortCart($rootScope, AjaxAPI) {
 		var cacheCartDataKey = 'cartData';
 		return {
 			restrict: 'A',
-			templateUrl: '/rbsShortCart.tpl',
+			templateUrl: '/rbsCommerceShortCart.tpl',
 			replace: false,
 			scope: {},
 			link: function(scope, elem, attrs) {
 				var cacheKey = attrs['cacheKey'];
 				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
-				scope.cart = AjaxAPI.globalVar(cacheCartDataKey);
+				scope.cartData = AjaxAPI.globalVar(cacheCartDataKey);
 
-				function loadCurrentCart() {
-					var request = AjaxAPI.getData('Rbs/Commerce/Cart', null, {detailed: false, visualFormats: 'listItem'});
-					request.success(function(data, status, headers, config) {
-						var cart = data.dataSets;
-						if (!cart || angular.isArray(cart)) {
-							scope.cart = null;
-						} else {
-							scope.cart = cart;
-						}
-					}).error(function(data, status, headers, config) {
-						scope.cart = null;
-						console.log('loadCurrentCart error', data, status);
-					})
-				}
+				var cartParams = {
+					detailed: false,
+					URLFormats: 'canonical',
+					visualFormats: scope.parameters['imageFormats']
+				};
 
-				if (angular.isUndefined(scope.cart)) {
+				scope.loading = false;
+				scope.readOnly = true;
+				if (angular.isUndefined(scope.cartData)) {
+					scope.readOnly = false;
 					loadCurrentCart();
 				}
 
-				$rootScope.$on('rbsRefreshCart', function(event, params) {
-					scope.cart = params['cart'];
+				function loadCurrentCart() {
+					scope.loading = true;
+					var request = AjaxAPI.getData('Rbs/Commerce/Cart', null, cartParams);
+					request.success(function(data) {
+						var cart = data.dataSets;
+						if (!cart || angular.isArray(cart)) {
+							scope.cartData = null;
+						}
+						else {
+							scope.cartData = cart;
+						}
+						scope.loading = false;
+					}).error(function(data, status, headers, config) {
+						scope.cartData = null;
+						scope.loading = false;
+						console.log('loadCurrentCart error', data, status, headers, config);
+					})
+				}
+
+				function updateCartData(actions) {
+					scope.loading = true;
+					AjaxAPI.openWaitingModal(attrs['deleteProductWaitingMessage']);
+					var request = AjaxAPI.putData('Rbs/Commerce/Cart', actions, cartParams);
+					request.success(function(data) {
+						var cartData = data.dataSets;
+						if (cartData && !angular.isArray(cartData)) {
+							scope.cartData = cartData;
+						}
+						elem.find('.dropdown-toggle').dropdown('toggle');
+						scope.loading = false;
+						AjaxAPI.closeWaitingModal();
+					}).error(function(data, status, headers, config) {
+						console.log('updateCartData error', data, status, headers, config);
+						scope.loading = false;
+						AjaxAPI.closeWaitingModal();
+					});
+					return request;
+				}
+
+				scope.updateLineQuantity = function updateLineQuantity(key, newQuantity) {
+					var actions = {
+						'updateLinesQuantity': [
+							{ key: key, quantity: newQuantity }
+						]
+					};
+					updateCartData(actions);
+				};
+
+				$rootScope.$on('rbsRefreshCart', function onRbsRefreshCart(event, params) {
+					scope.cartData = params['cart'];
+					scope.loading = false;
 				});
 
-				$rootScope.$on('rbsUserConnected', function(event, params) {
+				$rootScope.$on('rbsUserConnected', function onRbsUserConnected(event, params) {
 					loadCurrentCart();
 				});
 			}
 		}
 	}
 
-	rbsShortCart.$inject = ['$rootScope', 'RbsChange.AjaxAPI'];
-	app.directive('rbsShortCart', rbsShortCart);
+	rbsCommerceShortCart.$inject = ['$rootScope', 'RbsChange.AjaxAPI'];
+	app.directive('rbsCommerceShortCart', rbsCommerceShortCart);
 })();
 

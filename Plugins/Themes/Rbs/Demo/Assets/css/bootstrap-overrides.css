@@ -1781,3 +1781,19 @@ a.badge:focus {
 		display: none !important;
 	}
 }
+
+/** Taken from recent version of Bootstrap */
+.media-right,
+.media > .pull-right {
+	padding-left: 10px;
+}
+.media-left,
+.media > .pull-left {
+	padding-right: 10px;
+}
+.media-left,
+.media-right,
+.media-body {
+	display: table-cell;
+	vertical-align: top;
+}

@@ -566,3 +566,20 @@ form .description {
 .alert-cookie .richtext > :last-child {
 	margin-bottom: 0;
 }
+
+/** Short cart */
+.dropdown-cart {
+	padding: 10px 10px;
+	min-width: 250px;
+}
+.dropdown-cart .media-left {
+	min-width: 90px;
+	text-align: center;
+}
+.dropdown-cart .media-body {
+	width: 100%;
+}
+#header-top > div > div .dropdown-cart,
+#footer-top > div > div .dropdown-cart {
+	line-height: 20px;
+}

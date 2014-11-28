@@ -30,7 +30,7 @@ class Cart extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('cartIdentifier');
-		$parameters->addParameterMeta('imageFormats', 'cartItem,detailThumbnail');
+		$parameters->addParameterMeta('imageFormats', 'cartItem,detailThumbnail,shortCartItem');
 		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$parameters->setNoCache();

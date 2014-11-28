@@ -34,5 +34,8 @@
 	},
 	"select":{
 		"message":"sélectionner"
+	},
+	"delete":{
+		"message":"supprimer"
 	}
 }
