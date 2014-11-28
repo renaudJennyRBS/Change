@@ -463,9 +463,9 @@
 
 		<script type="text/ng-template" id="/rbsCommerceShippingAtHomeStep.tpl">
 			<div data-ng-hide="shippingMode.edition">
-				<div class="row">
+				<div class="row" data-ng-hide="isEmptyAddress(atHomeAddress)">
 					<div class="col-md-4">
-						<address class="no-bottom-margin" data-ng-show="atHomeAddress.lines.length">
+						<address class="no-bottom-margin">
 							<strong>(= atHomeAddress.lines[0] =)</strong>
 							<div data-ng-repeat="addressLine in atHomeAddress.lines track by $index" data-ng-show="!$first">
 								(= addressLine =)
@@ -483,6 +483,16 @@
 							<div data-rbs-commerce-mode-selector="" data-show-prices="showPrices"
 								data-shipping-mode="shippingMode" data-shipping-mode-info="allowedShippingModeInfo"></div>
 						</div>
+					</div>
+				</div>
+				<div class="row" data-ng-show="isEmptyAddress(atHomeAddress)">
+					<div class="col-md-12">
+						<div>
+							{{ i18n('m.rbs.commerce.front.at_home_address_not_defined', ['ucf']) }}
+						</div>
+						<button class="btn btn-default" data-ng-click="editAddress()">
+							{{ i18n('m.rbs.commerce.front.define_address', ['ucf']) }}
+						</button>
 					</div>
 				</div>
 			</div>

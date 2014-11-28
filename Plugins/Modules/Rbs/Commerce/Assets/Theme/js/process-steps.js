@@ -448,6 +448,9 @@
 						if (scope.userId && address.common && address.common.useName && address.common.name) {
 							delete address.common.id;
 							delete address.default;
+							if (!scope.userAddresses || !scope.userAddresses.length) {
+								address.default = {'default': true};
+							}
 							processController.loading(true);
 							AjaxAPI.postData('Rbs/Geo/Address/', address)
 								.success(function(data, status, headers, config) {
@@ -530,9 +533,7 @@
 						var defaultUserShippingAddress = scope.getDefaultUserAddress(userAddresses);
 						if (defaultUserShippingAddress) {
 							scope.selectUserAddress(defaultUserShippingAddress);
-							return;
 						}
-						scope.editAddress();
 					}
 				});
 			}

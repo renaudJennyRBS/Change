@@ -52,6 +52,9 @@
 					scope.cartData = cartData;
 					if (cartData.processData) {
 						processInfo = cartData.processData;
+						if (!scope.currentStep && processInfo.common && processInfo.common.currentStep) {
+							self.setCurrentStep(processInfo.common.currentStep);
+						}
 					}
 					if (self.showPrices()) {
 						scope.currencyCode = cartData.common.currencyCode;
