@@ -138,6 +138,13 @@
 					}
 				};
 
+				scope.onReload = function() {
+					scope.block = null;
+					scope.blockParameters = null;
+					scope.select = {websiteId: null};
+					scope.buildBlockList();
+				};
+
 				scope.buildBlockList = function() {
 					var editableContent = scope.document.editableContent,
 						contentByWebsite = scope.document.contentByWebsite,
