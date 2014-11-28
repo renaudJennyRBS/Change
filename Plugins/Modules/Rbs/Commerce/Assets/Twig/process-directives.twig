@@ -1,40 +1,3 @@
-{% block processMenu %}
-<script type="text/ng-template" id="/rbsCommerceProcessMenu.tpl">
-	<ol class="nav nav-stacked nav-pills">
-		<li>
-			<a href="{{ currentURL(null, 'cart') }}" data-target="#cart">
-				<span data-ng-cloak="" class="badge pull-right"><span class="glyphicon glyphicon-ok"></span></span>
-				{{ i18n('m.rbs.commerce.front.process_step_cart', ['ucf']) }}
-			</a>
-		</li>
-		<li>
-			<a href="{{ currentURL(null, 'information') }}" data-target="#identification">
-				<span data-ng-cloak="" data-ng-show="isStepChecked('identification')" class="badge pull-right">
-					<span class="glyphicon glyphicon-ok"></span>
-				</span>
-				{{ i18n('m.rbs.commerce.front.process_step_identification', ['ucf']) }}
-			</a>
-		</li>
-		<li data-ng-class="{'disabled': !isStepEnabled('shipping')}">
-			<a href="{{ currentURL(null, 'shipping') }}" data-target="#shipping">
-				<span data-ng-cloak="" data-ng-show="isStepChecked('shipping')" class="badge pull-right">
-					<span class="glyphicon glyphicon-ok"></span>
-				</span>
-				{{ i18n('m.rbs.commerce.front.process_step_shipping', ['ucf']) }}
-			</a>
-		</li>
-		<li data-ng-class="{'disabled': !isStepEnabled('payment')}">
-			<a href="{{ currentURL(null, 'payment') }}" data-target="#payment">
-				{{ i18n('m.rbs.commerce.front.process_step_payment', ['ucf']) }}
-			</a>
-		</li>
-		<li class="disabled">
-			<a href="">{{ i18n('m.rbs.commerce.front.process_step_confirmation', ['ucf']) }}</a>
-		</li>
-	</ol>
-</script>
-{% endblock processMenu %}
-
 {% block acceptTermsAndConditions %}
 	<div class="col-sm-12">
 		<p class="alert alert-warning" role="alert">
@@ -74,64 +37,106 @@
 		{% endblock processLoader %}
 
 		<div class="row" data-ng-show="cartData">
-			<div class="col-sm-3 process-sidebar-container">
-				<div class="process-sidebar" data-rbs-commerce-process-menu="" data-steps="steps" data-current-step="currentStep"></div>
+			<div class="col-sm-3">
+				{% block processStructureMenu %}
+				<ol class="nav nav-stacked nav-pills process-menu">
+					<li>
+						<a href="javascript:;" data-rbs-anchor="cart">
+							<span class="badge pull-right"><span class="glyphicon glyphicon-ok"></span></span>
+							{{ i18n('m.rbs.commerce.front.process_step_cart', ['ucf']) }}
+						</a>
+					</li>
+					<li>
+						<a href="javascript:;" data-rbs-anchor="identification">
+							<span data-ng-show="isStepChecked('identification')" class="badge pull-right">
+								<span class="glyphicon glyphicon-ok"></span>
+							</span>
+							{{ i18n('m.rbs.commerce.front.process_step_identification', ['ucf']) }}
+						</a>
+					</li>
+					<li data-ng-class="{'disabled': !isStepEnabled('shipping')}">
+						<a href="javascript:;" data-rbs-anchor="shipping">
+							<span data-ng-show="isStepChecked('shipping')" class="badge pull-right">
+								<span class="glyphicon glyphicon-ok"></span>
+							</span>
+							{{ i18n('m.rbs.commerce.front.process_step_shipping', ['ucf']) }}
+						</a>
+					</li>
+					<li data-ng-class="{'disabled': !isStepEnabled('payment')}">
+						<a href="javascript:;" data-rbs-anchor="payment">
+							{{ i18n('m.rbs.commerce.front.process_step_payment', ['ucf']) }}
+						</a>
+					</li>
+					<li class="disabled">
+						<a href="javascript:;">{{ i18n('m.rbs.commerce.front.process_step_confirmation', ['ucf']) }}</a>
+					</li>
+				</ol>
+				{% endblock processStructureMenu %}
 			</div>
 			<div class="col-sm-9">
-				<div id="cart" class="clearfix">
-					<h2>{{ i18n('m.rbs.commerce.front.process_step_cart', ['ucf']) }}</h2>
-					{% block processCartLines %}
-						<div class="table-responsive">
-							<table summary="{{ i18nAttr('m.rbs.commerce.front.cart_contents', ['ucf']) }}" class="table table-striped table-vertical-middle">
-								<thead>
-								<tr>
-									<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
-									<th>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
-									<th data-ng-if="showPrices" colspan="2">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
-								</tr>
-								</thead>
-								<tbody data-role="cart-lines">
-								</tbody>
-							</table>
-						</div>
-					{% endblock processCartLines %}
-					<div class="clearfix">
-						<p>
-							<a class="btn btn-default pull-right" href="{{ functionURL('Rbs_Commerce_Cart') }}">
-								{{ i18n('m.rbs.commerce.front.modify_cart', ['ucf']) }}
-							</a>
-						</p>
-					</div>
+				{% block processStructureCartStep %}
+				<div id="cart" data-rbs-commerce-cart-lines="" data-cart-data="cartData">
 				</div>
+				{% endblock processStructureCartStep %}
 
-				<div class="vertical-if-animation" data-ng-if="isStepEnabled('identification')" data-ng-cloak="">
+				{% block processStructureIdentificationStep %}
+				<div class="vertical-if-animation" data-ng-if="isStepEnabled('identification')">
 					<div class="vertical-if-animation-content">
 						<hr />
 						<div id="identification" class="clearfix" data-rbs-commerce-identification-step="" >
 						</div>
 					</div>
 				</div>
+				{% endblock processStructureIdentificationStep %}
 
-				<div class="vertical-if-animation" data-ng-if="isStepEnabled('shipping')" data-ng-cloak="">
+				{% block processStructureShippingStep %}
+				<div class="vertical-if-animation" data-ng-if="isStepEnabled('shipping')">
 					<div class="vertical-if-animation-content">
 						<hr />
 						<div id="shipping" class="clearfix" data-rbs-commerce-shipping-step="">
 						</div>
 					</div>
 				</div>
+				{% endblock processStructureShippingStep %}
 
-				<div class="vertical-if-animation" data-ng-if="isStepEnabled('payment')" data-ng-cloak="">
+				{% block processStructurePaymentStep %}
+				<div class="vertical-if-animation" data-ng-if="isStepEnabled('payment')">
 					<div class="vertical-if-animation-content">
 						<hr />
-
 						<div id="payment" class="clearfix" data-rbs-commerce-payment-step="">
 						</div>
 					</div>
 				</div>
+				{% endblock processStructurePaymentStep %}
 			</div>
 		</div>
 	</script>
 {% endblock processStructure %}
+
+{% block processCartLines %}
+	<script type="text/ng-template" id="/rbsCommerceCartLines.tpl">
+		<h2>{{ i18n('m.rbs.commerce.front.process_step_cart', ['ucf']) }}</h2>
+		<div class="table-responsive">
+			<table summary="{{ i18nAttr('m.rbs.commerce.front.cart_contents', ['ucf']) }}" class="table table-striped table-vertical-middle">
+				<thead>
+				<tr>
+					<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
+					<th>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
+					<th data-ng-if="showPrices" colspan="2">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
+				</tr>
+				</thead>
+				<tbody data-role="cart-lines">
+				</tbody>
+			</table>
+		</div>
+		<p class="clearfix">
+			<a class="btn btn-default pull-right" href="{{ functionURL('Rbs_Commerce_Cart') }}">
+				{{ i18n('m.rbs.commerce.front.modify_cart', ['ucf']) }}
+			</a>
+		</p>
+	</script>
+{% endblock %}
+
 
 {% block processLine %}
 	<script type="text/ng-template" id="/rbsCommerceProcessLineDefault.tpl">
