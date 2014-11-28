@@ -676,7 +676,7 @@
 		<div class="text-right">
 			<p data-ng-if="!hasTransaction()">
 				<button class="btn btn-lg btn-primary" type="button" data-ng-click="savePayment()"
-					data-ng-disabled="isEmptyAddress(processData.address)">
+					data-ng-disabled="isEmptyAddress(processData.address) || processData.addressEdition">
 					{{ i18n('m.rbs.commerce.front.continue', ['ucf']) }}
 				</button>
 			</p>
