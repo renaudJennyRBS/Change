@@ -219,6 +219,40 @@ class DocumentCodeManager
 	/**
 	 * @api
 	 * @param \Change\Documents\AbstractDocument|integer $document
+	 * @throws \Change\Transaction\RollbackException
+	 * @throws \Exception
+	 * @return integer|boolean
+	 */
+	public function clearAllDocumentCodes($document)
+	{
+		if ($document instanceof \Change\Documents\AbstractDocument)
+		{
+			$documentId = $document->getId();
+		}
+		elseif (is_numeric($document))
+		{
+			$documentId = intval($document);
+		}
+		else
+		{
+			return false;
+		}
+		try
+		{
+			$this->getTransactionManager()->begin();
+			$result = $this->deleteDocumentId($documentId);
+			$this->getTransactionManager()->commit();
+			return $result;
+		}
+		catch (\Exception $e)
+		{
+			throw $this->getTransactionManager()->rollBack($e);
+		}
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Documents\AbstractDocument|integer $document
 	 * @param string $code
 	 * @param integer|string $context
 	 * @throws \Exception
@@ -374,6 +408,24 @@ class DocumentCodeManager
 		$iq = $qb->deleteQuery();
 		$iq->bindParameter('id', $id);
 		$iq->execute();
+	}
+
+	/**
+	 * @param integer $documentId
+	 * @return integer
+	 */
+	protected function deleteDocumentId($documentId)
+	{
+		$qb = $this->getDbProvider()->getNewStatementBuilder('DocumentCodeManager_deleteDocumentId');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->delete($fb->table('change_document_code'))
+				->where($fb->eq($fb->column('document_id'), $fb->integerParameter('documentId')));
+		}
+		$iq = $qb->deleteQuery();
+		$iq->bindParameter('documentId', $documentId);
+		return $iq->execute();
 	}
 
 	/**
