@@ -35,7 +35,7 @@ class OrderProcess extends Block
 		$parameters->addParameterMeta('confirmed', false);
 		$parameters->addParameterMeta('login', null);
 		$parameters->addParameterMeta('email', null);
-		$parameters->addParameterMeta('imageFormats', 'cartItem,detailThumbnail');
+		$parameters->addParameterMeta('imageFormats', 'cartItem,detailThumbnail,shortCartItem');
 		$this->initCommerceContextParameters($parameters);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());

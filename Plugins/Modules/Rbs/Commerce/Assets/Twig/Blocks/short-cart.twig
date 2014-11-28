@@ -1,48 +1,135 @@
-<script type="text/ng-template" id="/rbsShortCart.tpl">
-	<div>
-		<div data-ng-show="cart.lines.length" class="dropdown">
-			<a href="#" data-toggle="dropdown" class="dropdown-toggle">
-				<i class="glyphicon glyphicon-shopping-cart"></i>
-				{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
-				<span class="badge">(= cart.lines.length =)</span>
-				<b class="caret"></b>
-			</a>
-			<ul class="dropdown-menu">
-				<li class="dropdown-text">
-					(= cart.lines.length =)
-					<span data-ng-show="cart.lines.length == 1">{{ i18n('m.rbs.commerce.front.article') }}</span>
-					<span data-ng-show="cart.lines.length > 1">{{ i18n('m.rbs.commerce.front.articles') }}</span>
-				</li>
+{% block rbsCommerceShortCart %}
+	<script type="text/ng-template" id="/rbsCommerceShortCart.tpl">
+		{% block cartLoading %}
+			<div data-ng-show="loading" class="dropdown">
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+					<span class="glyphicon glyphicon-shopping-cart"></span>
+					{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
+					<span class="badge">...</span>
+					<span class="caret"></span >
+				</a>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="{{ functionURL('Rbs_Commerce_Cart') }}">
+							{{ i18n('m.rbs.commerce.front.please_wait_loading_cart', ['ucf', 'etc']) }}
+						</a>
+					</li>
+				</ul>
+			</div>
+		{% endblock cartLoading %}
 
-				<li class="divider" data-ng-show="parameters.displayPricesWithoutTax || parameters.displayPricesWithTax"></li>
-				<li class="dropdown-text price" data-ng-show="parameters.displayPricesWithoutTax">
-					(= cart.amounts.linesAmountWithoutTaxes | rbsFormatPrice:cart.common.currencyCode =)
-					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}</abbr>
-				</li>
-				<li class="dropdown-text price" data-ng-show="parameters.displayPricesWithTax">
-					(= cart.amounts.linesAmountWithTaxes | rbsFormatPrice:cart.common.currencyCode =)
-				</li>
-				<li class="dropdown-text" data-ng-show="parameters.displayPricesWithoutTax || parameters.displayPricesWithTax">{{ i18n('m.rbs.commerce.front.excluding_fees') }}</li>
+		{% block cartEmpty %}
+			<div data-ng-show="!loading && !cartData.lines.length" class="dropdown">
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+					<span class="glyphicon glyphicon-shopping-cart"></span>
+					{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
+					<span class="badge">{{ i18n('m.rbs.commerce.front.empty') }}</span>
+					<span class="caret"></span >
+				</a>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="{{ functionURL('Rbs_Commerce_Cart') }}">{{ i18n('m.rbs.commerce.front.empty_cart', ['ucf']) }}</a>
+					</li>
+				</ul>
+			</div>
+		{% endblock cartEmpty %}
 
-				<li class="divider"></li>
-				<li><a href="{{ functionURL('Rbs_Commerce_Cart') }}">{{ i18n('m.rbs.commerce.front.view_my_cart', ['ucf']) }}</a></li>
-			</ul>
-		</div>
-		<div data-ng-hide="cart.lines.length" class="dropdown">
-			<a href="#" data-toggle="dropdown" class="dropdown-toggle">
-				<i class="glyphicon glyphicon-shopping-cart"></i>
-				{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
-				<span class="badge">{{ i18n('m.rbs.commerce.front.empty') }}</span>
-				<b class="caret"></b>
-			</a>
-			<ul class="dropdown-menu">
-				<li><a href="{{ functionURL('Rbs_Commerce_Cart') }}">{{ i18n('m.rbs.commerce.front.empty_cart', ['ucf']) }}</a></li>
-			</ul>
-		</div>
-	</div>
-</script>
+		{% block cartNotEmpty %}
+			<div data-ng-show="!loading && cartData.lines.length" class="dropdown">
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+					<span class="glyphicon glyphicon-shopping-cart"></span>
+					{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
+					<span class="badge">(= cartData.lines.length =)</span>
+					<span  class="caret"></span >
+				</a>
+				<div class="dropdown-menu dropdown-cart">
+					{% block cartDropdownHeader %}
+						<h3 class="no-top-margin text-center">
+							(= cartData.lines.length =)
+							<span data-ng-show="cartData.lines.length == 1">{{ i18n('m.rbs.commerce.front.article') }}</span>
+							<span data-ng-show="cartData.lines.length > 1">{{ i18n('m.rbs.commerce.front.articles') }}</span>
+						</h3>
+					{% endblock cartDropdownHeader %}
 
-<div data-rbs-short-cart="" data-cache-key="{{ blockId }}">
-	<i class="glyphicon glyphicon-shopping-cart"></i>
+					{% block cartDropdownLines %}
+						<ul class="media-list">
+							<li class="media" data-ng-repeat="line in cartData.lines | orderBy:'index':true | limitTo:3">
+								<a data-ng-href="(= line.product.common.URL.canonical =)" class="media-left">
+									<img data-ng-show="line.product.common.visuals[0].shortCartItem" src=""
+										alt="(= line.product.common.title =)"
+										data-ng-src="(= line.product.common.visuals[0].shortCartItem =)" />
+									<img data-ng-show="!line.product.common.visuals[0].shortCartItem && line.product.rootProduct.common.visuals[0].shortCartItem"
+										src="" alt="(= line.product.common.title =)"
+										data-ng-src="(= line.product.rootProduct.common.visuals[0].shortCartItem =)" />
+									<div data-ng-show="!line.product.common.visuals[0].shortCartItem && !line.product.rootProduct.common.visuals[0].shortCartItem"
+										class="text-muted">
+										<span class="glyphicon glyphicon-camera" style="font-size:50px"></span>
+									</div>
+								</a>
+								<div class="media-body">
+									<h4 class="media-heading">(= line.designation =)</h4>
+									<dl class="dl-inline-items no-bottom-margin">
+										<dt data-ng-repeat-start="axeInfo in line.options.axesInfo">(= axeInfo.name =)</dt>
+										<dd data-ng-repeat-end="">(= axeInfo.value =)</dd>
+										<dt>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</dt>
+										<dd>(= line.quantity =)</dd>
+									</dl>
+									<strong data-ng-show="parameters.displayPricesWithTax && line.amountWithTaxes">
+										(= line.amountWithTaxes | rbsFormatPrice:cartData.common.currencyCode =)
+									</strong>
+									<strong data-ng-show="!parameters.displayPricesWithTax && parameters.displayPricesWithoutTax && line.amountWithoutTaxes">
+										(= line.amountWithoutTaxes | rbsFormatPrice:cartData.common.currencyCode =)
+										<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+											{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+										</abbr>
+									</strong>
+									<div data-ng-if="!readOnly">
+										<button type="button" class="btn btn-xs btn-default"
+											data-ng-click="updateLineQuantity(line.key, 0)">
+											<span class="glyphicon glyphicon-trash"></span>
+											{{ i18n('m.rbs.generic.front.delete', ['ucf']) }}
+										</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<p data-ng-if="cartData.lines.length > 3">
+							{{ i18n('m.rbs.commerce.front.and', ['ucf']) }}
+							<a href="{{ functionURL('Rbs_Commerce_Cart') }}">
+								{{ i18n('m.rbs.commerce.front.n_other_articles', ['etc'], {count: '(= cartData.lines.length - 3 =)'}) }}
+							</a>
+						</p>
+					{% endblock cartDropdownLines %}
+
+					{% block cartDropdownFooter %}
+						<ul class="list-unstyled">
+							<li>
+								<strong>
+									{{ i18n('m.rbs.commerce.front.sub_total', ['ucf', 'lab']) }}
+									<span data-ng-show="parameters.displayPricesWithTax && cartData.amounts.linesAmountWithTaxes">
+										(= cartData.amounts.linesAmountWithTaxes | rbsFormatPrice:cartData.common.currencyCode =)
+									</span>
+									<span data-ng-show="!parameters.displayPricesWithTax && parameters.displayPricesWithoutTax && cartData.amounts.linesAmountWithoutTaxes">
+										(= cartData.amounts.linesAmountWithoutTaxes | rbsFormatPrice:cartData.common.currencyCode =)
+										<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+											{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+										</abbr>
+									</span>
+								</strong>
+							</li>
+						</ul>
+						<a href="{{ functionURL('Rbs_Commerce_Cart') }}" class="btn btn-primary btn-block">
+							{{ i18n('m.rbs.commerce.front.view_my_cart', ['ucf']) }}
+						</a>
+					{% endblock cartDropdownFooter %}
+				</div>
+			</div>
+		{% endblock cartNotEmpty %}
+	</script>
+{% endblock rbsCommerceShortCart %}
+
+<div data-rbs-commerce-short-cart="" data-cache-key="{{ blockId }}"
+	data-delete-product-waiting-message="{{ i18nAttr('m.rbs.commerce.front.deleting_product', ['ucf', 'etc']) }}">
+	<span class="glyphicon glyphicon-shopping-cart"></span>
 	{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
 </div>

@@ -29,6 +29,7 @@ class ShortCart extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
+		$parameters->addParameterMeta('imageFormats', 'shortCartItem');
 		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -58,7 +59,6 @@ class ShortCart extends Block
 	 */
 	protected function execute($event, $attributes)
 	{
-		$parameters = $event->getBlockParameters();
 		return 'short-cart.twig';
 	}
 }

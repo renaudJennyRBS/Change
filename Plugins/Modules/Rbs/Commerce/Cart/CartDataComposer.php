@@ -260,7 +260,7 @@ class CartDataComposer
 	protected function generateCreditNotesDataSet()
 	{
 		$this->dataSets['creditNotes'] = [];
-		$amountWithoutTaxes = 0.0;
+		$amount = 0.0;
 		foreach ($this->cart->getCreditNotes() as $creditNote)
 		{
 			$creditNoteData = [
@@ -269,7 +269,7 @@ class CartDataComposer
 				'amountWithoutTaxes' => $creditNote->getAmount(),
 				'amountWithTaxes' => $creditNote->getAmount(),
 			];
-			$amountWithoutTaxes += $creditNote->getAmount();
+			$amount += $creditNote->getAmount();
 			if ($creditNote->getOptions()->count())
 			{
 				$creditNoteData['options'] = $creditNote->getOptions()->toArray();
@@ -278,8 +278,7 @@ class CartDataComposer
 		}
 
 		if (count($this->dataSets['creditNotes'])) {
-			$this->dataSets['amounts']['creditNotesAmountWithoutTaxes'] = $amountWithoutTaxes;
-			$this->dataSets['amounts']['creditNotesAmountWithTaxes'] = $amountWithoutTaxes;
+			$this->dataSets['amounts']['creditNotesAmount'] = $amount;
 		}
 	}
 

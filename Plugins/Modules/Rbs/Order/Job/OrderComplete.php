@@ -52,6 +52,6 @@ class OrderComplete
 		$job = $event->getJob();
 		$jobManager = $event->getJobManager();
 		$argument = ['notificationName' => 'rbs_commerce_order_canceled', 'targetId' => $job->getArgument('orderId')];
-		$jobManager->createNewJob('Rbs_Notification_ProcessTransactionalNotification', $argument);
+		$jobManager->createNewJob('Rbs_Commerce_Notification', $argument);
 	}
 } 

@@ -360,5 +360,17 @@
 	},
 	"define_address":{
 		"message":"saisir l'adresse"
+	},
+	"sub_total":{
+		"message":"sous-total"
+	},
+	"and":{
+		"message": "et"
+	},
+	"n_other_articles":{
+		"message":"$count$ autres articles"
+	},
+	"deleting_product": {
+		"message": "suppression du produit"
 	}
 }

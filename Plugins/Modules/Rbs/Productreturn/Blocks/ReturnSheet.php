@@ -13,8 +13,6 @@ namespace Rbs\Productreturn\Blocks;
  */
 class ReturnSheet extends \Change\Presentation\Blocks\Standard\Block
 {
-	//use \Rbs\Commerce\Blocks\Traits\ContextParameters;
-
 	/**
 	 * Event Params 'website', 'document', 'page'
 	 * @api
@@ -36,12 +34,6 @@ class ReturnSheet extends \Change\Presentation\Blocks\Standard\Block
 			return $this->setInvalidParameters($parameters);
 		}
 
-		/*order = $return->getOrderIdInstance();
-		if (!($order instanceof \Rbs\Order\Documents\Order))
-		{
-			return $this->setInvalidParameters($parameters);
-		}*/
-
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		$user = $event->getAuthenticationManager()->getCurrentUser();
@@ -52,14 +44,7 @@ class ReturnSheet extends \Change\Presentation\Blocks\Standard\Block
 			return $this->setInvalidParameters($parameters);
 		}
 
-		/*$webStore = $documentManager->getDocumentInstance($order->getWebStoreId());
-		if (!($webStore instanceof \Rbs\Store\Documents\WebStore))
-		{
-			return $this->setInvalidParameters($parameters);
-		}*/
-
 		$parameters->setParameterValue('productReturnId', $return->getId());
-		//$parameters->setParameterValue('webStoreId', $order->getWebStoreId());
 		$parameters->setParameterValue('accessorId', $userId);
 
 		$page = $event->getParam('page');
@@ -67,8 +52,6 @@ class ReturnSheet extends \Change\Presentation\Blocks\Standard\Block
 		{
 			$parameters->setParameterValue('pageId', $page->getId());
 		}
-
-		//$this->setDetailedCommerceContextParameters($webStore, $order->getBillingAreaIdInstance(), $order->getZone(), $parameters);
 		return $parameters;
 	}
 

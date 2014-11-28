@@ -81,6 +81,7 @@
 						for (var returnIndex = 0; returnIndex < scope.orderData.returns.length; returnIndex++) {
 							var returnData = scope.orderData.returns[returnIndex];
 							if (returnData.common['statusInfos'].code === 'CANCELED' ||
+								returnData.common['statusInfos'].code === 'REFUSED' ||
 								returnData.common['statusInfos'].code === 'EDITION') {
 								continue;
 							}
@@ -137,6 +138,10 @@
 		scope.$watch('returnData.shipments', function () {
 			scope.stepsData.reshipping.isEnabled = scope.needsReshipment();
 		}, true);
+
+		scope.editLine = function editLine(shipmentIndex, lineIndex, returnLineIndex) {
+			scope.data.editingLine = shipmentIndex + '_' + lineIndex + '_' + returnLineIndex;
+		};
 
 		scope.isEditing = function isEditing() {
 			var editingStep = false;
@@ -293,7 +298,6 @@
 					}
 					else {
 						AjaxAPI.closeWaitingModal();
-						console.log('return submitted', resultData);
 					}
 				})
 				.error(function(data, status, headers) {
@@ -326,12 +330,10 @@
 				};
 
 				this.loadObjectData = function(withProcessData) {
-					console.log('loadObjectData', withProcessData);
 					return null;
 				};
 
 				this.updateObjectData = function(actions) {
-					console.log('updateObjectData', actions);
 					if (actions.hasOwnProperty('setReshippingData')) {
 						scope.returnData.reshippingData = actions.setReshippingData;
 					}
@@ -389,22 +391,18 @@
 				};
 
 				this.nextStep = function () {
-					console.log('nextStep');
 					return null;
 				};
 
 				this.getNextStep = function (step) {
-					console.log('getNextStep', step);
 					return null;
 				};
 
 				this.setCurrentStep = function(currentStep) {
-					console.log('setCurrentStep', currentStep);
 					scope.stepsData[currentStep].isCurrent = true;
 				};
 
 				this.getStepProcessData = function(step) {
-					console.log('getStepProcessData', step);
 					if (scope.stepsData.hasOwnProperty(step)) {
 						return scope.stepsData[step];
 					}
@@ -447,10 +445,6 @@
 			link: function(scope, element, attrs) {
 				var formName = attrs['formName'];
 
-				scope.editLine = function editLine(shipmentIndex, lineIndex, returnLineIndex) {
-					scope.data.editingLine = shipmentIndex + '_' + lineIndex + '_' + returnLineIndex;
-				};
-
 				scope.isLineValid = function isLineValid(line, returnLine) {
 					if (scope[formName].$invalid) {
 						return false;
@@ -487,7 +481,7 @@
 						return false;
 					}
 					else if (!reason['timeoutMessage']) {
-						console.log('A reason with a time limit requires a timeout message!');
+						console.log('error', 'A reason with a time limit requires a timeout message!');
 					}
 
 					var dateNow = new Date();

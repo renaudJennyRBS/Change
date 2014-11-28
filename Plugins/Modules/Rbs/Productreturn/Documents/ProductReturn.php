@@ -176,6 +176,8 @@ class ProductReturn extends \Compilation\Rbs\Productreturn\Documents\ProductRetu
 		parent::attachEvents($eventManager);
 		$eventManager->attach(array(\Change\Documents\Events\Event::EVENT_CREATE, \Change\Documents\Events\Event::EVENT_UPDATE),
 			array($this, 'onDefaultSave'), 10);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_CREATED, array($this, 'onDefaultCreated'), 10);
+		$eventManager->attach(\Change\Documents\Events\Event::EVENT_UPDATED, array($this, 'onDefaultUpdated'), 10);
 	}
 
 	/**
@@ -210,6 +212,77 @@ class ProductReturn extends \Compilation\Rbs\Productreturn\Documents\ProductRetu
 		{
 			$this->setReshippingConfigurationData($this->reshippingConfiguration->toArray());
 			$this->reshippingConfiguration = null;
+		}
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultCreated(\Change\Documents\Events\Event $event)
+	{
+		if ($event->getDocument() !== $this)
+		{
+			return;
+		}
+
+		$this->sendStatusNotificationMail($this->getProcessingStatus(), $event);
+	}
+
+	/**
+	 * @param \Change\Documents\Events\Event $event
+	 */
+	public function onDefaultUpdated(\Change\Documents\Events\Event $event)
+	{
+		if ($event->getDocument() !== $this)
+		{
+			return;
+		}
+
+		if (in_array('processingStatus', $event->getParam('modifiedPropertyNames')))
+		{
+			$this->sendStatusNotificationMail($this->getProcessingStatus(), $event);
+		}
+	}
+
+	/**
+	 * @param string $status
+	 * @param \Change\Documents\Events\Event $event
+	 * @throws \Exception
+	 */
+	protected function sendStatusNotificationMail($status, \Change\Documents\Events\Event $event)
+	{
+		$jobManager = $event->getApplicationServices()->getJobManager();
+		switch ($status)
+		{
+			case self::PROCESSING_STATUS_RECEPTION :
+				$notificationName = 'rbs_productreturn_status_accepted';
+				break;
+
+			case self::PROCESSING_STATUS_PROCESSING :
+				$notificationName = 'rbs_productreturn_status_received';
+				break;
+
+			case self::PROCESSING_STATUS_FINALIZED :
+				$notificationName = 'rbs_productreturn_status_finalized';
+				break;
+
+			case self::PROCESSING_STATUS_CANCELED :
+				$notificationName = 'rbs_productreturn_status_canceled';
+				break;
+
+			case self::PROCESSING_STATUS_REFUSED :
+				$notificationName = 'rbs_productreturn_status_refused';
+				break;
+
+			default:
+				$notificationName = null;
+				break;
+		}
+
+		if ($notificationName)
+		{
+			$argument = ['notificationName' => $notificationName, 'targetId' => $this->getId()];
+			$jobManager->createNewJob('Rbs_Commerce_Notification', $argument);
 		}
 	}
 

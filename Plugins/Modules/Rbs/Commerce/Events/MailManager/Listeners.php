@@ -28,11 +28,8 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function ($event)
 		{
 			(new \Rbs\Commerce\Events\InstallMails())->execute($event);
-		};
-		$events->attach('installMails', $callback, 5);
-		$callback = function ($event)
-		{
 			(new \Rbs\Payment\Events\InstallMails())->execute($event);
+			(new \Rbs\Productreturn\Mails\InstallMails())->execute($event);
 		};
 		$events->attach('installMails', $callback, 5);
 	}
