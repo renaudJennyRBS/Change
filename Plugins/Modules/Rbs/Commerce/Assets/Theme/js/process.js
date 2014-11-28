@@ -2,38 +2,7 @@
 	"use strict";
 	var app = angular.module('RbsChangeApp');
 
-	//---------------- Menu
-	function resizeSidebar() {
-		jQuery('.process-sidebar').width(function() { return jQuery(this).parent().width(); });
-	}
-
-	jQuery(window).resize(function() {
-		resizeSidebar();
-	});
-
-	resizeSidebar();
-
-	jQuery('.process-sidebar').affix({
-		offset: {
-			top: function() { return jQuery('.process-sidebar-container').offset().top - 15; },
-			bottom: function() {
-				var node = jQuery('.process-sidebar-container').parent();
-				return jQuery(document).outerHeight() - node.offset().top - node.outerHeight();
-			}
-		}
-	});
-
-	function rbsCommerceProcessMenu() {
-		return {
-			restrict: 'AE',
-			templateUrl: '/rbsCommerceProcessMenu.tpl',
-			link: function(scope) {
-			}
-		}
-	}
-	app.directive('rbsCommerceProcessMenu', rbsCommerceProcessMenu);
-
-	function rbsCommerceProcess($rootScope, $compile, AjaxAPI) {
+	function rbsCommerceProcess($rootScope, $compile, AjaxAPI, $timeout) {
 		var cacheCartDataKey = 'cartData';
 
 		return {
@@ -165,22 +134,8 @@
 					}
 				};
 
-				function redrawLines() {
-					var linesContainer = elem.find('[data-role="cart-lines"]');
-					var directiveName = angular.isFunction(self.getLineDirectiveName) ? self.getLineDirectiveName : function(line) {
-						return 'rbs-commerce-process-line-default';
-					};
-					var lines = scope.cartData.lines;
-					var html = [];
-					angular.forEach(lines, function(line, idx){
-						html.push('<tr data-line="cartData.lines['+ idx +']" ' + directiveName(line) + '=""></tr>');
-					});
-					self.replaceChildren(linesContainer, scope, html.join(''));
-				}
-
 				scope.$watch('cartData', function(cartData, oldCartData) {
 						if (cartData) {
-							redrawLines();
 							if (!scope.currentStep) {
 								self.nextStep();
 							}
@@ -204,6 +159,15 @@
 					return null;
 				};
 
+				function locateCurrentStep() {
+					var offset = jQuery('#' + scope.currentStep).offset();
+					if (offset && offset.hasOwnProperty('top')) {
+						jQuery('html, body').animate({ scrollTop: offset.top - 20 }, 500);
+					} else if (scope.currentStep) {
+						$timeout(locateCurrentStep, 100);
+					}
+				}
+
 				this.setCurrentStep = function(currentStep) {
 					scope.currentStep = currentStep;
 					var enabled = currentStep !== null, checked = enabled;
@@ -221,6 +185,9 @@
 							stepProcessData.isChecked = checked;
 							stepProcessData.isEnabled = enabled;
 						}
+					}
+					if (currentStep) {
+						$timeout(locateCurrentStep, 100);
 					}
 				};
 
@@ -257,6 +224,43 @@
 		}
 	}
 
-	rbsCommerceProcess.$inject = ['$rootScope', '$compile', 'RbsChange.AjaxAPI'];
+	rbsCommerceProcess.$inject = ['$rootScope', '$compile', 'RbsChange.AjaxAPI', '$timeout'];
 	app.directive('rbsCommerceProcess', rbsCommerceProcess);
+
+	function rbsCommerceCartLines() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCommerceCartLines.tpl',
+			require: '^rbsCommerceProcess',
+			scope: {
+				cartData:"=",
+				getLineDirectiveName:"="
+			},
+			link: function (scope, elem, attrs, processController) {
+				scope.showPrices = processController.showPrices();
+
+				function redrawLines() {
+					var linesContainer = elem.find('[data-role="cart-lines"]');
+					var directiveName = angular.isFunction(scope.getLineDirectiveName) ? scope.getLineDirectiveName : function(line) {
+						return 'rbs-commerce-process-line-default';
+					};
+					var lines = scope.cartData.lines;
+					var html = [];
+					angular.forEach(lines, function(line, idx){
+						html.push('<tr data-line="cartData.lines['+ idx +']" ' + directiveName(line) + '=""></tr>');
+					});
+					processController.replaceChildren(linesContainer, scope, html.join(''));
+				}
+
+				scope.$watch('cartData', function(cartData) {
+						if (cartData) {
+							redrawLines();
+						}
+					}
+				);
+			}
+		}
+	}
+	app.directive('rbsCommerceCartLines', rbsCommerceCartLines);
+
 })(window.jQuery);
