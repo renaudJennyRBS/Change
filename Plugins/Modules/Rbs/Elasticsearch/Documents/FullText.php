@@ -80,10 +80,8 @@ class FullText extends \Compilation\Rbs\Elasticsearch\Documents\FullText
 					$eventManager = $this->getEventManager();
 					$args = $eventManager->prepareArgs(['document' => $document, 'indexManager' => $indexManager]);
 					$eventManager->trigger('getDocumentIndexData', $this, $args);
-					if (isset($args['documentData']) && is_array($args['documentData']))
-					{
-						return [$this->getDefaultTypeName() => $args['documentData']];
-					}
+					$documentData =  (isset($args['documentData']) && is_array($args['documentData'])) ? $args['documentData'] : [];
+					return [$this->getDefaultTypeName() => $documentData];
 				}
 			}
 			elseif ($model instanceof \Change\Documents\AbstractModel && is_numeric($document))

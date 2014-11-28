@@ -354,5 +354,11 @@
 	},
 	"button_set_billing_default":{
 		"message":"utiliser pour la facturation"
+	},
+	"at_home_address_not_defined":{
+		"message":"Vous n'avez renseigné aucune adresse."
+	},
+	"define_address":{
+		"message":"saisir l'adresse"
 	}
 }

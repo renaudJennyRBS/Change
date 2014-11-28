@@ -52,5 +52,14 @@
 	},
 	"variant_group_prices_updated":{
 		"message":"les prix des variantes ont été mis à jour"
+	},
+	"variant_group_sections_update":{
+		"message":"mise à jour des sections de publication"
+	},
+	"impossible_to_update_sections_of_variant_group":{
+		"message":"impossible de mettre à jour les sections de publication des variantes"
+	},
+	"variant_group_sections_updated":{
+		"message":"les sections de publication des variantes ont été mis à jour"
 	}
 }

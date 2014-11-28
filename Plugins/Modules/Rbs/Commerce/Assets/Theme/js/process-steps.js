@@ -408,8 +408,10 @@
 
 				scope.$watch('shippingMode.id', function(id) {
 					if (id) {
+						var found = false;
 						angular.forEach(scope.shippingMode.allowedShippingModesInfo, function(modeInfo) {
 							if (modeInfo.common.id == id) {
+								found = true;
 								scope.shippingMode.title = modeInfo.common.title;
 								if (!angular.isObject(scope.shippingMode.options) ||
 									angular.isArray(scope.shippingMode.options)) {
@@ -419,6 +421,10 @@
 								scope.shippingMode.valid = atHomeValid;
 							}
 						});
+
+						if (!found && scope.shippingMode.edition) {
+							scope.setAddress(scope.atHomeAddress);
+						}
 					}
 				});
 
@@ -434,6 +440,7 @@
 				};
 
 				scope.editAddress = function() {
+					scope.shippingMode.id = 0;
 					scope.matchingZoneError = null;
 					scope.shippingMode.edition = true;
 				};
@@ -448,6 +455,9 @@
 						if (scope.userId && address.common && address.common.useName && address.common.name) {
 							delete address.common.id;
 							delete address.default;
+							if (!scope.userAddresses || !scope.userAddresses.length) {
+								address.default = {'default': true};
+							}
 							processController.loading(true);
 							AjaxAPI.postData('Rbs/Geo/Address/', address)
 								.success(function(data, status, headers, config) {
@@ -530,9 +540,7 @@
 						var defaultUserShippingAddress = scope.getDefaultUserAddress(userAddresses);
 						if (defaultUserShippingAddress) {
 							scope.selectUserAddress(defaultUserShippingAddress);
-							return;
 						}
-						scope.editAddress();
 					}
 				});
 			}

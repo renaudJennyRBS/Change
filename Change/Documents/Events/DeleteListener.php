@@ -173,7 +173,6 @@ class DeleteListener
 		$jobManager->createNewJob('Change_Document_LocalizedCleanUp',
 			array('id' => $document->getId(), 'model' => $document->getDocumentModelName(),
 				'LCID' => $applicationServices->getDocumentManager()->getLCID()));
-
 	}
 
 	public function onCleanUp(\Change\Job\Event $event)
@@ -195,6 +194,8 @@ class DeleteListener
 			$event->failed('Document Model ' . $modelName . ' not found');
 			return;
 		}
+
+		$event->getApplication()->getLogging()->info('CleanUp document: ' . $documentId . ' (' . $modelName . ')');
 
 		$transactionManager = $applicationServices->getTransactionManager();
 		try
@@ -348,14 +349,29 @@ class DeleteListener
 				$qb->where(
 					$fb->logicOr(
 						$fb->eq($fb->column('website_id'), $fb->number($documentId)),
-						$fb->eq($fb->column('section_id'), $fb->number($documentId)),
-						$fb->eq($fb->column('document_id'), $fb->number($documentId)),
-						$fb->eq($fb->column('document_alias_id'), $fb->number($documentId))
+						$fb->eq($fb->column('document_id'), $fb->number($documentId))
 					));
-
 				$dq = $qb->deleteQuery();
 				$dq->execute();
+
+				$qb = $dbp->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->update($fb->table('change_path_rule'));
+				$qb->assign($fb->column('section_id'), $fb->number(0));
+				$qb->where($fb->eq($fb->column('section_id'), $fb->number($documentId)));
+				$dq = $qb->updateQuery();
+				$dq->execute();
+
+				$qb = $dbp->getNewStatementBuilder();
+				$fb = $qb->getFragmentBuilder();
+				$qb->update($fb->table('change_path_rule'));
+				$qb->assign($fb->column('document_alias_id'), $fb->number(0));
+				$qb->where($fb->eq($fb->column('document_alias_id'), $fb->number($documentId)));
+				$dq = $qb->updateQuery();
+				$dq->execute();
 			}
+
+			$applicationServices->getDocumentCodeManager()->clearAllDocumentCodes($documentId);
 
 			$event->success();
 

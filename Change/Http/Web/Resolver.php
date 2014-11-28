@@ -55,13 +55,29 @@ class Resolver extends BaseResolver
 				$queryParameters = $event->getRequest()->getQuery()->toArray();
 				$pathRule->setQueryParameters($queryParameters);
 				$validPathRule = $urlManager->getValidDocumentRule($document, $pathRule);
+				$absoluteUrl = $urlManager->absoluteUrl(true);
 				if ($validPathRule instanceof PathRule)
 				{
-					//Rewritten url already exist
-					$absoluteUrl = $urlManager->absoluteUrl(true);
 					$location = $urlManager->getByPathInfo($validPathRule->getRelativePath(), $queryParameters);
 					$pathRule->setLocation($location->normalize()->toString());
 					$urlManager->absoluteUrl($absoluteUrl);
+				}
+				elseif ($pathRule->getRuleId())
+				{
+					$location = $urlManager->getCanonicalByDocument($document, $queryParameters);
+					$pathRule->setLocation($location->normalize()->toString());
+					$urlManager->absoluteUrl($absoluteUrl);
+				}
+				elseif ($document instanceof \Change\Documents\Interfaces\Publishable)
+				{
+					if ($document->getCanonicalSection($website))
+					{
+						$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
+					}
+					else
+					{
+						return;
+					}
 				}
 				else
 				{

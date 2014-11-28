@@ -164,6 +164,15 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/sections": {
+		"model": "Rbs_Catalog_VariantGroup",
+		"name": "variant-sections",
+		"rule": {
+			"templateUrl": "Document/Rbs/Catalog/VariantGroup/variant-sections.twig",
+			"labelKey": "m.rbs.catalog.admin.variantgroup_sections_config | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Catalog/Product/:productId/VariantGroup/:id/stocks": {
 		"model": "Rbs_Catalog_VariantGroup",
 		"name": "variant-stocks",

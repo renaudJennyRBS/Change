@@ -133,6 +133,20 @@ class Listeners implements ListenerAggregateInterface
 					(new \Rbs\Catalog\Http\Rest\VariantPrices())->saveVariantPrices($event);
 				});
 			}
+			else if ($relativePath === 'rbs/catalog/variantsections')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Catalog\Http\Rest\VariantSections())->getVariantSections($event);
+				});
+			}
+			else if ($relativePath === 'rbs/catalog/savevariantsections')
+			{
+				$event->setAction(function ($event)
+				{
+					(new \Rbs\Catalog\Http\Rest\VariantSections())->saveVariantSections($event);
+				});
+			}
 			else if ($relativePath === 'rbs/catalog/productlistitem/delete')
 			{
 				$event->getController()->getActionResolver()->setAuthorization($event, 'CategoryManager');

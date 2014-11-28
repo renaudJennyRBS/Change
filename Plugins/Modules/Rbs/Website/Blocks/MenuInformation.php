@@ -38,7 +38,7 @@ class MenuInformation extends Information
 				$propertyName = \Change\Presentation\Blocks\Standard\Block::DOCUMENT_TO_DISPLAY_PROPERTY_NAME;
 				return isset($parametersValues[$propertyName]) ? intval($parametersValues[$propertyName]) : 0;
 			});
-		$this->addInformationMeta('offset', Property::TYPE_INTEGER, true, 0)
+		$this->addInformationMeta('offset', Property::TYPE_INTEGER, false, 0)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_offset', $ucf))
 			->setNormalizeCallback(function ($parametersValues) {
 				$contextual = isset($parametersValues['contextual']) ? $parametersValues['contextual'] : false;

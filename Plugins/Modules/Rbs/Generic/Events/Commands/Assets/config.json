@@ -208,5 +208,21 @@
 				"shortcut": "n"
 			}
 		}
+	},
+	"rbs_website:refresh-path-rules": {
+		"description": "Refresh documents path rules",
+		"options": {
+			"publishable": {
+				"description": "publishable model",
+				"shortcut": "p"
+			},
+			"model": {
+				"description": "specific model",
+				"default":"",
+				"shortcut": "m"
+			}
+		},
+		"arguments": {
+		}
 	}
 }

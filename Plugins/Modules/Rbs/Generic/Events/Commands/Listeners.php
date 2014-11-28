@@ -82,6 +82,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Generic\Commands\InitializeWebsite())->execute($event);
 		};
 		$events->attach('rbs_generic:initialize-website', $callback);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Website\Commands\RefreshPathRules())->execute($event);
+		};
+		$events->attach('rbs_website:refresh-path-rules', $callback);
 	}
 
 	/**

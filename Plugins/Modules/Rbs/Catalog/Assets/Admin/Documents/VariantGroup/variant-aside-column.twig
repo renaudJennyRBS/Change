@@ -39,6 +39,16 @@
 		{% else %}
 			<p class="list-group-item active">{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantprices', ['ucf']) | raw}}</p>
 		{% endif %}
+		{% if currentRootName != 'variant-sections' %}
+			<p class="list-group-item">
+				<a href="" data-ng-href="(= document | rbsURL:'variant-sections':{productId:document.rootProduct.id} =)">
+					<i class="icon-arrow-right"></i>
+					{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantsections', ['ucf']) | raw}}
+				</a>
+			</p>
+		{% else %}
+			<p class="list-group-item active">{{ i18nAttr('m.rbs.catalog.admin.variantgroup_variantsections', ['ucf']) | raw}}</p>
+		{% endif %}
 	</div>
 </div>
 <div class="panel panel-default">

@@ -33,7 +33,7 @@
 		"message":"variantes"
 	},
 	"variantgroup_variant_list":{
-		"message":"liste des variantes"
+		"message":"liste"
 	},
 	"variantgroup_aside_link":{
 		"message":"configurer les variantes"
@@ -42,16 +42,22 @@
 		"message":"configuration des attributs"
 	},
 	"variantgroup_variantstocks":{
-		"message":"stocks des variantes"
+		"message":"stocks"
 	},
 	"variantgroup_variantprices":{
-		"message":"prix des variantes"
+		"message":"prix"
+	},
+	"variantgroup_variantsections":{
+		"message":"Sections de publication"
 	},
 	"variantgroup_stocks_config":{
 		"message":"configuration des stocks"
 	},
 	"variantgroup_prices_config":{
 		"message":"configuration des prix"
+	},
+	"variantgroup_sections_config":{
+		"message":"configuration des sections de publication"
 	},
 	"variantgroup_edit":{
 		"message":"configuration des variantes"
@@ -577,5 +583,20 @@
 	},
 	"display_mode_flat":{
 		"message": "à plat"
+	},
+	"select_all":{
+		"message": "Tous"
+	},
+	"select_categorizable":{
+		"message": "Catégorisable"
+	},
+	"inverse_selection": {
+		"message": "Inverser"
+	},
+	"empty_selection":{
+		"message": "Aucun"
+	},
+	"selected_sections":{
+		"message": "Sections de publication à affecter aux variantes"
 	}
 }

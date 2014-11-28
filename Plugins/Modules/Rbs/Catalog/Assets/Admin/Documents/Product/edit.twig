@@ -28,6 +28,10 @@
 					label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'visuals'), ['ucf']) }}"
 					selector-title="{{ i18nAttr('m.rbs.catalog.admin.product_visuals_picker_title', ['ucf']) }}">
 				</rbs-field-picker-multiple>
+
+				<rbs-field-boolean property="categorizable"
+						label="{{ i18nAttr(propertyKey('Rbs_Catalog_Product', 'categorizable'), ['ucf']) }}">
+				</rbs-field-boolean>
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="attributes"
