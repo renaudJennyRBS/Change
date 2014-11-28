@@ -85,10 +85,8 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 				$eventManager = $this->getEventManager();
 				$args = $eventManager->prepareArgs(['document' => $document, 'indexManager' => $indexManager]);
 				$eventManager->trigger('getDocumentIndexData', $this, $args);
-				if (isset($args['documentData']) && is_array($args['documentData']))
-				{
-					return [$this->getDefaultTypeName() => $args['documentData']];
-				}
+				$documentData =  (isset($args['documentData']) && is_array($args['documentData'])) ? $args['documentData'] : [];
+				return [$this->getDefaultTypeName() => $documentData];
 			}
 			else
 			{
@@ -199,6 +197,11 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 	}
 
 	/**
+	 * @var \Rbs\Elasticsearch\Index\PublicationData
+	 */
+	protected $publicationData;
+
+	/**
 	 * @var \Rbs\Elasticsearch\Index\ProductData
 	 */
 	protected $productData;
@@ -224,13 +227,29 @@ class StoreIndex extends \Compilation\Rbs\Elasticsearch\Documents\StoreIndex
 		if ($commerceServices && $productLocalization->getPublicationStatus() == Publishable::STATUS_PUBLISHABLE)
 		{
 			$applicationServices = $event->getApplicationServices();
+			if ($this->publicationData === null)
+			{
+				$publicationData = new \Rbs\Elasticsearch\Index\PublicationData();
+				$publicationData->setDocumentManager($applicationServices->getDocumentManager());
+				$publicationData->setTreeManager($applicationServices->getTreeManager());
+			}
+			else
+			{
+				$publicationData = $this->publicationData;
+			}
+
+			$canonicalSectionId = $publicationData->getCanonicalSectionId($product, $index->getWebsite());
+			if (!$canonicalSectionId)
+			{
+				return;
+			}
+
 			$documentData = $event->getParam('documentData');
 			if (!is_array($documentData))
 			{
 				$documentData = [];
 			}
-			$publicationData = new \Rbs\Elasticsearch\Index\PublicationData();
-			$publicationData->setDocumentManager($applicationServices->getDocumentManager());
+
 			$documentData = $publicationData->addPublishableMetas($product, $documentData);
 			$documentData = $publicationData->addPublishableContent($product, $index->getWebsite(), $documentData,
 				$index, $event->getParam('indexManager'));

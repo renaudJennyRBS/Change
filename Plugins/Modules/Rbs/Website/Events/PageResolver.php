@@ -78,7 +78,7 @@ class PageResolver
 			{
 				$staticPage = $document;
 			}
-			elseif (!($document instanceof \Rbs\Website\Documents\Section))
+			elseif (!($document instanceof \Rbs\Website\Documents\Section) && !$pathRule->getSectionId())
 			{
 				$treeManager = $event->getApplicationServices()->getTreeManager();
 				$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Website_StaticPage');

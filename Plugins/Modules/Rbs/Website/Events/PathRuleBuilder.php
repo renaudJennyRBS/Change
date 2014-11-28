@@ -18,6 +18,29 @@ use Rbs\Website\Documents\Website;
 class PathRuleBuilder
 {
 	/**
+	 * @api
+	 * @param AbstractDocument|Publishable|integer $document
+	 * @param \Change\Http\Web\PathRuleManager $pathRuleManager
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Logging\Logging $logging
+	 */
+	public function refreshDocumentPathRules($document,
+		\Change\Http\Web\PathRuleManager$pathRuleManager,
+		\Change\Documents\DocumentManager $documentManager,
+		\Change\Logging\Logging $logging)
+	{
+		if (is_numeric($document)) {
+			$document = $documentManager->getDocumentInstance($document);
+		}
+
+		if (!($document instanceof Publishable) || $document instanceof Website)
+		{
+			return;
+		}
+		$this->updateDocumentPathRules($document, true, $pathRuleManager, $documentManager, $logging);
+	}
+
+	/**
 	 * @param Event $event
 	 */
 	public function updatePathRules($event)
@@ -27,9 +50,30 @@ class PathRuleBuilder
 		{
 			return;
 		}
+		$modifiedPropertyNames = $event->getParam('modifiedPropertyNames');
+		$refresh = (is_array($modifiedPropertyNames) && in_array('publicationSections', $modifiedPropertyNames));
 
+
+		$logging = $event->getApplication()->getLogging();
+		$applicationServices = $event->getApplicationServices();
+		$pathRuleManager = $applicationServices->getPathRuleManager();
+		$documentManager = $applicationServices->getDocumentManager();
+
+		$this->updateDocumentPathRules($document, $refresh, $pathRuleManager, $documentManager, $logging);
+	}
+
+	/**
+	 * @param AbstractDocument|Publishable $document
+	 * @param boolean $refresh
+	 * @param \Change\Http\Web\PathRuleManager $pathRuleManager
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Logging\Logging $logging
+	 */
+	protected function updateDocumentPathRules($document, $refresh, $pathRuleManager, $documentManager, $logging)
+	{
 		$websiteIds = [];
 		$allSectionIds = [0];
+
 		if ($document instanceof \Rbs\Website\Documents\StaticPage)
 		{
 			$section = $document->getSection();
@@ -73,22 +117,23 @@ class PathRuleBuilder
 			}
 		}
 
-		if (!count($websiteIds))
-		{
-			return;
-		}
-
-		$pathRuleManager = $event->getApplicationServices()->getPathRuleManager();
-		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		$logging = $event->getApplicationServices()->getLogging();
-
-		$modifiedPropertyNames = $event->getParam('modifiedPropertyNames');
-		if (is_array($modifiedPropertyNames) && in_array('publicationSections', $modifiedPropertyNames))
+		if ($refresh)
 		{
 			$oldRules = $pathRuleManager->getAllForDocumentId($document->getId());
+
+			$websiteIdsArray = array_keys($websiteIds);
 			foreach ($oldRules as $oldRule)
 			{
-				if (!in_array($oldRule->getSectionId(), $allSectionIds) && $oldRule->getHttpStatus() == 200)
+				if ($oldRule->getDocumentId() != $document->getId() || $oldRule->getHttpStatus() != 200)
+				{
+					continue;
+				}
+
+				if (!in_array($oldRule->getWebsiteId(), $websiteIdsArray))
+				{
+					$pathRuleManager->updateRuleStatus($oldRule->getRuleId(), 301);
+				}
+				elseif (!in_array($oldRule->getSectionId(), $allSectionIds))
 				{
 					$pathRuleManager->updateRuleStatus($oldRule->getRuleId(), 301);
 				}
@@ -105,10 +150,10 @@ class PathRuleBuilder
 				$publicationStatus = $document->getDocumentModel()->getPropertyValue($document, 'publicationStatus');
 				if ($publicationStatus != Publishable::STATUS_DRAFT)
 				{
-					$this->updatePathRule($document, $LCID, $websiteId, 0, $pathRuleManager, $logging);
+					$this->updatePathRule($document, $LCID, $websiteId, 0, $documentManager, $pathRuleManager, $logging);
 					foreach ($sectionIds as $sectionId)
 					{
-						$this->updatePathRule($document, $LCID, $websiteId, $sectionId, $pathRuleManager, $logging);
+						$this->updatePathRule($document, $LCID, $websiteId, $sectionId, $documentManager, $pathRuleManager, $logging);
 					}
 				}
 				$documentManager->popLCID();
@@ -154,7 +199,7 @@ class PathRuleBuilder
 		foreach ($website->getLCIDArray() as $LCID)
 		{
 			$documentManager->pushLCID($LCID);
-			$this->updatePathRule($page, $LCID, $website->getId(), $sectionId, $pathRuleManager, $logging);
+			$this->updatePathRule($page, $LCID, $website->getId(), $sectionId, $documentManager, $pathRuleManager, $logging);
 			$documentManager->popLCID();
 		}
 	}
@@ -164,30 +209,41 @@ class PathRuleBuilder
 	 * @param string $LCID
 	 * @param integer $websiteId
 	 * @param integer $sectionId
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @param \Change\Http\Web\PathRuleManager $pathRuleManager
 	 * @param \Change\Logging\Logging $logging
 	 */
-	protected function updatePathRule($document, $LCID, $websiteId, $sectionId, $pathRuleManager, $logging)
+	protected function updatePathRule($document, $LCID, $websiteId, $sectionId, $documentManager, $pathRuleManager, $logging)
 	{
 		$tmpRule = $pathRuleManager->getNewRule($websiteId, $LCID,
 			$pathRuleManager->getDefaultRelativePath($document, $sectionId),
 			$document->getId(), 200, $sectionId);
+
 		$newRule = $pathRuleManager->populatePathRuleByDocument($tmpRule, $document);
 		if ($newRule === null)
 		{
 			return;
 		}
-		$newRuleQuery = $newRule->getQuery();
 
+		$newRuleQuery = $newRule->getQuery();
 		$currentRule = null;
+
+		/** @var integer[] $oldAliasedDocumentIds */
+		$oldAliasedDocumentIds = [];
+
 		$existingRules = $pathRuleManager->findPathRules($websiteId, $LCID, $document->getId(), $sectionId);
+
 		foreach ($existingRules as $rule)
 		{
-			if ($rule->getDocumentId() != $newRule->getDocumentId()
-				|| $rule->getDocumentAliasId() != $newRule->getDocumentAliasId()
-			)
+			if ($rule->getDocumentId() != $document->getId())
 			{
-				$rule->setDocumentId($newRule->getDocumentId());
+				continue;
+			}
+
+			if ($rule->getDocumentAliasId() != $newRule->getDocumentAliasId() && $newRule->getDocumentAliasId() != $document->getId())
+			{
+				$oldAliasedDocumentIds[] = $rule->getDocumentAliasId();
+				$oldAliasedDocumentIds[] = $newRule->getDocumentAliasId();
 				$rule->setDocumentAliasId($newRule->getDocumentAliasId());
 				$pathRuleManager->updatePathRule($rule);
 			}
@@ -201,67 +257,76 @@ class PathRuleBuilder
 			}
 		}
 
-		if ($currentRule !== null)
+		if (!$currentRule)
 		{
-			return;
-		}
-
-		$successRuleId = -1;
-
-		$ruleByPath = $pathRuleManager->getPathRule($websiteId, $LCID, $newRule->getRelativePath());
-		if ($ruleByPath)
-		{
-			if ($ruleByPath->getDocumentId() == $document->getId() || $ruleByPath->getDocumentAliasId() == $document->getId())
+			$successRuleId = -1;
+			$ruleByPath = $pathRuleManager->getPathRule($websiteId, $LCID, $newRule->getRelativePath());
+			if ($ruleByPath)
 			{
-				$ruleByPath->setDocumentId($newRule->getDocumentId());
-				$ruleByPath->setDocumentAliasId($newRule->getDocumentAliasId());
-				$ruleByPath->setHttpStatus(200);
-				$ruleByPath->setUserEdited(false);
-				$ruleByPath->setQuery($newRuleQuery);
-				$pathRuleManager->updatePathRule($ruleByPath);
-				$successRuleId = $ruleByPath->getRuleId();
-			}
-			else
-			{
-				$newRule->setRelativePath($document->getId() . '/' . $newRule->getRelativePath());
-				$ruleByPath = $pathRuleManager->getPathRule($websiteId, $LCID, $newRule->getRelativePath());
-				if ($ruleByPath)
+				if ($ruleByPath->getDocumentId() == $document->getId() || $ruleByPath->getDocumentAliasId() == $document->getId())
 				{
-					if ($ruleByPath->getDocumentId() == $document->getId()
-						|| $ruleByPath->getDocumentAliasId() == $document->getId()
-					)
-					{
-						$ruleByPath->setDocumentId($newRule->getDocumentId());
-						$ruleByPath->setDocumentAliasId($newRule->getDocumentAliasId());
-						$ruleByPath->setHttpStatus(200);
-						$ruleByPath->setUserEdited(false);
-						$ruleByPath->setQuery($newRuleQuery);
-						$pathRuleManager->updatePathRule($ruleByPath);
-						$successRuleId = $ruleByPath->getRuleId();
-					}
-					else
-					{
-						$logging->error('Duplicate relative path rule ' . $ruleByPath->getRuleId() . ' for document '
-						. $document);
-						return;
-					}
+					$ruleByPath->setDocumentId($newRule->getDocumentId());
+					$ruleByPath->setDocumentAliasId($newRule->getDocumentAliasId());
+					$ruleByPath->setHttpStatus(200);
+					$ruleByPath->setUserEdited(false);
+					$ruleByPath->setQuery($newRuleQuery);
+					$pathRuleManager->updatePathRule($ruleByPath);
+					$successRuleId = $ruleByPath->getRuleId();
 				}
 				else
 				{
-					$pathRuleManager->insertPathRule($newRule);
+					$newRule->setRelativePath($document->getId() . '/' . $newRule->getRelativePath());
+					$ruleByPath = $pathRuleManager->getPathRule($websiteId, $LCID, $newRule->getRelativePath());
+					if ($ruleByPath)
+					{
+						if ($ruleByPath->getDocumentId() == $document->getId()
+							|| $ruleByPath->getDocumentAliasId() == $document->getId()
+						)
+						{
+							$ruleByPath->setDocumentId($newRule->getDocumentId());
+							$ruleByPath->setDocumentAliasId($newRule->getDocumentAliasId());
+							$ruleByPath->setHttpStatus(200);
+							$ruleByPath->setUserEdited(false);
+							$ruleByPath->setQuery($newRuleQuery);
+							$pathRuleManager->updatePathRule($ruleByPath);
+							$successRuleId = $ruleByPath->getRuleId();
+						}
+						else
+						{
+							$logging->error('Duplicate relative path rule ' . $ruleByPath->getRuleId() . ' for document '
+								. $document);
+							return;
+						}
+					}
+					else
+					{
+						$pathRuleManager->insertPathRule($newRule);
+					}
+				}
+			}
+			else
+			{
+				$pathRuleManager->insertPathRule($newRule);
+			}
+
+			foreach ($existingRules as $rule)
+			{
+				if ($rule->getDocumentId() != $document->getId())
+				{
+					continue;
+				}
+				if ($rule->getQuery() == $newRuleQuery && $rule->getRuleId() != $successRuleId)
+				{
+					$pathRuleManager->updateRuleStatus($rule->getRuleId(), 301);
 				}
 			}
 		}
-		else
-		{
-			$pathRuleManager->insertPathRule($newRule);
-		}
 
-		foreach ($existingRules as $rule)
+		foreach ($oldAliasedDocumentIds as $id)
 		{
-			if ($rule->getQuery() == $newRuleQuery && $rule->getRuleId() != $successRuleId)
+			if ($id)
 			{
-				$pathRuleManager->updateRuleStatus($rule->getRuleId(), 301);
+				$this->refreshDocumentPathRules($id, $pathRuleManager, $documentManager, $logging);
 			}
 		}
 	}
