@@ -571,7 +571,9 @@
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
 
-				scope.filter.parameters.operator = 'eq';
+				if (!scope.filter.parameters.hasOwnProperty('operator')) {
+					scope.filter.parameters.operator = 'eq';
+				}
 
 				if (!scope.filter.parameters.hasOwnProperty('value')){
 					scope.filter.parameters.value = false;
@@ -601,7 +603,11 @@
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
-				scope.filter.parameters.operator = 'lte';
+
+				if (!scope.filter.parameters.hasOwnProperty('operator')) {
+					scope.filter.parameters.operator = 'lte';
+				}
+
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
 					return op && (op == 'isNull' || scope.filter.parameters.value);
@@ -628,7 +634,9 @@
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
-				scope.filter.parameters.operator = 'eq';
+				if (!scope.filter.parameters.hasOwnProperty('operator')) {
+					scope.filter.parameters.operator = 'eq';
+				}
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
 					return op && (op == 'isNull' || scope.filter.parameters.value);
@@ -654,7 +662,9 @@
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
-				scope.filter.parameters.operator = 'eq';
+				if (!scope.filter.parameters.hasOwnProperty('operator')) {
+					scope.filter.parameters.operator = 'eq';
+				}
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
 					return op && (op == 'isNull' || scope.filter.parameters.value);
@@ -680,7 +690,9 @@
 			},
 			link: function(scope, element, attrs, containerController) {
 				containerController.linkNode(scope);
-				scope.filter.parameters.operator = 'eq';
+				if (!scope.filter.parameters.hasOwnProperty('operator')) {
+					scope.filter.parameters.operator = 'eq';
+				}
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
 					return op && (op == 'isNull' || scope.filter.parameters.value);
