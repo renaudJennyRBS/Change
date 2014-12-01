@@ -650,6 +650,7 @@
 				}
 
 				scope.userAddresses = null;
+				scope.processPaymentConnectorsInfo = [];
 				scope.paymentConnectorsInfo = [];
 				scope.paymentConnectorInfo = null;
 				scope.transaction = null;
@@ -886,8 +887,8 @@
 
 				function getConnectIndexById(connectorId) {
 					if (connectorId) {
-						for (var i = 0; i < scope.paymentConnectorsInfo.length; i++) {
-							if (scope.paymentConnectorsInfo[i]['common'].id == connectorId) {
+						for (var i = 0; i < scope.processPaymentConnectorsInfo.length; i++) {
+							if (scope.processPaymentConnectorsInfo[i]['common'].id == connectorId) {
 								return i;
 							}
 						}
@@ -966,14 +967,11 @@
 					scope.processData.coupons = cartData.coupons;
 
 					var processInfo = processController.getProcessInfo();
-					scope.paymentConnectorsInfo = (processInfo && processInfo['paymentConnectors'] &&
+					scope.processPaymentConnectorsInfo = (processInfo && processInfo['paymentConnectors'] &&
 					processInfo['paymentConnectors']['default']) ? processInfo['paymentConnectors']['default'] : [];
 
 					var connectorIndex = getConnectIndexById(scope.processData.id);
-					if (connectorIndex !== null) {
-						scope.selectConnector(connectorIndex);
-					}
-					else {
+					if (connectorIndex === null) {
 						scope.processData.id = 0;
 					}
 
@@ -986,14 +984,16 @@
 				}
 
 				scope.$watch('transaction', function(transaction) {
+					scope.paymentConnectorsInfo = [];
 					if (transaction && transaction.connectors) {
 						var html = [];
 						angular.forEach(transaction.connectors, function(connector, i) {
 							if (connector.transaction && connector.transaction.directiveName) {
 								var infoIndex = null;
-								angular.forEach(scope.paymentConnectorsInfo, function(paymentConnectorInfo, i) {
+								angular.forEach(scope.processPaymentConnectorsInfo, function(paymentConnectorInfo, i) {
 									if (paymentConnectorInfo.common.id == connector.common.id) {
-										infoIndex = i;
+										infoIndex = scope.paymentConnectorsInfo.length;
+										scope.paymentConnectorsInfo.push(paymentConnectorInfo);
 									}
 								});
 								if (infoIndex !== null) {
@@ -1008,8 +1008,7 @@
 							}
 						});
 						redrawConnectorConfiguration(html.length ? html.join('') : null);
-					}
-					else {
+					} else {
 						redrawConnectorConfiguration(null);
 					}
 				});
