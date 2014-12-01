@@ -40,13 +40,21 @@
 					return scope.loading;
 				};
 
+				function getCartParams() {
+					return {
+						detailed: true,
+						visualFormats: scope.parameters['imageFormats'],
+						URLFormats: 'canonical'
+					};
+				}
+
 				/**
 				 * In alternative implementation of this controller, this method should return an HttpPromise or null (when there
 				 * is no AJAX call to do). So make sure to check if there is a returned promise before calling methods on it.
 				 */
 				this.loadObjectData = function(withProcessData) {
 					scope.loading = true;
-					var params = {detailed: true, visualFormats: scope.parameters['imageFormats']};
+					var params = getCartParams();
 					if (withProcessData) {
 						params.dataSets = "process";
 					}
@@ -69,7 +77,7 @@
 				 */
 				this.updateObjectData = function(actions) {
 					scope.loading = true;
-					var request = AjaxAPI.putData('Rbs/Commerce/Cart', actions, {detailed: true, visualFormats: scope.parameters['imageFormats']});
+					var request = AjaxAPI.putData('Rbs/Commerce/Cart', actions, getCartParams());
 					request.success(function(data, status, headers, config) {
 						var cartData = data.dataSets;
 						if (cartData && !angular.isArray(cartData)) {

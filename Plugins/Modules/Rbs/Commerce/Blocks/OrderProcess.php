@@ -131,7 +131,6 @@ class OrderProcess extends Block
 		$context->setVisualFormats($parameters->getParameter('imageFormats'));
 		$context->setURLFormats(['canonical']);
 		$context->setDataSetNames('process');
-		$context->setDetailed(true);
 		return $context;
 	}
 }
