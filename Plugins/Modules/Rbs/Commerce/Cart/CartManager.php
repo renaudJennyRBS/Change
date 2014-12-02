@@ -665,6 +665,18 @@ class CartManager implements \Zend\EventManager\EventsCapableInterface
 			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
 			$newCart = $this->getNewCart($webStore, $cart->getBillingArea(), $cart->getZone());
 			$newCart->getContext()->set('lockedCart', $cart->getIdentifier());
+			foreach ($cart->getContext() as $name => $value)
+			{
+				switch ($name)
+				{
+					case 'lockedCart' :
+					case 'storageId' :
+						break;
+					default:
+						$newCart->getContext()->set($name, $value);
+						break;
+				}
+			}
 
 			$newCart->setUserId($cart->getUserId());
 			$newCart->setPriceTargetIds($cart->getPriceTargetIds());
