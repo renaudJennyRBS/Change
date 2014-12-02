@@ -130,6 +130,5 @@
 
 <div data-rbs-commerce-short-cart="" data-cache-key="{{ blockId }}"
 	data-delete-product-waiting-message="{{ i18nAttr('m.rbs.commerce.front.deleting_product', ['ucf', 'etc']) }}">
-	<span class="glyphicon glyphicon-shopping-cart"></span>
-	{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
+	{{ block('cartLoading') }}
 </div>

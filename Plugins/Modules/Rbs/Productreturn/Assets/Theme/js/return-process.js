@@ -42,6 +42,11 @@
 				scope.returnData.orderData = data.orderData;
 				scope.processData = data.processData;
 
+				// If there is only one return mode, select it.
+				if (scope.processData['returnModes'].length == 1) {
+					scope.returnData.returnMode = scope.processData['returnModes'][0].id;
+				}
+
 				for (var reasonIndex = 0; reasonIndex < scope.processData['reasons'].length; reasonIndex++) {
 					var reason = scope.processData['reasons'][reasonIndex];
 					reasons[reason.id] = reason;

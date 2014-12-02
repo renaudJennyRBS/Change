@@ -103,7 +103,8 @@ class ProductAddedToCart extends \Change\Presentation\Blocks\Standard\Block
 	protected function populateContext($application, $documentManager, $parameters)
 	{
 		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
-		$context->setDetailed(false);
+		$context->setDetailed(true);
+		$context->setDataSetNames(['rootProduct']);
 		$context->setVisualFormats($parameters->getParameter('imageFormats'));
 		$context->setPage($parameters->getParameter('pageId'));
 		$context->addData('webStoreId', $parameters->getParameter('webStoreId'));

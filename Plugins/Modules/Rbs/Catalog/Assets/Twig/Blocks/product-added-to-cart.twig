@@ -1,5 +1,5 @@
 <div class="row">
-	{% set visualData = productData.common.visuals[0] %}
+	{% set visualData = productData.common.visuals[0] ? productData.common.visuals[0] : productData.rootProduct.common.visuals[0] %}
 	{% if visualData %}
 		{% set secondColumnClass = 'col-sm-8' %}
 		<div class="col-sm-4">
@@ -10,6 +10,21 @@
 	{% endif %}
 	<div class="{{ secondColumnClass }}">
 		<h3>{{ productData.common.title }}</h3>
+		{% if productData.common.type == 'variant' %}
+			{% set variantConfiguration = productData.rootProduct.variants %}
+			{% if variantConfiguration %}
+				{% for variant in variantConfiguration.products %}
+					{% if variant.id == productData.common.id %}
+						<dl class="dl-inline-items">
+							{% for value in variant.axesValues %}
+								<dt>{{ variantConfiguration.axes[loop.index0].title }}</dt>
+								<dd>{{ value }}</dd>
+							{% endfor %}
+						</dl>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+		{% endif %}
 		<div class="alert alert-success">{{ i18n('m.rbs.catalog.front.this_product_added_to_cart', ['ucf']) }}</div>
 	</div>
 </div>

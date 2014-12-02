@@ -30,7 +30,7 @@
 
 		<div data-ng-show="hasReturnLine()">
 			<form name="{{ commonFormName }}">
-				<div class="form-group">
+				<div class="form-group" data-ng-show="processData.returnModes.length > 1">
 					<h3>{{ i18n('m.rbs.productreturn.front.you_want', ['ucf']) }}</h3>
 					<div class="radio" data-ng-repeat="mode in processData.returnModes">
 						<label>
