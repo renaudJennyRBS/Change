@@ -54,7 +54,7 @@ class CartsCleanup
 				if ($cart)
 				{
 					$logging->info('Cleanup anonymous cart: ' . $identifier);
-					$commerceServices->getCartManager()->deleteCart($cart);
+					$commerceServices->getCartManager()->deleteCart($cart, true);
 				}
 			}
 
@@ -145,7 +145,7 @@ class CartsCleanup
 					if ($cart)
 					{
 						$logging->info('Cleanup deprecated cart: ' . $identifier . ',' . $row['user_id'] . ',' . $row['store_id']);
-						$commerceServices->getCartManager()->deleteCart($cart);
+						$commerceServices->getCartManager()->deleteCart($cart, true);
 					}
 				}
 			}
