@@ -33,6 +33,7 @@ class Product extends Block
 		$parameters->addParameterMeta('activateZoom', true);
 		$parameters->addParameterMeta('attributesDisplayMode', 'table');
 		$parameters->addParameterMeta('imageFormats', 'x,detail,detailThumbnail,pictogram,attribute');
+		$parameters->addParameterMeta('dataSetNames', 'rootProduct,productSet');
 		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -120,7 +121,7 @@ class Product extends Block
 		$context->setDetailed(true);
 		$context->setVisualFormats($parameters->getParameter('imageFormats'));
 		$context->setURLFormats(['canonical', 'contextual']);
-		$context->setDataSetNames('rootProduct');
+		$context->setDataSetNames($parameters->getParameter('dataSetNames'));
 		$context->setPage($parameters->getParameter('pageId'));
 		$context->addData('webStoreId', $parameters->getParameter('webStoreId'));
 		$context->addData('billingAreaId', $parameters->getParameter('billingAreaId'));
