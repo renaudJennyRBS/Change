@@ -32,28 +32,8 @@ class Login extends Block
 		$parameters->addParameterMeta('reloadOnSuccess', false);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
-		$parameters->addParameterMeta('errId');
-		$parameters->addParameterMeta('login');
-		$parameters->addParameterMeta('password');
-		$parameters->addParameterMeta('rememberMe');
+		$parameters->addParameterMeta('accessorName');
 		$parameters->addParameterMeta('accessorId');
-
-
-		$request = $event->getHttpRequest();
-
-		$parameters->setParameterValue('errId', $request->getQuery('errId'));
-
-		$login = $request->getPost('login');
-		if ($login)
-		{
-			$parameters->setParameterValue('login', $login);
-		}
-
-		$password = $request->getPost('password');
-		if ($password)
-		{
-			$parameters->setParameterValue('password', $password);
-		}
 
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		if ($user->authenticated())

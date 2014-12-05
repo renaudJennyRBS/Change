@@ -59,8 +59,7 @@ class ManageAutoLoginToken extends \Change\Presentation\Blocks\Standard\Block
 			$result[] = $token;
 		}
 
-		$attributes['tokens'] = $result;
-
+		$attributes['tokensData'] = $result;
 		return 'manage-auto-login-token.twig';
 	}
 
@@ -84,7 +83,6 @@ class ManageAutoLoginToken extends \Change\Presentation\Blocks\Standard\Block
 		$sq->bindParameter('userId', $userId);
 		$now = new \DateTime();
 		$sq->bindParameter('validityDate', $now);
-
 		return $sq->getResults($sq->getRowsConverter()->addIntCol('id')->addStrCol('device')->addDtCol('validity_date'));
 	}
 }

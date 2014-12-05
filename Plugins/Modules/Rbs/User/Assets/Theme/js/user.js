@@ -2,13 +2,26 @@
 	"use strict";
 	var app = angular.module('RbsChangeApp');
 
-	function rbsUserForgotPassword($http) {
+	function rbsUserForgotPassword(AjaxAPI) {
 		return {
-			restrict: 'AE',
-			templateUrl: 'Theme/Rbs/Base/Rbs_User/forgot-password.twig',
-			replace: true,
-
+			restrict: 'A',
+			templateUrl: '/rbsUserForgotPassword.tpl',
 			link: function(scope) {
+
+				function createResetPasswordRequest(data) {
+					var request = AjaxAPI.postData('Rbs/User/User/ResetPasswordRequest', data);
+					scope.sending = true;
+					request.success(function(data) {
+						scope.sending = false;
+						scope.successSending = true;
+					})
+					.error(function(data, status) {
+						scope.sending = false;
+						scope.successSending = false;
+						console.error('rbsUserCreateAccount', data, status);
+					});
+				}
+
 				scope.diplayResetBox = false;
 				scope.sending = false;
 				scope.successSending = false;
@@ -18,23 +31,17 @@
 					jQuery('#reset-password-modal-main-content').modal({});
 				};
 
+				scope.invalidMail = function() {
+					return 	!scope.resetPasswordEmail || scope.resetPasswordEmail == '';
+				};
+
 				scope.askReset = function() {
-					scope.sending = true;
-					$http.post('Action/Rbs/User/ResetPasswordRequest', {email: scope.resetPasswordEmail})
-						.success(function() {
-							scope.sending = false;
-							scope.successSending = true;
-						})
-						.error(function() {
-							scope.sending = false;
-							scope.successSending = true;
-						}
-					);
+					createResetPasswordRequest({email: scope.resetPasswordEmail});
 				};
 			}
 		}
 	}
-	rbsUserForgotPassword.$inject = ['$http'];
+	rbsUserForgotPassword.$inject = ['RbsChange.AjaxAPI'];
 	app.directive('rbsUserForgotPassword', rbsUserForgotPassword);
 
 	function rbsUserShortAccount($rootScope, AjaxAPI, window) {
@@ -77,22 +84,28 @@
 	rbsUserShortAccount.$inject = ['$rootScope', 'RbsChange.AjaxAPI', '$window'];
 	app.directive('rbsUserShortAccount', rbsUserShortAccount);
 
-	function rbsManageAutoLogin($http) {
+	function rbsUserManageAutoLogin(AjaxAPI) {
 		return {
 			restrict: 'A',
-			templateUrl: '/manageToken.tpl',
-			replace: false,
-
+			templateUrl: '/rbsUserManageAutoLogin.tpl',
+			controller : ['$scope', '$element', function(scope, elem) {
+				var cacheKey = elem.attr('data-cache-key');
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+				scope.tokens = AjaxAPI.globalVar(cacheKey);
+			}],
 			link: function(scope, elm, attrs) {
-				scope.tokens = angular.fromJson(attrs.tokens);
 				scope.errors = null;
 
 				scope.deleteToken = function (index) {
-					var params = {
+					var data = {
 						tokenId : scope.tokens[index].id
 					};
-					$http.post('Action/Rbs/User/RevokeToken', params)
+					AjaxAPI.openWaitingModal();
+
+					scope.errors = null;
+					AjaxAPI.deleteData('Rbs/User/RevokeToken', data)
 						.success(function(data) {
+							AjaxAPI.closeWaitingModal();
 							scope.tokens.splice(index, 1);
 							scope.errors = null;
 							if (scope.tokens.length == 0)
@@ -100,65 +113,18 @@
 								scope.tokens = null;
 							}
 						})
-						.error(function(data) {
-							scope.errors = data.errors;
+						.error(function(data, status) {
+							AjaxAPI.closeWaitingModal();
+							console.log('deleteToken error', data, status);
 						});
 				}
 			}
 		};
 	}
-	rbsManageAutoLogin.$inject = ['$http'];
-	app.directive('rbsManageAutoLogin', rbsManageAutoLogin);
+	rbsUserManageAutoLogin.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsUserManageAutoLogin', rbsUserManageAutoLogin);
 
-
-	function rbsEditAccount($http, $rootScope) {
-		return {
-			restrict: 'A',
-			templateUrl: '/editAccount.tpl',
-			replace: false,
-
-			link: function(scope, elm, attrs) {
-				scope.success = false;
-				scope.readonly = true;
-
-				scope.userId = attrs.userId;
-				scope.profile = angular.fromJson(attrs.profile);
-				scope.items = angular.fromJson(attrs.titles);
-
-				scope.openEdit = function() {
-					scope.readonly = false;
-					scope.profileBackup = angular.copy(scope.profile);
-				};
-
-				scope.saveAccount = function() {
-					$http.post('Action/Rbs/User/EditAccount', scope.profile)
-						.success(function(data) {
-							scope.errors = null;
-							scope.readonly = true;
-							scope.profile = data;
-							var params = {'profile': scope.profile, 'userId': scope.userId};
-							$rootScope.$broadcast('rbsUserProfileUpdated', params);
-						})
-						.error(function(data) {
-							scope.errors = data.errors;
-						});
-				};
-
-				scope.cancelEdit = function() {
-					scope.readonly = true;
-					scope.profile = angular.copy(scope.profileBackup);
-				};
-
-			}
-		}
-	}
-	rbsEditAccount.$inject = ['$http', '$rootScope'];
-	app.directive('rbsEditAccount', rbsEditAccount);
-
-	function rbsUserLoginController(scope, elem, AjaxAPI, window, $rootScope) {
-		var key = elem.attr('data-cache-key');
-		scope.parameters = AjaxAPI.getBlockParameters(key);
-		scope.error = null;
+	function rbsUserLogin(AjaxAPI, $rootScope, window) {
 
 		function buildDevice() {
 			var userAgent = window.navigator.userAgent;
@@ -184,50 +150,310 @@
 			return webBrowser + ' - ' + system;
 		}
 
-		scope.parameters.device = buildDevice();
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsUserLogin.tpl',
+			scope: {},
+			controller : ['$scope', '$element', function(scope, elem) {
+				scope.error = null;
+				var cacheKey = elem.attr('data-cache-key');
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+				scope.data = {login:null, password:null, realm: scope.parameters.realm,
+					rememberMe: true, device: buildDevice()};
 
-		scope.submit = function() {
-			scope.error = null;
-			var v = AjaxAPI.putData('Rbs/User/Login', {login: scope.parameters.login, 'password': scope.parameters.password,
-				realm: scope.parameters.realm, rememberMe: scope.parameters.rememberMe,
-				device: scope.parameters.device});
+				this.getData = function () {
+					return scope.data;
+				};
 
-			v.success(function(data, status, headers, config) {
-				var user = data.dataSets.user;
-				scope.parameters.accessorId = user.accessorId;
-				scope.parameters.accessorName = user.name;
-				if (scope.parameters.reloadOnSuccess) {
-					window.location.reload(true)
-				} else {
-					var params = {'accessorId': user.accessorId, 'accessorName': user.name};
-					$rootScope.$broadcast('rbsUserConnected', params);
+				this.login = function(loginData) {
+					scope.error = null;
+					var v = AjaxAPI.putData('Rbs/User/Login', loginData);
+					v.success(function(data, status, headers, config) {
+						var user = data.dataSets.user;
+						scope.parameters.accessorId = user.accessorId;
+						scope.parameters.accessorName = user.name;
+						if (scope.parameters.reloadOnSuccess) {
+							window.location.reload(true)
+						} else {
+							var params = {'accessorId': user.accessorId, 'accessorName': user.name};
+							$rootScope.$broadcast('rbsUserConnected', params);
+						}
+					}).
+						error(function(data, status, headers, config) {
+							scope.error = data.message;
+							scope.parameters.password = scope.parameters.login = null;
+							console.log('login error', data, status);
+						});
+				};
+
+				this.logout = function() {
+					var v = AjaxAPI.getData('Rbs/User/Logout');
+					v.success(function(data, status, headers, config) {
+						scope.parameters.accessorId = null;
+						scope.parameters.accessorName = null;
+						if (scope.parameters.reloadOnSuccess) {
+							window.location.reload(true);
+						} else {
+							var params = {'accessorId': null, 'accessorName': null};
+							$rootScope.$broadcast('rbsUserConnected', params);
+						}
+					}).
+						error(function(data, status, headers, config) {
+							scope.error = data.message;
+							console.log('logout error', data, status);
+						});
 				}
-			}).
-			error(function(data, status, headers, config) {
-					scope.error = data.message;
-					scope.parameters.password = scope.parameters.login = null;
-				console.log('login error', data, status);
-			});
-		};
+			}],
+			link: function(scope, elm, attrs, controller) {
+				scope.login = function() {
+					controller.login(scope.data);
+				};
 
-		scope.logout = function() {
-			var v = AjaxAPI.getData('Rbs/User/Logout');
-			v.success(function(data, status, headers, config) {
-				scope.parameters.accessorId = null;
-				scope.parameters.accessorName = null;
-				if (scope.parameters.reloadOnSuccess) {
-					window.location.reload(true);
-				} else {
-					var params = {'accessorId': null, 'accessorName': null};
-					$rootScope.$broadcast('rbsUserConnected', params);
+				scope.logout = function() {
+					controller.logout();
 				}
-			}).
-				error(function(data, status, headers, config) {
-					scope.error = data.message;
-					console.log('logout error', data, status);
-				});
+			}
 		}
 	}
-	rbsUserLoginController.$inject = ['$scope', '$element', 'RbsChange.AjaxAPI', '$window', '$rootScope'];
-	app.controller('rbsUserLoginController', rbsUserLoginController)
+	rbsUserLogin.$inject = ['RbsChange.AjaxAPI', '$rootScope', '$window'];
+	app.directive('rbsUserLogin', rbsUserLogin);
+
+	function rbsUserCreateAccount(AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsUserCreateAccount.tpl',
+			scope: {
+				fixedEmail:'@',
+				confirmationPage:'@'
+			},
+			controller : ['$scope', '$element', function(scope, elem) {
+				var cacheKey = elem.attr('data-cache-key');
+
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+				scope.data = {
+					email: scope.fixedEmail ? scope.fixedEmail : null,
+					password: null,
+					confirmationPage: scope.confirmationPage ? parseInt(scope.confirmationPage) : 0
+				};
+
+				this.getData = function() {
+					return scope.data;
+				};
+
+				this.createAccountRequest = function(data) {
+					var request = AjaxAPI.postData('Rbs/User/User/AccountRequest', data);
+					AjaxAPI.openWaitingModal();
+					scope.error = null;
+					request.success(function(data) {
+						AjaxAPI.closeWaitingModal();
+						scope.requestAccountCreated = true;
+						})
+						.error(function(data, status) {
+							AjaxAPI.closeWaitingModal();
+							if (data && data.message) {
+								scope.error = data.message;
+							}
+							console.error('rbsUserCreateAccount', data, status);
+					});
+				};
+
+				this.confirmAccountRequest = function(data) {
+					var request = AjaxAPI.putData('Rbs/User/User/AccountRequest', data);
+					AjaxAPI.openWaitingModal();
+					scope.error = null;
+					request.success(function(data) {
+						AjaxAPI.closeWaitingModal();
+						scope.accountConfirmed = true;
+					})
+						.error(function(data, status) {
+							AjaxAPI.closeWaitingModal();
+							scope.accountConfirmed = true;
+							if (data && data.message) {
+								scope.error = data.message;
+							}
+							console.error('rbsUserConfirmAccount', data, status);
+						});
+				};
+
+				if (scope.parameters.requestId && scope.parameters.email) {
+					this.confirmAccountRequest({requestId: scope.parameters.requestId, email: scope.parameters.email})
+				}
+			}],
+
+			link: function(scope, elm, attrs, controller) {
+				scope.showForm = function() {
+					return !scope.requestAccountCreated && !scope.parameters.requestId;
+				};
+
+				scope.submit = function() {
+					controller.createAccountRequest(scope.data);
+				}
+			}
+		}
+	}
+	rbsUserCreateAccount.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsUserCreateAccount', rbsUserCreateAccount);
+
+
+	function rbsUserResetPassword(AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsUserResetPassword.tpl',
+			scope: {},
+			controller : ['$scope', '$element', function(scope, elem) {
+				var cacheKey = elem.attr('data-cache-key');
+
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+				scope.data = {
+					token: scope.parameters.token ? scope.parameters.token : null,
+					password: null
+				};
+
+				this.getData = function() {
+					return scope.data;
+				};
+
+				this.confirmResetPassword = function(data) {
+					var request = AjaxAPI.putData('Rbs/User/User/ResetPasswordRequest', data);
+					AjaxAPI.openWaitingModal();
+					scope.error = null;
+					request.success(function(data) {
+						AjaxAPI.closeWaitingModal();
+						scope.passwordConfirmed = true;
+					})
+						.error(function(data, status) {
+							AjaxAPI.closeWaitingModal();
+							scope.passwordConfirmed = false;
+							if (data && data.message) {
+								scope.error = data.message;
+							}
+							console.error('rbsUserResetPassword', data, status);
+						});
+				};
+			}],
+
+			link: function(scope, elm, attrs, controller) {
+				scope.showForm = function() {
+					return scope.data.token && !scope.passwordConfirmed;
+				};
+
+				scope.submit = function() {
+					controller.confirmResetPassword(scope.data);
+				}
+			}
+		}
+	}
+	rbsUserResetPassword.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsUserResetPassword', rbsUserResetPassword);
+
+
+	function rbsUserChangePassword(AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsUserChangePassword.tpl',
+			scope: {},
+			controller : ['$scope', '$element', function(scope, elem) {
+				var cacheKey = elem.attr('data-cache-key');
+
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+
+				scope.data = {
+					currentPassword: null,
+					password: null
+				};
+
+				this.getData = function() {
+					return scope.data;
+				};
+
+				this.changePassword = function(data) {
+					var request = AjaxAPI.putData('Rbs/User/User/ChangePassword', data);
+					AjaxAPI.openWaitingModal();
+					scope.error = null;
+					request.success(function(data) {
+						AjaxAPI.closeWaitingModal();
+						scope.passwordConfirmed = true;
+						scope.data = {
+							currentPassword: null,
+							password: null
+						};
+						scope.confirmPassword = null;
+					})
+						.error(function(data, status) {
+							AjaxAPI.closeWaitingModal();
+							scope.passwordConfirmed = false;
+							if (data && data.message) {
+								scope.error = data.message;
+							}
+							console.error('changePassword', data, status);
+						});
+				};
+			}],
+
+			link: function(scope, elm, attrs, controller) {
+				scope.showForm = function() {
+					return scope.parameters.authenticated;
+				};
+
+				scope.submit = function() {
+					controller.changePassword(scope.data);
+				}
+			}
+		}
+	}
+	rbsUserChangePassword.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsUserChangePassword', rbsUserChangePassword);
+
+	function rbsUserAccount(AjaxAPI, $rootScope) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsUserAccount.tpl',
+			scope: {},
+			controller : ['$scope', '$element', function(scope, elem) {
+				var cacheKey = elem.attr('data-cache-key');
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+				scope.data = AjaxAPI.globalVar(cacheKey);
+
+				this.saveProfiles = function(data) {
+					var request = AjaxAPI.putData('Rbs/User/User/Profiles', data);
+					AjaxAPI.openWaitingModal();
+					scope.error = null;
+					request.success(function(data) {
+						AjaxAPI.closeWaitingModal();
+						scope.readonly = true;
+						scope.data = data.dataSets;
+						var params = {'profile': scope.data, 'userId': scope.data.common.id};
+						$rootScope.$broadcast('rbsUserProfileUpdated', params);
+					})
+						.error(function(data, status) {
+							AjaxAPI.closeWaitingModal();
+							if (data && data.message) {
+								scope.error = data.message;
+							}
+							console.error('changePassword', data, status);
+						});
+				};
+			}],
+			link: function(scope, elm, attrs, controller) {
+				scope.success = false;
+				scope.readonly = true;
+
+				scope.openEdit = function() {
+					scope.readonly = false;
+					scope.dataBackup = angular.copy(scope.data);
+				};
+
+				scope.saveAccount = function() {
+					controller.saveProfiles(scope.data);
+				};
+
+				scope.cancelEdit = function() {
+					scope.readonly = true;
+					scope.data = scope.dataBackup;
+				};
+			}
+		}
+	}
+	rbsUserAccount.$inject = ['RbsChange.AjaxAPI', '$rootScope'];
+	app.directive('rbsUserAccount', rbsUserAccount);
 })();

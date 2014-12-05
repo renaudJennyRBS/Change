@@ -1,18 +1,26 @@
 <h2>{{ i18n('m.rbs.commerce.front.payment_confirmation', ['ucf']) }}</h2>
+{% if connector %}
 
-{% include paymentTemplate %}
+	{% include paymentTemplate %}
 
-{% if proposeRegistration %}
-	<div class="panel panel-info">
-		<div class="panel-heading">{{ i18n('m.rbs.commerce.front.register_now', ['ucf']) }}</div>
-		<div class="panel-body">
-			<p>{{ i18n('m.rbs.commerce.front.register_to_follow_orders', ['ucf']) }}</p>
-			<div>
-				<a class="btn btn-default btn-primary"
-					href="{{ functionURL('Rbs_Payment_CreateAccountForTransaction', {'transactionId': parameters.transactionId}) }}">
-					{{ i18n('m.rbs.commerce.front.register_button', ['ucf']) }}
-				</a>
+	{% if proposeRegistration %}
+
+		{% block rbsCommerceUse %}
+			{% use 'Rbs_User/user-directives.twig' %}
+			{{ block('rbsUserCreateAccount') }}
+		{% endblock rbsCommerceUse %}
+
+		<div class="panel panel-info">
+			<div class="panel-heading">{{ i18n('m.rbs.commerce.front.register_to_follow_orders', ['ucf']) }}</div>
+			<div class="panel-body">
+				<div data-rbs-user-create-account="" data-cache-key="{{ blockId }}"
+						data-fixed-email="{{ email }}" data-confirmation-page="{{ parameters.confirmationPage }}"
+						data-rbs-commerce-create-account=""
+						data-transaction-id="{{ parameters.transactionId }}">
+				</div>
 			</div>
 		</div>
-	</div>
+	{% endif %}
+{% else %}
+	<p class="text-danger">{{ i18n('m.rbs.commerce.front.invalid_transaction', ['ucf']) }}</p>
 {% endif %}

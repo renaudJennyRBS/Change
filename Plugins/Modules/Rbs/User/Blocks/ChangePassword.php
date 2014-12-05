@@ -24,22 +24,12 @@ class ChangePassword extends \Change\Presentation\Blocks\Standard\Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('authenticated', false);
-		$parameters->addParameterMeta('errId');
-		$parameters->addParameterMeta('context');
-		$parameters->addParameterMeta('formAction', 'Action/Rbs/User/ChangePassword');
-
 		$parameters->setLayoutParameters($event->getBlockLayout());
-
-		$request = $event->getHttpRequest();
-		$parameters->setParameterValue('errId', $request->getQuery('errId'));
-
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		if ($user->authenticated())
 		{
 			$parameters->setParameterValue('authenticated', true);
 		}
-
-		$parameters->setParameterValue('contextChangePassword', $event->getHttpRequest()->getQuery('contextChangePassword'));
 
 		return $parameters;
 	}
@@ -53,19 +43,6 @@ class ChangePassword extends \Change\Presentation\Blocks\Standard\Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-
-		// Handle errors.
-		$errId = $parameters->getParameterValue('errId');
-		if ($errId)
-		{
-			$session = new \Zend\Session\Container('Change_Errors');
-			$sessionErrors = isset($session[$errId]) ? $session[$errId] : null;
-			if ($sessionErrors && is_array($sessionErrors))
-			{
-				$attributes['errors'] = isset($sessionErrors['errors']) ? $sessionErrors['errors'] : [];
-			}
-		}
-
 		return 'change-password.twig';
 	}
 }

@@ -29,25 +29,31 @@ class CreateAccount extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('authenticated', false);
-		$parameters->addParameterMeta('errId');
-		$parameters->addParameterMeta('context');
-		$parameters->addParameterMeta('initialValues', array());
-		$parameters->addParameterMeta('readonlyNames', array());
-		$parameters->addParameterMeta('formAction', 'Action/Rbs/User/CreateAccountRequest');
+		$parameters->addParameterMeta('requestId', null);
+		$parameters->addParameterMeta('email', null);
+		$parameters->addParameterMeta('confirmationPage', 0);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		$request = $event->getHttpRequest();
-
-		$parameters->setParameterValue('errId', $request->getQuery('errId'));
-
 		$user = $event->getAuthenticationManager()->getCurrentUser();
 		if ($user->authenticated())
 		{
 			$parameters->setParameterValue('authenticated', true);
 		}
-
-		$parameters->setParameterValue('context', $event->getHttpRequest()->getQuery('context'));
-
+		$httpRequest =  $event->getHttpRequest();
+		if ($httpRequest)
+		{
+			$requestId = intval($httpRequest->getQuery('requestId'));
+			if ($requestId)
+			{
+				$email = strval($httpRequest->getQuery('email'));
+				if ($email)
+				{
+					$parameters->setParameterValue('requestId', $requestId);
+					$parameters->setParameterValue('email', $email);
+					$parameters->setNoCache();
+				}
+			}
+		}
 		return $parameters;
 	}
 
@@ -61,23 +67,6 @@ class CreateAccount extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-
-		// Handle errors.
-		$errId = $parameters->getParameterValue('errId');
-		if ($errId)
-		{
-			$session = new \Zend\Session\Container('Change_Errors');
-			$sessionErrors = isset($session[$errId]) ? $session[$errId] : null;
-			if ($sessionErrors && is_array($sessionErrors))
-			{
-				$attributes['errors'] = isset($sessionErrors['errors']) ? $sessionErrors['errors'] : [];
-				$attributes['inputData'] = isset($sessionErrors['inputData']) ? $sessionErrors['inputData'] : null;
-			}
-		}
-		else
-		{
-			$attributes['inputData'] = $parameters->getParameterValue('initialValues');
-		}
 		return 'create-account.twig';
 	}
 }

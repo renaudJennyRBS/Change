@@ -1,33 +1,16 @@
-<script type="text/ng-template" id="/manageToken.tpl">
-	<div data-ng-show="errors" class="text-center">
-		<p data-ng-repeat="error in errors" class="text-danger">(= error =)</p>
-	</div>
-	<div data-ng-hide="tokens" class="text-center">
-		<p class="text-success">{{ i18n('m.rbs.user.front.no_token', ['ucf']) }}</p>
-	</div>
-	<table data-ng-show="tokens" class="table table-striped">
-		<thead>
-			<tr>
-				<td>{{ i18n('m.rbs.user.front.device', ['ucf']) }}</td>
-				<td>{{ i18n('m.rbs.user.front.validity_date', ['ucf']) }}</td>
-				<td></td>
-			</tr>
-		</thead>
-		<tbody>
-			<tr data-ng-repeat="token in tokens">
-				<td>(= token.device =)</td>
-				<td>(= token.date =)</td>
-				<td><button class="form-control" data-ng-click="deleteToken($index)">{{ i18n('m.rbs.user.front.revoke', ['ucf']) }}</button></td>
-			</tr>
-		</tbody>
-	</table>
-</script>
+{% block rbsUserUse %}
+	{% use 'Rbs_User/user-directives.twig' %}
+	{{ block('rbsUserManageAutoLogin') }}
+{% endblock rbsUserUse %}
 
-{% if not parameters.authenticated %}
-	{# Display nothing #}
-{% else %}
+{% block rbsUserTokensDataCache %}
+	<script type="text/javascript">
+		window.__change['{{ blockId }}'] = {{ tokensData | json_encode | raw}};
+	</script>
+{% endblock rbsUserTokensDataCache %}
+
+{% if parameters.authenticated %}
 	<h1>{{ i18n('m.rbs.user.front.manage_auto_login_token_title', ['ucf']) }}</h1>
-
-	<div rbs-manage-auto-login="" data-tokens="{{ tokens | json_encode }}"></div>
+	<div data-rbs-user-manage-auto-login="" data-cache-key="{{ blockId }}"></div>
 {% endif %}
 
