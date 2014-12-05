@@ -17,6 +17,22 @@
 				"Theme/Rbs/Base/js/ngInfiniteScroll-1.2.0/build/ng-infinite-scroll.min.js"
 			]
 		},
+		"Rbs_Common_Print": {
+			"cssAssets": [
+				"Theme/Rbs/Base/css/bootstrap.min.css",
+				"Theme/Rbs/Base/css/bootstrap-complements.css"
+			],
+			"jsAssets": [
+				"Theme/Rbs/Base/js/jquery-2.1.1.min.js",
+				"Theme/Rbs/Base/js/bootstrap.min.js",
+				"Theme/Rbs/Base/js/angular-1.2.23/angular.min.js",
+				"Theme/Rbs/Base/js/angular-1.2.23/angular-cookies.min.js",
+				"Theme/Rbs/Base/js/angular-1.2.23/angular-animate.min.js",
+				"Theme/Rbs/Base/js/ui-bootstrap-custom-typeahead-tpls-0.10.0.min.js",
+				"Theme/Rbs/Base/js/rbschangeapp.js",
+				"Theme/Rbs/Base/js/commerce.js"
+			]
+		},
 
 		"i18n_fr_FR": {
 			"jsAssets": [
