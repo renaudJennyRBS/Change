@@ -597,95 +597,8 @@ class ProductDataComposer
 
 			if ($price && $price->getValue() !== null)
 			{
-				$currencyCode = $billingArea->getCurrencyCode();
-				$precision = $priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
-
 				$this->dataSets['cart']['hasPrice'] = true;
-				$this->dataSets['price']['currencyCode'] = $currencyCode;
-				$this->dataSets['price']['precision'] = $precision;
-
-				$taxesApplication = null;
-				$valueWithTax = $valueWithoutTax = $baseValueWithTax = $baseValueWithoutTax = null;
-				$value = $price->getValue();
-				$baseValue = $price->getBasePriceValue();
-				$zone = $this->getZone();
-
-				$options = $price->getOptions()->toArray();
-				if (count($options)) {
-					$this->dataSets['price']['options'] = $options;
-				}
-
-				if ($zone)
-				{
-					/** @var \Rbs\Price\Documents\Tax[] $taxes */
-					$taxes = $billingArea->getTaxes()->toArray();
-					$taxesApplication = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $this->getQuantity());
-					$basedAmountTaxesApplication = [];
-					$baseValueWithTax = $baseValueWithoutTax = $baseValue;
-					if (count($taxesApplication))
-					{
-						if ($baseValue !== null)
-						{
-							$rate = $baseValue / $value;
-							foreach ($taxesApplication as $tax)
-							{
-								$basedAmountTax = clone($tax);
-								$basedAmountTax->setValue($tax->getValue() * $rate);
-								$basedAmountTaxesApplication[] = $basedAmountTax;
-							}
-						}
-					}
-
-					if ($price->isWithTax())
-					{
-						$valueWithTax = $value;
-						$valueWithoutTax = $priceManager->getValueWithoutTax($valueWithTax, $taxesApplication);
-						if ($baseValueWithTax !== null)
-						{
-							$baseValueWithoutTax = $priceManager->getValueWithoutTax($baseValueWithTax, $basedAmountTaxesApplication);
-						}
-					}
-					else
-					{
-						$valueWithoutTax = $value;
-						$valueWithTax = $priceManager->getValueWithTax($valueWithoutTax, $taxesApplication);
-						if ($baseValue !== null)
-						{
-							$baseValueWithTax = $priceManager->getValueWithTax($baseValueWithoutTax, $basedAmountTaxesApplication);
-						}
-					}
-				}
-				else
-				{
-					if ($price->isWithTax())
-					{
-						$valueWithTax = $value;
-						$baseValueWithTax = $baseValue;
-					}
-					else
-					{
-						$valueWithoutTax = $value;
-						$baseValueWithoutTax = $baseValue;
-					}
-				}
-
-				$this->dataSets['price']['valueWithTax'] = $priceManager->roundValue($valueWithTax, $precision);
-				$this->dataSets['price']['valueWithoutTax'] = $priceManager->roundValue($valueWithoutTax, $precision);
-
-				$this->dataSets['price']['baseValueWithTax'] = $priceManager->roundValue($baseValueWithTax, $precision);
-				$this->dataSets['price']['baseValueWithoutTax'] = $priceManager->roundValue($baseValueWithoutTax, $precision);
-
-				if (is_array($taxesApplication))
-				{
-					$this->dataSets['price']['taxes'] = array_map(function (\Rbs\Price\Tax\TaxApplication $ta)
-					{
-						return $ta->toArray();
-					}, $taxesApplication);
-				}
-				else
-				{
-					$this->dataSets['price']['taxes'] = null;
-				}
+				$this->fillPriceDataSetWithPrice($price);
 			}
 		}
 	}
@@ -748,46 +661,106 @@ class ProductDataComposer
 				if ($lowestPrice)
 				{
 					$this->dataSets['price']['hasDifferentPrices'] = $hasDifferentPrices;
-					$currencyCode = $billingArea->getCurrencyCode();
-					$precision = $priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
-					$zone = $this->getZone();
-					$this->dataSets['price']['currencyCode'] = $currencyCode;
-					$this->dataSets['price']['precision'] = $precision;
-
-					$valueWithTax = $valueWithoutTax = null;
-
-					if ($zone) {
-						/** @var \Rbs\Price\Documents\Tax[] $taxes */
-						$taxes = $billingArea->getTaxes()->toArray();
-						$taxesApplication = $priceManager->getTaxesApplication($lowestPrice, $taxes, $zone,
-							$currencyCode, $this->getQuantity());
-						if ($lowestPrice->isWithTax())
-						{
-							$valueWithTax = $lowestPrice->getValue();
-							$valueWithoutTax = $priceManager->getValueWithoutTax($valueWithTax, $taxesApplication);
-						}
-						else
-						{
-							$valueWithoutTax = $lowestPrice->getValue();
-							$valueWithTax = $priceManager->getValueWithTax($valueWithoutTax, $taxesApplication);
-						}
-					}
-					else
-					{
-						if ($lowestPrice->isWithTax())
-						{
-							$valueWithTax = $lowestPrice->getValue();
-						}
-						else
-						{
-							$valueWithoutTax = $lowestPrice->getValue();
-						}
-					}
-
-					$this->dataSets['price']['valueWithTax'] = $priceManager->roundValue($valueWithTax, $precision);
-					$this->dataSets['price']['valueWithoutTax'] = $priceManager->roundValue($valueWithoutTax, $precision);
+					$this->fillPriceDataSetWithPrice($lowestPrice);
 				}
 			}
+		}
+	}
+
+	/**
+	 * @param \Rbs\Price\PriceInterface $price
+	 */
+	protected function fillPriceDataSetWithPrice($price)
+	{
+		$priceManager = $this->priceManager;
+		$billingArea = $this->getBillingArea();
+
+		$currencyCode = $billingArea->getCurrencyCode();
+		$precision = $priceManager->getRoundPrecisionByCurrencyCode($currencyCode);
+		$this->dataSets['price']['currencyCode'] = $currencyCode;
+		$this->dataSets['price']['precision'] = $precision;
+
+		$taxesApplication = null;
+		$valueWithTax = $valueWithoutTax = $baseValueWithTax = $baseValueWithoutTax = null;
+		$value = $price->getValue();
+		$baseValue = $price->getBasePriceValue();
+		$zone = $this->getZone();
+
+		$options = $price->getOptions()->toArray();
+		if (count($options)) {
+			$this->dataSets['price']['options'] = $options;
+		}
+
+		if ($zone)
+		{
+			/** @var \Rbs\Price\Documents\Tax[] $taxes */
+			$taxes = $billingArea->getTaxes()->toArray();
+			$taxesApplication = $priceManager->getTaxesApplication($price, $taxes, $zone, $currencyCode, $this->getQuantity());
+			$basedAmountTaxesApplication = [];
+			$baseValueWithTax = $baseValueWithoutTax = $baseValue;
+			if (count($taxesApplication))
+			{
+				if ($baseValue !== null)
+				{
+					$rate = $baseValue / $value;
+					foreach ($taxesApplication as $tax)
+					{
+						$basedAmountTax = clone($tax);
+						$basedAmountTax->setValue($tax->getValue() * $rate);
+						$basedAmountTaxesApplication[] = $basedAmountTax;
+					}
+				}
+			}
+
+			if ($price->isWithTax())
+			{
+				$valueWithTax = $value;
+				$valueWithoutTax = $priceManager->getValueWithoutTax($valueWithTax, $taxesApplication);
+				if ($baseValueWithTax !== null)
+				{
+					$baseValueWithoutTax = $priceManager->getValueWithoutTax($baseValueWithTax, $basedAmountTaxesApplication);
+				}
+			}
+			else
+			{
+				$valueWithoutTax = $value;
+				$valueWithTax = $priceManager->getValueWithTax($valueWithoutTax, $taxesApplication);
+				if ($baseValue !== null)
+				{
+					$baseValueWithTax = $priceManager->getValueWithTax($baseValueWithoutTax, $basedAmountTaxesApplication);
+				}
+			}
+		}
+		else
+		{
+			if ($price->isWithTax())
+			{
+				$valueWithTax = $value;
+				$baseValueWithTax = $baseValue;
+			}
+			else
+			{
+				$valueWithoutTax = $value;
+				$baseValueWithoutTax = $baseValue;
+			}
+		}
+
+		$this->dataSets['price']['valueWithTax'] = $priceManager->roundValue($valueWithTax, $precision);
+		$this->dataSets['price']['valueWithoutTax'] = $priceManager->roundValue($valueWithoutTax, $precision);
+
+		$this->dataSets['price']['baseValueWithTax'] = $priceManager->roundValue($baseValueWithTax, $precision);
+		$this->dataSets['price']['baseValueWithoutTax'] = $priceManager->roundValue($baseValueWithoutTax, $precision);
+
+		if (is_array($taxesApplication))
+		{
+			$this->dataSets['price']['taxes'] = array_map(function (\Rbs\Price\Tax\TaxApplication $ta)
+			{
+				return $ta->toArray();
+			}, $taxesApplication);
+		}
+		else
+		{
+			$this->dataSets['price']['taxes'] = null;
 		}
 	}
 }
