@@ -7,6 +7,8 @@
  */
 namespace Rbs\Commerce\Cart;
 
+use Rbs\Payment\Documents\Transaction;
+
 /**
  * @name \Rbs\Commerce\Cart\CartDataComposer
  */
@@ -35,6 +37,11 @@ class CartDataComposer
 	protected $processManager;
 
 	/**
+	 * @var \Rbs\Payment\PaymentManager
+	 */
+	protected $paymentManager;
+
+	/**
 	 * @var null|array
 	 */
 	protected $dataSets = null;
@@ -55,6 +62,7 @@ class CartDataComposer
 		$this->catalogManager = $commerceServices->getCatalogManager();
 		$this->priceManager = $commerceServices->getPriceManager();
 		$this->processManager = $commerceServices->getProcessManager();
+		$this->paymentManager = $commerceServices->getPaymentManager();
 	}
 
 	public function toArray()
@@ -126,6 +134,11 @@ class CartDataComposer
 		{
 			$this->generateProcessDataSet();
 		}
+
+		if ($this->detailed || $this->hasDataSet('transaction'))
+		{
+			$this->generateTransactionDataSet();
+		}
 	}
 
 	protected function generateTaxesDataSet()
@@ -184,11 +197,15 @@ class CartDataComposer
 		$addTaxes = isset($this->dataSets['taxesInfo']);
 		$productContext = $this->getProductLineContext();
 
+		$itemCount = 0;
 		foreach ($this->cart->getLines() as $index => $line)
 		{
 			$lineData = $this->generateLineData($index, $line, $addTaxes, $productContext);
 			$this->dataSets['lines'][] = $lineData;
+			$itemCount += $line->getQuantity();
 		}
+
+		$this->dataSets['common']['itemCount'] = $itemCount;
 	}
 
 	protected function generateDiscountsDataSet()
@@ -434,4 +451,38 @@ class CartDataComposer
 			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
 			'data' => ['cartId' => $this->cart->getIdentifier()], 'detailed' => true];
 	}
-} 
+
+	// Transaction.
+
+	/**
+	 * @return array
+	 */
+	protected function getTransactionContext()
+	{
+		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats,
+			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
+			'data' => ['webStoreId' => $this->cart->getWebStoreId()], 'detailed' => $this->detailed
+		];
+	}
+
+	protected function generateTransactionDataSet()
+	{
+		$query = $this->documentManager->getNewQuery('Rbs_Payment_Transaction');
+		$query->andPredicates(
+			$query->eq('targetIdentifier', $this->cart->getIdentifier()),
+			$query->in('processingStatus', [Transaction::STATUS_PROCESSING, Transaction::STATUS_SUCCESS])
+		);
+		$query->addOrder('id', false);
+		$transaction = $query->getFirstDocument();
+		if ($transaction instanceof Transaction)
+		{
+			$transactionContext = $this->getTransactionContext();
+			$transactionData = $this->paymentManager->getTransactionData($transaction, $transactionContext);
+			$this->dataSets['transaction'] = count($transactionData) ? $transactionData : null;
+		}
+		else
+		{
+			$this->dataSets['transaction'] = null;
+		}
+	}
+}

@@ -1,32 +1,21 @@
-{# Used parameters: designation, product, axesInfo #}
-{% block rbsProductreturnDetailsProduct %}
-	<ul class="list-unstyled{% if not (axesInfo | length) %} no-bottom-margin{% endif %}">
-		{% if product %}
-			<li>
-				{% if product.common.URL.canonical %}
-					<a href="{{ product.common.URL.canonical }}">{{ product.common.title }}</a>
-				{% else %}
-					{{ product.common.title }}
-				{% endif %}
-			</li>
-			{% if product.common.reference %}
-				<li>{{ product.common.reference }}</li>
-			{% endif %}
-		{% else %}
-			<li>{{ designation }}</li>
-		{% endif %}
-	</ul>
-	{% if axesInfo | length %}
-		<dl class="dl-inline-items no-bottom-margin">
-			{% for axisInfo in axesInfo %}
-				<dt>{{ axisInfo.name }}</dt>
-				<dd>{{ axisInfo.value }}</dd>
-			{% endfor %}
-		</dl>
-	{% endif %}
-{% endblock rbsProductreturnDetailsProduct %}
+{# Used parameters: returns, showOrderLink #}
+{% block rbsProductreturnList %}
+	<div data-ng-controller="RbsProductreturnReturnListController">
+		{% for return in returns %}
+			{% block rbsProductreturnListItem %}
+				{{ block('rbsProductreturnDetails') }}
+			{% endblock rbsProductreturnListItem %}
 
-{# Used parameter: return, blockId, showOrderLink #}
+			{% block rbsProductreturnListSeparator %}
+				{% if not loop.last %}
+					<hr />
+				{% endif %}
+			{% endblock rbsProductreturnListSeparator %}
+		{% endfor %}
+	</div>
+{% endblock rbsProductreturnList %}
+
+{# Used parameters: return, blockId, showOrderLink #}
 {% block rbsProductreturnDetails %}
 	{% block rbsProductreturnDetailsHeader %}
 		<h2 id="return-details-{{ return.common.id }}">
@@ -114,28 +103,15 @@
 						{% block returnLine %}
 							<tr>
 								<td>
-									{% if line.product %}
-										<a title="{{ line.product.common.title }}" href="{{ line.product.common.URL.canonical }}">
-											{% if line.product.common.visuals|length %}
-												<img alt="{{ line.product.common.visuals[0].alt }}"
-													src="{{ line.product.common.visuals[0].cartItem }}" />
-											{% else %}
-												<div class="text-left text-muted">
-													<span class="glyphicon glyphicon-camera" style="font-size: 80px"></span>
-												</div>
-											{% endif %}
-										</a>
-									{% else %}
-										<div class="text-left text-muted">
-											<span class="glyphicon glyphicon-camera" style="font-size: 80px"></span>
-										</div>
-									{% endif %}
+									{% set designation = line.designation %}
+									{% set product = line.product %}
+									{{ block('rbsOrderLineVisual') }}
 								</td>
 								<td>
 									{% set designation = line.designation %}
 									{% set product = line.product %}
 									{% set axesInfo = line.options.orderLineOptions.axesInfo %}
-									{{ block('rbsProductreturnDetailsProduct') }}
+									{{ block('rbsOrderLineDescription') }}
 								</td>
 								<td class="form-inline">
 									{{ line.quantity }}
@@ -186,7 +162,8 @@
 
 	{% block rbsProductreturnDetailsShipments %}
 		{% if return.shipments | length %}
-			{% include 'Rbs_Order/shipment-list.twig' with {'shipments': return.shipments, 'blockId': blockId} %}
+			{% set shipments = return.shipments %}
+			{{ block('rbsOrderShipmentList') }}
 		{% endif %}
 	{% endblock rbsProductreturnDetailsShipments %}
 {% endblock rbsProductreturnDetails %}

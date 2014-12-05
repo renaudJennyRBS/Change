@@ -62,21 +62,36 @@ class OrderList extends Block
 		{
 			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 			$commerceServices = $event->getServices('commerceServices');
-			$orderManager = $commerceServices->getOrderManager();
-			$itemsPerPage = $parameters->getParameter('itemsPerPage');
-			$pageNumber = $parameters->getParameter('pageNumber');
-			$paginator = $orderManager->getByUser($user, [], $processingStatus, $pageNumber, $itemsPerPage);
-			if ($paginator->getTotalCount() || $parameters->getParameter('showIfEmpty'))
-			{
-				$attributes['paginator'] = $paginator;
-				$fullListPage = $documentManager->getDocumentInstance($parameters->getParameter('fullListPage'));
-				if ($fullListPage instanceof \Rbs\Website\Documents\StaticPage)
-				{
-					$attributes['fullListPage'] = $fullListPage;
-				}
-				return 'order-list.twig';
-			}
+			$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+			$result = $commerceServices->getOrderManager()->getOrdersData($user, [], $processingStatus, $context->toArray());
+			$attributes['ordersData'] = $result['items'];
+			$attributes['itemsPerLine'] = $parameters->getParameter('itemsPerLine');
+
+			$pagination = $result['pagination'];
+			$pagination['pageCount'] = $pageCount = ceil($pagination['count'] / $pagination['limit']);
+			$pagination['pageNumber'] = $this->fixPageNumber($parameters->getParameter('pageNumber'), $pageCount);
+			$attributes['pagination'] = $pagination;
+			return 'order-list.twig';
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param \Change\Presentation\Blocks\Parameters $parameters
+	 * @return \Change\Http\Ajax\V1\Context
+	 */
+	protected function populateContext($application, $documentManager, $parameters)
+	{
+		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
+		$context->setDetailed(false);
+		$context->setURLFormats(['canonical']);
+
+		$pageNumber = intval($parameters->getParameter('pageNumber'));
+		$limit = $parameters->getParameter('itemsPerPage');
+		$offset = ($pageNumber - 1) * $limit;
+		$context->setPagination([$offset, $limit]);
+		return $context;
 	}
 }

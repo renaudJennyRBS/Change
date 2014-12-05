@@ -193,7 +193,6 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			return;
 		}
 
-		/** @var \Rbs\Shipping\Documents\Mode $shippingMode */
 		$shippingMode = $event->getParam('shippingMode');
 		if (is_numeric($shippingMode))
 		{
@@ -325,7 +324,6 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			return;
 		}
 
-		/** @var \Rbs\Payment\Documents\Connector $paymentConnector */
 		$paymentConnector = $event->getParam('paymentConnector');
 		if (is_numeric($paymentConnector))
 		{
@@ -342,7 +340,7 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			$context = [];
 		}
 
-		//Set default context values
+		// Set default context values.
 		$context += ['visualFormats' => [], 'website' => null, 'data' => [], 'detailed' => false, 'dataSetNames' => []];
 
 		$applicationServices = $event->getApplicationServices();
@@ -353,7 +351,6 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			'category' => 'default',
 		]];
 
-
 		if ($context['detailed'])
 		{
 			$visualFormats = $context['visualFormats'];
@@ -363,7 +360,14 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 
 			$paymentConnectorData['presentation'] = [
 				'description' => $richTextManager->render($paymentConnector->getCurrentLocalization()
-					->getDescription(), 'Website', $richTextContext)];
+					->getDescription(), 'Website', $richTextContext)
+			];
+			if ($paymentConnector instanceof \Rbs\Payment\Documents\DeferredConnector)
+			{
+				$paymentConnectorData['presentation']['instructions'] = $richTextManager->render(
+					$paymentConnector->getCurrentLocalization()->getInstructions(), 'Website', $richTextContext
+				);
+			}
 
 			$visual = $paymentConnector->getVisual();
 			if ($visual && $visualFormats)
@@ -377,8 +381,6 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-		/** @var \Rbs\Commerce\CommerceServices $commerceServices */
-		$commerceServices = $event->getServices('commerceServices');
 		if (array_key_exists('transaction', $context['dataSetNames'])) {
 			$paymentConnectorData['transaction'] = null;
 
@@ -427,7 +429,6 @@ class ProcessManager implements \Zend\EventManager\EventsCapableInterface
 			return;
 		}
 
-		/** @var \Rbs\Shipping\Documents\Mode $shippingMode */
 		$shippingMode = $event->getParam('shippingMode');
 		if (is_numeric($shippingMode))
 		{

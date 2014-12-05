@@ -1,0 +1,467 @@
+{# Used parameter: orderData #}
+{% block rbsOrderHeader %}
+	{% set date = orderData.common.date ? orderData.common.date : orderData.common.lastUpdate %}
+	<h1>
+		<span class="pull-right">
+			{% if orderData.common.statusInfos %}
+				{{ orderData.common.statusInfos.title }}
+			{% else %}
+				{{ i18n('m.rbs.order.front.payment_validating', ['ucf']) }}
+			{% endif %}
+		</span>
+		{% if orderData.common.code %}
+			{{ i18n('m.rbs.order.front.order_title', ['ucf'], {'code': orderData.common.code, 'date': date|transDateTime}) }}
+		{% else %}
+			{{ i18n('m.rbs.order.front.order_title_without_code', ['ucf'], {'date': date|transDateTime}) }}
+		{% endif %}
+	</h1>
+{% endblock rbsOrderHeader %}
+
+{# Used parameter: orderData #}
+{% block rbsOrderGeneralInformation %}
+	{% set date = orderData.common.date ? orderData.common.date : orderData.common.lastUpdate %}
+	<h2>{{ i18n('m.rbs.order.front.order_general_information', ['ucf']) }}</h2>
+	<dl class="dl-inline-items">
+		{% if orderData.common.code %}
+			<dt>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</dt>
+			<dd>{{ orderData.common.code }}</dd>
+		{% endif %}
+		<dt>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</dt>
+		<dd>{{ date | transDateTime }}</dd>
+		<dt>{{ i18n('m.rbs.order.front.order_processing_status', ['ucf']) }}</dt>
+		<dd>
+			{% if orderData.common.statusInfos %}
+				{{ orderData.common.statusInfos.title }}
+			{% else %}
+				{{ i18n('m.rbs.order.front.payment_validating', ['ucf']) }}
+			{% endif %}
+		</dd>
+	</dl>
+{% endblock rbsOrderGeneralInformation %}
+
+{# Used parameter: canReturn, orderData #}
+{% block rbsOrderLinks %}
+	{% if canReturn or orderData.returns | length %}
+		<ul class="pull-right text-right list-unstyled">
+			{% if canReturn %}
+				<li>
+					<a href="{{ functionURL('Rbs_Productreturn_ReturnProcess', {'orderId': orderData.common.id}) }}" class="btn btn-default">
+						{{ i18n('m.rbs.productreturn.front.make_a_return', ['ucf']) }}
+					</a>
+				</li>
+			{% endif %}
+			{% if orderData.returns | length %}
+				<li>
+					<a href="javascript:" data-rbs-anchor="return-list-{{ blockId }}">
+						{{ i18n('m.rbs.productreturn.front.follow_a_return', ['ucf']) }}
+					</a>
+				</li>
+			{% endif %}
+		</ul>
+	{% endif %}
+{% endblock rbsOrderLinks %}
+
+{# Used parameter: transaction #}
+{% block rbsOrderTransaction %}
+	{% block rbsOrderTransactionTitle %}
+		<h2>{{ i18n('m.rbs.order.front.order_payment_information', ['ucf']) }}</h2>
+	{% endblock rbsOrderTransactionTitle %}
+	{% if orderData.transaction %}
+		{% block rbsOrderTransactionInformation %}
+			<dl class="dl-inline-items">
+				<dt>{{ i18n('m.rbs.order.front.transaction_connector', ['ucf']) }}</dt>
+				<dd>{{ transaction.connector.common.title }}</dd>
+				<dt>{{ i18n('m.rbs.order.front.transaction_status', ['ucf']) }}</dt>
+				<dd>{{ transaction.common.statusInfos.title }}</dd>
+				{% if transaction.common.processingDate %}
+					<dt>{{ i18n('m.rbs.order.front.transaction_date_time', ['ucf']) }}</dt>
+					<dd>{{ transaction.common.processingDate | transDateTime }}</dd>
+				{% endif %}
+				{% if transaction.common.processingIdentifier %}
+					<dt>{{ i18n('m.rbs.order.front.transaction_number', ['ucf']) }}</dt>
+					<dd>{{ transaction.common.processingIdentifier }}</dd>
+				{% endif %}
+				{% if transaction.common.statusInfos.code == 'PROCESSING' and transaction.connector.presentation.instructions %}
+					<dt>{{ i18n('m.rbs.order.front.transaction_instructions', ['ucf']) }}</dt>
+					<dd>{{ transaction.connector.presentation.instructions|raw }}</dd>
+				{% endif %}
+			</dl>
+
+		{% endblock rbsOrderTransactionInformation %}
+	{% else %}
+		{% block rbsOrderTransactionEmpty %}
+			-
+		{% endblock rbsOrderTransactionEmpty %}
+	{% endif %}
+{% endblock rbsOrderTransaction %}
+
+{# Used parameter: address, email, disableMailto #}
+{% block rbsOrderBillingInformation %}
+	{% block rbsOrderBillingInformationTitle %}
+		<h2>{{ i18n('m.rbs.order.front.order_billing_address', ['ucf']) }}</h2>
+	{% endblock rbsOrderBillingInformationTitle %}
+	{% block rbsOrderBillingInformationAddress %}
+		<address>
+			<strong>{{ address.lines[0] }}</strong>
+			{% for line in address.lines %}
+				{% if not loop.first %}<br />{{ line }}{% endif %}
+			{% endfor %}
+		</address>
+	{% endblock rbsOrderBillingInformationAddress %}
+	{% block rbsOrderBillingInformationEmail %}
+		<dl class="dl-inline-items">
+			<dt>{{ i18n('m.rbs.order.front.order_email_address', ['ucf']) }}</dt>
+			<dd>
+				{% if disableMailto %}
+					{{ email }}
+				{% else %}
+					<a href="mailto:{{ email }}">{{ email }}</a>
+				{% endif %}
+			</dd>
+		</dl>
+	{% endblock rbsOrderBillingInformationEmail %}
+{% endblock rbsOrderBillingInformation %}
+
+{# Used parameters: designation, product, imageFormat = 'cartItem', defaultVisualFontSize = '80px' #}
+{% block rbsOrderLineVisual %}
+	{% set imageFormat = imageFormat ? imageFormat : 'cartItem' %}
+	{% set defaultVisualFontSize = defaultVisualFontSize ? defaultVisualFontSize : '80px' %}
+	{% if product %}
+		<a title="{{ product.common.title }}" href="{{ product.common.URL.canonical }}">
+			{% if product.common.visuals|length %}
+				<img alt="{{ product.common.visuals[0].alt }}"
+					src="{{ product.common.visuals[0][imageFormat] }}" />
+			{% else %}
+				<div class="text-left text-muted">
+					<span class="glyphicon glyphicon-camera" style="font-size: {{ defaultVisualFontSize }}"></span>
+				</div>
+			{% endif %}
+		</a>
+	{% else %}
+		<div title="{{ designation }}" class="text-left text-muted">
+			<span class="glyphicon glyphicon-camera" style="font-size: {{ defaultVisualFontSize }}"></span>
+		</div>
+	{% endif %}
+{% endblock rbsOrderLineVisual %}
+
+{# Used parameters: designation, product, axesInfo #}
+{% block rbsOrderLineDescription %}
+	<ul class="list-unstyled{% if not (axesInfo | length) %} no-bottom-margin{% endif %}">
+		{% if product %}
+			<li>
+				{% if product.common.URL.canonical %}
+					<a href="{{ product.common.URL.canonical }}">{{ product.common.title }}</a>
+				{% else %}
+					{{ product.common.title }}
+				{% endif %}
+			</li>
+			{% if product.common.reference %}
+				<li>{{ product.common.reference }}</li>
+			{% endif %}
+		{% else %}
+			<li>{{ designation }}</li>
+		{% endif %}
+	</ul>
+	{% if axesInfo | length %}
+		<dl class="dl-inline-items no-bottom-margin">
+			{% for axisInfo in axesInfo %}
+				<dt>{{ axisInfo.name }}</dt>
+				<dd>{{ axisInfo.value }}</dd>
+			{% endfor %}
+		</dl>
+	{% endif %}
+{% endblock rbsOrderLineDescription %}
+
+{# Used parameters: line, currencyCode, displayPricesWithoutTax, displayPricesWithTax #}
+{% block rbsOrderLinePrices %}
+	{% if displayPricesWithoutTax %}
+		<div class="row">
+			{% if line.unitAmountWithoutTaxes and line.quantity > 1 %}
+				<div class="col-sm-6 small">
+					{{ line.quantity }} x {{ formatPrice(line.unitAmountWithoutTaxes, currencyCode) }}
+				</div>
+				<div class="col-sm-6">
+					{{ formatPrice(line.amountWithoutTaxes, currencyCode)}}
+					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+						{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+					</abbr>
+				</div>
+			{% else %}
+				<div class="col-sm-12">
+					{{ formatPrice(line.amountWithoutTaxes, currencyCode)}}
+					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+						{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+					</abbr>
+				</div>
+			{% endif %}
+		</div>
+	{% endif %}
+	{% if displayPricesWithTax %}
+		<div class="row">
+			{% if line.unitAmountWithTaxes and line.quantity > 1 %}
+				<div class="col-sm-6 small">
+					{{ line.quantity }} x {{ formatPrice(line.unitAmountWithTaxes, currencyCode) }}
+				</div>
+				<div class="col-sm-6">
+					{{ formatPrice(line.amountWithTaxes, currencyCode)}}
+				</div>
+			{% else %}
+				<div class="col-sm-12">
+					{{ formatPrice(line.amountWithTaxes, currencyCode)}}
+				</div>
+			{% endif %}
+		</div>
+	{% endif %}
+{% endblock rbsOrderLinePrices %}
+
+{# Used parameter: orderData, displayPricesWithTax, displayPricesWithoutTax #}
+{% block rbsOrderLines %}
+	{% set lines = orderData.lines %}
+	{% set currencyCode = orderData.common.currencyCode %}
+	{% set displayPrices = displayPricesWithTax or displayPricesWithoutTax %}
+	<div class="table-responsive">
+		<table class="table table-striped table-vertical-middle no-bottom-margin">
+			<thead>
+				{% block rbsOrderLinesHead %}
+					<tr>
+						<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
+						<th class="text-right">{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
+						{% if displayPrices %}
+							<th class="text-right">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
+						{% endif %}
+					</tr>
+				{% endblock rbsOrderLinesHead %}
+			</thead>
+			<tbody>
+				{% for line in orderData.lines %}
+					{% block rbsOrderLinesItem %}
+						<tr>
+							{% block rbsOrderLinesItemVisual %}
+								<td>
+									{% set designation = line.designation %}
+									{% set product = line.product %}
+									{{ block('rbsOrderLineVisual') }}
+								</td>
+							{% endblock rbsOrderLinesItemVisual %}
+							{% block rbsOrderLinesItemDescription %}
+								<td>
+									{% set designation = line.designation %}
+									{% set product = line.product %}
+									{% set axesInfo = line.options.orderLineOptions.axesInfo %}
+									{{ block('rbsOrderLineDescription') }}
+								</td>
+							{% endblock rbsOrderLinesItemDescription %}
+							{% block rbsOrderLinesItemQuantity %}
+								<td class="text-right">{{ line.quantity }}</td>
+							{% endblock rbsOrderLinesItemQuantity %}
+							{% if displayPrices %}
+								{% block rbsOrderLinesItemPrice %}
+									<td class="price text-right">
+										{{ block('rbsOrderLinePrices') }}
+									</td>
+								{% endblock rbsOrderLinesItemPrice %}
+							{% endif %}
+						</tr>
+					{% endblock rbsOrderLinesItem %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock rbsOrderLines %}
+
+{# Used parameter: orderData #}
+{% block rbsOrderAmounts %}
+	{% set currencyCode = orderData.common.currencyCode %}
+	<div class="row no-bottom-margin">
+		<div class="col-md-6">
+			{% block rbsOrderAmountsTaxes %}
+				<h2>{{ i18n('m.rbs.commerce.front.taxes_amount', ['ucf']) }}</h2>
+				<table class="table">
+					<tbody>
+						{% for tax in orderData.totalTaxes %}
+							<tr>
+								<td>{{ taxTitle(tax.taxCode) }} ({{ formatRate(tax.rate) }})</td>
+								<td class="price">{{ formatPrice(tax.value, currencyCode) }}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% endblock rbsOrderAmountsTaxes %}
+		</div>
+		<div class="col-md-6">
+			{% block rbsOrderAmountsDetail %}
+				<h2>{{ i18n('m.rbs.commerce.front.summary_of_amounts', ['ucf']) }}</h2>
+				<table class="table text-right">
+					<tbody>
+						{% if orderData.fees | length or orderData.discounts | length %}
+							<tr>
+								<td>
+									{{ orderData.common.itemCount }}
+									{% if orderData.common.itemCount == 1 %}
+										{{ i18n('m.rbs.commerce.front.article') }}
+									{% else %}
+										{{ i18n('m.rbs.commerce.front.articles') }}
+									{% endif %}
+								</td>
+								<td class="price">{{ formatPrice(orderData.amounts.linesAmountWithTaxes, currencyCode) }}</td>
+							</tr>
+						{% endif %}
+						{% for fee in orderData.fees %}
+							<tr>
+								<td>{{ fee.designation }}</td>
+								<td class="price">{{ formatPrice(fee.amountWithTaxes, currencyCode) }}</td>
+							</tr>
+						{% endfor %}
+						{% for discount in orderData.discounts %}
+							<tr>
+								<td>{{ discount.title }}</td>
+								<td class="price">{{ formatPrice(discount.amountWithTaxes, currencyCode) }}</td>
+							</tr>
+						{% endfor %}
+						{% if orderData.creditNotes | length %}
+							<tr>
+								<td>{{ i18n('m.rbs.commerce.front.total_amount_with_tax', ['ucf']) }}</td>
+								<td class="price">{{ formatPrice(orderData.amounts.totalAmountWithTaxes, currencyCode) }}</td>
+							</tr>
+							<tr>
+								<td>{{ i18n('m.rbs.commerce.front.credit_notes_total_amounts', ['ucf']) }}</td>
+								<td class="price">{{ formatPrice(orderData.amounts.totalCreditNotesAmount, currencyCode) }}</td>
+							</tr>
+						{% endif %}
+						<tr>
+							<td><strong>{{ i18n('m.rbs.commerce.front.amount_to_pay', ['ucf']) }}</strong></td>
+							<td class="price">{{ formatPrice(orderData.amounts.paymentAmount, currencyCode) }}</td>
+						</tr>
+					</tbody>
+				</table>
+			{% endblock rbsOrderAmountsDetail %}
+		</div>
+	</div>
+{% endblock rbsOrderAmounts %}
+
+{# Used parameter: shipments #}
+{% block rbsOrderShipmentList %}
+	<div class="table-responsive">
+		<table class="table table-striped table-vertical-middle no-bottom-margin">
+			<thead>
+				{% block rbsOrderShipmentListHead %}
+					<tr>
+						<th>{{ i18n('m.rbs.order.front.shipment_mode', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.shipment_products', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.shipment_status', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.shipment_address', ['ucf']) }}</th>
+					</tr>
+				{% endblock rbsOrderShipmentListHead %}
+			</thead>
+			<tbody>
+				{% for shipment in shipments %}
+					{% block rbsOrderShipmentListItem %}
+						<tr>
+							{% block rbsOrderShipmentListItemMode %}
+								<td>
+									{{ shipment.context.shippingModeTitle ? shipment.context.shippingModeTitle : shipment.common.shippingModeCode }}
+								</td>
+							{% endblock rbsOrderShipmentListItemMode %}
+							{% block rbsOrderShipmentListItemLines %}
+								<td>
+									{% for line in shipment.lines %}
+										{{ line.quantity }} x {{ line.designation }}<br />
+									{% endfor %}
+								</td>
+							{% endblock rbsOrderShipmentListItemLines %}
+							{% block rbsOrderShipmentListItemStatus %}
+								<td>
+									{{ shipment.common.statusInfos.title }}
+								</td>
+							{% endblock rbsOrderShipmentListItemStatus %}
+							{% block rbsOrderShipmentListItemAddress %}
+								<td>
+									{% if shipment.address.lines|length %}
+										{% set lines = shipment.address.lines %}
+										<address class="no-bottom-margin">
+											<strong>{{ lines[0] }}</strong>
+											{% for line in lines %}
+												{% if not loop.first %}<br />{{ line }}{% endif %}
+											{% endfor %}
+										</address>
+									{% else %}
+										-
+									{% endif %}
+									<br />
+									{% if shipment.common.trackingCode %}
+										{{ i18n('m.rbs.order.front.shipment_tracking', ['ucf', 'lab']) }}
+										{% if shipment.common.trackingUrl %}
+											<a href="{{ shipment.common.trackingUrl }}">{{ shipment.common.trackingCode }}</a>
+										{% else %}
+											{{ shipment.common.trackingCode }}
+										{% endif %}
+									{% endif %}
+								</td>
+							{% endblock rbsOrderShipmentListItemAddress %}
+						</tr>
+					{% endblock rbsOrderShipmentListItem %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock rbsOrderShipmentList %}
+
+{# Used parameter: ordersData #}
+{% block rbsOrderList %}
+	<div class="table-responsive">
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+				{% block rbsOrderListHead %}
+					<tr>
+						<th>{{ i18n('m.rbs.order.front.order_number', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.order_date', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.order_item_count', ['ucf']) }}</th>
+						<th>{{ i18n('m.rbs.order.front.order_amount', ['ucf']) }}</th>
+					</tr>
+				{% endblock rbsOrderListHead %}
+			</thead>
+			<tbody>
+				{% for orderData in ordersData %}
+					{% block rbsOrderListItem %}
+						<tr>
+							{% block rbsOrderListItemDescription %}
+								<td>
+									{% if orderData.common.id %}
+										{% set urlParams = {'orderId': orderData.common.id} %}
+									{% else %}
+										{% set urlParams = {'cartIdentifier': orderData.common.identifier} %}
+									{% endif %}
+									{% set detailHref = functionURL('Rbs_Order_OrderDetail', urlParams) %}
+									<a href="{{ detailHref }}">
+										{% if orderData.common.code %}{{ orderData.common.code }} - {% endif %}
+										{% if orderData.common.statusInfos %}
+											{{ orderData.common.statusInfos.title }}
+										{% else %}
+											{{ i18n('m.rbs.order.front.payment_validating', ['ucf']) }}
+										{% endif %}
+									</a>
+								</td>
+							{% endblock rbsOrderListItemDescription %}
+							{% block rbsOrderListItemDate %}
+								<td>
+									{% if orderData.common.date %}
+										{{ orderData.common.date | transDateTime }}
+									{% else %}
+										{{ orderData.common.lastUpdate | transDateTime }}
+									{% endif %}
+								</td>
+							{% endblock rbsOrderListItemDate %}
+							{% block rbsOrderListItemArticles %}
+								<td>{{ orderData.common.itemCount }}</td>
+							{% endblock rbsOrderListItemArticles %}
+							{% block rbsOrderListItemPrice %}
+								<td>{{ formatPrice(orderData.amounts.totalAmountWithTaxes, orderData.common.currencycode) }}</td>
+							{% endblock rbsOrderListItemPrice %}
+						</tr>
+					{% endblock rbsOrderListItem %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock rbsOrderList %}
