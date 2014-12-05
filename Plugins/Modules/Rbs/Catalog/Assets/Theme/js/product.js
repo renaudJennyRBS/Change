@@ -203,13 +203,24 @@
 	app.directive('rbsCatalogProductVisuals', rbsCatalogProductVisuals);
 
 	function RbsCatalogSimpleProductController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
-		scope.productData = {};
 		scope.pictograms = null;
 		scope.visuals = null;
 
+		scope.productData = {};
+		scope.parameters = {};
+		scope.productAjaxData = {};
+		scope.productAjaxParams = {};
+
 		var cacheKey = $element.attr('data-cache-key');
-		if (cacheKey && angular.isObject($window['__change']) && $window['__change'][cacheKey]) {
-			scope.productData = $window['__change'][cacheKey];
+		if (cacheKey) {
+			scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+			scope.productData = AjaxAPI.globalVar(cacheKey);
+
+			scope.productAjaxData.webStoreId = scope.parameters.webStoreId;
+			scope.productAjaxData.billingAreaId = scope.parameters.billingAreaId;
+			scope.productAjaxData.zone = scope.parameters.zone;
+			scope.productAjaxParams.visualFormats = scope.parameters.imageFormats;
+			scope.productAjaxParams.URLFormats = 'canonical,contextual';
 		}
 
 		this.setPictograms = function(productData) {
@@ -245,25 +256,24 @@
 	app.directive('rbsCatalogAddSimpleProductToCart', rbsCatalogAddSimpleProductToCart);
 
 	function RbsCatalogVariantProductController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
-		scope.productData = {};
 		scope.pictograms = null;
 		scope.visuals = null;
-		scope.parameters = {};
 
+		scope.productData = {};
+		scope.parameters = {};
 		scope.productAjaxData = {};
 		scope.productAjaxParams = {};
 
 		var cacheKey = $element.attr('data-cache-key');
 		if (cacheKey) {
 			scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
-			if (angular.isObject($window['__change']) && $window['__change'][cacheKey]) {
-				scope.productData = $window['__change'][cacheKey];
-			}
+			scope.productData = AjaxAPI.globalVar(cacheKey);
 
 			scope.productAjaxData.webStoreId = scope.parameters.webStoreId;
 			scope.productAjaxData.billingAreaId = scope.parameters.billingAreaId;
 			scope.productAjaxData.zone = scope.parameters.zone;
 			scope.productAjaxParams.visualFormats = scope.parameters.imageFormats;
+			scope.productAjaxParams.URLFormats = 'canonical,contextual';
 		}
 
 		scope.$watch('productData', function(productData) {
@@ -327,7 +337,7 @@
 						scope.rootProductData = scope.productData.rootProduct || scope.productData;
 
 						scope.$watchCollection('selectedAxesValues', function(definedAxes) {
-							var axesDefinition = scope.rootProductData.variants.axes;
+							var axesDefinition = scope.rootProductData.variants ? scope.rootProductData.variants.axes : [];
 							scope.axesItems = [];
 
 							var currentAxesValue = [], axisIndex, values, axisItems;
@@ -563,13 +573,24 @@
 	app.directive('rbsCatalogProductAvailability', rbsCatalogProductAvailability);
 
 	function RbsCatalogProductSetController(scope, $element, AjaxAPI) {
-		scope.productData = {};
 		scope.pictograms = null;
 		scope.visuals = null;
 
+		scope.productData = {};
+		scope.parameters = {};
+		scope.productAjaxData = {};
+		scope.productAjaxParams = {};
+
 		var cacheKey = $element.attr('data-cache-key');
 		if (cacheKey) {
+			scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
 			scope.productData = AjaxAPI.globalVar(cacheKey);
+
+			scope.productAjaxData.webStoreId = scope.parameters.webStoreId;
+			scope.productAjaxData.billingAreaId = scope.parameters.billingAreaId;
+			scope.productAjaxData.zone = scope.parameters.zone;
+			scope.productAjaxParams.visualFormats = scope.parameters.imageFormats;
+			scope.productAjaxParams.URLFormats = 'canonical,contextual';
 		}
 
 		this.setPictograms = function(productData) {

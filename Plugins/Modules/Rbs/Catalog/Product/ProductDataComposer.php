@@ -193,7 +193,7 @@ class ProductDataComposer
 	{
 		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats, 'dataSetNames' => $this->dataSetNames,
 			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
-			'data' => $this->data, 'detailed' => false];
+			'data' => $this->data, 'detailed' => $this->hasDataSet('productSet')];
 	}
 
 
