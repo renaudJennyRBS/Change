@@ -204,6 +204,7 @@ class ProductList extends Block
 			$pagination['pageCount'] = $pageCount = ceil($pagination['count'] / $pagination['limit']);
 			$pagination['pageNumber'] = $this->fixPageNumber($parameters->getParameter('pageNumber'), $pageCount);
 			$attributes['pagination'] = $pagination;
+			$attributes['context'] = $contextArray;
 			return 'product-list.twig';
 		}
 		return null;

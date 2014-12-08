@@ -598,5 +598,8 @@
 	},
 	"selected_sections":{
 		"message": "Sections de publication à affecter aux variantes"
+	},
+	"product_list_infinite_scroll_label":{
+		"message": "liste de produits sans pagination"
 	}
 }

@@ -26,9 +26,99 @@
 			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
 		};
 	}
-
 	RbsCatalogProductItemController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
+
+	function rbsCatalogProductsList(AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductsList.tpl',
+			scope: {},
+			controller: ['$scope', '$element', function (scope, elem) {
+				var cacheKey = elem.attr('data-cache-key');
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+				var data = AjaxAPI.globalVar(cacheKey);
+				scope.productsData = data.productsData;
+				scope.contextData = data.context.data;
+				scope.context = {URLFormats : data.context.URLFormats, pagination: data.context.pagination, visualFormats: []};
+				angular.forEach(data.context.visualFormats, function(size, name) {
+					scope.context.visualFormats.push(name);
+				})
+			}],
+			link: function(scope, elem, attrs, controller) {
+				scope.loading = false;
+				scope.viewDetailTitleMask = attrs.viewDetailTitleMask || 'PRODUCT_TITLE';
+
+				scope.addMoreProducts = function() {
+					var productCount = parseInt(attrs.productCount);
+					var itemsPerPage = scope.parameters.itemsPerPage;
+					var currentCount = scope.productsData.length;
+					scope.context.pagination.offset = currentCount;
+					scope.loading = true;
+					AjaxAPI.getData('Rbs/Catalog/Product/', scope.contextData, scope.context)
+						.success(function(data) {
+							if (data.pagination.offset == scope.productsData.length) {
+								angular.forEach(data.items, function(product) {
+									scope.productsData.push(product);
+								})
+							}
+							scope.loading = false;
+						})
+				};
+
+				scope.scrollDisabled = function() {
+					var productCount = parseInt(attrs.productCount);
+					var scrollDisabled  = scope.loading || scope.productsData.length >= productCount;
+					return scrollDisabled;
+				}
+			}
+		}
+	}
+
+	rbsCatalogProductsList.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsCatalogProductsList', rbsCatalogProductsList);
+
+	function rbsCatalogProductItemData($http, $compile, $rootScope, $window, AjaxAPI) {
+		return {
+			restrict: 'A',
+			link: function (scope, elem, attrs) {
+				var productData = scope.productData;
+
+				scope.pictograms = null;
+				scope.url = null;
+				scope.visual = null;
+				scope.viewDetailTitle = null;
+
+				if (!productData || !productData.common) {
+					return;
+				}
+
+				scope.viewDetailTitle = scope.viewDetailTitleMask.replace('PRODUCT_TITLE', productData.common.title);
+
+				if (productData.common.attributes && productData.common.attributes.pictograms) {
+					var attr = productData.attributes[productData.common.attributes.pictograms];
+					if (attr && attr.value && attr.value.length) {
+						scope.pictograms = attr.value;
+					}
+				}
+
+				if (productData.common.URL) {
+					scope.url = productData.common.URL.contextual || productData.common.URL.canonical;
+				}
+
+				if (productData.common.visuals && productData.common.visuals.length) {
+					scope.visual = productData.common.visuals[0];
+				}
+
+				scope.addLine = function() {
+					addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+				};
+			}
+		}
+	}
+
+	rbsCatalogProductItemData.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	app.directive('rbsCatalogProductItemData', rbsCatalogProductItemData);
 
 	function rbsCatalogAddListItemProductToCart() {
 		return {
@@ -39,7 +129,6 @@
 			link: productDataLink
 		}
 	}
-
 	app.directive('rbsCatalogAddListItemProductToCart', rbsCatalogAddListItemProductToCart);
 
 	function productDataLink(scope, elm, attrs) {

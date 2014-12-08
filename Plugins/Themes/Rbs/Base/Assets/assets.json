@@ -13,7 +13,8 @@
 				"Theme/Rbs/Base/js/angular-1.2.23/angular-animate.min.js",
 				"Theme/Rbs/Base/js/ui-bootstrap-custom-typeahead-tpls-0.10.0.min.js",
 				"Theme/Rbs/Base/js/rbschangeapp.js",
-				"Theme/Rbs/Base/js/commerce.js"
+				"Theme/Rbs/Base/js/commerce.js",
+				"Theme/Rbs/Base/js/ngInfiniteScroll-1.2.0/build/ng-infinite-scroll.min.js"
 			]
 		},
 
