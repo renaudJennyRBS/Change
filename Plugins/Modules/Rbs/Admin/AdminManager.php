@@ -1007,7 +1007,7 @@ class AdminManager implements \Zend\EventManager\EventsCapableInterface
 			$query->addOrder($propertyName);
 		}
 		$query->orPredicates($restrictions);
-		if (!in_array($propertyNames, 'id'))
+		if (!in_array('id', $propertyNames))
 		{
 			$query->addOrder('id');
 		}
