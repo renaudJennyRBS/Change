@@ -16,5 +16,8 @@
 	},
 	"refuse_trackers":{
 		"message":"refuser"
+	},
+	"interstitial_direct_access":{
+		"message":"accès direct au site"
 	}
 }

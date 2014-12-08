@@ -486,5 +486,62 @@
 	},
 	"trackers_manage_not_allowed_text":{
 		"message":"texte si tracker refusé"
+	},
+	"interstitial_label":{
+		"message":"intersticiel"
+	},
+	"interstitial_popin_title":{
+		"message":"titre de la fenêtre surgissante"
+	},
+	"interstitial_displayed_page":{
+		"message":"page à afficher dans la fenêtre surgissante"
+	},
+	"interstitial_popin_size":{
+		"message":"taille de la fenêtre surgissante"
+	},
+	"interstitial_popin_size_small":{
+		"message":"petite"
+	},
+	"interstitial_popin_size_medium":{
+		"message":"moyenne"
+	},
+	"interstitial_popin_size_large":{
+		"message":"large"
+	},
+	"interstitial_display_frequency":{
+		"message":"fréquence d'affichage"
+	},
+	"interstitial_display_frequency_always":{
+		"message":"à chaque affichage de la page"
+	},
+	"interstitial_display_frequency_session":{
+		"message":"une fois par session"
+	},
+	"interstitial_display_frequency_reprieve":{
+		"message":"une fois tous les N jours"
+	},
+	"interstitial_display_frequency_once":{
+		"message":"une seule fois"
+	},
+	"interstitial_display_reprieve":{
+		"message":"nombre de jours entre deux affichages"
+	},
+	"interstitial_audience":{
+		"message":"public visé"
+	},
+	"interstitial_audience_all":{
+		"message":"tout le monde"
+	},
+	"interstitial_audience_guest":{
+		"message":"utilisateurs non identifiés"
+	},
+	"interstitial_audience_registered":{
+		"message":"utilisateurs identifiés"
+	},
+	"interstitial_auto_close_delay":{
+		"message":"nombre de secondes avant fermeture automatique"
+	},
+	"interstitial_allow_closing":{
+		"message":"autoriser la fermeture"
 	}
 }
