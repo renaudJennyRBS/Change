@@ -52,6 +52,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Catalog_CrossSelling_CartProductChoiceStrategy':
 					(new \Rbs\Catalog\Collection\Collections())->addCartProductChoiceStrategyCollection($event);
 					break;
+				case 'Rbs_Catalog_InformationDisplayMode':
+					(new \Rbs\Catalog\Collection\Collections())->addInformationDisplayMode($event);
+					break;
 				case 'Rbs_Catalog_SpecificationDisplayMode':
 					(new \Rbs\Catalog\Collection\Collections())->addSpecificationDisplayMode($event);
 					break;

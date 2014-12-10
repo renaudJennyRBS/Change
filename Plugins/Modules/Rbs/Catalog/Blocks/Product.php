@@ -31,7 +31,10 @@ class Product extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('activateZoom', true);
-		$parameters->addParameterMeta('attributesDisplayMode', 'table');
+		$parameters->addParameterMeta('reinsurance');
+		$parameters->addParameterMeta('commonInformation', []);
+		$parameters->addParameterMeta('informationDisplayMode', 'tabs');
+		$parameters->addParameterMeta('specificationsDisplayMode', 'table');
 		$parameters->addParameterMeta('imageFormats', 'x,detail,detailThumbnail,pictogram,attribute');
 		$parameters->addParameterMeta('dataSetNames', 'rootProduct,productSet');
 		$this->initCommerceContextParameters($parameters);
@@ -102,8 +105,29 @@ class Product extends Block
 			}
 
 			$productData = $catalogManager->getProductData($productId, $context->toArray());
-
 			$attributes['productData'] = $productData;
+
+			$reinsurance = $documentManager->getDocumentInstance($parameters->getParameter('reinsurance'));
+			if ($reinsurance instanceof \Rbs\Website\Documents\text)
+			{
+				$attributes['reinsurance'] = $reinsurance;
+			}
+
+			$staticInformation = [];
+			if (is_array($parameters->getParameter('commonInformation')))
+			{
+				foreach ($parameters->getParameter('commonInformation') as $documentId)
+				{
+					$text = $documentManager->getDocumentInstance($documentId);
+					if ($text instanceof \Rbs\Website\Documents\text && $text->getCurrentLocalization()->getTitle()
+						&& !$text->getCurrentLocalization()->getText()->isEmpty()
+					)
+					{
+						$staticInformation[] = $text;
+					}
+				}
+			}
+			$attributes['commonInformation'] = $staticInformation;
 			return 'product.twig';
 		}
 		return null;

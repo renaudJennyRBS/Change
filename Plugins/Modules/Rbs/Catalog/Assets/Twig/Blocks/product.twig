@@ -2,9 +2,13 @@
 	{% use 'Rbs_Catalog/product-directives.twig' %}
 	{{ block('rbsCatalogAddToCartPopin') }}
 	{{ block('rbsCatalogProductPictograms') }}
-	{{ block('rbsCatalogAttributes') }}
+	{{ block('rbsCatalogAttributeValue') }}
+	{{ block('rbsCatalogProductInformation') }}
+	{{ block('rbsCatalogProductSpecifications') }}
 	{{ block('rbsCatalogProductAvailability') }}
 	{{ block('rbsCatalogProductPrice') }}
+	{% set handleReviews = parameters.handleReviews %}
+	{{ block('rbsCatalogProductInformationTabs') }}
 
 	{% use 'Rbs_Catalog/product-detail.twig' %}
 {% endblock rbsCatalogProductUse %}
@@ -23,22 +27,17 @@
 				data-ng-controller="RbsCatalogVariantProductController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
 			<div class="row">
-				<div class="col-sm-12">
-					<header>{{ block('rbsCatalogProductHeader') }}</header>
-				</div>
-			</div>
-			<div class="row">
 				<div class="col-sm-6 col-md-8">
 					{{ block('rbsCatalogProductVisuals') }}
 				</div>
 				<div class="col-sm-6 col-md-4">
+					<header>{{ block('rbsCatalogProductHeader') }}</header>
 					{{ block('rbsCatalogProductOfferVariant') }}
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-sm-12">
-					{{ block('rbsCatalogProductDescription') }}
-					{{ block('rbsCatalogProductAttributes') }}
+					{{ block('rbsCatalogProductDetailInformation') }}
 				</div>
 			</div>
 		</article>
@@ -50,22 +49,17 @@
 				data-ng-controller="RbsCatalogProductSetController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
 			<div class="row">
-				<div class="col-sm-12">
-					<header>{{ block('rbsCatalogProductHeader') }}</header>
-				</div>
-			</div>
-			<div class="row">
 				<div class="col-sm-6 col-md-8">
 					{{ block('rbsCatalogProductVisuals') }}
 				</div>
 				<div class="col-sm-6 col-md-4">
+					<header>{{ block('rbsCatalogProductHeader') }}</header>
 					{{ block('rbsCatalogProductOfferSet') }}
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-sm-12">
-					{{ block('rbsCatalogProductDescription') }}
-					{{ block('rbsCatalogProductAttributes') }}
+					{{ block('rbsCatalogProductDetailInformation') }}
 				</div>
 			</div>
 		</article>
@@ -76,23 +70,19 @@
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details"
 				data-ng-controller="RbsCatalogSimpleProductController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
-			<div class="row">
-				<div class="col-sm-12">
-					<header>{{ block('rbsCatalogProductHeader') }}</header>
-				</div>
-			</div>
+
 			<div class="row">
 				<div class="col-sm-6 col-md-8">
 					{{ block('rbsCatalogProductVisuals') }}
 				</div>
 				<div class="col-sm-6 col-md-4">
+					<header>{{ block('rbsCatalogProductHeader') }}</header>
 					{{ block('rbsCatalogProductOfferSimple') }}
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-sm-12">
-					{{ block('rbsCatalogProductDescription') }}
-					{{ block('rbsCatalogProductAttributes') }}
+					{{ block('rbsCatalogProductDetailInformation') }}
 				</div>
 			</div>
 		</article>

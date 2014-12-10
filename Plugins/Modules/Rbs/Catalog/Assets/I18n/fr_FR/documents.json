@@ -183,8 +183,11 @@
 	"attribute_axis":{
 		"message":"axe de déclinaison"
 	},
+	"attribute_visibility_information":{
+		"message":"information sur la fiche détail"
+	},
 	"attribute_visibility_specifications":{
-		"message":"caractéristiques"
+		"message":"caractéristique sur la fiche détail"
 	},
 	"attribute_visibility_list_item":{
 		"message":"utilisable dans les listes"

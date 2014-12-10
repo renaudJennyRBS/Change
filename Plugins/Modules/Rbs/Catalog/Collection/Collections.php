@@ -17,6 +17,25 @@ use Rbs\Catalog\Product\ProductManager;
  */
 class Collections
 {
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function addInformationDisplayMode(\Change\Events\Event $event)
+	{
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
+		{
+			$i18n = $applicationServices->getI18nManager();
+			$items = [
+				'accordion' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_accordion', array('ucf')),
+				'tabs' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_tabs', array('ucf')),
+				'flat' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_flat', array('ucf'))
+			];
+			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_InformationDisplayMode', $items);
+			$event->setParam('collection', $collection);
+			$event->stopPropagation();
+		}
+	}
 
 	/**
 	 * @param \Change\Events\Event $event
@@ -155,6 +174,7 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$collection = array(
+				'information' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_information', array('ucf')),
 				'specifications' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_specifications', array('ucf')),
 				'listItem' => new I18nString($i18n, 'm.rbs.catalog.documents.attribute_visibility_list_item', array('ucf'))
 			);

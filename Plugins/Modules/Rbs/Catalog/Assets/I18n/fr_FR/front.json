@@ -98,5 +98,11 @@
 	},
 	"no_visual": {
 		"message":"Visuel non disponible."
+	},
+	"customer_reviews": {
+		"message":"avis client"
+	},
+	"specifications": {
+		"message":"caractéristiques"
 	}
 }
