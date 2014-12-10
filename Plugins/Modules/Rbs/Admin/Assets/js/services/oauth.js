@@ -59,7 +59,6 @@
 		return shouldSign;
 	}
 
-
 	/**
 	 * Signs a REST request based on the 'config' object provided by the Angular's $http service.
 	 *
@@ -99,8 +98,8 @@
 			withFile = (function () {
 				var hasFile = false, name;
 				for (name in data) {
-					// Thanks to the FileAPI, any file entry has a fileName property
-					if (data[name] && (data[name] instanceof File || typeof data[name].fileName !== 'undefined')) {
+					// Thanks to the FileAPI, any file entry has a name and lastModifiedDate property
+					if (data[name] && data[name].name && data[name].lastModifiedDate) {
 						hasFile = true;
 					}
 				}
@@ -514,7 +513,7 @@
 					for(var name in data) {
 						// Thanks to the FileAPI any file entry
 						// has a fileName property
-						if(data[name] instanceof  File || typeof data[name].fileName != 'undefined') hasFile = true;
+						if(data[name].name && data[name].lastModifiedDate) hasFile = true;
 					}
 
 					return hasFile;
