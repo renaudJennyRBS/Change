@@ -20,11 +20,11 @@
 	"reason_processingModes":{
 		"message":"modes de traitement"
 	},
-	"reason_requirePrecisions":{
-		"message":"nécessite des précisions"
+	"reason_precisionsField":{
+		"message":"champ précisions"
 	},
-	"reason_requireAttachedFile":{
-		"message":"nécessite une pièce jointe"
+	"reason_attachedFileField":{
+		"message":"champ pièce jointe"
 	},
 	"processingMode":{
 		"message":"mode de traitement"

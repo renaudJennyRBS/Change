@@ -85,6 +85,9 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Commerce_TaxBehavior':
 					(new \Rbs\Commerce\Collection\Collections())->addTaxBehavior($event);
 					break;
+				case 'Rbs_Productreturn_FieldDisplayOptions':
+					(new \Rbs\Productreturn\Collection\Collections())->addFieldDisplayOptions($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
@@ -108,6 +111,7 @@ class Listeners implements ListenerAggregateInterface
 			$codes[] = 'Rbs_Price_Collection_TaxRoundingStrategy';
 			$codes[] = 'Rbs_Store_Collection_WebStores';
 			$codes[] = 'Rbs_Commerce_TaxBehavior';
+			$codes[] = 'Rbs_Productreturn_FieldDisplayOptions';
 			$event->setParam('codes', $codes);
 		};
 		$events->attach(CollectionManager::EVENT_GET_CODES, $callback, 1);

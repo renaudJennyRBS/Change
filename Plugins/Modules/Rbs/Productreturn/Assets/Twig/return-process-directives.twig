@@ -251,33 +251,35 @@
 							data-ng-bind-html="trustHtml(returnLine.timeLimitErrorMessage)"></p>
 					</div>
 				</div>
-				<div class="form-group" data-ng-class="{
+				<div class="form-group" data-ng-if="getReasonById(returnLine.reason).precisionsField"
+					data-ng-class="{
 						'has-error': {{ lineFormName }}.precisions.$invalid,
 						'has-success': {{ lineFormName }}.precisions.$dirty && !{{ lineFormName }}.precisions.$invalid
 					}">
 					<label for="{{ fieldIdPrefix }}_precisions" class="{{ labelColClasses }}">
-						<em data-ng-if="getReasonById(returnLine.reason).requirePrecisions"
+						<em data-ng-if="getReasonById(returnLine.reason).precisionsField == 'required'"
 							class="required-symbol" title="{{ requiredStarTitle }}">*</em>
 						{{ i18n('m.rbs.productreturn.front.precisions', ['ucf']) }}
 					</label>
 					<div class="{{ fieldColClasses }}">
 						<textarea id="{{ fieldIdPrefix }}_precisions" class="form-control" name="precisions"
-							data-ng-required="getReasonById(returnLine.reason).requirePrecisions"
+							data-ng-required="getReasonById(returnLine.reason).precisionsField == 'required'"
 							data-ng-model="returnLine.precisions"></textarea>
 					</div>
 				</div>
-				<div class="form-group" data-ng-class="{
+				<div class="form-group" data-ng-if="getReasonById(returnLine.reason).attachedFileField"
+					data-ng-class="{
 						'has-error': {{ lineFormName }}.attachedFile.$invalid,
 						'has-success': {{ lineFormName }}.attachedFile.$dirty && !{{ lineFormName }}.attachedFile.$invalid
 					}">
 					<label for="{{ fieldIdPrefix }}_attachedFile" class="{{ labelColClasses }}">
-						<em data-ng-if="getReasonById(returnLine.reason).requireAttachedFile"
+						<em data-ng-if="getReasonById(returnLine.reason).attachedFileField == 'required'"
 							class="required-symbol" title="{{ requiredStarTitle }}">*</em>
 						{{ i18n('m.rbs.productreturn.front.attach_file', ['ucf']) }}
 					</label>
 					<div class="{{ fieldColClasses }}">
 						<input id="{{ fieldIdPrefix }}_attachedFile" type="file" name="attachedFile"
-							data-ng-required="getReasonById(returnLine.reason).requireAttachedFile"
+							data-ng-required="getReasonById(returnLine.reason).attachedFileField == 'required'"
 							data-ng-model="returnLine.attachedFile" data-rbs-productreturn-file-reader="" />
 					</div>
 				</div>

@@ -102,8 +102,8 @@ class ProcessDataComposer
 
 		$data['id'] = $reason->getId();
 		$data['title'] = $reason->getCurrentLocalization()->getTitle();
-		$data['requirePrecisions'] = $reason->getRequirePrecisions();
-		$data['requireAttachedFile'] = $reason->getRequireAttachedFile();
+		$data['precisionsField'] = $reason->getPrecisionsField();
+		$data['attachedFileField'] = $reason->getAttachedFileField();
 		$data['timeLimitAfterReceipt'] = $reason->getTimeLimitAfterReceipt();
 		$data['extraTimeAfterShipping'] = $reason->getExtraTimeAfterShipping();
 

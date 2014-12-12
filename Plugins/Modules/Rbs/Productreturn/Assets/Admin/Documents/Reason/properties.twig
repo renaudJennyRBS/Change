@@ -32,13 +32,17 @@
 	accepted-model="Rbs_Productreturn_ProcessingMode">
 </rbs-field-picker-multiple>
 
-<rbs-field-boolean property="requirePrecisions"
-	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'requirePrecisions'), ['ucf']) }}">
-</rbs-field-boolean>
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'precisionsField'), ['ucf']) }}">
+	<select data-ng-model="document.precisionsField" class="form-control"
+		data-rbs-items-from-collection="Rbs_Productreturn_FieldDisplayOptions">
+	</select>
+</rbs-field>
 
-<rbs-field-boolean property="requireAttachedFile"
-	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'requireAttachedFile'), ['ucf']) }}">
-</rbs-field-boolean>
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'attachedFileField'), ['ucf']) }}">
+	<select data-ng-model="document.attachedFileField" class="form-control"
+		data-rbs-items-from-collection="Rbs_Productreturn_FieldDisplayOptions">
+	</select>
+</rbs-field>
 
 <rbs-field-boolean property="automaticValidation"
 	label="{{ i18nAttr(propertyKey('Rbs_Productreturn_Reason', 'automaticValidation'), ['ucf']) }}">

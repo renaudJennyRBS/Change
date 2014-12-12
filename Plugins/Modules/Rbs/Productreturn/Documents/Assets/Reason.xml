@@ -9,7 +9,7 @@
 		<property name="extraTimeAfterShipping" type="Integer" />
 		<property name="timeoutMessage" type="RichText" localized="true" />
 		<property name="processingModes" type="DocumentArray" document-type="Rbs_Productreturn_ProcessingMode" />
-		<property name="requirePrecisions" type="Boolean" default-value="false" />
-		<property name="requireAttachedFile" type="Boolean" default-value="false" />
+		<property name="precisionsField" type="String" default-value="optional" />
+		<property name="attachedFileField" type="String" default-value="optional" />
 	</properties>
 </document>
