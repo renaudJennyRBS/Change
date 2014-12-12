@@ -6,7 +6,11 @@
 {% block rbsProductreturnReturnListMain %}
 	{% set returns = productReturnsData %}
 	{% set showOrderLink = true %}
-	{{ block('rbsProductreturnList') }}
+	{% if returns | length %}
+		{{ block('rbsProductreturnList') }}
+	{% else %}
+		{{ i18n('m.rbs.productreturn.front.no_return_yet', ['ucf']) }}
+	{% endif %}
 {% endblock rbsProductreturnReturnListMain %}
 
 {% block rbsProductreturnReturnListFooter %}
