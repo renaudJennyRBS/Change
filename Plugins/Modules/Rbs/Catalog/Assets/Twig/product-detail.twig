@@ -87,9 +87,10 @@
 
 {# Used parameters: reinsurance #}
 {% block rbsCatalogProductReinsurance %}
-	{% if not reinsurance.currentLocalization.text.isEmpty() %}
+	{% set text = reinsurance.currentLocalization.text %}
+	{% if text and (not text.isEmpty()) %}
 		<div class="product-reinsurance well well-sm">
-			{{ reinsurance.currentLocalization.text|richText }}
+			{{ text|richText }}
 		</div>
 	{% endif %}
 {% endblock rbsCatalogProductReinsurance %}
