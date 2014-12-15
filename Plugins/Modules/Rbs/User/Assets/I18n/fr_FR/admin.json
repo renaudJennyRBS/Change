@@ -264,5 +264,8 @@
 	},
 	"reload_on_success":{
 		"message":"recharger la page après authentification."
+	},
+	"confirmation_page":{
+		"message":"Page de confirmation"
 	}
 }

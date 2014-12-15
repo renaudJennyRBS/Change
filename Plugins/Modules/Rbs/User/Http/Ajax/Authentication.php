@@ -184,6 +184,52 @@ class Authentication
 		}
 	}
 
+	/**
+	 * Default actionPath: Rbs/User/RevokeToken
+	 * Event params:
+	 *  - website
+	 *  - data:
+	 *     - tokenId
+	 * @param \Change\Http\Event $event
+	 * @throws \Change\Transaction\RollbackException
+	 * @throws \Exception
+	 */
+	public function revokeToken(\Change\Http\Event $event)
+	{
+		$data = $event->getParam('data');
+		if (is_array($data) && isset($data['tokenId']))
+		{
+			$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+			if ($currentUser->authenticated())
+			{
+				$transactionManager = $event->getApplicationServices()->getTransactionManager();
+				$dbProvider = $event->getApplicationServices()->getDbProvider();
+				try
+				{
+					$transactionManager->begin();
+					$qb = $dbProvider->getNewStatementBuilder();
+					$fb = $qb->getFragmentBuilder();
+					$qb->delete($fb->table('rbs_user_auto_login'));
+					$qb->where($fb->logicAnd(
+						$fb->eq($fb->column('id'), $fb->integerParameter('id')),
+						$fb->eq($fb->column('user_id'), $fb->integerParameter('userId'))
+					));
+					$dq = $qb->deleteQuery();
+					$dq->bindParameter('id', intval($data['tokenId']));
+					$dq->bindParameter('userId', $currentUser->getId());
+					$dq->execute();
+					$transactionManager->commit();
+				}
+				catch(\Exception $e)
+				{
+					throw $transactionManager->rollBack($e);
+				}
+				$dataSets = ['common' => ['id' => intval($data['tokenId']), 'userId' => $currentUser->getId()]];
+				$result = new \Change\Http\Ajax\V1\ItemResult('Rbs/User/RevokeToken', $dataSets);
+				$event->setResult($result);
+			}
+		}
+	}
 
 	/**
 	 * @param \Change\Transaction\TransactionManager $transactionManager
@@ -219,6 +265,8 @@ class Authentication
 			$transactionManager->rollBack($e);
 		}
 	}
+
+
 
 
 	/**

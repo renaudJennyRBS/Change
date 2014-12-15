@@ -235,56 +235,6 @@
 		},
 
 		{
-			"_id": "rbs_commerce_initialize_create_account_for_transaction",
-			"_model": "Rbs_Website_FunctionalPage",
-			"label": {"_i18n": "m.rbs.commerce.initialize.create_account_for_transaction"},
-			"website": {"_id": "website"},
-			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
-			"_LCID": {
-				"fr_FR": {
-					"editableContent": {
-						"mainContent":
-						{
-							"id": "mainContent",
-							"grid": 12,
-							"type": "container",
-							"items":[
-								{
-									"type": "block", "name": "Rbs_Payment_CreateAccountForTransaction", "id": 2, "label": "Rbs_Payment_CreateAccountForTransaction"
-								}
-							]
-						}
-					},
-					"title": {"_i18n": "m.rbs.commerce.initialize.create_account_for_transaction"}
-				},
-				"en_US": {
-					"editableContent": {
-						"mainContent":
-						{
-							"id": "mainContent",
-							"grid": 12,
-							"type": "container",
-							"items":[
-								{
-									"type": "block", "name": "Rbs_Payment_CreateAccountForTransaction", "id": 2, "label": "Rbs_Payment_CreateAccountForTransaction"
-								}
-							]
-						}
-					},
-					"title": {"_i18n": "m.rbs.commerce.initialize.create_account_for_transaction"}
-				}
-			}
-		},
-		{
-			"_id": "rbs_commerce_initialize_create_account_for_transaction_function",
-			"_model": "Rbs_Website_SectionPageFunction",
-			"functionCode": "Rbs_Payment_CreateAccountForTransaction",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_commerce_initialize_create_account_for_transaction"}
-		},
-
-		{
 			"_id": "rbs_commerce_initialize_user_account_home",
 			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_home"},

@@ -52,6 +52,7 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Rbs/Seo/Events/SeoManager/Rbs_Commerce', '\Rbs\Commerce\Events\SeoManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Admin/Events/AdminManager/Rbs_Commerce', '\Rbs\Commerce\Events\AdminManager\Listeners');
 		$configuration->addPersistentEntry('Rbs/Productreturn/Events/ReturnManager/Rbs_Commerce', '\Rbs\Commerce\Events\ReturnManager\Listeners');
+		$configuration->addPersistentEntry('Rbs/User/Events/UserManager/Rbs_Commerce', '\Rbs\Commerce\Events\UserManager\Listeners');
 
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/cartItem', '160x120');
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/shortCartItem', '80x120');

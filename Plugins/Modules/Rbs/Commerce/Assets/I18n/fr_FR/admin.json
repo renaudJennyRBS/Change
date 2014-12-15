@@ -166,5 +166,8 @@
 	},
 	"tax_behavior_during_process":{
 		"message":"selection de la zone durant le processus"
+	},
+	"confirmation_page":{
+		"message":"Page de confirmation d'inscription"
 	}
 }

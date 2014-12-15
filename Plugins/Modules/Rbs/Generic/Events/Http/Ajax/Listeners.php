@@ -108,6 +108,53 @@ class Listeners implements ListenerAggregateInterface
 				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
+		elseif ('Rbs/User/User/Profiles' === $actionPath)
+		{
+			if ($request->isGet())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\User\Http\Ajax\User())->getProfiles($event);
+				});
+				$event->setAuthorization(function() use ($event)
+					{
+						return $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()->authenticated();
+					}
+				);
+			}
+			elseif ($request->isPut())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\User\Http\Ajax\User())->setProfiles($event);
+				});
+				$event->setAuthorization(function() use ($event)
+					{
+						return $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()->authenticated();
+					}
+				);
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+			}
+		}
+		elseif ('Rbs/User/RevokeToken' === $actionPath)
+		{
+			if ($request->isDelete())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\User\Http\Ajax\Authentication())->revokeToken($event);
+				});
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_DELETE]));
+			}
+			$event->setAuthorization(function() use ($event)
+				{
+					return $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()->authenticated();
+				}
+			);
+		}
 		elseif ('Rbs/User/CheckEmailAvailability' === $actionPath)
 		{
 			if ($request->isGet())
@@ -119,6 +166,62 @@ class Listeners implements ListenerAggregateInterface
 			else
 			{
 				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+			}
+		}
+		elseif ('Rbs/User/User/AccountRequest' === $actionPath)
+		{
+			if ($request->isPost())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\User\Http\Ajax\User())->createAccountRequest($event);
+				});
+			}
+			elseif ($request->isPut())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\User\Http\Ajax\User())->confirmAccountRequest($event);
+				});
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_POST, \Zend\Http\Request::METHOD_PUT]));
+			}
+		}
+		elseif ('Rbs/User/User/ResetPasswordRequest' === $actionPath)
+		{
+			if ($request->isPost())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\User\Http\Ajax\User())->createResetPasswordRequest($event);
+				});
+			}
+			elseif ($request->isPut())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\User\Http\Ajax\User())->confirmResetPasswordRequest($event);
+				});
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_POST, \Zend\Http\Request::METHOD_PUT]));
+			}
+		}
+		elseif ('Rbs/User/User/ChangePassword' === $actionPath)
+		{
+			if ($request->isPut())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\User\Http\Ajax\User())->changePassword($event);
+				});
+				$event->setAuthorization(function() use ($event)
+					{
+						return $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()->authenticated();
+					}
+				);
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_PUT]));
 			}
 		}
 		elseif ('Rbs/Geo/Address/' === $actionPath)

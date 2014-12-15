@@ -1,7 +1,7 @@
 (function(jQuery) {
 	"use strict";
 
-	var app = angular.module('RbsChangeApp', ['ngCookies', 'ngAnimate', 'ui.bootstrap']);
+	var app = angular.module('RbsChangeApp', ['ngCookies', 'ngAnimate', 'ui.bootstrap', 'infinite-scroll']);
 	app.config(function($interpolateProvider) {
 		$interpolateProvider.startSymbol('(=').endSymbol('=)');
 	});

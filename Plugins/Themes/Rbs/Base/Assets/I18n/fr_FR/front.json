@@ -1,5 +1,8 @@
 {
 	"error_title":{
 		"message":"erreur"
+	},
+	"loading":{
+		"message":"chargement en cours"
 	}
 }

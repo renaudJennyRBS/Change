@@ -26,6 +26,12 @@
 			"jsAssets": [
 				"Theme/Rbs/Base/Rbs_Commerce/js/short-cart.js"
 			]
+		},
+		"PaymentReturn": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_User/js/user.js",
+				"Theme/Rbs/Base/Rbs_Commerce/js/user.js"
+			]
 		}
 	}
 }

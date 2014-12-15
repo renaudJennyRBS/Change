@@ -140,6 +140,13 @@ class GenericServices extends \Zend\Di\Di
 			->addMethodParameter('setPluginManager', 'pluginManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+
+		//UserManager : Application
+		$userManagerClassName = $this->getInjectedClassName('UserManager', 'Rbs\User\UserManager');
+		$classDefinition = $this->getClassDefinition($userManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 		$im = $this->instanceManager();
 
@@ -182,6 +189,8 @@ class GenericServices extends \Zend\Di\Di
 		$im->addAlias('AdminManager', $adminManagerClassName,
 			array('application' => $application, 'i18nManager' => $i18nManager, 'modelManager' => $modelManager,
 				'pluginManager' => $pluginManager));
+
+		$im->addAlias('UserManager', $userManagerClassName, array('application' => $application));
 	}
 
 	/**
@@ -263,5 +272,14 @@ class GenericServices extends \Zend\Di\Di
 	public function getAdminManager()
 	{
 		return $this->get('AdminManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\User\UserManager
+	 */
+	public function getUserManager()
+	{
+		return $this->get('UserManager');
 	}
 }

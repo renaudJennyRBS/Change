@@ -38,5 +38,8 @@ class ProductListInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_ordering', $ucf));
 		$this->addInformationMeta('showUnavailable', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_unavailable', $ucf));
+
+		$templateInformation = $this->addTemplateInformation('Rbs_Catalog', 'product-list-infinite-scroll.twig');
+		$templateInformation->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_infinite_scroll_label', ['ucf']));
 	}
 }

@@ -26,5 +26,8 @@ class StoreResultInformation extends \Rbs\Catalog\Blocks\ProductListInformation
 
 		$this->getParameterInformation('contextualUrls')->setHidden(true)
 			->setDefaultValue(false)->setLabel(null);
+
+		$templateInformation = $this->addTemplateInformation('Rbs_Catalog', 'product-list-infinite-scroll.twig');
+		$templateInformation->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_infinite_scroll_label', ['ucf']));
 	}
 }

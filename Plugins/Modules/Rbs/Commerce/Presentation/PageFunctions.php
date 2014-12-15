@@ -72,11 +72,6 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.productreturn.admin.return_sheet_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.productreturn.admin.module_name', $ucf)];
 
-		$functions[] = ['code' => 'Rbs_Payment_CreateAccountForTransaction', 'document' => false,
-			'block' => 'Rbs_Payment_CreateAccountForTransaction',
-			'label' => $i18nManager->trans('m.rbs.payment.admin.create_account_for_transaction_function', $ucf),
-			'section' => $i18nManager->trans('m.rbs.payment.admin.module_name', $ucf)];
-
 		$functions[] = ['code' => 'Rbs_Wishlist_Wishlist', 'document' => true, 'block' => 'Rbs_Wishlist_WishlistDetail',
 			'label' => $i18nManager->trans('m.rbs.wishlist.admin.wishlist_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];

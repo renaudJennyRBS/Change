@@ -29,6 +29,7 @@ class PaymentReturn extends Block
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('transactionId');
 		$parameters->addParameterMeta('transactionStatus');
+		$parameters->addParameterMeta('confirmationPage', 0);
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
@@ -58,35 +59,29 @@ class PaymentReturn extends Block
 		if ($transactionId)
 		{
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
+
 			/* @var $transaction \Rbs\Payment\Documents\Transaction */
 			$transaction = $documentManager->getDocumentInstance($transactionId);
-			$attributes['transaction'] = $transaction;
+			if ($transaction && $transaction->getConnector())
+			{
+				$connector = $transaction->getConnector();
+				$template = $connector->getPaymentReturnTemplate($transaction);
+				if ($template && is_string($template))
+				{
+					$attributes['transaction'] = $transaction;
+					$attributes['connector'] = $connector;
+					$attributes['paymentTemplate'] = $template;
 
-			$connector = $transaction->getConnector();
-			if (!$connector)
-			{
-				return 'paymentReturn-invalid.twig';
+					$data = $transaction->getContextData();
+					if (isset($data['guestCheckout']) && $data['guestCheckout'] == true &&
+						$transaction->getEmail() && !$transaction->getAuthorId())
+					{
+						$attributes['proposeRegistration'] = true;
+						$attributes['email'] = $transaction->getEmail();
+					}
+				}
 			}
-			$attributes['connector'] = $connector;
-
-			$template = $connector->getPaymentReturnTemplate($transaction);
-			if ($template === null)
-			{
-				return 'paymentReturn-invalid.twig';
-			}
-			elseif (!is_string($template))
-			{
-				throw new \RuntimeException('Invalid payment template!');
-			}
-			$attributes['paymentTemplate'] = $template;
-
-			$data = $transaction->getContextData();
-			if (isset($data['guestCheckout']) && $data['guestCheckout'] == true && $transaction->getEmail())
-			{
-				$attributes['proposeRegistration'] = true;
-			}
-			return 'paymentReturn.twig';
 		}
-		return 'paymentReturn-invalid.twig';
+		return 'paymentReturn.twig';
 	}
 }

@@ -1,5 +1,10 @@
 {
 	"blocks" : {
+		"CreateAccount": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_User/js/user.js"
+			]
+		},
 		"Login": {
 			"jsAssets": [
 				"Theme/Rbs/Base/Rbs_User/js/user.js"
@@ -16,6 +21,16 @@
 			]
 		},
 		"EditAccount": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_User/js/user.js"
+			]
+		},
+		"ResetPassword": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_User/js/user.js"
+			]
+		},
+		"ChangePassword": {
 			"jsAssets": [
 				"Theme/Rbs/Base/Rbs_User/js/user.js"
 			]

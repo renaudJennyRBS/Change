@@ -28,19 +28,10 @@ class ResetPassword extends Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-		$parameters->addParameterMeta('errId');
 		$parameters->addParameterMeta('token');
-		$parameters->addParameterMeta('context');
-		$parameters->addParameterMeta('formAction', 'Action/Rbs/User/ResetPasswordConfirmation');
 		$parameters->setNoCache();
-
 		$request = $event->getHttpRequest();
-		$parameters->setParameterValue('errId', $request->getQuery('errId'));
-
-		$token = $event->getHttpRequest()->getQuery('token');
-		$parameters->setParameterValue('token', $token);
-
-		$parameters->setParameterValue('context', $event->getHttpRequest()->getQuery('context'));
+		$parameters->setParameterValue('token', $request ? $request->getQuery('token') : null);
 
 		return $parameters;
 	}
@@ -55,19 +46,6 @@ class ResetPassword extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-
-		// Handle errors.
-		$errId = $parameters->getParameterValue('errId');
-		if ($errId)
-		{
-			$session = new \Zend\Session\Container('Change_Errors');
-			$sessionErrors = isset($session[$errId]) ? $session[$errId] : null;
-			if ($sessionErrors && is_array($sessionErrors))
-			{
-				$attributes['errors'] = isset($sessionErrors['errors']) ? $sessionErrors['errors'] : [];
-			}
-		}
-
 		return 'reset-password.twig';
 	}
 }
