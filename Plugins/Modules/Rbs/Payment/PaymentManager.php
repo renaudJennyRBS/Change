@@ -89,6 +89,8 @@ class PaymentManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('handleProcessingForTransaction', [$this, 'onHandleProcessingForTransactionJob'], 5);
 		$eventManager->attach('handleSuccessForTransaction', [$this, 'onHandleSuccessForTransactionJob'], 5);
 		$eventManager->attach('handleFailedForTransaction', [$this, 'onHandleFailedForTransactionJob'], 5);
+		$eventManager->attach('getTransactionStatusInfo', [$this, 'onDefaultGetTransactionStatusInfo'], 5);
+		$eventManager->attach('getTransactionData', [$this, 'onDefaultGetTransactionData'], 5);
 	}
 
 	/**
@@ -272,5 +274,111 @@ class PaymentManager implements \Zend\EventManager\EventsCapableInterface
 		$em = $this->getEventManager();
 		$args = $em->prepareArgs(array('user' => $user, 'transaction' => $transaction));
 		$this->getEventManager()->trigger('handleRegistrationForTransaction', $this, $args);
+	}
+
+	/**
+	 * @param \Rbs\Payment\Documents\Transaction|integer $transaction
+	 * @return array
+	 */
+	public function getTransactionStatusInfo($transaction)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['transaction' => $transaction, 'statusInfo' => ['code' => null, 'title' => null]]);
+		$this->getEventManager()->trigger('getTransactionStatusInfo', $this, $args);
+		return $args['statusInfo'];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetTransactionStatusInfo(\Change\Events\Event $event)
+	{
+		$transaction = $event->getParam('transaction');
+		if (is_numeric($transaction))
+		{
+			$transaction = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($transaction);
+		}
+
+		$i18nManager = $event->getApplicationServices()->getI18nManager();
+		if ($transaction instanceof \Rbs\Payment\Documents\Transaction)
+		{
+			$code = \Change\Stdlib\String::toUpper($transaction->getProcessingStatus());
+			if ($code)
+			{
+				$statusInfo = ['code' => $code, 'title' => $code];
+				switch ($code)
+				{
+					case 'INITIATED':
+						$statusInfo['title'] = $i18nManager->trans('m.rbs.payment.front.transaction_status_initiated', ['ucf']);
+						break;
+					case 'PROCESSING':
+						$statusInfo['title'] = $i18nManager->trans('m.rbs.payment.front.transaction_status_processing', ['ucf']);
+						break;
+					case 'SUCCESS':
+						$statusInfo['title'] = $i18nManager->trans('m.rbs.payment.front.transaction_status_success', ['ucf']);
+						break;
+					case 'FAILED':
+						$statusInfo['title'] = $i18nManager->trans('m.rbs.payment.front.transaction_status_failed', ['ucf']);
+						break;
+				}
+				$event->setParam('statusInfo', $statusInfo);
+			}
+		}
+	}
+
+	/**
+	 * Default context:
+	 *  - *dataSetNames, *visualFormats, *URLFormats
+	 *  - website, websiteUrlManager, section, page, detailed
+	 *  - *data
+	 * @api
+	 * @param \Rbs\Payment\Documents\Transaction|integer $transaction
+	 * @param array $context
+	 * @return array
+	 */
+	public function getTransactionData($transaction, array $context)
+	{
+		$em = $this->getEventManager();
+		if (is_numeric($transaction))
+		{
+			$transaction = $this->getDocumentManager()->getDocumentInstance($transaction);
+		}
+
+		if ($transaction instanceof \Rbs\Payment\Documents\Transaction)
+		{
+			$eventArgs = $em->prepareArgs(['transaction' => $transaction, 'context' => $context]);
+			$em->trigger('getTransactionData', $this, $eventArgs);
+			if (isset($eventArgs['transactionData']))
+			{
+				$transactionData = $eventArgs['transactionData'];
+				if (is_object($transactionData))
+				{
+					$callable = [$transactionData, 'toArray'];
+					if (is_callable($callable))
+					{
+						$transactionData = call_user_func($callable);
+					}
+				}
+				if (is_array($transactionData))
+				{
+					return $transactionData;
+				}
+			}
+		}
+		return [];
+	}
+
+	/**
+	 * Input params: transaction, context
+	 * Output param: transactionData
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetTransactionData(\Change\Events\Event $event)
+	{
+		if (!$event->getParam('transactionData'))
+		{
+			$transactionDataComposer = new \Rbs\Payment\TransactionDataComposer($event);
+			$event->setParam('transactionData', $transactionDataComposer->toArray());
+		}
 	}
 }

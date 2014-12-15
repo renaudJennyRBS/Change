@@ -1,5 +1,6 @@
 {% block rbsProductreturnReturnListUse %}
-	{% use 'Rbs_Productreturn/return-details-templates.twig' %}
+	{% use 'Rbs_Order/order-templates.twig' %}
+	{% use 'Rbs_Productreturn/return-templates.twig' %}
 {% endblock rbsProductreturnReturnListUse %}
 
 {% block rbsProductreturnReturnSheetHeader %}
@@ -26,20 +27,10 @@
 			</dl>
 		</div>
 		<div class="col-sm-6">
-			<h2>
-				{{ i18n('m.rbs.order.front.order_billing_address', ['ucf']) }}
-			</h2>
-			{% set lines = returnData.order.process.address.lines %}
-			<address>
-				<strong>{{ lines[0] }}</strong>
-				{% for line in lines %}
-					{% if not loop.first %}<br />{{ line }}{% endif %}
-				{% endfor %}
-			</address>
-			<dl class="dl-inline-items">
-				<dt>{{ i18n('m.rbs.order.front.order_email_address', ['ucf']) }}</dt>
-				<dd>{{ returnData.common.email }}</dd>
-			</dl>
+			{% set address = returnData.order.process.address %}
+			{% set email = returnData.common.email %}
+			{% set disableMailto = true %}
+			{{ block('rbsOrderBillingInformation') }}
 		</div>
 	</div>
 {% endblock rbsProductreturnReturnSheetHeader %}

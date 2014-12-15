@@ -45,6 +45,11 @@ class OrderDataComposer
 	protected $processManager;
 
 	/**
+	 * @var \Rbs\Payment\PaymentManager
+	 */
+	protected $paymentManager;
+
+	/**
 	 * @var \Rbs\ProductReturn\ReturnManager
 	 */
 	protected $returnManager;
@@ -73,6 +78,7 @@ class OrderDataComposer
 		$this->catalogManager = $commerceServices->getCatalogManager();
 		$this->priceManager = $commerceServices->getPriceManager();
 		$this->processManager = $commerceServices->getProcessManager();
+		$this->paymentManager = $commerceServices->getPaymentManager();
 		$this->returnManager = $commerceServices->getReturnManager();
 	}
 
@@ -146,6 +152,11 @@ class OrderDataComposer
 		if ($this->detailed || $this->hasDataSet('process'))
 		{
 			$this->generateProcessDataSet();
+		}
+
+		if ($this->detailed || $this->hasDataSet('transaction'))
+		{
+			$this->generateTransactionDataSet();
 		}
 
 		if ($this->hasDataSet('shipments'))
@@ -224,11 +235,15 @@ class OrderDataComposer
 		$addTaxes = isset($this->dataSets['taxesInfo']);
 		$productContext = $this->getProductLineContext();
 
+		$itemCount = 0;
 		foreach ($this->order->getLines() as $index => $line)
 		{
 			$lineData = $this->generateLineData($index, $line, $addTaxes, $productContext);
 			$this->dataSets['lines'][] = $lineData;
+			$itemCount += $line->getQuantity();
 		}
+
+		$this->dataSets['common']['itemCount'] = $itemCount;
 	}
 
 	protected function generateDiscountsDataSet()
@@ -343,7 +358,7 @@ class OrderDataComposer
 
 	/**
 	 * @param integer $index
-	 * @param \Rbs\Commerce\Cart\CartLine $line
+	 * @param \Rbs\Order\OrderLine $line
 	 * @param boolean $addTaxes
 	 * @param array $productContext
 	 * @return array
@@ -424,6 +439,34 @@ class OrderDataComposer
 		foreach ($order->getShippingModes() as $shippingMode)
 		{
 			$this->dataSets['process']['shippingModes'][] = $shippingMode->toArray();
+		}
+	}
+
+	// Transaction.
+
+	/**
+	 * @return array
+	 */
+	protected function getTransactionContext()
+	{
+		return ['visualFormats' => $this->visualFormats, 'URLFormats' => $this->URLFormats,
+			'website' => $this->website, 'websiteUrlManager' => $this->websiteUrlManager, 'section' => $this->section,
+			'data' => ['webStoreId' => $this->order->getWebStoreId()], 'detailed' => $this->detailed
+		];
+	}
+
+	protected function generateTransactionDataSet()
+	{
+		$transactionId = $this->order->getContext()->get('transactionId');
+		if ($transactionId)
+		{
+			$transactionContext = $this->getTransactionContext();
+			$transactionData = $this->paymentManager->getTransactionData($transactionId, $transactionContext);
+			$this->dataSets['transaction'] = count($transactionData) ? $transactionData : null;
+		}
+		else
+		{
+			$this->dataSets['transaction'] = null;
 		}
 	}
 

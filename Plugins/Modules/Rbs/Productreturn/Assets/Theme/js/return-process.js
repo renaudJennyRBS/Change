@@ -181,7 +181,7 @@
 				returnLine.quantity = 1;
 			}
 			if (scope.processData['reasons'].length == 1) {
-				returnLine.quantity = scope.processData['reasons'][0].id;
+				returnLine.reason = scope.processData['reasons'][0].id;
 			}
 
 			scope.returnData.shipments[shipmentIndex].lines[lineIndex].returnLines.push(returnLine);

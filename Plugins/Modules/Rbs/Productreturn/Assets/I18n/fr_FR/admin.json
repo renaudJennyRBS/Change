@@ -69,10 +69,10 @@
 		"message":"bon de retour imprimmable"
 	},
 	"return_list_function":{
-		"message":"liste des retour"
+		"message":"liste des retours"
 	},
 	"return_list_label":{
-		"message":"liste des retour"
+		"message":"liste des retours"
 	},
 	"return_list_items_per_page":{
 		"message":"éléments par page"
@@ -175,5 +175,14 @@
 	},
 	"productReturn_update_status_confirm_message_finalized":{
 		"message":"Vous vous apprêtez à finaliser le retour."
+	},
+	"field_display_option_disabled":{
+		"message":"non-proposé"
+	},
+	"field_display_option_optional":{
+		"message":"optionnel"
+	},
+	"field_display_option_required":{
+		"message":"requis"
 	}
 }

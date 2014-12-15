@@ -50,7 +50,7 @@ body {
 	padding: 15px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
 	#sidebar-column {
 		margin-top: 15px;
 		padding-top: 15px;
@@ -331,7 +331,7 @@ form .description {
 	border-top: 0;
 }
 .tab-pane {
-	padding-top: 20px;
+	padding: 20px;
 }
 .tab-pane :first-child {
 	margin-top: 0;
@@ -428,62 +428,116 @@ form .description {
 	font-size: 1.4em;
 }
 
-.product-details .visuals {
+.product-details .product-visuals {
 	position: relative;
 	text-align: center;
+	vertical-align: top;
 }
-.product-details img {
+.product-details .product-visuals .pictograms-container {
+	height: 45px;
+	line-height: 45px;
+	vertical-align: middle;
+	position: absolute;
+	right: 20px;
+	bottom: 20px;
+	z-index: 10;
+}
+.product-details .product-visuals img {
 	max-width: 100%;
 }
-.product-details .full-visuals {
+.product-details .product-visuals .full-visuals {
 	height: 405px;
 	line-height: 405px;
 }
-.product-details .full-visuals li:first-child {
+.product-details .product-visuals .full-visuals li:first-child {
 	display: block;
 }
-.product-details .full-visuals li {
+.product-details .product-visuals .full-visuals li {
 	display: none;
 }
-.product-details .full-visuals a {
+.product-details .product-visuals .full-visuals a {
 	display: block;
 }
-.product-details .full-visuals a img {
-	cursor: crosshair;
-}
-.product-details .thumbnail-visuals li {
+.product-details .product-visuals .thumbnail-visuals li {
 	-webkit-box-sizing: content-box;
-	-moz-box-sizing: content-box;
 	box-sizing: content-box;
 	width: 80px;
 	height: 60px;
 	line-height: 58px;
-	margin: 3px;
+	margin: 5px 0;
 	cursor: pointer;
 	vertical-align: middle;
-	-webkit-transition: none;
 	transition: none;
 }
-.product-details .thumbnail-visuals img {
+.product-details .product-visuals .thumbnail-visuals img {
 	display: inline-block;
 }
-.product-details .zoomDiv {
-	z-index: 100;
-	position: absolute;
-	top: 0;
-	right: -330px;
-	width: 330px;
-	height: 405px;
-	background: #fff;
-	border: 1px solid #ddd;
-	text-align: center;
-	overflow: hidden;
-	box-shadow: 0 0 7px #ddd, 0 0 15px #ddd;
+
+/* On small screens, the thumbnails are on the bottom and zoom is disabled. */
+@media (max-width: 767px) {
+	/* Thumbnails. */
+	.product-details .product-visuals .full-visual {
+		position: relative;
+	}
+	.product-details .product-visuals .thumbnail-visuals li {
+		margin: 5px;
+		display: inline-block;
+	}
+
+	/* Zoom. */
+	.product-details .product-visuals .full-visuals a img {
+		cursor: default;
+	}
+	.product-details .zoomDiv {
+		display: none;
+	}
 }
-.product-details .zoomDiv img {
-	position: absolute;
-	max-width: none;
+/* On other sizes, the thumbnails are on the right and zoom is activated. */
+@media (min-width: 768px) {
+	/* Thumbnails. */
+	.product-details .product-visuals.product-visuals-multiple .pictograms-container {
+		right: 132px;
+	}
+	.product-details .product-visuals.product-visuals-multiple .full-visuals {
+		margin-right: 110px;
+	}
+	.product-details .product-visuals .thumbnail-visuals {
+		vertical-align: middle;
+		text-align: center;
+		position: absolute;
+		right: 0;
+		top: 0;
+		z-index: 10;
+		width: 92px;
+		margin: -5px 0 -5px 18px;
+	}
+	.product-details .product-visuals .thumbnail-visuals li {
+		margin: 5px 0;
+	}
+
+	/* Zoom. */
+	.product-details .product-visuals .full-visuals a img {
+		cursor: crosshair;
+	}
+	.product-details .zoomDiv {
+		z-index: 100;
+		position: absolute;
+		top: 0;
+		right: -330px;
+		width: 330px;
+		height: 405px;
+		background: #fff;
+		border: 1px solid #ddd;
+		text-align: center;
+		overflow: hidden;
+		box-shadow: 0 0 7px #ddd, 0 0 15px #ddd;
+	}
+	.product-details .zoomDiv img {
+		position: absolute;
+		max-width: none;
+	}
 }
+
 .product-details .product-loading {
 	position: absolute;
 	text-align: center;

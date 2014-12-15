@@ -29,9 +29,18 @@ class ProductInformation extends Information
 		$this->addInformationMetaForDetailBlock('Rbs_Catalog_Product', $i18nManager);
 		$this->addInformationMeta('activateZoom', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_activate_zoom', $ucf));
-		$this->addInformationMeta('attributesDisplayMode', Property::TYPE_STRING, false, 'table')
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_attributes_display_mode', $ucf))
+		$this->addInformationMeta('reinsurance', Property::TYPE_DOCUMENT)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_reinsurance', $ucf))
+			->setAllowedModelsNames('Rbs_Website_Text');
+		$this->addInformationMeta('informationDisplayMode', Property::TYPE_STRING, false, 'tabs')
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_information_display_mode', $ucf))
+			->setCollectionCode('Rbs_Catalog_InformationDisplayMode');
+		$this->addInformationMeta('specificationsDisplayMode', Property::TYPE_STRING, false, 'table')
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_specifications_display_mode', $ucf))
 			->setCollectionCode('Rbs_Catalog_SpecificationDisplayMode');
+		$this->addInformationMeta('commonInformation', Property::TYPE_DOCUMENTARRAY)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_common_information', $ucf))
+			->setAllowedModelsNames('Rbs_Website_Text');
 
 		$this->addTTL(60);
 	}

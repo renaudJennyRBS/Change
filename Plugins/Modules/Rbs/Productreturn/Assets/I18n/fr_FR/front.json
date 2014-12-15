@@ -142,5 +142,8 @@
 	},
 	"customer": {
 		"message": "client"
+	},
+	"no_return_yet": {
+		"message": "Vous n'avez fait aucune demande de retour. Vous pouvez en réaliser une depuis le détail de la commande concernée."
 	}
 }

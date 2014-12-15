@@ -56,6 +56,7 @@ class Install extends \Change\Plugins\InstallBase
 
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/cartItem', '160x120');
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/shortCartItem', '80x120');
+		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/modeThumbnail', '80x60');
 
 		$configuration->addPersistentEntry('Rbs/Commerce/Cart/CleanupTTL', 60 * 60);
 	}

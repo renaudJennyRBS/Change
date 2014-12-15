@@ -818,14 +818,15 @@
 	rbsCatalogAttributeValue.$inject = ['$sce'];
 	app.directive('rbsCatalogAttributeValue', rbsCatalogAttributeValue);
 
-	function rbsCatalogSectionAttributes($sce) {
+	function rbsCatalogProductSpecifications($sce) {
 		return {
 			restrict: 'A',
 			template: '<div></div>',
 			scope: { productData: '=' },
 			compile: function(elm, attrs) {
 				var displayMode = attrs['displayMode'] || 'table';
-				var displayDirective = '<div data-rbs-catalog-attributes-' + displayMode + '=""></div>';
+				console.log('rbsCatalogProductSpecifications', displayMode);
+				var displayDirective = '<div data-rbs-catalog-product-specifications-' + displayMode + '=""></div>';
 				elm.html(displayDirective);
 
 				return function(scope, elm, attrs) {
@@ -885,13 +886,13 @@
 		}
 	}
 
-	rbsCatalogSectionAttributes.$inject = ['$sce'];
-	app.directive('rbsCatalogSectionAttributes', rbsCatalogSectionAttributes);
+	rbsCatalogProductSpecifications.$inject = ['$sce'];
+	app.directive('rbsCatalogProductSpecifications', rbsCatalogProductSpecifications);
 
-	function rbsCatalogAttributesTable() {
+	function rbsCatalogProductSpecificationsTable() {
 		return {
 			restrict: 'A',
-			templateUrl: '/rbsCatalogAttributesTable.tpl',
+			templateUrl: '/rbsCatalogProductSpecificationsTable.tpl',
 			link: function(scope, elm, attrs) {
 				scope.tableRows = [];
 
@@ -908,24 +909,23 @@
 		}
 	}
 
-	app.directive('rbsCatalogAttributesTable', rbsCatalogAttributesTable);
+	app.directive('rbsCatalogProductSpecificationsTable', rbsCatalogProductSpecificationsTable);
 
-	function rbsCatalogAttributesAccordion() {
+	function rbsCatalogProductSpecificationsAccordion() {
 		return {
 			restrict: 'A',
-			templateUrl: '/rbsCatalogAttributesAccordion.tpl',
+			templateUrl: '/rbsCatalogProductSpecificationsAccordion.tpl',
 			link: function(scope, elm, attrs) {
-
 			}
 		}
 	}
 
-	app.directive('rbsCatalogAttributesAccordion', rbsCatalogAttributesAccordion);
+	app.directive('rbsCatalogProductSpecificationsAccordion', rbsCatalogProductSpecificationsAccordion);
 
-	function rbsCatalogAttributesFlat() {
+	function rbsCatalogProductSpecificationsFlat() {
 		return {
 			restrict: 'A',
-			templateUrl: '/rbsCatalogAttributesFlat.tpl',
+			templateUrl: '/rbsCatalogProductSpecificationsFlat.tpl',
 			link: function(scope, elm, attrs) {
 				scope.flatRows = [];
 				scope.$watch('sectionsAttributes', function(sectionsAttributes) {
@@ -940,17 +940,121 @@
 		}
 	}
 
-	app.directive('rbsCatalogAttributesFlat', rbsCatalogAttributesFlat);
+	app.directive('rbsCatalogProductSpecificationsFlat', rbsCatalogProductSpecificationsFlat);
 
-	function rbsCatalogAttributesTabs() {
+	function rbsCatalogProductSpecificationsTabs() {
 		return {
 			restrict: 'A',
-			templateUrl: '/rbsCatalogAttributesTabs.tpl',
+			templateUrl: '/rbsCatalogProductSpecificationsTabs.tpl',
 			link: function(scope, elm, attrs) {
-
 			}
 		}
 	}
 
-	app.directive('rbsCatalogAttributesTabs', rbsCatalogAttributesTabs);
+	app.directive('rbsCatalogProductSpecificationsTabs', rbsCatalogProductSpecificationsTabs);
+
+	function rbsCatalogProductInformation($sce) {
+		return {
+			restrict: 'A',
+			template: '<div></div>',
+			scope: {
+				productData: '='
+			},
+			compile: function(elm, attrs) {
+				console.log('rbsCatalogProductInformation', attrs);
+				var blockId = attrs.blockId || 'product';
+				var displayMode = attrs['displayMode'] || 'tabs';
+				var specificationsDisplayMode = attrs['specificationsDisplayMode'];
+				console.log('rbsCatalogProductInformation', displayMode, specificationsDisplayMode);
+				var displayDirective = '<div data-rbs-catalog-product-information-' + displayMode + '="">';
+				if (specificationsDisplayMode) {
+					displayDirective += '<div data-rbs-catalog-product-specifications="" data-product-data="productData"' +
+					' data-visibility="specifications" data-display-mode="' + specificationsDisplayMode + '"' +
+					'data-block-id="' + blockId + '"></div>';
+				}
+				displayDirective += '</div>';
+				elm.html(displayDirective);
+
+				return function(scope, elm, attrs) {
+					function getNonEmptyAttributes(visibility) {
+						var attributes = [];
+						var attributeIds = scope.productData['attributesVisibility'][visibility];
+						if (angular.isArray(attributeIds)) {
+							for (var i = 0; i < attributeIds.length; i++) {
+								var attribute = scope.productData.attributes[attributeIds[i]];
+								if (attribute.value) {
+									attributes.push(attribute);
+								}
+								else if (angular.isObject(scope.productData['rootProduct'])) {
+									attribute = scope.productData['rootProduct'].attributes[attributeIds[i]];
+									if (attribute.value) {
+										attributes.push(attribute);
+									}
+								}
+							}
+						}
+						return attributes;
+					}
+
+					scope.blockId = attrs.blockId || 'product';
+					scope.attributesDisplayMode = attrs.attributesDisplayMode || 'table';
+
+					scope.specificInformation = getNonEmptyAttributes('information');
+					scope.specifications = getNonEmptyAttributes('specifications');
+
+					scope.trustHtml = function(html) {
+						return $sce.trustAsHtml(html);
+					};
+				}
+			}
+		}
+	}
+
+	rbsCatalogProductInformation.$inject = ['$sce'];
+	app.directive('rbsCatalogProductInformation', rbsCatalogProductInformation);
+
+	function rbsCatalogProductInformationAccordion() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductInformationAccordion.tpl',
+			transclude: true,
+			link: function(scope, elm, attrs) {
+			}
+		}
+	}
+
+	app.directive('rbsCatalogProductInformationAccordion', rbsCatalogProductInformationAccordion);
+
+	function rbsCatalogProductInformationFlat() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductInformationFlat.tpl',
+			transclude: true,
+			link: function(scope, elm, attrs) {
+				scope.flatRows = [];
+				scope.$watch('sectionsAttributes', function(sectionsAttributes) {
+					scope.flatRows = [];
+					angular.forEach(scope.sections, function(section) {
+						angular.forEach(sectionsAttributes[section], function(attribute) {
+							scope.flatRows.push(attribute);
+						})
+					});
+				}, true);
+			}
+		}
+	}
+
+	app.directive('rbsCatalogProductInformationFlat', rbsCatalogProductInformationFlat);
+
+	function rbsCatalogProductInformationTabs() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductInformationTabs.tpl',
+			transclude: true,
+			link: function(scope, elm, attrs) {
+			}
+		}
+	}
+
+	app.directive('rbsCatalogProductInformationTabs', rbsCatalogProductInformationTabs);
 })(jQuery);

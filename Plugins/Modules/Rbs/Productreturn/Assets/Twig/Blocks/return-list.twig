@@ -1,22 +1,16 @@
 {% block rbsProductreturnReturnListUse %}
-	{% use 'Rbs_Productreturn/return-details-templates.twig' %}
+	{% use 'Rbs_Order/order-templates.twig' %}
+	{% use 'Rbs_Productreturn/return-templates.twig' %}
 {% endblock rbsProductreturnReturnListUse %}
 
 {% block rbsProductreturnReturnListMain %}
-	<div data-ng-controller="RbsProductreturnReturnListController">
-		{% for return in productReturnsData %}
-			{% block returnDetails %}
-				{% set showOrderLink = true %}
-				{{ block('rbsProductreturnDetails') }}
-			{% endblock returnDetails %}
-
-			{% block returnSeparator %}
-				{% if not loop.last %}
-					<hr />
-				{% endif %}
-			{% endblock returnSeparator %}
-		{% endfor %}
-	</div>
+	{% set returns = productReturnsData %}
+	{% set showOrderLink = true %}
+	{% if returns | length %}
+		{{ block('rbsProductreturnList') }}
+	{% else %}
+		{{ i18n('m.rbs.productreturn.front.no_return_yet', ['ucf']) }}
+	{% endif %}
 {% endblock rbsProductreturnReturnListMain %}
 
 {% block rbsProductreturnReturnListFooter %}

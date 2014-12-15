@@ -78,7 +78,7 @@ class UpdateProductAvailability
 				{
 					foreach ($commerceServices->getStockManager()->getAvailableWarehouseIds() as $warehouseId)
 					{
-						$this->updateProductSetAvailability($product->getProductSet(), $warehouseId, $dbProvider);
+						$this->updateProductSetAvailability($product->getProductSet(), $warehouseId, $documentManager, $dbProvider);
 					}
 				}
 				else
@@ -293,9 +293,10 @@ class UpdateProductAvailability
 		$query->andPredicates($query->eq('products', $product));
 		$productSets = $query->getDocuments();
 
+		/** @var \Rbs\Catalog\Documents\ProductSet $productSet */
 		foreach ($productSets as $productSet)
 		{
-			$this->updateProductSetAvailability($productSet, $warehouseId, $dbProvider);
+			$this->updateProductSetAvailability($productSet, $warehouseId, $documentManager, $dbProvider);
 		}
 	}
 
@@ -304,10 +305,11 @@ class UpdateProductAvailability
 	 * Requires an open transaction @see \Change\Transaction\TransactionManager::begin()
 	 * @param \Rbs\Catalog\Documents\ProductSet $productSet
 	 * @param integer $warehouseId
+	 * @param \Change\Documents\DocumentManager $documentManager
 	 * @param \Change\Db\DbProvider $dbProvider
 	 */
 	protected function updateProductSetAvailability(\Rbs\Catalog\Documents\ProductSet $productSet, $warehouseId,
-		\Change\Db\DbProvider $dbProvider)
+		\Change\Documents\DocumentManager $documentManager, \Change\Db\DbProvider $dbProvider)
 	{
 		$rootProduct = $productSet->getRootProduct();
 		if ($rootProduct && !$rootProduct->getSku())
@@ -324,7 +326,7 @@ class UpdateProductAvailability
 			$maxEntry = null;
 			if (count($skuIdToCheck))
 			{
-				$maxEntry = $this->getMaxAvailabilityEntryBySku($skuIdToCheck, $warehouseId, $dbProvider);
+				$maxEntry = $this->getMaxAvailabilityEntryBySku($skuIdToCheck, $warehouseId, $documentManager);
 			}
 
 			if ($maxEntry)

@@ -1,0 +1,14 @@
+{
+	"transaction_status_initiated": {
+		"message": "initialisée"
+	},
+	"transaction_status_processing": {
+		"message": "en attente"
+	},
+	"transaction_status_success": {
+		"message": "payé"
+	},
+	"transaction_status_failed": {
+		"message": "échoué"
+	}
+}

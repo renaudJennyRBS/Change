@@ -24,7 +24,6 @@ class ProcessDataComposer
 	 */
 	protected $processManager;
 
-
 	/**
 	 * @var \Rbs\Commerce\Cart\CartManager
 	 */

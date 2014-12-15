@@ -784,28 +784,34 @@ class ReturnManager implements \Zend\EventManager\EventsCapableInterface
 			$line->getOptions()->set('reasonTitle', $reason->getCurrentLocalization()->getTitle());
 
 			// Precisions and attached file.
-			if (isset($lineData['reasonPrecisions']) && trim($lineData['reasonPrecisions']))
+			if ($reason->getPrecisionsField())
 			{
-				$line->setReasonPrecisions(trim($lineData['reasonPrecisions']));
-			}
-			elseif ($reason->getRequirePrecisions())
-			{
-				throw new \RuntimeException('Precisions are required in line ' . $lineIndex . '.', 999999);
-			}
-			if (isset($lineData['reasonAttachedFile']))
-			{
-				if (isset($lineData['reasonAttachedFile']['contents']) && isset($lineData['reasonAttachedFile']['name']))
+				if (isset($lineData['reasonPrecisions']) && trim($lineData['reasonPrecisions']))
 				{
-					$line->setReasonAttachedFileUri($lineData['reasonAttachedFile']);
+					$line->setReasonPrecisions(trim($lineData['reasonPrecisions']));
 				}
-				else
+				elseif ($reason->getPrecisionsField() == 'required')
 				{
-					throw new \RuntimeException('Invalid attached file in line ' . $lineIndex . '.', 999999);
+					throw new \RuntimeException('Precisions are required in line ' . $lineIndex . '.', 999999);
 				}
 			}
-			elseif ($reason->getRequireAttachedFile())
+			if ($reason->getAttachedFileField())
 			{
-				throw new \RuntimeException('Attached file is required in line ' . $lineIndex . '.', 999999);
+				if (isset($lineData['reasonAttachedFile']))
+				{
+					if (isset($lineData['reasonAttachedFile']['contents']) && isset($lineData['reasonAttachedFile']['name']))
+					{
+						$line->setReasonAttachedFileUri($lineData['reasonAttachedFile']);
+					}
+					else
+					{
+						throw new \RuntimeException('Invalid attached file in line ' . $lineIndex . '.', 999999);
+					}
+				}
+				elseif ($reason->getAttachedFileField() == 'required')
+				{
+					throw new \RuntimeException('Attached file is required in line ' . $lineIndex . '.', 999999);
+				}
 			}
 
 			// Preferred processing mode.

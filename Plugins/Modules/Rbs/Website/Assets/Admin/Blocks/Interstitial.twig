@@ -1,0 +1,37 @@
+{% extends '@Rbs_Admin/block-parameters.twig' %}
+
+{% block blockParameters %}
+	{% set param = information.getParameterInformation('popinTitle') %}
+	{{ render.param(param, information.name ~ "_" ~ param.name) }}
+
+	{% set param = information.getParameterInformation('displayedPage') %}
+	{{ render.param(param, information.name ~ "_" ~ param.name) }}
+
+	{% set param = information.getParameterInformation('popinSize') %}
+	{{ render.param(param, information.name ~ "_" ~ param.name) }}
+
+	<hr />
+
+	{% set param = information.getParameterInformation('audience') %}
+	{{ render.param(param, information.name ~ "_" ~ param.name) }}
+
+	{% set param = information.getParameterInformation('displayFrequency') %}
+	{{ render.param(param, information.name ~ "_" ~ param.name) }}
+
+	<div data-ng-show="blockParameters.displayFrequency == 'reprieve'">
+		{% set param = information.getParameterInformation('displayReprieve') %}
+		{{ render.param(param, information.name ~ "_" ~ param.name) }}
+	</div>
+
+	{% set param = information.getParameterInformation('allowClosing') %}
+	{{ render.param(param, information.name ~ "_" ~ param.name) }}
+
+	<div data-ng-show="blockParameters.allowClosing">
+		{% set param = information.getParameterInformation('autoCloseDelay') %}
+		{{ render.param(param, information.name ~ "_" ~ param.name) }}
+	</div>
+
+	{% if templates|length != 0 %}
+		<hr />
+	{% endif %}
+{% endblock %}

@@ -40,18 +40,15 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$eventManager->attach('getByUser', [$this, 'onProcessingGetByUser'], 10);
-		$eventManager->attach('getByUser', [$this, 'onDefaultGetByUser'], 5);
 		$eventManager->attach('canViewOrder', [$this, 'onDefaultCanViewOrder'], 10);
 		$eventManager->attach('canViewOrder', [$this, 'onCartCanViewOrder'], 5);
-		$eventManager->attach('getOrderPresentation', [$this, 'onDefaultGetOrderPresentation'], 15);
-		$eventManager->attach('getOrderPresentation', [$this, 'onCartGetOrderPresentation'], 10);
-		$eventManager->attach('getOrderPresentation', [$this, 'onArrayGetOrderPresentation'], 5);
 		$eventManager->attach('getOrderStatusInfo', [$this, 'onDefaultGetOrderStatusInfo'], 5);
 		$eventManager->attach('getShipmentStatusInfo', [$this, 'onDefaultGetShipmentStatusInfo'], 5);
 		$eventManager->attach('getAvailableCreditNotesInfo', [$this, 'onDefaultGetAvailableCreditNotesInfo'], 5);
 
 		$eventManager->attach('getOrderData', [$this, 'onDefaultGetOrderData'], 5);
+		$eventManager->attach('getOrdersData', [$this, 'onProcessingGetOrdersData'], 10);
+		$eventManager->attach('getOrdersData', [$this, 'onDefaultGetOrdersData'], 5);
 		$eventManager->attach('getShipmentData', [$this, 'onDefaultGetShipmentData'], 5);
 	}
 
@@ -187,147 +184,6 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * @api
-	 * @param \Rbs\User\Documents\User|null $user
-	 * @param integer[] $ownerIds
-	 * @param string $status
-	 * @param integer $pageNumber
-	 * @param integer $itemsPerPage
-	 * @return \Rbs\Generic\Presentation\Paginator
-	 */
-	public function getByUser($user, $ownerIds = array(), $status, $pageNumber = 1, $itemsPerPage = 10)
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array(
-			'user' => $user,
-			'ownerIds' => $ownerIds,
-			'processingStatus' => $status,
-			'pageNumber' => $pageNumber,
-			'itemsPerPage' => $itemsPerPage
-		));
-		$this->getEventManager()->trigger(static::EVENT_GET_BY_USER, $this, $args);
-		if (isset($args['paginator']))
-		{
-			return $args['paginator'];
-		}
-		return null;
-	}
-
-	/**
-	 * "Processing orders" contains carts and orders, so here we must get all instances, sort them and make pagination after.
-	 * @param \Change\Events\Event $event
-	 * @return \Change\Documents\DocumentCollection
-	 */
-	public function onProcessingGetByUser(\Change\Events\Event $event)
-	{
-		if ($event->getParam('paginator')
-			|| $event->getParam('processingStatus') != \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING
-		)
-		{
-			return;
-		}
-
-		$user = $event->getParam('user');
-		$ownerIds = $event->getParam('ownerIds', array());
-		$processingStatus = $event->getParam('processingStatus');
-		if ($user instanceof \Rbs\User\Documents\User || count($ownerIds))
-		{
-			$orderPresentations = array();
-
-			// Get the orders.
-			$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Order');
-			$query->andPredicates(
-				$this->getOwnerPredicate($query, $user, $ownerIds),
-				$query->eq('processingStatus', $processingStatus)
-			);
-			$query->addOrder('creationDate', false);
-			foreach ($query->getDocuments() as $order)
-			{
-				/* @var $order \Rbs\Order\Documents\Order */
-				$orderPresentations[] = $this->getOrderPresentation($order);
-			}
-
-			// Add the carts.
-			/** @var $commerceServices \Rbs\Commerce\CommerceServices */
-			$commerceServices = $event->getServices('commerceServices');
-			$cartManager = $commerceServices->getCartManager();
-			foreach ($cartManager->getProcessingCartsByUser($user) as $cart)
-			{
-				$orderPresentations[] = $this->getOrderPresentation($cart);
-			}
-
-			usort($orderPresentations,
-				function (\Rbs\Order\Presentation\OrderPresentation $a, \Rbs\Order\Presentation\OrderPresentation $b)
-				{
-					if ($a->getDate() == $b->getDate())
-					{
-						return 0;
-					}
-					return ($a->getDate() > $b->getDate()) ? -1 : 1;
-				}
-			);
-
-			$totalCount = count($orderPresentations);
-			$itemsPerPage = $event->getParam('itemsPerPage', null);
-			$offset = ($event->getParam('pageNumber', 1) - 1) * $itemsPerPage;
-			if ($offset > $totalCount || $offset < 0)
-			{
-				$offset = 0;
-			}
-			$orderPresentations = array_slice($orderPresentations, $offset, $itemsPerPage);
-
-			$pageNumber = ceil($offset / $itemsPerPage) + 1;
-			$paginator = new \Rbs\Generic\Presentation\Paginator($orderPresentations, $pageNumber, $itemsPerPage, $totalCount);
-			$event->setParam('paginator', $paginator);
-		}
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 * @return \Change\Documents\DocumentCollection
-	 */
-	public function onDefaultGetByUser(\Change\Events\Event $event)
-	{
-		if ($event->getParam('paginator'))
-		{
-			return;
-		}
-
-		$user = $event->getParam('user');
-		$ownerIds = $event->getParam('ownerIds', array());
-		$processingStatus = $event->getParam('processingStatus');
-		if ($processingStatus && ($user instanceof \Rbs\User\Documents\User || count($ownerIds)))
-		{
-			// Get the total count.
-			$orderPresentations = array();
-			$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Order');
-			$query->andPredicates(
-				$this->getOwnerPredicate($query, $user, $ownerIds),
-				$query->eq('processingStatus', $processingStatus)
-			);
-			$totalCount = $query->getCountDocuments();
-
-			// Get the orders for the current page.
-			$query->addOrder('creationDate', false);
-			$itemsPerPage = $event->getParam('itemsPerPage', null);
-			$offset = ($event->getParam('pageNumber', 1) - 1) * $itemsPerPage;
-			if ($offset > $totalCount || $offset < 0)
-			{
-				$offset = 0;
-			}
-			foreach ($query->getDocuments($offset, $itemsPerPage) as $order)
-			{
-				/* @var $order \Rbs\Order\Documents\Order */
-				$orderPresentations[] = $this->getOrderPresentation($order);
-			}
-
-			$pageNumber = ceil($offset / $itemsPerPage) + 1;
-			$paginator = new \Rbs\Generic\Presentation\Paginator($orderPresentations, $pageNumber, $itemsPerPage, $totalCount);
-			$event->setParam('paginator', $paginator);
-		}
-	}
-
-	/**
 	 * @param \Change\Documents\Query\Query $query
 	 * @param \Rbs\User\Documents\User|null $user
 	 * @param Integer[] $ownerIds
@@ -352,144 +208,6 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 			$ownerPredicate = $query->in('ownerId', $ownerIds);
 		}
 		return $ownerPredicate;
-	}
-
-	/**
-	 * Options:
-	 *  - withTransactions
-	 *  - withShipments
-	 * @api
-	 * @param \Rbs\Order\Documents\Order|\Rbs\Commerce\Cart\Cart|array $order
-	 * @param array $options
-	 * @return \Rbs\Order\Presentation\OrderPresentation
-	 */
-	public function getOrderPresentation($order, array $options = array())
-	{
-		$em = $this->getEventManager();
-		$args = $em->prepareArgs($options);
-		$args['order'] = $order;
-		$this->getEventManager()->trigger('getOrderPresentation', $this, $args);
-		return (isset($args['orderPresentation'])) ? $args['orderPresentation'] : null;
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function onDefaultGetOrderPresentation(\Change\Events\Event $event)
-	{
-		$order = $event->getParam('order');
-		if ($order instanceof \Rbs\Order\Documents\Order)
-		{
-			$orderPresentation = $event->getParam('orderPresentation');
-			if (!$orderPresentation instanceof \Rbs\Order\Presentation\OrderPresentation)
-			{
-				$orderPresentation = new \Rbs\Order\Presentation\OrderPresentation($order);
-
-				$event->setParam('orderPresentation', $orderPresentation);
-			}
-
-			$orderPresentation->setStatusInfo($this->getOrderStatusInfo($order));
-
-			if ($event->getParam('withTransactions') === true)
-			{
-				$query = $this->getDocumentManager()->getNewQuery('Rbs_Payment_Transaction');
-				$query->andPredicates(
-					$query->eq('targetIdentifier', $order->getIdentifier()),
-					$query->neq('processingStatus', \Rbs\Payment\Documents\Transaction::STATUS_INITIATED)
-				);
-				$transactionPresentations = array();
-				foreach ($query->getDocuments() as $transaction)
-				{
-					/* @var $transaction \Rbs\Payment\Documents\Transaction */
-					$transactionPresentations[] = new \Rbs\Order\Presentation\TransactionPresentation($transaction);
-				}
-				$orderPresentation->setTransactions($transactionPresentations);
-			}
-
-			$orderPresentation->setShippingModesStatuses($this->getShippingModeStatusesByOrder($order));
-			if ($event->getParam('withShipments') === true)
-			{
-				$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Shipment');
-				$query->andPredicates($query->eq('orderId', $order->getId()), $query->eq('prepared', true));
-				$shipmentPresentations = array();
-				foreach ($query->getDocuments() as $shipment)
-				{
-					/* @var $shipment \Rbs\Order\Documents\Shipment */
-					$shipmentPresentation = new \Rbs\Order\Presentation\ShipmentPresentation($shipment);
-
-					// Handle tracking URL.
-					$modeId = $shipment->getContext()->get('shippingModeId');
-					$trackingCode = $shipment->getTrackingCode();
-					if ($modeId && $trackingCode)
-					{
-						$mode = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($modeId);
-						if ($mode instanceof \Rbs\Shipping\Documents\Mode)
-						{
-							$shipmentPresentation->setShippingModeTitle($mode->getCurrentLocalization()->getTitle());
-							$urlTemplate = $mode->getTrackingUrlTemplate();
-							if ($urlTemplate)
-							{
-								$shipmentPresentation->setTrackingUrl(str_replace('{CODE}', $trackingCode, $urlTemplate));
-							}
-						}
-					}
-					$shipmentPresentations[] = $shipmentPresentation;
-				}
-				$orderPresentation->setShipments($shipmentPresentations);
-			}
-		}
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function onCartGetOrderPresentation(\Change\Events\Event $event)
-	{
-		$cart = $event->getParam('order');
-		if ($cart instanceof \Rbs\Commerce\Cart\Cart && $cart->isProcessing())
-		{
-			$orderPresentation = $event->getParam('orderPresentation');
-			if (!$orderPresentation instanceof \Rbs\Order\Presentation\OrderPresentation)
-			{
-				$orderPresentation = new \Rbs\Order\Presentation\OrderPresentation($cart);
-				$event->setParam('orderPresentation', $orderPresentation);
-			}
-
-			$orderPresentation->setStatusInfo($this->getOrderStatusInfo($cart));
-
-			if ($event->getParam('withTransactions') === true)
-			{
-				$documentManager = $event->getApplicationServices()->getDocumentManager();
-				$query = $documentManager->getNewQuery('Rbs_Payment_Transaction');
-				$query->andPredicates(
-					$query->eq('targetIdentifier', $cart->getIdentifier()),
-					$query->neq('processingStatus', \Rbs\Payment\Documents\Transaction::STATUS_INITIATED)
-				);
-				$transactionPresentations = array();
-				foreach ($query->getDocuments() as $transaction)
-				{
-					/* @var $transaction \Rbs\Payment\Documents\Transaction */
-					$transactionPresentations[] = new \Rbs\Order\Presentation\TransactionPresentation($transaction);
-				}
-				$orderPresentation->setTransactions($transactionPresentations);
-			}
-		}
-	}
-
-	/**
-	 * @param \Change\Events\Event $event
-	 */
-	public function onArrayGetOrderPresentation(\Change\Events\Event $event)
-	{
-		$order = $event->getParam('order');
-		if (is_array($order))
-		{
-			$orderPresentation = $event->getParam('orderPresentation');
-			if (!$orderPresentation instanceof \Rbs\Order\Presentation\OrderPresentation)
-			{
-				$event->setParam('orderPresentation', new \Rbs\Order\Presentation\OrderPresentation($order));
-			}
-		}
 	}
 
 	/**
@@ -843,6 +561,8 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
+	// Order data.
+
 	/**
 	 * Default context:
 	 *  - *dataSetNames, *visualFormats, *URLFormats
@@ -899,6 +619,211 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 		}
 	}
 
+	// Orders data.
+
+	/**
+	 * Default context:
+	 *  - *dataSetNames, *visualFormats, *URLFormats, pagination
+	 *  - website, websiteUrlManager, section, page, detailed
+	 *  - *data
+	 * @api
+	 * @param \Rbs\User\Documents\User|integer|null $user $user
+	 * @param integer[] $ownerIds
+	 * @param string $status
+	 * @param array $context
+	 * @return array
+	 */
+	public function getOrdersData($user, $ownerIds = [], $status, array $context)
+	{
+		$em = $this->getEventManager();
+		$pagination = isset($context['pagination']) && is_array($context['pagination']) ? $context['pagination'] : [];
+		$pagination += ['offset' => 0, 'limit' => 100, 'count' => 0];
+		$eventArgs = $em->prepareArgs([
+			'user' => $user,
+			'ownerIds' => $ownerIds,
+			'processingStatus' => $status,
+			'pagination' => $pagination,
+			'context' => $context
+		]);
+		$em->trigger('getOrdersData', $this, $eventArgs);
+
+		$ordersData = [];
+		$pagination = ['offset' => 0, 'limit' => 100, 'count' => 0];
+		if (isset($eventArgs['ordersData']) && is_array($eventArgs['ordersData']))
+		{
+			if (isset($eventArgs['pagination']) && is_array($eventArgs['pagination']))
+			{
+				$pagination = $eventArgs['pagination'];
+			}
+
+			foreach ($eventArgs['ordersData'] as $orderData)
+			{
+				if (is_object($orderData))
+				{
+					$callable = [$orderData, 'toArray'];
+					if (is_callable($callable))
+					{
+						$orderData = call_user_func($callable);
+					}
+				}
+
+				if (is_array($orderData) && count($orderData))
+				{
+					$ordersData[] = $orderData;
+				}
+			}
+		}
+		return ['pagination' => $pagination, 'items' => $ordersData];
+	}
+
+	/**
+	 * "Processing orders" contains carts and orders, so here we must get all instances, sort them and make pagination after.
+	 * @param \Change\Events\Event $event
+	 * @return \Change\Documents\DocumentCollection
+	 */
+	public function onProcessingGetOrdersData(\Change\Events\Event $event)
+	{
+		if ($event->getParam('ordersData'))
+		{
+			return;
+		}
+
+		$status = $event->getParam('processingStatus');
+		$pagination = $event->getParam('pagination');
+		$user = $event->getParam('user');
+		if (is_numeric($user))
+		{
+			$user = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($user);
+		}
+		$ownerIds = $event->getParam('ownerIds', array());
+		if (!is_array($pagination) || $status != \Rbs\Order\Documents\Order::PROCESSING_STATUS_PROCESSING
+			|| !($user instanceof \Rbs\User\Documents\User) && !count($ownerIds))
+		{
+			return;
+		}
+
+		$context = $event->getParam('context');
+		$ordersData = [];
+
+		// Get the orders.
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Order');
+		$query->andPredicates(
+			$this->getOwnerPredicate($query, $user, $ownerIds),
+			$query->eq('processingStatus', $status)
+		);
+		$query->addOrder('creationDate', false);
+		foreach ($query->getDocuments() as $order)
+		{
+			/* @var $order \Rbs\Order\Documents\Order */
+			$orderData = $this->getOrderData($order, $context);
+			if (count($orderData))
+			{
+				$ordersData[] = $orderData;
+			}
+		}
+
+		// Add the carts.
+		/** @var $commerceServices \Rbs\Commerce\CommerceServices */
+		$commerceServices = $event->getServices('commerceServices');
+		$cartManager = $commerceServices->getCartManager();
+		foreach ($cartManager->getProcessingCartsByUser($user) as $cart)
+		{
+			$orderData = $cartManager->getCartData($cart, $context);
+			if (count($orderData))
+			{
+				$ordersData[] = $orderData;
+			}
+		}
+
+		usort($ordersData,
+			function (array $a, array $b)
+			{
+				$dateA = isset($a['common']['date']) ? $a['common']['date'] : $a['common']['lastUpdate'];
+				$dateB = isset($b['common']['date']) ? $b['common']['date'] : $b['common']['lastUpdate'];
+				if ($dateA == $dateB)
+				{
+					return 0;
+				}
+				return ($dateA > $dateB) ? -1 : 1;
+			}
+		);
+
+		$totalCount = count($ordersData);
+		$offset = isset($pagination['offset']) ? $pagination['offset'] : 0;
+		$limit = isset($pagination['limit']) ? $pagination['limit'] : 100;
+		if ($offset > $totalCount || $offset < 0)
+		{
+			$offset = 0;
+		}
+		$ordersData = array_slice($ordersData, $offset, $limit);
+
+		$event->setParam('ordersData', $ordersData);
+		$event->setParam('pagination', ['offset' => $offset, 'limit' => $limit, 'count' => $totalCount]);
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 * @return \Change\Documents\DocumentCollection
+	 */
+	public function onDefaultGetOrdersData(\Change\Events\Event $event)
+	{
+		if ($event->getParam('ordersData'))
+		{
+			return;
+		}
+
+		$status = $event->getParam('processingStatus');
+		$pagination = $event->getParam('pagination');
+		$user = $event->getParam('user');
+		if (is_numeric($user))
+		{
+			$user = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($user);
+		}
+		$ownerIds = $event->getParam('ownerIds', array());
+		if (!is_array($pagination) || !$status || !($user instanceof \Rbs\User\Documents\User) && !count($ownerIds))
+		{
+			return;
+		}
+
+		$context = $event->getParam('context');
+		$ordersData = [];
+
+		// Get the total count.
+		$query = $this->getDocumentManager()->getNewQuery('Rbs_Order_Order');
+		$query->andPredicates(
+			$this->getOwnerPredicate($query, $user, $ownerIds),
+			$query->eq('processingStatus', $status)
+		);
+		$totalCount = $query->getCountDocuments();
+
+		$offset = isset($pagination['offset']) ? $pagination['offset'] : 0;
+		$limit = isset($pagination['limit']) ? $pagination['limit'] : 100;
+		if ($offset > $totalCount || $offset < 0)
+		{
+			$offset = 0;
+		}
+
+		// Get the orders for the current page.
+		if ($totalCount)
+		{
+			$query->addOrder('creationDate', false);
+			foreach ($query->getDocuments($offset, $limit) as $order)
+			{
+				/* @var $order \Rbs\Order\Documents\Order */
+				$orderData = $this->getOrderData($order, $context);
+				if (count($orderData))
+				{
+					$ordersData[] = $orderData;
+				}
+			}
+		}
+
+		$event->setParam('ordersData', $ordersData);
+		$event->setParam('pagination', ['offset' => $offset, 'limit' => $limit, 'count' => $totalCount]);
+	}
+
+	// Shipment data.
+
 	/**
 	 * Default context:
 	 *  - *dataSetNames, *visualFormats, *URLFormats
@@ -942,8 +867,8 @@ class OrderManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
-	 * Input params: order, context
-	 * Output param: orderData
+	 * Input params: shipment, context
+	 * Output param: shipmentData
 	 * @param \Change\Events\Event $event
 	 */
 	public function onDefaultGetShipmentData(\Change\Events\Event $event)

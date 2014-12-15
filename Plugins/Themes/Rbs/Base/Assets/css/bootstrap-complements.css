@@ -140,10 +140,10 @@ table.table-striped tr.no-top-border td {
 }
 
 /* list-divided */
-.list-inline.list-divided > li:not(:first-child):before,
-.list-inline.list-divided > dt:not(:first-child):before {
+.list-inline.list-divided > li:not(:last-child):after,
+.list-inline.list-divided > dd:not(:last-child):after {
 	content: "|";
-	padding-right: 10px;
+	padding-left: 10px;
 	font-weight: normal;
 }
 

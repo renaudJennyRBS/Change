@@ -72,7 +72,7 @@
 		"message":"date"
 	},
 	"order_item_count":{
-		"message":"nombre d'articles"
+		"message":"articles"
 	},
 	"order_amount":{
 		"message":"montant"
@@ -119,8 +119,8 @@
 	"order_email_address":{
 		"message":"adresse e-mail"
 	},
-	"order_payment":{
-		"message":"paiement"
+	"order_payment_information":{
+		"message":"informations de paiement"
 	},
 	"order_shipments":{
 		"message":"expéditions"
@@ -165,25 +165,19 @@
 		"message":"adresse"
 	},
 	"transaction_connector":{
-		"message":"mode"
-	},
-	"transaction_amount":{
-		"message":"montant"
+		"message":"mode de paiment"
 	},
 	"transaction_status":{
-		"message":"statut"
+		"message":"statut de la tranaction"
 	},
-	"transaction_date":{
-		"message":"date"
+	"transaction_date_time":{
+		"message":"date et heure de transaction"
 	},
-	"transaction_status_processing":{
-		"message":"en attente"
+	"transaction_number":{
+		"message":"numéro de transaction"
 	},
-	"transaction_status_success":{
-		"message":"payé"
-	},
-	"transaction_status_failed":{
-		"message":"échoué"
+	"transaction_instructions":{
+		"message":"instructions de paiement"
 	},
 	"shipment_mode":{
 		"message":"mode de livraison"
@@ -214,5 +208,8 @@
 	},
 	"order_title":{
 		"message":"commande n°$code$ du $date$"
+	},
+	"order_title_without_code":{
+		"message":"commande du $date$"
 	}
 }

@@ -158,6 +158,14 @@ class OrderDetail extends Block
 		$commerceServices = $event->getServices('commerceServices');
 		$parameters = $event->getBlockParameters();
 
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+		$section = $event->getParam('section');
+		if ($section)
+		{
+			$context->setSection($section);
+		}
+
 		$orderId = $parameters->getParameter('orderId');
 		$cartIdentifier = $parameters->getParameter('cartIdentifier');
 		if ($orderId)
@@ -168,32 +176,21 @@ class OrderDetail extends Block
 			{
 				return null;
 			}
+			$orderData = $commerceServices->getOrderManager()->getOrderData($order, $context->toArray());
 		}
 		elseif ($cartIdentifier)
 		{
-			$order = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
-			if (!($order instanceof \Rbs\Commerce\Cart\Cart))
+			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
+			if (!($cart instanceof \Rbs\Commerce\Cart\Cart))
 			{
 				return null;
 			}
+			$orderData = $commerceServices->getCartManager()->getCartData($cart, $context->toArray());
 		}
 		else
 		{
 			return null;
 		}
-
-		// TODO: migrate.
-		$options = [ 'withTransactions' => true, 'withShipments' => true ];
-		$attributes['order'] = $commerceServices->getOrderManager()->getOrderPresentation($order, $options);
-
-		$documentManager = $event->getApplicationServices()->getDocumentManager();
-		$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
-		$section = $event->getParam('section');
-		if ($section)
-		{
-			$context->setSection($section);
-		}
-		$orderData = $commerceServices->getOrderManager()->getOrderData($order, $context->toArray());
 		$attributes['orderData'] = $orderData;
 
 		$attributes['canReturn'] = false;

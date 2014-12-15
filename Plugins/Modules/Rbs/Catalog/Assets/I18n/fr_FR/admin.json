@@ -290,11 +290,20 @@
 	"product_added_to_cart_function":{
 		"message":"produit ajouté au panier"
 	},
+	"product_reinsurance":{
+		"message":"communication réassurance, coûts de livraison, etc."
+	},
+	"product_common_information":{
+		"message":"informations communes"
+	},
 	"product_activate_zoom":{
 		"message":"activer le zoom"
 	},
-	"product_attributes_display_mode":{
-		"message":"affichage des attributs"
+	"product_information_display_mode":{
+		"message":"affichage des informations"
+	},
+	"product_specifications_display_mode":{
+		"message":"affichage des spécifications"
 	},
 	"cross_selling_label":{
 		"message":"produits associés"

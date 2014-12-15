@@ -9,6 +9,8 @@
 {% set cacheKey = blockId %}
 
 {% block rbsProductreturnReturnProcessUse %}
+	{% use 'Rbs_Order/order-templates.twig' %}
+
 	{% block geoDirectives %}
 		{% use 'Rbs_Geo/address-editor.twig' %}
 		{{ block('addressEditor') }}
@@ -47,10 +49,7 @@
 {% endblock rbsProductreturnReturnProcessDataCache %}
 
 {% block rbsProductreturnReturnProcessHeader %}
-	<h1>
-		<span class="pull-right">{{ orderData.common.statusInfos.title }}</span>
-		{{ i18n('m.rbs.order.front.order_title', ['ucf'], {'code': orderData.common.code, 'date': orderData.common.date|transDateTime}) }}
-	</h1>
+	{{ block('rbsOrderHeader') }}
 
 	<ul class="pull-right text-right list-unstyled">
 		<li>

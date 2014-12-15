@@ -259,7 +259,7 @@
 			scope: false,
 
 			link: function(scope, elm, attrs) {
-				var visualFormats = attrs.hasOwnProperty('visualFormats')? attrs.visualFormats : 'detailThumbnail';
+				var visualFormats = attrs.hasOwnProperty('visualFormats')? attrs.visualFormats : 'modeThumbnail';
 				scope.displayPricesWithoutTax = attrs.hasOwnProperty('displayPricesWithoutTax');
 				scope.displayPricesWithTax = attrs.hasOwnProperty('displayPricesWithTax');
 				scope.data = null;

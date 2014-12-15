@@ -1,5 +1,10 @@
 {
 	"blocks" : {
+		"Interstitial": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Website/js/interstitial.js"
+			]
+		},
 		"TrackersManage": {
 			"jsAssets": [
 				"Theme/Rbs/Base/Rbs_Website/js/manage-trackers.js"

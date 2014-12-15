@@ -28,7 +28,7 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$events->attach(Event::EVENT_ACTION, array($this, 'registerActions'));
 		$events->attach(Event::EVENT_REQUEST, function ($event) { (new Loader)->onRegisterServices($event); }, 1);
-		$events->attach(Event::EVENT_AUTHENTICATE, function ($event) { (new Loader())->onAuthenticate($event);}, 1);
+		$events->attach(Event::EVENT_AUTHENTICATE, function ($event) { (new Loader())->onAuthenticate($event); }, 1);
 	}
 
 	/**
@@ -53,148 +53,200 @@ class Listeners implements ListenerAggregateInterface
 			if ($request->isGet())
 			{
 				$event->setParam('productId', intval($matches[1]));
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Catalog\Http\Ajax\Product())->getData($event);
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Catalog\Http\Ajax\Product())->getData($event);
+					}
+				);
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Catalog/Product/$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Catalog\Http\Ajax\Product())->getListData($event);
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Catalog\Http\Ajax\Product())->getListData($event);
+					}
+				);
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Commerce/Cart$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Commerce\Http\Ajax\Cart())->getCart($event);
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Commerce\Http\Ajax\Cart())->getCart($event);
+					}
+				);
 			}
 			if ($request->isPut())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Commerce\Http\Ajax\Cart())->updateCart($event);
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Commerce\Http\Ajax\Cart())->updateCart($event);
+					}
+				);
 
 				// Initialize Authentication Manager.
-				$event->setAuthorization(function() {return true;});
+				$event->setAuthorization(function () { return true; });
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET, \Zend\Http\Request::METHOD_PUT]));
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(),
+					[\Zend\Http\Request::METHOD_GET, \Zend\Http\Request::METHOD_PUT]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Commerce/Cart/ShippingFeesEvaluation$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Commerce\Http\Ajax\Cart())->getShippingFeesEvaluation($event);
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Commerce\Http\Ajax\Cart())->getShippingFeesEvaluation($event);
+					}
+				);
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Commerce/Cart/Transaction$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Commerce\Http\Ajax\Cart())->getCartTransaction($event);
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Commerce\Http\Ajax\Cart())->getCartTransaction($event);
+					}
+				);
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Order/Order/([0-9]+)$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{
-				$order = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance(intval($matches[1]), 'Rbs_Order_Order');
+				$order = $event->getApplicationServices()->getDocumentManager()
+					->getDocumentInstance(intval($matches[1]), 'Rbs_Order_Order');
 				if ($order instanceof \Rbs\Order\Documents\Order)
 				{
 					$event->setParam('orderId', $order->getId());
-					$event->setAction(function (Event $event) {
-						(new \Rbs\Order\Http\Ajax\Order())->getOrder($event);
-					});
-					$event->setAuthorization(function () use ($event, $order) {
-						/** @var \Rbs\Commerce\CommerceServices $commerceServices */
-						$commerceServices = $event->getServices('commerceServices');
-						if (!$commerceServices)
+					$event->setAction(
+						function (Event $event)
 						{
-							return false;
+							(new \Rbs\Order\Http\Ajax\Order())->getOrder($event);
 						}
-						$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
-						return $commerceServices->getOrderManager()->canViewOrder(['userId' => $currentUser->getId(), 'order' => $order]);
-					});
+					);
+					$event->setAuthorization(
+						function () use ($event, $order)
+						{
+							/** @var \Rbs\Commerce\CommerceServices $commerceServices */
+							$commerceServices = $event->getServices('commerceServices');
+							if (!$commerceServices)
+							{
+								return false;
+							}
+							$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+							return $commerceServices->getOrderManager()->canViewOrder(['userId' => $currentUser->getId(),
+								'order' => $order]);
+						}
+					);
 				}
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET, \Zend\Http\Request::METHOD_PUT]));
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(),
+					[\Zend\Http\Request::METHOD_GET, \Zend\Http\Request::METHOD_PUT]));
 			}
 		}
-		elseif (preg_match('#^Rbs/Order/Order/$#', $actionPath, $matches))
+		elseif (preg_match('#^Rbs/Order/Order/([a-z]+)/$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Order\Http\Ajax\Order())->getOrderList($event);
-				});
-				$event->setAuthorization(function() use ($event)
+				$event->setParam('processingStatus', $matches[1]);
+				$event->setAction(
+					function (Event $event)
 					{
-						return $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()->authenticated();
+						(new \Rbs\Order\Http\Ajax\Order())->getOrderList($event);
+					}
+				);
+				$event->setAuthorization(
+					function () use ($event)
+					{
+						$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+						if ($currentUser)
+						{
+							$event->setParam('user', $currentUser->getId());
+							return true;
+						}
+						return false;
 					}
 				);
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Commerce/Context$#', $actionPath, $matches))
 		{
 			if ($request->isPut())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Commerce\Http\Ajax\Context())->set($event);
-				});
-				$event->setAuthorization(function() {return true;});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Commerce\Http\Ajax\Context())->set($event);
+					}
+				);
+				$event->setAuthorization(function () { return true; });
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_PUT]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_PUT]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Commerce/ContextConfiguration$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Commerce\Http\Ajax\Context())->getConfiguration($event);
-				});
-				$event->setAuthorization(function() {return true;});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Commerce\Http\Ajax\Context())->getConfiguration($event);
+					}
+				);
+				$event->setAuthorization(function () { return true; });
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Commerce/Process/([0-9]+)/ShippingModesByAddress/$#', $actionPath, $matches))
@@ -202,13 +254,17 @@ class Listeners implements ListenerAggregateInterface
 			if ($request->isGet())
 			{
 				$event->setParam('processId', intval($matches[1]));
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Commerce\Http\Ajax\Process())->getShippingModesByAddress($event);
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Commerce\Http\Ajax\Process())->getShippingModesByAddress($event);
+					}
+				);
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Commerce/Process/([0-9]+)$#', $actionPath, $matches))
@@ -216,107 +272,144 @@ class Listeners implements ListenerAggregateInterface
 			if ($request->isGet())
 			{
 				$event->setParam('processId', intval($matches[1]));
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Commerce\Http\Ajax\Process())->getData($event);
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Commerce\Http\Ajax\Process())->getData($event);
+					}
+				);
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Productreturn/Process/([0-9]+)$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{
-				$process = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance(intval($matches[1]), 'Rbs_Productreturn_Process');
+				$process = $event->getApplicationServices()->getDocumentManager()
+					->getDocumentInstance(intval($matches[1]), 'Rbs_Productreturn_Process');
 				if ($process instanceof \Rbs\Productreturn\Documents\Process)
 				{
 					$event->setParam('processId', $process->getId());
-					$event->setAction(function (Event $event) {
-						(new \Rbs\Productreturn\Http\Ajax\Process())->getOrder($event);
-					});
+					$event->setAction(
+						function (Event $event)
+						{
+							(new \Rbs\Productreturn\Http\Ajax\Process())->getOrder($event);
+						}
+					);
 				}
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Productreturn/ProductReturn/$#', $actionPath, $matches))
 		{
 			if ($request->isPost())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Productreturn\Http\Ajax\ProductReturn())->submitReturnRequest($event);
-				});
-				$event->setAuthorization(function() use ($event) {
-					return $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()->authenticated();
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Productreturn\Http\Ajax\ProductReturn())->submitReturnRequest($event);
+					}
+				);
+				$event->setAuthorization(
+					function () use ($event)
+					{
+						return $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()->authenticated();
+					}
+				);
 			}
 			elseif ($request->isGet())
 			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Productreturn\Http\Ajax\ProductReturn())->getListData($event);
-				});
-				$event->setAuthorization(function() use ($event) {
-					return $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()->authenticated();
-				});
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Productreturn\Http\Ajax\ProductReturn())->getListData($event);
+					}
+				);
+				$event->setAuthorization(
+					function () use ($event)
+					{
+						return $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()->authenticated();
+					}
+				);
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET, \Zend\Http\Request::METHOD_POST]));
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(),
+					[\Zend\Http\Request::METHOD_GET, \Zend\Http\Request::METHOD_POST]));
 			}
 		}
 		elseif (preg_match('#^Rbs/Productreturn/ProductReturn/([0-9]+)$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{
-				$return = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance(intval($matches[1]), 'Rbs_Productreturn_ProductReturn');
+				$return = $event->getApplicationServices()->getDocumentManager()
+					->getDocumentInstance(intval($matches[1]), 'Rbs_Productreturn_ProductReturn');
 				if ($return instanceof \Rbs\Productreturn\Documents\ProductReturn)
 				{
 					$event->setParam('returnId', $return->getId());
-					$event->setAction(function (Event $event)
-					{
-						(new \Rbs\Productreturn\Http\Ajax\ProductReturn())->getData($event);
-					});
-					$event->setAuthorization(function () use ($event, $return) {
-						/** @var \Rbs\Commerce\CommerceServices $commerceServices */
-						$commerceServices = $event->getServices('commerceServices');
-						if (!$commerceServices)
+					$event->setAction(
+						function (Event $event)
 						{
-							return false;
+							(new \Rbs\Productreturn\Http\Ajax\ProductReturn())->getData($event);
 						}
-						$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
-						return $commerceServices->getReturnManager()->canViewReturn(['userId' => $currentUser->getId(), 'productReturn' => $return]);
-					});
+					);
+					$event->setAuthorization(
+						function () use ($event, $return)
+						{
+							/** @var \Rbs\Commerce\CommerceServices $commerceServices */
+							$commerceServices = $event->getServices('commerceServices');
+							if (!$commerceServices)
+							{
+								return false;
+							}
+							$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+							return $commerceServices->getReturnManager()->canViewReturn(['userId' => $currentUser->getId(),
+								'productReturn' => $return]);
+						}
+					);
 				}
 			}
 			elseif ($request->isPut())
 			{
-				$return = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance(intval($matches[1]), 'Rbs_Productreturn_ProductReturn');
+				$return = $event->getApplicationServices()->getDocumentManager()
+					->getDocumentInstance(intval($matches[1]), 'Rbs_Productreturn_ProductReturn');
 				if ($return instanceof \Rbs\Productreturn\Documents\ProductReturn)
 				{
 					$event->setParam('returnId', $return->getId());
-					$event->setAction(function (Event $event)
-					{
-						(new \Rbs\Productreturn\Http\Ajax\ProductReturn())->updateReturn($event);
-					});
-					$event->setAuthorization(function () use ($event, $return) {
-						/** @var \Rbs\Commerce\CommerceServices $commerceServices */
-						$commerceServices = $event->getServices('commerceServices');
-						if (!$commerceServices)
+					$event->setAction(
+						function (Event $event)
 						{
-							return false;
+							(new \Rbs\Productreturn\Http\Ajax\ProductReturn())->updateReturn($event);
 						}
-						$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
-						return $commerceServices->getReturnManager()->canViewReturn(['userId' => $currentUser->getId(), 'productReturn' => $return]);
-					});
+					);
+					$event->setAuthorization(
+						function () use ($event, $return)
+						{
+							/** @var \Rbs\Commerce\CommerceServices $commerceServices */
+							$commerceServices = $event->getServices('commerceServices');
+							if (!$commerceServices)
+							{
+								return false;
+							}
+							$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
+							return $commerceServices->getReturnManager()->canViewReturn(['userId' => $currentUser->getId(),
+								'productReturn' => $return]);
+						}
+					);
 				}
 			}
 			else
 			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET, \Zend\Http\Request::METHOD_PUT]));
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(),
+					[\Zend\Http\Request::METHOD_GET, \Zend\Http\Request::METHOD_PUT]));
 			}
 		}
 	}

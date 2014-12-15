@@ -109,6 +109,15 @@ class Listeners implements ListenerAggregateInterface
 				case 'Rbs_Geo_AddressField_Names':
 					(new \Rbs\Geo\Collection\Collections())->addAddressFieldNames($event);
 					break;
+				case 'Rbs_Website_InterstitialAudiences':
+					(new \Rbs\Website\Collection\Collections())->addInterstitialAudiences($event);
+					break;
+				case 'Rbs_Website_InterstitialDisplayFrequencies':
+					(new \Rbs\Website\Collection\Collections())->addInterstitialDisplayFrequencies($event);
+					break;
+				case 'Rbs_Website_InterstitialPopinSizes':
+					(new \Rbs\Website\Collection\Collections())->addInterstitialPopinSizes($event);
+					break;
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
