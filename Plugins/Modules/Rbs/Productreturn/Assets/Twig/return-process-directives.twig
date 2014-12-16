@@ -173,32 +173,40 @@
 {% block rbsProductreturnReturnLine %}
 	{% block rbsProductreturnReturnLineSummary %}
 		<script type="text/ng-template" id="/rbsProductreturnReturnLineSummary.tpl">
-			<button type="button" class="btn btn-sm btn-default pull-right" data-ng-disabled="isEditingLine()"
-				data-ng-click="editLine(shipmentIndex, lineIndex, returnLineIndex)">
-				{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
-			</button>
-			<dl class="dl-horizontal no-top-margin no-bottom-margin">
-				<dt>{{ i18n('m.rbs.productreturn.front.quantity_to_return', ['ucf']) }}</dt>
-				<dd>(= returnLine.quantity =)</dd>
-				<dt>{{ i18n('m.rbs.productreturn.front.return_reason', ['ucf']) }}</dt>
-				<dd>(= getReasonById(returnLine.reason).title =)</dd>
-				<dt data-ng-show="returnLine.precisions">{{ i18n('m.rbs.productreturn.front.precisions', ['ucf']) }}</dt>
-				<dd data-ng-show="returnLine.precisions">
-					<div data-rbs-max-height="70">
-						<div class="long-string">(= returnLine.precisions =)</div>
-					</div>
-				</dd>
-				<dt>{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}</dt>
-				<dd>(= returnLine.attachedFile ? "{{ i18n('m.rbs.generic.front.yes', ['ucf']) }}" : "{{ i18n('m.rbs.generic.front.no', ['ucf']) }}" =)</dd>
-				<dt>{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf']) }}</dt>
-				<dd>(= getProcessingModeById(returnLine.preferredProcessingMode).title =)</dd>
-				<dt data-ng-show="canChooseOtherVariant(line, returnLine)">
-					{{ i18n('m.rbs.productreturn.front.replacing_variant', ['ucf']) }}
-				</dt>
-				<dd data-ng-show="canChooseOtherVariant(line, returnLine)">
-					(= returnLine.productData.common.title =)
-				</dd>
-			</dl>
+			{% block rbsProductreturnReturnLineSummaryButton %}
+				<button type="button" class="btn btn-sm btn-default pull-right" data-ng-disabled="isEditingLine()"
+					data-ng-click="editLine(shipmentIndex, lineIndex, returnLineIndex)">
+					{{ i18n('m.rbs.commerce.front.modify', ['ucf']) }}
+				</button>
+			{% endblock rbsProductreturnReturnLineSummaryButton %}
+			{% block rbsProductreturnReturnLineSummaryProperties %}
+				<dl class="dl-horizontal no-top-margin no-bottom-margin">
+					<dt>{{ i18n('m.rbs.productreturn.front.quantity_to_return', ['ucf']) }}</dt>
+					<dd>(= returnLine.quantity =)</dd>
+					<dt>{{ i18n('m.rbs.productreturn.front.return_reason', ['ucf']) }}</dt>
+					<dd>(= getReasonById(returnLine.reason).title =)</dd>
+					<dt data-ng-show="returnLine.precisions">{{ i18n('m.rbs.productreturn.front.precisions', ['ucf']) }}</dt>
+					<dd data-ng-show="returnLine.precisions">
+						<div data-rbs-max-height="70">
+							<div class="long-string">(= returnLine.precisions =)</div>
+						</div>
+					</dd>
+					<dt data-ng-show="getReasonById(returnLine.reason).attachedFileField">
+						{{ i18n('m.rbs.productreturn.front.attached_file', ['ucf']) }}
+					</dt>
+					<dd data-ng-show="getReasonById(returnLine.reason).attachedFileField">
+						(= returnLine.attachedFile ? "{{ i18n('m.rbs.generic.front.yes', ['ucf']) }}" : "{{ i18n('m.rbs.generic.front.no', ['ucf']) }}" =)
+					</dd>
+					<dt>{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf']) }}</dt>
+					<dd>(= getProcessingModeById(returnLine.preferredProcessingMode).title =)</dd>
+					<dt data-ng-show="canChooseOtherVariant(line, returnLine)">
+						{{ i18n('m.rbs.productreturn.front.replacing_variant', ['ucf']) }}
+					</dt>
+					<dd data-ng-show="canChooseOtherVariant(line, returnLine)">
+						(= returnLine.productData.common.title =)
+					</dd>
+				</dl>
+			{% endblock rbsProductreturnReturnLineSummaryProperties %}
 		</script>
 	{% endblock rbsProductreturnReturnLineSummary %}
 

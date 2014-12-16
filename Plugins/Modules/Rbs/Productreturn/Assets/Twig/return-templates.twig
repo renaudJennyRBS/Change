@@ -1,6 +1,6 @@
-{# Used parameters: returns, showOrderLink #}
+{# Used parameters: returns, showOrderLink, blockId #}
 {% block rbsProductreturnList %}
-	<div data-ng-controller="RbsProductreturnReturnListController">
+	<div data-ng-controller="RbsProductreturnReturnListController" id="return-list-{{ blockId }}">
 		{% for return in returns %}
 			{% block rbsProductreturnListItem %}
 				{{ block('rbsProductreturnDetails') }}
