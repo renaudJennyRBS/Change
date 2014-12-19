@@ -27,9 +27,9 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$events->attach(array(ProfileManager::EVENT_LOAD), array($this, 'onLoad'), 5);
-		$events->attach(array(ProfileManager::EVENT_SAVE), array($this, 'onSave'), 5);
-		$events->attach(array(ProfileManager::EVENT_PROFILES), array($this, 'onProfiles'), 5);
+		$events->attach([ProfileManager::EVENT_LOAD], [$this, 'onLoad'], 5);
+		$events->attach([ProfileManager::EVENT_SAVE], [$this, 'onSave'], 5);
+		$events->attach([ProfileManager::EVENT_PROFILES], [$this, 'onProfiles'], 5);
 	}
 
 	/**
@@ -47,78 +47,71 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function onLoad(Event $event)
 	{
-		if ($event->getParam('profileName') === 'Rbs_Admin')
+		$profileName = $event->getParam('profileName');
+		if ($profileName === 'Change_User')
+		{
+			$profile = new \Change\User\UserProfile();
+		}
+		elseif ($profileName === 'Rbs_Admin')
 		{
 			$profile = new \Rbs\Admin\Profile\Profile();
-			$user = $event->getParam('user');
-			$applicationServices = $event->getApplicationServices();
-			if ($applicationServices && $user instanceof \Change\User\UserInterface)
-			{
-				$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
-				if ($docUser instanceof \Rbs\User\Documents\User)
-				{
-					$result = $docUser->getMeta('profile_Rbs_Admin');
-					if (is_array($result))
-					{
-						foreach ($result as $name => $value)
-						{
-							$profile->setPropertyValue($name, $value);
-						}
-					}
-				}
-			}
-			$event->setParam('profile', $profile);
 		}
-		else if ($event->getParam('profileName') === 'Rbs_User')
+		elseif ($profileName === 'Rbs_User')
 		{
 			$profile = new \Rbs\User\Profile\Profile();
+		}
+		elseif ($profileName === 'Rbs_Website')
+		{
+			$profile = new \Rbs\Website\Profile\Profile();
+		}
+		else
+		{
+			return;
+		}
 
-			$user = $event->getParam('user');
-			$applicationServices = $event->getApplicationServices();
-			if ($applicationServices && $user instanceof \Change\User\UserInterface)
+		$user = $event->getParam('user');
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices && $user instanceof \Change\User\UserInterface)
+		{
+			$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
+			if ($docUser instanceof \Rbs\User\Documents\User)
 			{
-				$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
-				if ($docUser instanceof \Rbs\User\Documents\User)
-				{
-					$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
-					$query->andPredicates($query->eq('user', $docUser));
+				$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
+				$query->andPredicates($query->eq('user', $docUser));
 
-					$documentProfile = $query->getFirstDocument();
-					if ($documentProfile instanceof \Rbs\User\Documents\Profile)
+				$documentProfile = $query->getFirstDocument();
+				if ($documentProfile instanceof \Rbs\User\Documents\Profile)
+				{
+					if ($profileName === 'Change_User' && $documentProfile->getHasChangeUser())
+					{
+						$profile->setPropertyValue('LCID', $documentProfile->getDefaultLCID());
+						$profile->setPropertyValue('TimeZone', $documentProfile->getDefaultTimeZone());
+					}
+					elseif ($profileName === 'Rbs_Admin' && $documentProfile->getHasRbsAdmin())
+					{
+						$profile->setPropertyValue('avatar', $documentProfile->getAdminAvatar());
+						$profile->setPropertyValue('pagingSize', $documentProfile->getPagingSize());
+						$profile->setPropertyValue('documentListViewMode', $documentProfile->getDocumentListViewMode());
+						$profile->setPropertyValue('sendNotificationMailImmediately', $documentProfile->getSendNotificationMailImmediately());
+						$profile->setPropertyValue('notificationMailInterval', $documentProfile->getNotificationMailInterval());
+						$profile->setPropertyValue('notificationMailAt', $documentProfile->getNotificationMailAt());
+						$profile->setPropertyValue('dateOfLastNotificationMailSent', $documentProfile->getDateOfLastNotificationMailSent());
+					}
+					elseif ($profileName === 'Rbs_User' && $documentProfile->getHasRbsUser())
 					{
 						$profile->setPropertyValue('firstName', $documentProfile->getFirstName());
 						$profile->setPropertyValue('lastName', $documentProfile->getLastName());
 						$profile->setPropertyValue('titleCode', $documentProfile->getTitleCode());
 						$profile->setPropertyValue('birthDate', $documentProfile->getBirthDate());
 					}
-				}
-			}
-			$event->setParam('profile', $profile);
-		}
-		else if ($event->getParam('profileName') === 'Change_User')
-		{
-			$profile = new \Change\User\UserProfile();
-
-			$user = $event->getParam('user');
-			$applicationServices = $event->getApplicationServices();
-			if ($applicationServices && $user instanceof \Change\User\UserInterface)
-			{
-				$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
-				if ($docUser instanceof \Rbs\User\Documents\User)
-				{
-					$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
-					$query->andPredicates($query->eq('user', $docUser));
-
-					$documentProfile = $query->getFirstDocument();
-					if ($documentProfile instanceof \Rbs\User\Documents\Profile)
+					elseif ($profileName === 'Rbs_Website' && $documentProfile->getHasRbsWebsite())
 					{
-						$profile->setPropertyValue('LCID', $documentProfile->getDefaultLCID());
-						$profile->setPropertyValue('TimeZone', $documentProfile->getDefaultTimeZone());
+						$profile->setPropertyValue('pseudonym', $documentProfile->getWebPseudonym());
 					}
 				}
 			}
-			$event->setParam('profile', $profile);
 		}
+		$event->setParam('profile', $profile);
 	}
 
 	/**
@@ -128,114 +121,82 @@ class Listeners implements ListenerAggregateInterface
 	public function onSave(Event $event)
 	{
 		$profile = $event->getParam('profile');
-		if ($profile instanceof \Rbs\Admin\Profile\Profile)
+		if (!($profile instanceof \Change\User\ProfileInterface))
 		{
-			$user = $event->getParam('user');
-			$applicationServices = $event->getApplicationServices();
-			if ($applicationServices && $user instanceof \Change\User\UserInterface)
-			{
-				$transactionManager = $applicationServices->getTransactionManager();
-				try
-				{
-					$transactionManager->begin();
-					$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
-					if ($docUser instanceof \Rbs\User\Documents\User)
-					{
-						$props = array();
-						foreach ($profile->getPropertyNames() as $name)
-						{
-							$props[$name] = $profile->getPropertyValue($name);
-						}
-						$docUser->setMeta('profile_Rbs_Admin', $props);
-						$docUser->saveMetas();
-					}
-					$transactionManager->commit();
-				}
-				catch (\Exception $e)
-				{
-					throw $transactionManager->rollBack($e);
-				}
-			}
+			return;
 		}
-		else if ($profile instanceof \Rbs\User\Profile\Profile)
+		$profileName = $profile->getName();
+		if (!in_array($profileName, ['Change_User', 'Rbs_Admin', 'Rbs_User', 'Rbs_Website']))
 		{
-			$user = $event->getParam('user');
-			$applicationServices = $event->getApplicationServices();
-			if ($applicationServices && $user instanceof \Change\User\UserInterface)
+			return;
+		}
+
+		$user = $event->getParam('user');
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices && $user instanceof \Change\User\UserInterface)
+		{
+			$transactionManager = $applicationServices->getTransactionManager();
+			try
 			{
-				$transactionManager = $applicationServices->getTransactionManager();
-				try
+				$transactionManager->begin();
+				$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
+				if ($docUser instanceof \Rbs\User\Documents\User)
 				{
-					$transactionManager->begin();
-					$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
-					if ($docUser instanceof \Rbs\User\Documents\User)
+					$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
+					$query->andPredicates($query->eq('user', $docUser));
+
+					/* @var $documentProfile \Rbs\User\Documents\Profile */
+					$documentProfile = $query->getFirstDocument();
+					if ($documentProfile === null)
 					{
-						$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
-						$query->andPredicates($query->eq('user', $docUser));
+						$documentProfile = $applicationServices->getDocumentManager()
+							->getNewDocumentInstanceByModelName('Rbs_User_Profile');
+						$documentProfile->setUser($docUser);
+					}
 
-						/* @var $documentProfile \Rbs\User\Documents\Profile */
-						$documentProfile = $query->getFirstDocument();
-						if ($documentProfile === null)
-						{
-							$documentProfile = $applicationServices->getDocumentManager()
-								->getNewDocumentInstanceByModelName('Rbs_User_Profile');
-							$documentProfile->setUser($docUser);
-						}
-
+					if ($profileName === 'Change_User')
+					{
+						$documentProfile->setHasChangeUser(true);
+						$documentProfile->setDefaultLCID($profile->getPropertyValue('LCID'));
+						$documentProfile->setDefaultTimeZone($profile->getPropertyValue('timeZone'));
+					}
+					elseif ($profileName === 'Rbs_Admin')
+					{
+						$documentProfile->setHasRbsAdmin(true);
+						$documentProfile->setAdminAvatar($profile->getPropertyValue('avatar'));
+						$documentProfile->setPagingSize($profile->getPropertyValue('pagingSize'));
+						$documentProfile->setDocumentListViewMode($profile->getPropertyValue('documentListViewMode'));
+						$documentProfile->setSendNotificationMailImmediately($profile->getPropertyValue('sendNotificationMailImmediately'));
+						$documentProfile->setNotificationMailInterval($profile->getPropertyValue('notificationMailInterval'));
+						$documentProfile->setNotificationMailAt($profile->getPropertyValue('notificationMailAt'));
+						$documentProfile->setDateOfLastNotificationMailSent($profile->getPropertyValue('dateOfLastNotificationMailSent'));
+					}
+					elseif ($profileName === 'Rbs_User')
+					{
+						$documentProfile->setHasRbsUser(true);
 						$documentProfile->setFirstName($profile->getPropertyValue('firstName'));
 						$documentProfile->setLastName($profile->getPropertyValue('lastName'));
 						$documentProfile->setTitleCode($profile->getPropertyValue('titleCode'));
-						$birthDate = $profile->getPropertyValue('birthDate');
-						if (trim($birthDate) == '')
+						$birthDate = trim($profile->getPropertyValue('birthDate'));
+						if (!$birthDate)
 						{
 							$birthDate = null;
 						}
 						$documentProfile->setBirthDate($birthDate);
-						$documentProfile->save();
 					}
-					$transactionManager->commit();
-				}
-				catch (\Exception $e)
-				{
-					throw $transactionManager->rollBack($e);
-				}
-			}
-		}
-		else if ($profile instanceof \Change\User\UserProfile)
-		{
-			$user = $event->getParam('user');
-			$applicationServices = $event->getApplicationServices();
-			if ($applicationServices && $user instanceof \Change\User\UserInterface)
-			{
-				$transactionManager = $applicationServices->getTransactionManager();
-				try
-				{
-					$transactionManager->begin();
-					$docUser = $applicationServices->getDocumentManager()->getDocumentInstance($user->getId());
-					if ($docUser instanceof \Rbs\User\Documents\User)
+					elseif ($profileName === 'Rbs_Website')
 					{
-						$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_User_Profile');
-						$query->andPredicates($query->eq('user', $docUser));
-
-						/* @var $documentProfile \Rbs\User\Documents\Profile */
-						$documentProfile = $query->getFirstDocument();
-						if ($documentProfile === null)
-						{
-							$documentProfile = $applicationServices->getDocumentManager()
-								->getNewDocumentInstanceByModelName('Rbs_User_Profile');
-							$documentProfile->setUser($docUser);
-						}
-
-						$documentProfile->setDefaultLCID($profile->getLCID());
-						$documentProfile->setDefaultTimeZone($profile->getTimeZone());
-						$documentProfile->save();
+						$documentProfile->setHasRbsWebsite(true);
+						$documentProfile->setWebPseudonym($profile->getPropertyValue('pseudonym'));
 					}
-					$transactionManager->commit();
+
+					$documentProfile->save();
 				}
-				catch (\Exception $e)
-				{
-					throw $transactionManager->rollBack($e);
-				}
+				$transactionManager->commit();
+			}
+			catch (\Exception $e)
+			{
+				throw $transactionManager->rollBack($e);
 			}
 		}
 	}
@@ -246,7 +207,7 @@ class Listeners implements ListenerAggregateInterface
 	public function onProfiles(Event $event)
 	{
 		$profiles = $event->getParam('profiles', []);
-		$profiles = ['Change_User', 'Rbs_User', 'Rbs_Admin'] + $profiles;
+		$profiles = ['Change_User', 'Rbs_User', 'Rbs_Admin', 'Rbs_Website'] + $profiles;
 		$event->setParam('profiles', $profiles);
 	}
 }

@@ -5,7 +5,7 @@
 	"review_content":{
 		"message":"message"
 	},
-	"review_pseudonym":{
+	"review_guestPseudonym":{
 		"message":"pseudonyme"
 	},
 	"review_rating":{

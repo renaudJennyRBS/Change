@@ -13,13 +13,13 @@ namespace Rbs\User\Profile;
 */
 class Profile extends \Change\User\AbstractProfile
 {
-	function __construct()
+	public function __construct()
 	{
 		$this->properties = array(
-			'firstName' => '',
-			'lastName' => '',
-			'fullName' => '',
-			'titleCode' => '',
+			'firstName' => null,
+			'lastName' => null,
+			'fullName' => null,
+			'titleCode' => null,
 			'birthDate' => null
 		);
 	}
@@ -42,25 +42,11 @@ class Profile extends \Change\User\AbstractProfile
 		{
 			$lName = $this->getPropertyValue('lastName');
 			$fName = $this->getPropertyValue('firstName');
-			if ($lName == null && $fName == null)
+			if (!$lName && !$fName)
 			{
 				return null;
 			}
-
-			$fullName = '';
-			if ($lName == null)
-			{
-				$lName = '';
-			}
-			if ($fName == null)
-			{
-				$fName = '';
-			}
-			if (trim($lName) != '' && trim($fName) != '')
-			{
-				$fullName = ' ' . $lName;
-			}
-			return $fName . $fullName;
+			return trim(trim(strval($fName)) . ' ' . trim(strval($lName)));
 		}
 
 		return parent::getPropertyValue($name);

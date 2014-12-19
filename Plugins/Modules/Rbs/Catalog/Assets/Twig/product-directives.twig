@@ -312,61 +312,77 @@
 {% endblock rbsCatalogProductVariantSelector %}
 
 {% block rbsCatalogProductInformation %}
-	{# Used parameters: handleReviews, commonInformation #}
+	{# Used parameters: commonInformation #}
 	{% block rbsCatalogProductInformationTabs %}
-		{% set baseId = 'block-(= blockId =)-information-tab' %}
-		{% set ngClassLastTabs = '{active: !specificInformation.length && !specifications.length}' %}
-		{% set ngClassLastContents = '{active: !specificInformation.length && !specifications.length, in: !specificInformation.length && !specifications.length}' %}
+		{% set ngClassTest = '!specificInformation.length && !specifications.length && !handleReviews' %}
+		{% set ngClassLastTabs = '{active: ' ~ ngClassTest ~ '}' %}
+		{% set ngClassLastContents = '{active: ' ~ ngClassTest ~ ', in: ' ~ ngClassTest ~ '}' %}
 		<script type="text/ng-template" id="/rbsCatalogProductInformationTabs.tpl">
-			<div{% if not (handleReviews or commonInformation|length) %} data-ng-show="specificInformation.length || specifications.length"{% endif %}>
-				<ul role="tablist" id="{{ baseId }}s" class="nav nav-tabs">
+			<div{% if not commonInformation|length %} data-ng-show="specificInformation.length || specifications.length || handleReviews"{% endif %}>
+				<ul role="tablist" id="(= baseId =)s" class="nav nav-tabs">
 					<li role="presentation" data-ng-repeat="information in specificInformation track by $index"
 						data-ng-class="{active: $first}">
-						<a role="tab" data-ng-href="#{{ baseId }}-(= $index =)" data-toggle="tab">
-							<span data-ng-bind="information.title"></span>
+						<a role="tab" data-ng-href="#(= baseId =)-(= $index =)" data-toggle="tab">
+							{% block rbsCatalogProductInformationTabsPanelAttributeTitle %}
+								<span data-ng-bind="information.title"></span>
+							{% endblock rbsCatalogProductInformationTabsPanelAttributeTitle %}
 						</a>
 					</li>
 					<li role="presentation" data-ng-if="specifications.length"
 						data-ng-class="{active: !specificInformation.length}">
-						<a role="tab" data-ng-href="#{{ baseId }}-specifications" data-toggle="tab">
-							{{ i18n('m.rbs.catalog.front.specifications', ['ucf']) }}
+						<a role="tab" data-ng-href="#(= baseId =)-specifications" data-toggle="tab">
+							{% block rbsCatalogProductInformationTabsPanelSpecificationsTitle %}
+								{{ i18n('m.rbs.catalog.front.specifications', ['ucf']) }}
+							{% endblock rbsCatalogProductInformationTabsPanelSpecificationsTitle %}
 						</a>
 					</li>
-					{% if handleReviews %}
-						<li role="presentation" data-ng-class="{{ ngClassLastTabs }}">
-							<a role="tab" data-ng-href="#{{ baseId }}-reviews" data-toggle="tab">
-								{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }}
-							</a>
-						</li>
-					{% endif %}
+					<li role="presentation" data-ng-if="handleReviews"
+						data-ng-class="{active: !specificInformation.length && !specifications.length}">
+						<a role="tab" data-ng-href="#(= baseId =)-reviews" data-toggle="tab">
+							{% block rbsCatalogProductInformationTabsPanelReviewsTitle %}
+								{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }} ((= productData.reviews.count =))
+							{% endblock rbsCatalogProductInformationTabsPanelReviewsTitle %}
+						</a>
+					</li>
 					{% for information in commonInformation %}
-						<li role="presentation"{% if loop.index == 1 and (not handleReviews) %} data-ng-class="{{ ngClassLastTabs }}"{% endif %}>
-							<a role="tab" data-ng-href="#{{ baseId }}-static-{{ loop.index }}" data-toggle="tab">
-								{{ information.currentLocalization.title }}
+						<li role="presentation"{% if loop.index == 1 %} data-ng-class="{{ ngClassLastTabs }}"{% endif %}>
+							<a role="tab" data-ng-href="#(= baseId =)-static-{{ loop.index }}" data-toggle="tab">
+								{% block rbsCatalogProductInformationTabsPanelCommonTitle %}
+									{{ information.currentLocalization.title }}
+								{% endblock rbsCatalogProductInformationTabsPanelCommonTitle %}
 							</a>
 						</li>
 					{% endfor %}
 				</ul>
 				<div class="tab-content">
 					<div role="tabpanel" data-ng-repeat="information in specificInformation track by $index"
-						id="{{ baseId }}-(= $index =)"
-						class="tab-pane fade richtext" data-ng-class="{active: $first, in: $first}">
-						<div data-rbs-catalog-attribute-value="" data-attribute="information"></div>
+						id="(= baseId =)-(= $index =)" class="tab-pane fade richtext"
+						data-ng-class="{active: $first, in: $first}">
+						{% block rbsCatalogProductInformationTabsPanelAttributeContent %}
+							<div data-rbs-catalog-attribute-value="" data-attribute="information"></div>
+						{% endblock rbsCatalogProductInformationTabsPanelAttributeContent %}
 					</div>
-					<div data-ng-if="specifications.length" id="{{ baseId }}-specifications" class="tab-pane fade"
+					<div data-ng-if="specifications.length" id="(= baseId =)-specifications" class="tab-pane fade"
 						data-ng-class="{active: !specificInformation.length, in: !specificInformation.length}">
-						<div role="tabpanel" data-ng-transclude=""></div>
+						{% block rbsCatalogProductInformationTabsPanelSpecificationsContent %}
+							<div role="tabpanel" data-ng-transclude=""></div>
+						{% endblock rbsCatalogProductInformationTabsPanelSpecificationsContent %}
 					</div>
-					{% if handleReviews %}
-						<div role="tabpanel" id="{{ baseId }}-reviews" class="tab-pane fade"
-							data-ng-class="{{ ngClassLastContents }}">
-							TODO reviews
-						</div>
-					{% endif %}
+					<div role="tabpanel" data-ng-if="handleReviews" id="(= baseId =)-reviews" class="tab-pane fade"
+						data-ng-class="{active: !specificInformation.length && !specifications.length, in: !specificInformation.length && !specifications.length}">
+						{% block rbsCatalogProductInformationTabsPanelReviewsContent %}
+							<div data-rbs-review-reviews-details="" data-target-id="productData.common.id"
+								data-ajax-data="reviewsAjaxData" data-ajax-params="reviewsAjaxParams"
+								data-reviews-per-page="reviewsPerPage" data-scale="ratingScale"
+								data-handle-votes="handleReviewVotes"></div>
+						{% endblock rbsCatalogProductInformationTabsPanelReviewsContent %}
+					</div>
 					{% for information in commonInformation %}
-						<div role="tabpanel" id="{{ baseId }}-static-{{ loop.index }}" class="tab-pane fade richtext"
-							{% if loop.index == 1 and (not handleReviews) %} data-ng-class="{{ ngClassLastContents }}"{% endif %}>
-							{{ information.currentLocalization.text|richText }}
+						<div role="tabpanel" id="(= baseId =)-static-{{ loop.index }}" class="tab-pane fade richtext"
+							{% if loop.index == 1 %} data-ng-class="{{ ngClassLastContents }}"{% endif %}>
+							{% block rbsCatalogProductInformationTabsPanelCommonContent %}
+								{{ information.currentLocalization.text|richText }}
+							{% endblock rbsCatalogProductInformationTabsPanelCommonContent %}
 						</div>
 					{% endfor %}
 				</div>
@@ -374,21 +390,24 @@
 		</script>
 	{% endblock rbsCatalogProductInformationTabs %}
 
-	{# Used parameters: handleReviews, commonInformation #}
+	{# Used parameters: commonInformation #}
 	{% block rbsCatalogProductInformationAccordion %}
-		{% set baseId = 'block-(= blockId =)-information-accordion' %}
 		<script type="text/ng-template" id="/rbsCatalogProductInformationAccordion.tpl">
-			<div class="panel-group" id="{{ baseId }}">
+			<div class="panel-group" id="(= baseId =)">
 				<div class="panel" data-ng-repeat="information in specificInformation track by $index">
 					<div class="panel-heading">
-						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#{{ baseId }}" data-ng-href="#{{ baseId }}-(= $index =)">
-							(= information.title =)
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#(= baseId =)"
+							data-ng-href="#(= baseId =)-(= $index =)">
+							{% block rbsCatalogProductInformationAccordionPanelAttributeTitle %}
+								(= information.title =)
+							{% endblock rbsCatalogProductInformationAccordionPanelAttributeTitle %}
 						</a>
 					</div>
-					<div id="{{ baseId }}-(= $index =)" class="panel-collapse collapse" data-ng-class="{in: $first}">
+					<div id="(= baseId =)-(= $index =)" class="panel-collapse collapse" data-ng-class="{in: $first}">
 						<div class="panel-body richtext">
-							<div data-rbs-catalog-attribute-value="" data-attribute="information"></div>
+							{% block rbsCatalogProductInformationAccordionPanelAttributeContent %}
+								<div data-rbs-catalog-attribute-value="" data-attribute="information"></div>
+							{% endblock rbsCatalogProductInformationAccordionPanelAttributeContent %}
 						</div>
 					</div>
 				</div>
@@ -396,44 +415,57 @@
 				<div class="panel" data-ng-if="specifications.length">
 					<div class="panel-heading">
 						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#{{ baseId }}" data-ng-href="#{{ baseId }}-specifications">
-							{{ i18n('m.rbs.catalog.front.specifications', ['ucf']) }}
+							data-parent="#(= baseId =)" data-ng-href="#(= baseId =)-specifications">
+							{% block rbsCatalogProductInformationAccordionPanelSpecificationsTitle %}
+								{{ i18n('m.rbs.catalog.front.specifications', ['ucf']) }}
+							{% endblock rbsCatalogProductInformationAccordionPanelSpecificationsTitle %}
 						</a>
 					</div>
-					<div id="{{ baseId }}-specifications" class="panel-collapse collapse">
+					<div id="(= baseId =)-specifications" class="panel-collapse collapse">
 						<div class="panel-body">
-							<div data-ng-transclude=""></div>
+							{% block rbsCatalogProductInformationAccordionPanelSpecificationsContent %}
+								<div data-ng-transclude=""></div>
+							{% endblock rbsCatalogProductInformationAccordionPanelSpecificationsContent %}
 						</div>
 					</div>
 				</div>
 
-				{% if handleReviews %}
-					<div class="panel" data-ng-repeat="information in specificInformation track by $index">
-						<div class="panel-heading">
-							<a class="accordion-toggle" data-toggle="collapse"
-								data-parent="#{{ baseId }}" data-ng-href="#{{ baseId }}-reviews">
-								{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }}
-							</a>
-						</div>
-						<div id="{{ baseId }}-reviews" class="panel-collapse collapse">
-							<div class="panel-body">
-								TODO reviews
-							</div>
+				<div class="panel" data-ng-if="handleReviews">
+					<div class="panel-heading">
+						<a class="accordion-toggle" data-toggle="collapse"
+							data-parent="#(= baseId =)" data-ng-href="#(= baseId =)-reviews">
+							{% block rbsCatalogProductInformationAccordionPanelReviewsTitle %}
+								{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }} ((= productData.reviews.count =))
+							{% endblock rbsCatalogProductInformationAccordionPanelReviewsTitle %}
+						</a>
+					</div>
+					<div id="(= baseId =)-reviews" class="panel-collapse collapse">
+						<div class="panel-body">
+							{% block rbsCatalogProductInformationAccordionPanelReviewsContent %}
+								<div data-rbs-review-reviews-details="" data-target-id="productData.common.id"
+									data-ajax-data="reviewsAjaxData" data-ajax-params="reviewsAjaxParams"
+									data-reviews-per-page="reviewsPerPage" data-scale="ratingScale"
+									data-handle-votes="handleReviewVotes"></div>
+							{% endblock rbsCatalogProductInformationAccordionPanelReviewsContent %}
 						</div>
 					</div>
-				{% endif %}
+				</div>
 
 				{% for information in commonInformation %}
 					<div class="panel">
 						<div class="panel-heading">
 							<a class="accordion-toggle" data-toggle="collapse"
-								data-parent="#{{ baseId }}" data-ng-href="#{{ baseId }}-common-{{ loop.index }}">
-								{{ information.currentLocalization.title }}
+								data-parent="#(= baseId =)" data-ng-href="#(= baseId =)-common-{{ loop.index }}">
+								{% block rbsCatalogProductInformationAccordionPanelCommonTitle %}
+									{{ information.currentLocalization.title }}
+								{% endblock rbsCatalogProductInformationAccordionPanelCommonTitle %}
 							</a>
 						</div>
-						<div id="{{ baseId }}-common-{{ loop.index }}" class="panel-collapse collapse">
+						<div id="(= baseId =)-common-{{ loop.index }}" class="panel-collapse collapse">
 							<div class="panel-body richtext">
-								{{ information.currentLocalization.text|richText }}
+								{% block rbsCatalogProductInformationAccordionPanelCommonContent %}
+									{{ information.currentLocalization.text|richText }}
+								{% endblock rbsCatalogProductInformationAccordionPanelCommonContent %}
 							</div>
 						</div>
 					</div>
@@ -442,30 +474,41 @@
 		</script>
 	{% endblock rbsCatalogProductInformationAccordion %}
 
-	{# Used parameters: handleReviews, commonInformation #}
+	{# Used parameters: commonInformation #}
 	{% block rbsCatalogProductInformationFlat %}
 		<script type="text/ng-template" id="/rbsCatalogProductInformationFlat.tpl">
 			<div data-ng-repeat="information in specificInformation track by $index">
-				<h2 data-ng-bind="information.title"></h2>
-				<div class="richtext" data-rbs-catalog-attribute-value="" data-attribute="information"></div>
+				{% block rbsCatalogProductInformationFlatPanelAttribute %}
+					<h2 id="(= baseId =)-(= $index =)" data-ng-bind="information.title"></h2>
+					<div class="richtext" data-rbs-catalog-attribute-value="" data-attribute="information"></div>
+				{% endblock rbsCatalogProductInformationFlatPanelAttribute %}
 			</div>
 
 			<div data-ng-if="specifications.length">
-				<h2>{{ i18n('m.rbs.catalog.front.specifications', ['ucf']) }}</h2>
-				<div data-ng-transclude=""></div>
+				{% block rbsCatalogProductInformationFlatPanelSpecifications %}
+					<h2 id="(= baseId =)-specifications">{{ i18n('m.rbs.catalog.front.specifications', ['ucf']) }}</h2>
+					<div data-ng-transclude=""></div>
+				{% endblock rbsCatalogProductInformationFlatPanelSpecifications %}
 			</div>
 
-			{% if handleReviews %}
-				<div data-ng-if="specifications.length">
-					<h2>{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }}</h2>
-					<div>TODO reviews</div>
-				</div>
-			{% endif %}
+			<div data-ng-if="handleReviews">
+				{% block rbsCatalogProductInformationFlatPanelReviews %}
+					<h2 id="(= baseId =)-reviews">
+						{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }} ((= productData.reviews.count =))
+					</h2>
+					<div data-rbs-review-reviews-details="" data-target-id="productData.common.id"
+						data-ajax-data="reviewsAjaxData" data-ajax-params="reviewsAjaxParams"
+						data-reviews-per-page="reviewsPerPage" data-scale="ratingScale"
+						data-handle-votes="handleReviewVotes"></div>
+				{% endblock rbsCatalogProductInformationFlatPanelReviews %}
+			</div>
 
 			{% for information in commonInformation %}
-				<div data-ng-if="specifications.length">
-					<h2>{{ information.currentLocalization.title }}</h2>
-					<div class="richtext">{{ information.currentLocalization.text|richText }}</div>
+				<div>
+					{% block rbsCatalogProductInformationFlatPanelCommon %}
+						<h2 id="(= baseId =)-common-{{ loop.index }}">{{ information.currentLocalization.title }}</h2>
+						<div class="richtext">{{ information.currentLocalization.text|richText }}</div>
+					{% endblock rbsCatalogProductInformationFlatPanelCommon %}
 				</div>
 			{% endfor %}
 		</script>

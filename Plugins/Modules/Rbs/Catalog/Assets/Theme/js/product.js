@@ -45,15 +45,12 @@
 					scope.context.visualFormats.push(name);
 				})
 			}],
-			link: function(scope, elem, attrs, controller) {
+			link: function(scope, elem, attrs) {
 				scope.loading = false;
 				scope.viewDetailTitleMask = attrs.viewDetailTitleMask || 'PRODUCT_TITLE';
 
 				scope.addMoreProducts = function() {
-					var productCount = parseInt(attrs.productCount);
-					var itemsPerPage = scope.parameters.itemsPerPage;
-					var currentCount = scope.productsData.length;
-					scope.context.pagination.offset = currentCount;
+					scope.context.pagination.offset = scope.productsData.length;
 					scope.loading = true;
 					AjaxAPI.getData('Rbs/Catalog/Product/', scope.contextData, scope.context)
 						.success(function(data) {
@@ -68,8 +65,7 @@
 
 				scope.scrollDisabled = function() {
 					var productCount = parseInt(attrs.productCount);
-					var scrollDisabled  = scope.loading || scope.productsData.length >= productCount;
-					return scrollDisabled;
+					return scope.loading || scope.productsData.length >= productCount;
 				}
 			}
 		}
@@ -132,7 +128,6 @@
 	app.directive('rbsCatalogAddListItemProductToCart', rbsCatalogAddListItemProductToCart);
 
 	function productDataLink(scope, elm, attrs) {
-
 		scope.$watch('productData', function(productData) {
 			if (productData && productData.cart) {
 				var cart = productData.cart;
@@ -299,6 +294,8 @@
 		scope.parameters = {};
 		scope.productAjaxData = {};
 		scope.productAjaxParams = {};
+		scope.reviewsAjaxData = {};
+		scope.reviewsAjaxParams = {};
 
 		var cacheKey = $element.attr('data-cache-key');
 		if (cacheKey) {
@@ -327,6 +324,10 @@
 		scope.addLine = function() {
 			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
 		};
+
+		scope.showReviews = function() {
+			scope.$broadcast('showReviews', $element.attr('data-block-id'));
+		};
 	}
 
 	RbsCatalogSimpleProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
@@ -352,6 +353,8 @@
 		scope.parameters = {};
 		scope.productAjaxData = {};
 		scope.productAjaxParams = {};
+		scope.reviewsAjaxData = {};
+		scope.reviewsAjaxParams = {};
 
 		var cacheKey = $element.attr('data-cache-key');
 		if (cacheKey) {
@@ -390,6 +393,10 @@
 
 		scope.addLine = function() {
 			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+		};
+
+		scope.showReviews = function() {
+			scope.$broadcast('showReviews', $element.attr('data-block-id'));
 		};
 	}
 
@@ -627,7 +634,7 @@
 			require: 'select',
 			link: function(scope, elem, attrs) {
 				var optionsSourceStr = attrs.ngOptions.split(' ').pop();
-				var getOptionsClass = $parse(attrs.rbsCatalogAxisOptionClass);
+				var getOptionsClass = $parse(attrs['rbsCatalogAxisOptionClass']);
 
 				scope.$watchCollection(optionsSourceStr, function(items) {
 					angular.forEach(items, function(item, index) {
@@ -669,6 +676,8 @@
 		scope.parameters = {};
 		scope.productAjaxData = {};
 		scope.productAjaxParams = {};
+		scope.reviewsAjaxData = {};
+		scope.reviewsAjaxParams = {};
 
 		var cacheKey = $element.attr('data-cache-key');
 		if (cacheKey) {
@@ -678,7 +687,7 @@
 			scope.productAjaxData.webStoreId = scope.parameters.webStoreId;
 			scope.productAjaxData.billingAreaId = scope.parameters.billingAreaId;
 			scope.productAjaxData.zone = scope.parameters.zone;
-			scope.productAjaxParams.visualFormats = scope.parameters.imageFormats;
+			scope.productAjaxParams.visualFormats = scope.parameters['imageFormats'];
 			scope.productAjaxParams.URLFormats = 'canonical,contextual';
 		}
 
@@ -693,6 +702,10 @@
 		this.setPictograms(scope.productData);
 
 		this.setVisuals(scope.productData);
+
+		scope.showReviews = function() {
+			scope.$broadcast('showReviews', $element.attr('data-block-id'));
+		};
 	}
 	RbsCatalogProductSetController.$inject = ['$scope', '$element', 'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogProductSetController', RbsCatalogProductSetController);
@@ -758,8 +771,7 @@
 			templateUrl: '/rbsCatalogAttributeValue.tpl',
 			replace: false,
 			scope: { attribute: '=' },
-			link: function(scope, elm, attrs) {
-
+			link: function(scope) {
 				scope.isArrayValue = function(attribute) {
 					attribute = attribute || scope.attribute;
 					return (attribute && attribute.type == 'DocumentArray');
@@ -771,7 +783,7 @@
 				};
 
 				scope.isLinkValue = function(value) {
-					return (value && value.URL && value.URL.canonical);
+					return (value && value.URL && value.URL['canonical']);
 				};
 
 				scope.isLink = function(attribute) {
@@ -825,7 +837,6 @@
 			scope: { productData: '=' },
 			compile: function(elm, attrs) {
 				var displayMode = attrs['displayMode'] || 'table';
-				console.log('rbsCatalogProductSpecifications', displayMode);
 				var displayDirective = '<div data-rbs-catalog-product-specifications-' + displayMode + '=""></div>';
 				elm.html(displayDirective);
 
@@ -893,7 +904,7 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductSpecificationsTable.tpl',
-			link: function(scope, elm, attrs) {
+			link: function(scope) {
 				scope.tableRows = [];
 
 				scope.$watch('sectionsAttributes', function(sectionsAttributes) {
@@ -926,7 +937,7 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductSpecificationsFlat.tpl',
-			link: function(scope, elm, attrs) {
+			link: function(scope) {
 				scope.flatRows = [];
 				scope.$watch('sectionsAttributes', function(sectionsAttributes) {
 					scope.flatRows = [];
@@ -958,19 +969,19 @@
 			restrict: 'A',
 			template: '<div></div>',
 			scope: {
-				productData: '='
+				productData: '=',
+				reviewsAjaxData: '=',
+				reviewsAjaxParams: '='
 			},
 			compile: function(elm, attrs) {
-				console.log('rbsCatalogProductInformation', attrs);
 				var blockId = attrs.blockId || 'product';
 				var displayMode = attrs['displayMode'] || 'tabs';
 				var specificationsDisplayMode = attrs['specificationsDisplayMode'];
-				console.log('rbsCatalogProductInformation', displayMode, specificationsDisplayMode);
 				var displayDirective = '<div data-rbs-catalog-product-information-' + displayMode + '="">';
 				if (specificationsDisplayMode) {
 					displayDirective += '<div data-rbs-catalog-product-specifications="" data-product-data="productData"' +
 					' data-visibility="specifications" data-display-mode="' + specificationsDisplayMode + '"' +
-					'data-block-id="' + blockId + '"></div>';
+					' data-block-id="' + blockId + '"></div>';
 				}
 				displayDirective += '</div>';
 				elm.html(displayDirective);
@@ -999,6 +1010,11 @@
 					scope.blockId = attrs.blockId || 'product';
 					scope.attributesDisplayMode = attrs.attributesDisplayMode || 'table';
 
+					scope.handleReviews = attrs.handleReviews == 1;
+					scope.reviewsPerPage = parseInt(attrs.reviewsPerPage) || 10;
+					scope.ratingScale = parseInt(attrs.ratingScale) || 5;
+					scope.handleReviewVotes = attrs.handleReviewVotes == 1;
+
 					scope.specificInformation = getNonEmptyAttributes('information');
 					scope.specifications = getNonEmptyAttributes('specifications');
 
@@ -1018,7 +1034,16 @@
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductInformationAccordion.tpl',
 			transclude: true,
-			link: function(scope, elm, attrs) {
+			link: function(scope, elm) {
+				scope.baseId = 'block-' + scope.blockId + '-information-accordion';
+				var selector = '#' + scope.baseId + '-reviews';
+
+				scope.$on('showReviews', function (event, blockId) {
+					if (blockId == scope.blockId) {
+						elm.find(selector).collapse('show');
+						jQuery('html, body').animate({ scrollTop: elm.find('a[href="' + selector + '"]').offset().top - 20 }, 1000);
+					}
+				});
 			}
 		}
 	}
@@ -1030,16 +1055,15 @@
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductInformationFlat.tpl',
 			transclude: true,
-			link: function(scope, elm, attrs) {
-				scope.flatRows = [];
-				scope.$watch('sectionsAttributes', function(sectionsAttributes) {
-					scope.flatRows = [];
-					angular.forEach(scope.sections, function(section) {
-						angular.forEach(sectionsAttributes[section], function(attribute) {
-							scope.flatRows.push(attribute);
-						})
-					});
-				}, true);
+			link: function(scope, elm) {
+				scope.baseId = 'block-' + scope.blockId + '-information-flat';
+				var selector = '#' + scope.baseId + '-reviews';
+
+				scope.$on('showReviews', function (event, blockId) {
+					if (blockId == scope.blockId) {
+						jQuery('html, body').animate({ scrollTop: elm.find(selector).offset().top - 20 }, 1000);
+					}
+				});
 			}
 		}
 	}
@@ -1051,7 +1075,16 @@
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductInformationTabs.tpl',
 			transclude: true,
-			link: function(scope, elm, attrs) {
+			link: function(scope, elm) {
+				scope.baseId = 'block-' + scope.blockId + '-information-tab';
+				var selector = 'a[href="#' + scope.baseId + '-reviews"]';
+
+				scope.$on('showReviews', function (event, blockId) {
+					if (blockId == scope.blockId) {
+						elm.find(selector).tab('show');
+						jQuery('html, body').animate({ scrollTop: elm.find(selector).offset().top - 20 }, 1000);
+					}
+				});
 			}
 		}
 	}

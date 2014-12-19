@@ -24,6 +24,13 @@
 					<a itemprop="brand" href="{{ brandAttribute.value.URL.canonical }}">{{ brandAttribute.value.title }}</a>
 				</dd>
 			{% endif %}
+			{% if handleReviews %}
+				<dt class="sr-only">{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }}</dt>
+				<dd>
+					<div data-rbs-review-reviews-summary="productData.reviews" data-show-reviews-callback="showReviews"
+						data-scale="{{ ratingScale }}"></div>
+				</dd>
+			{% endif %}
 		</dl>
 	{% endspaceless %}
 {% endblock rbsCatalogProductHeader %}
@@ -68,11 +75,15 @@
 	</div>
 {% endblock rbsCatalogProductDescription %}
 
+{# Used parameters: handleReviews, reviewsPerPage, ratingScale, handleReviewVotes #}
 {% block rbsCatalogProductDetailInformation %}
 	{% if parameters.informationDisplayMode %}
 		<div data-rbs-catalog-product-information="" data-product-data="productData" data-block-id="{{ blockId }}"
 			data-display-mode="{{ parameters.informationDisplayMode }}"
-			data-specifications-display-mode="{{ parameters.specificationsDisplayMode }}">
+			data-specifications-display-mode="{{ parameters.specificationsDisplayMode }}"
+			data-reviews-ajax-data="reviewsAjaxData" data-reviews-ajax-params="reviewsAjaxParams"
+			data-handle-reviews="{{ handleReviews }}" data-handle-review-votes="{{ handleReviewVotes }}"
+			data-rating-scale="{{ ratingScale }}" data-reviews-per-page="{{ reviewsPerPage }}">
 		</div>
 	{% endif %}
 {% endblock rbsCatalogProductDetailInformation %}
@@ -170,13 +181,13 @@
 						</div>
 					{% endblock rbsCatalogProductOfferSetVisual %}
 					{% block rbsCatalogProductOfferSetInfo %}
-					<div class="product-label">
-						<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: subProductData.common.title}) }}"
+						<div class="product-label">
+							<a title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: subProductData.common.title}) }}"
 								href="{{ subProductURL }}">{{ subProductData.common.title }}</a>
-					</div>
-					<div class="product-availability">
-						{{ subProductData.stock.thresholdTitle }}
-					</div>
+						</div>
+						<div class="product-availability">
+							{{ subProductData.stock.thresholdTitle }}
+						</div>
 					{% endblock rbsCatalogProductOfferSetInfo %}
 
 					{% if parameters.webStoreId %}

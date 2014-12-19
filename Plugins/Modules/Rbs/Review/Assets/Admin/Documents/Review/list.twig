@@ -12,12 +12,11 @@
 			{% endfor %}
 		</div>
 
-		<rbs-document-list data-dlid="DLRbsReviewReview"
-			model="Rbs_Review_Review" publishable="true" filter-collection="filter">
+		<rbs-document-list data-dlid="DLRbsReviewReview" model="Rbs_Review_Review" publishable="true" filter-collection="filter">
 			<rbs-column name="target" primary="true">
 				<a href="javascript:;" data-ng-href="(=doc|rbsURL=)">(= doc.target.label =)</a>
 			</rbs-column>
-			<rbs-column name="pseudonym"></rbs-column>
+			<rbs-column name="pseudonym" label="{{ i18nAttr('m.rbs.review.admin.pseudonym') }}"></rbs-column>
 			<rbs-column name="promoted">
 				(= doc.promoted | rbsBoolean =)
 			</rbs-column>
@@ -27,10 +26,10 @@
 					<h4>(= doc.pseudonym =)</h4>
 					<p>{{ i18n(propertyKey('Rbs_Review_Review', 'rating'), ['ucf', 'lab']) }} (= doc.rating =)/100</p>
 					<div class="pull-right">
-						<span class="text-success"><i class="icon-thumbs-up"></i> (= doc.upvote =)</span>
-						<span class="text-warning"><i class="icon-thumbs-down"></i> (= doc.downvote =)</span>
+						<span class="text-success"><span class="icon-thumbs-up"></span> (= doc.upVote =)</span>
+						<span class="text-warning"><span class="icon-thumbs-down"></span> (= doc.downVote =)</span>
 					</div>
-					<p data-ng-bind-html="doc.content.h"></p>
+					<p data-ng-bind-html="doc.renderedContent"></p>
 				</div>
 			</rbs-preview>
 		</rbs-document-list>

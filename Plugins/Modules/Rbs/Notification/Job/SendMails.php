@@ -33,14 +33,15 @@ class SendMails
 			$sendNotification = false;
 			$notificationMailInterval = $adminProfile->getPropertyValue('notificationMailInterval');
 			$notificationMailAt = $adminProfile->getPropertyValue('notificationMailAt');
-			$lastNotificationMailSentTimestamp = $adminProfile->getPropertyValue('dateOfLastNotificationMailSent');
+			$lastNotificationMailSentDate = $adminProfile->getPropertyValue('dateOfLastNotificationMailSent');
 			if ($notificationMailInterval && $notificationMailAt)
 			{
 				$interval = new \DateInterval($adminProfile->getPropertyValue('notificationMailInterval'));
 				$now = new \DateTime();
 
 				list($hour, $minute) = explode(':', $notificationMailAt);
-				$nextSend = (new \DateTime())->setTimestamp($lastNotificationMailSentTimestamp)->add($interval);
+				$nextSend = $lastNotificationMailSentDate instanceof \DateTime ? $lastNotificationMailSentDate : new \DateTime();
+				$nextSend->add($interval);
 
 				//if interval concerning "day" set time (hour and minute), else that mean concerning "hour" so set only minute
 				$interval->d ? $nextSend->setTime(intval($hour), intval($minute)) : $nextSend->setTime($nextSend->format('H'), $minute);
@@ -92,7 +93,7 @@ class SendMails
 					}
 
 					//set date of the last sent mail, useful to compare with the interval next we want send mail
-					$adminProfile->setPropertyValue('dateOfLastNotificationMailSent', (new \DateTime())->getTimestamp());
+					$adminProfile->setPropertyValue('dateOfLastNotificationMailSent', new \DateTime());
 					$profileManager->saveProfile($authenticatedUser, $adminProfile);
 				}
 			}

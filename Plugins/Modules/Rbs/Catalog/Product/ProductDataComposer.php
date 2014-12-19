@@ -40,6 +40,11 @@ class ProductDataComposer
 	protected $stockManager;
 
 	/**
+	 * @var \Rbs\Review\ReviewManager
+	 */
+	protected $reviewManager;
+
+	/**
 	 * @var null|array
 	 */
 	protected $dataSets = null;
@@ -53,9 +58,12 @@ class ProductDataComposer
 		$this->setContext(is_array($context) ? $context : []);
 		$this->setServices($event->getApplicationServices());
 
+		/** @var \Rbs\Generic\GenericServices $genericServices */
+		$genericServices = $event->getServices('genericServices');
+		$this->reviewManager = $genericServices->getReviewManager();
+
 		/** @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-
 		$this->catalogManager = $commerceServices->getCatalogManager();
 		$this->priceManager = $commerceServices->getPriceManager();
 		$this->stockManager = $commerceServices->getStockManager();
@@ -159,6 +167,11 @@ class ProductDataComposer
 			$this->generateWithoutSkuStockAndPriceDataSet();
 		}
 		$this->generateCartDataSet();
+
+		if ($this->hasDataSet('reviews'))
+		{
+			$this->dataSets['reviews'] = $this->reviewManager->getDataSetForTarget($this->product->getId(), []);
+		}
 	}
 
 	public function toArray()

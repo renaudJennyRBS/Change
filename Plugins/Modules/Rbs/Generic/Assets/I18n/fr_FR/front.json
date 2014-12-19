@@ -37,5 +37,11 @@
 	},
 	"delete":{
 		"message":"supprimer"
+	},
+	"cancel":{
+		"message":"annuler"
+	},
+	"loading":{
+		"message":"chargement en cours"
 	}
 }

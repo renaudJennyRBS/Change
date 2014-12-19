@@ -1,23 +1,10 @@
-.star-rating{
+.star-rating {
 	font-size: 1em;
+	vertical-align: middle;
 }
-.star-rating label{
-	color: grey;
+.review-distribution .progress {
+	min-width: 60px;
 }
-.star-rating label:hover{
-	color: black;
-}
-.star-rating .selected label{
-	color: black;
-}
-.star-rating-display{
-	color: grey;
-	letter-spacing: -0.4em;
-}
-.star-rating-display .full {
-	color: black;
-}
-
-.row-review-rating-average {
-	margin-bottom: 0;
+.list-reviews article.panel {
+	margin-bottom: 20px;
 }

@@ -2,6 +2,12 @@
 	"review":{
 		"message":"avis"
 	},
+	"reviews":{
+		"message":"avis"
+	},
+	"review_detail_title":{
+		"message":"avis client"
+	},
 	"review_target":{
 		"message":"document"
 	},
@@ -23,14 +29,20 @@
 	"review_average_rating":{
 		"message":"moyenne des notes"
 	},
-	"review_rating":{
+	"review_rating_labeled":{
 		"message":"note : $RATINGVALUE$ sur $BESTRATING$"
 	},
+	"review_rating":{
+		"message":"$RATINGVALUE$ sur $BESTRATING$"
+	},
+	"review_title_content":{
+		"message":"à propos de $TARGET$"
+	},
 	"review_about":{
-		"message":"À propos de $TARGET$"
+		"message":"à propos de $TARGET$"
 	},
 	"review_post":{
-		"message":"donnez votre avis"
+		"message":"votre avis"
 	},
 	"review_post_review":{
 		"message":"formulaire de soumission d'avis"
@@ -41,6 +53,9 @@
 	"review_post_pseudonym":{
 		"message":"pseudonyme"
 	},
+	"pseudonym_help":{
+		"message":"Votre pseudonyme est le même pour l'ensemble de vos avis. Vous pouvez le modifier depuis votre profil."
+	},
 	"review_post_rating":{
 		"message":"note"
 	},
@@ -50,23 +65,32 @@
 	"review_post_submit":{
 		"message":"poster cet avis"
 	},
+	"review_post_update":{
+		"message":"mettre à jour cet avis"
+	},
 	"review_post_not_connected":{
-		"message":"vous devez vous connecter pour donner votre avis"
+		"message":"Vous devez vous connecter pour donner votre avis."
 	},
 	"review_post_section":{
 		"message":"section"
 	},
-	"already_reviewed":{
-		"message":"vous avez déjà donné votre avis"
+	"confirm_delete_review":{
+		"message":"Êtes-vous sûr de vouloir supprimer cet avis ? (cette opération est irréversible)"
+	},
+	"review_deleted":{
+		"message":"Cet avis a été supprimé."
 	},
 	"your_review":{
 		"message":"votre avis"
 	},
 	"pending_publication":{
-		"message":"votre avis est en cours de validation par notre équipe"
+		"message":"Votre avis est en cours de validation par notre équipe."
+	},
+	"published_review":{
+		"message":"Votre avis est publié."
 	},
 	"review_pending_correction":{
-		"message":"la correction apportée à votre avis est en cours de validation"
+		"message":"La correction apportée à votre avis est en cours de validation."
 	},
 	"review_pending_correction_new_note":{
 		"message":"nouvelle note"
@@ -87,7 +111,7 @@
 		"message":"sélection manuel des avis (si mode manuel sélectionné)"
 	},
 	"promoted_review_list_title_promoted":{
-		"message":"avis promus"
+		"message":"avis les plus utiles"
 	},
 	"promoted_review_list_title_most_recent":{
 		"message":"avis les plus récents"
@@ -104,23 +128,8 @@
 	"current_star_rating":{
 		"message":"$RATING$ étoile(s)"
 	},
-	"star_rating_0":{
-		"message":"0 étoile"
-	},
-	"star_rating_1":{
-		"message":"1 étoile"
-	},
-	"star_rating_2":{
-		"message":"2 étoiles"
-	},
-	"star_rating_3":{
-		"message":"3 étoiles"
-	},
-	"star_rating_4":{
-		"message":"4 étoiles"
-	},
-	"star_rating_5":{
-		"message":"5 étoiles"
+	"review_no_rating":{
+		"message":"ne pas donner de note"
 	},
 	"review_detail_promoted":{
 		"message":"cette avis à été mis en avant, si vous l'éditez, il repassera par la phase de validation et risque de perdre son statut."
@@ -128,13 +137,13 @@
 	"review_vote":{
 		"message":"appréciez-vous cet avis ?"
 	},
-	"review_upvote":{
+	"review_upVote":{
 		"message":"oui"
 	},
-	"review_downvote":{
+	"review_downVote":{
 		"message":"non"
 	},
-	"review_novote":{
+	"review_noVote":{
 		"message":"soyez le premier à évaluer ce commentaire."
 	},
 	"review_voted":{
@@ -144,12 +153,21 @@
 		"message":"détail d'un avis"
 	},
 	"edit_review":{
-		"message":"édition de l'avis"
+		"message":"modifier votre avis"
 	},
 	"edit_review_function":{
 		"message":"édition d'un avis"
 	},
 	"review_note_distribution":{
 		"message":"répartition des notes"
+	},
+	"review_count":{
+		"message":"$COUNT$ avis"
+	},
+	"written_on":{
+		"message":"écrit le"
+	},
+	"by":{
+		"message":"par"
 	}
 }

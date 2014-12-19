@@ -2,7 +2,11 @@
 	"blocks": {
 		"Product": {
 			"jsAssets": [
-				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js",
+				"Theme/Rbs/Base/Rbs_Review/js/review.js"
+			],
+			"cssAssets": [
+				"Theme/Rbs/Base/Rbs_Review/css/review.css"
 			]
 		},
 		"ProductList": {

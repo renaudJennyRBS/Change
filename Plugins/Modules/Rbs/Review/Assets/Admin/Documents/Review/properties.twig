@@ -16,9 +16,18 @@
 	label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'content'), ['ucf']) }}">
 </rbs-field-rich-text>
 
-<rbs-field-text property="pseudonym" required="true"
-	label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'pseudonym'), ['ucf']) }}">
-</rbs-field-text>
+<div data-ng-if="document.canEditPseudonym === false">
+	<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'guestPseudonym'), ['ucf']) }}">
+		<div class="form-control-static">(= document.pseudonym =)</div>
+		<p class="help-block">{{ i18n('m.rbs.review.admin.guest_pseudonym_help', ['ucf']) }}</p>
+	</rbs-field>
+</div>
+<div data-ng-if="document.canEditPseudonym !== false">
+	<rbs-field-text property="guestPseudonym"
+		label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'guestPseudonym'), ['ucf']) }}">
+		<p class="help-block">{{ i18n('m.rbs.review.admin.guest_pseudonym_help', ['ucf']) }}</p>
+	</rbs-field-text>
+</div>
 
 <rbs-field-picker property="target" required="true"
 	label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'target'), ['ucf']) }}"
@@ -32,7 +41,7 @@
 	selector-title="{{ i18nAttr('m.rbs.review.admin.review_select_section', ['ucf']) }}">
 </rbs-field-picker>
 
-<rbs-field-date property="reviewDate" required="true"
+<rbs-field-date property="reviewDate"
 	label="{{ i18nAttr(propertyKey('Rbs_Review_Review', 'reviewDate'), ['ucf']) }}">
 </rbs-field-date>
 

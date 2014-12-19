@@ -230,7 +230,6 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 
 	protected function synchronizeSectionDocumentLists()
 	{
-
 		$dm = $this->getDocumentManager();
 
 		if ($this->getPublicationSectionsCount())
@@ -365,8 +364,4 @@ class Product extends \Compilation\Rbs\Catalog\Documents\Product
 			}
 		}
 	}
-
-
-
-
 }

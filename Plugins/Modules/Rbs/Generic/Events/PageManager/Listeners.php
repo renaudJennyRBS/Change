@@ -36,6 +36,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Generic\Presentation\PageFunctions())->addFunctions($event);
 		};
 		$events->attach(\Change\Presentation\Pages\PageManager::EVENT_GET_FUNCTIONS, $callback, 5);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\User\Presentation\PageManager())->addUserContext($event);
+		};
+		$events->attach(\Change\Presentation\Pages\PageManager::EVENT_GET_PAGE_RESULT, $callback, 10);
 	}
 
 	/**

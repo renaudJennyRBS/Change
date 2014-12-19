@@ -52,6 +52,6 @@ class RichTextManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->trigger(static::EVENT_RENDER, $this, $params);
 		$html = (isset($params['html']) ? $params['html'] : '');
 		$richText->setHtml($html);
-		return $html;
+		return trim($html);
 	}
 }

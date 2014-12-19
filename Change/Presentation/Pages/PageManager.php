@@ -232,7 +232,7 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 					}
 					else
 					{
-						$result = $this->dispatchGetPageResult($page);
+						$result = $this->dispatchGetPageResult($page, $TTL);
 						$cacheAdapter->addItem($key, $result);
 						$this->addMonitoring($result);
 					}
@@ -286,9 +286,10 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param \Change\Presentation\Interfaces\Page $page
+	 * @param integer $TTL
 	 * @return \Change\Http\Web\Result\Page|null
 	 */
-	protected function dispatchGetPageResult($page)
+	protected function dispatchGetPageResult($page, $TTL = 0)
 	{
 		$result = new PageResult($page->getIdentifier());
 		$result->getHeaders()->addHeaderLine('Content-Type: text/html;charset=utf-8');
@@ -296,7 +297,7 @@ class PageManager implements \Zend\EventManager\EventsCapableInterface
 		$result->addNamedHeadAsString('base', new HtmlHeaderElement('base', array('href' => $base, 'target' => '_self')));
 
 		$eventManager = $this->getEventManager();
-		$args = $eventManager->prepareArgs(array('page' => $page, 'pageResult' => $result));
+		$args = $eventManager->prepareArgs(array('page' => $page, 'pageResult' => $result, 'TTL' => $TTL));
 
 		$pageEvent = new PageEvent(static::EVENT_GET_PAGE_RESULT, $this, $args);
 

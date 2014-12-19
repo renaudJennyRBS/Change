@@ -127,7 +127,7 @@ class GenericServices extends \Zend\Di\Di
 			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//AdminManager : Application, EventManagerFactory, i18nManager, ModelManager, PluginManager
+		//AdminManager : Application, i18nManager, ModelManager, PluginManager
 		$adminManagerClassName = $this->getInjectedClassName('AdminManager', 'Rbs\Admin\AdminManager');
 		$classDefinition = $this->getClassDefinition($adminManagerClassName);
 		$this->addApplicationClassDefinition($classDefinition);
@@ -140,11 +140,19 @@ class GenericServices extends \Zend\Di\Di
 			->addMethodParameter('setPluginManager', 'pluginManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-
 		//UserManager : Application
 		$userManagerClassName = $this->getInjectedClassName('UserManager', 'Rbs\User\UserManager');
 		$classDefinition = $this->getClassDefinition($userManagerClassName);
 		$this->addApplicationClassDefinition($classDefinition);
+		$definitionList->addDefinition($classDefinition);
+
+		//ReviewManager : Application, DocumentManager
+		$reviewManagerClassName = $this->getInjectedClassName('ReviewManager', 'Rbs\Review\ReviewManager');
+		$classDefinition = $this->getClassDefinition($reviewManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
+		$classDefinition
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		parent::__construct($definitionList);
@@ -191,6 +199,9 @@ class GenericServices extends \Zend\Di\Di
 				'pluginManager' => $pluginManager));
 
 		$im->addAlias('UserManager', $userManagerClassName, array('application' => $application));
+
+		$im->addAlias('ReviewManager', $reviewManagerClassName,
+			array('application' => $application, 'documentManager' => $documentManager));
 	}
 
 	/**
@@ -274,6 +285,7 @@ class GenericServices extends \Zend\Di\Di
 		return $this->get('AdminManager');
 	}
 
+
 	/**
 	 * @api
 	 * @return \Rbs\User\UserManager
@@ -281,5 +293,14 @@ class GenericServices extends \Zend\Di\Di
 	public function getUserManager()
 	{
 		return $this->get('UserManager');
+	}
+
+	/**
+	 * @api
+	 * @return \Rbs\Review\ReviewManager
+	 */
+	public function getReviewManager()
+	{
+		return $this->get('ReviewManager');
 	}
 }

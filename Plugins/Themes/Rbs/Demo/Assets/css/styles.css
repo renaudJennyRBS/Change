@@ -333,9 +333,6 @@ form .description {
 .tab-pane {
 	padding: 20px;
 }
-.tab-pane :first-child {
-	margin-top: 0;
-}
 
 .panel-heading :last-child,
 .panel-footer :last-child {
@@ -636,4 +633,9 @@ form .description {
 #header-top > div > div .dropdown-cart,
 #footer-top > div > div .dropdown-cart {
 	line-height: 20px;
+}
+
+/** Avatars */
+.img-avatar {
+	margin: 5px;
 }
