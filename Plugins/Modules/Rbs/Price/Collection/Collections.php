@@ -39,7 +39,6 @@ class Collections
 			}
 			$collection = new CollectionArray('Rbs_Price_Collection_BillingAreasForWebStore', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -58,7 +57,6 @@ class Collections
 				't' => $i18nManager->trans('m.rbs.price.admin.collection_taxroundingstrategy_on_total_value')
 			));
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -66,6 +64,5 @@ class Collections
 	{
 		$collection = new Iso4217Collection();
 		$event->setParam('collection', $collection);
-		$event->stopPropagation();
 	}
 }

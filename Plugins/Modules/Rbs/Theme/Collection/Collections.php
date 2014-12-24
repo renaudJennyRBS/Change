@@ -32,7 +32,6 @@ class Collections
 			$rows = $selectQuery->getResults($selectQuery->getRowsConverter()->addIntCol('id')->addStrCol('label')->indexBy('id'));
 			$collection = new CollectionArray('Rbs_Theme_WebsiteIds', $rows);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }

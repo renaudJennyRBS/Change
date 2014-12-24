@@ -37,7 +37,6 @@ class Collections
 			}
 			$collection = new CollectionArray('Rbs_Store_Collection_WebStores', $collection);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }

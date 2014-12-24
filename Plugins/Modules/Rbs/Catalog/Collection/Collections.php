@@ -33,7 +33,6 @@ class Collections
 			];
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_InformationDisplayMode', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -54,7 +53,6 @@ class Collections
 			];
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_SpecificationDisplayMode', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -74,7 +72,6 @@ class Collections
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_ProductSortOrders', $collection);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -100,7 +97,6 @@ class Collections
 
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeValueTypes', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -124,7 +120,6 @@ class Collections
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeCollections', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -160,7 +155,6 @@ class Collections
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeSet', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -180,7 +174,6 @@ class Collections
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeVisibility', $collection);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -213,7 +206,6 @@ class Collections
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_Collection_AttributeProductProperties', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -232,7 +224,6 @@ class Collections
 			$items[ProductManager::MOST_EXPENSIVE_PRODUCT] = new I18nString($i18n, 'm.rbs.catalog.admin.cross_selling_product_choice_most_expensive_product', array('ucf'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Catalog_CrossSelling_CartProductChoiceStrategy', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }

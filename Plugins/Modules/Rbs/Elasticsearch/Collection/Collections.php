@@ -8,14 +8,11 @@
  */
 namespace Rbs\Elasticsearch\Collection;
 
-use Rbs\Elasticsearch\Facet\FacetDefinitionInterface;
-
 /**
  * @name \Rbs\Elasticsearch\Collection\Collections
  */
 class Collections
 {
-
 	/**
 	 * @param \Change\Events\Event $event
 	 * @return \Rbs\Generic\GenericServices
@@ -63,7 +60,6 @@ class Collections
 
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_Clients', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -83,7 +79,6 @@ class Collections
 			$items = $query->getResults($query->getRowsConverter()->addIntCol('id')->addStrCol('label')->indexBy('id'));
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_CollectionIds', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -119,7 +114,6 @@ class Collections
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_AttributeIds', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -141,7 +135,6 @@ class Collections
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_Indexes', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 

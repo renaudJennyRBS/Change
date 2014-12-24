@@ -32,7 +32,6 @@ class Collections
 				'fill' => $i18nManager->trans('m.rbs.media.admin.block_alignment_fill')
 			));
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }
