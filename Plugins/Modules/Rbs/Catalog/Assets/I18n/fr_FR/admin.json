@@ -311,15 +311,6 @@
 	"product_handle_reviews":{
 		"message":"gérer les avis clients"
 	},
-	"product_reviews_per_page":{
-		"message":"nombre d'avis par page"
-	},
-	"product_rating_scale":{
-		"message":"échelle de notation"
-	},
-	"product_handle_review_votes":{
-		"message":"gérer le votes sur les avis clients"
-	},
 	"cross_selling_label":{
 		"message":"produits associés"
 	},

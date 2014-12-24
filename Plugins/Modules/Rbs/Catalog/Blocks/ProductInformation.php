@@ -48,11 +48,11 @@ class ProductInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_handle_reviews', $ucf))
 			->setHidden(true);
 		$templateInformation->addParameterInformation('reviewsPerPage', Property::TYPE_INTEGER, false, 10)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_reviews_per_page', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.review.admin.parameter_reviews_per_page', $ucf));
 		$templateInformation->addParameterInformation('ratingScale', Property::TYPE_INTEGER, false, 5)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_rating_scale', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.review.admin.parameter_rating_scale', $ucf));
 		$templateInformation->addParameterInformation('handleReviewVotes', Property::TYPE_BOOLEAN, false, true)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_handle_review_votes', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.review.admin.parameter_handle_review_votes', $ucf));
 
 		$this->addTTL(60);
 	}
