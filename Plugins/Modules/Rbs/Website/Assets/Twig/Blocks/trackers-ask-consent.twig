@@ -72,8 +72,8 @@
 			jQuery('#trackers-confirm-opt-in').addClass('hidden');
 
 			{% block explicitOptOut %}
-			document.cookie = consentCookieName + '=false;' + getCookieExpireDate() + ';path=/';
-			{% endblock %}
+				document.cookie = consentCookieName + '=false;' + getCookieExpireDate() + ';path=/';
+			{% endblock explicitOptOut %}
 
 			jQuery('#trackers-confirmation').modal({});
 		};
@@ -84,8 +84,8 @@
 			jQuery('#trackers-confirm-opt-in').removeClass('hidden');
 
 			{% block explicitOptIn %}
-			document.cookie = consentCookieName + '=true;' + getCookieExpireDate() + ';path=/';
-			{% endblock %}
+				document.cookie = consentCookieName + '=true;' + getCookieExpireDate() + ';path=/';
+			{% endblock explicitOptIn %}
 
 			jQuery('#trackers-confirmation').modal({});
 		};
@@ -112,7 +112,7 @@
 			else {
 				{% block implicitOptIn %}
 					document.cookie = consentCookieName + '=true;' + getCookieExpireDate() + ' ; path=/';
-				{% endblock %}
+				{% endblock implicitOptIn %}
 			}
 		}
 	})();

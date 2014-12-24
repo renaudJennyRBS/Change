@@ -87,6 +87,4 @@ class AuthenticatedUser implements UserInterface
 	{
 		return true;
 	}
-
-
 }

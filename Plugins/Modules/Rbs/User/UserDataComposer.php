@@ -34,7 +34,7 @@ class UserDataComposer
 	 */
 	protected $dataSets;
 
-	function __construct(\Change\Events\Event $event)
+	public function __construct(\Change\Events\Event $event)
 	{
 
 		$context = $event->getParam('context');
