@@ -60,9 +60,10 @@
 				});
 
 				$rootScope.$on('rbsUserProfileUpdated', function(event, params) {
-					if (params.profile.fullName !== null && params.profile.fullName != '') {
+					var fullName = params.profile['profiles']['Rbs_User']['fullName'];
+					if (fullName) {
 						scope.accessorId = params.userId;
-						scope.accessorName = params.profile.fullName;
+						scope.accessorName = fullName;
 					}
 				});
 
