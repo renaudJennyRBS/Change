@@ -295,16 +295,18 @@
 					(= axis.title =)
 				</label>
 				<div class="col-sm-8 col-md-9">
-					<select id="selectedVariant_{{ blockId }}_(= $index =)" data-ng-show="axesItems[$index].length != 1"
-						data-ng-cloak="" class="form-control" data-ng-model="selectedAxesValues[$index]"
-						data-ng-options="axisItem.value as axisItem.title for axisItem in axesItems[$index]"
-						data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
-						data-ng-change="variantChanged($index)" data-ng-disabled="$index > 0 && !selectedAxesValues[$index - 1]">
-						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
-					</select>
-					<div data-ng-show="axesItems[$index].length == 1" data-ng-cloak="" class="form-control-static">
-						(= axesItems[$index][0].title =)
-					</div>
+					{% block rbsCatalogProductVariantSelectorInput %}
+						<select id="selectedVariant_{{ blockId }}_(= $index =)" data-ng-show="axesItems[$index].length != 1"
+							data-ng-cloak="" class="form-control" data-ng-model="selectedAxesValues[$index]"
+							data-ng-options="axisItem.value as axisItem.title for axisItem in axesItems[$index]"
+							data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
+							data-ng-change="variantChanged($index)" data-ng-disabled="$index > 0 && !selectedAxesValues[$index - 1]">
+							<option value="">{{ i18n('m.rbs.generic.front.select', ['ucf']) }}</option>
+						</select>
+						<div data-ng-show="axesItems[$index].length == 1" data-ng-cloak="" class="form-control-static">
+							(= axesItems[$index][0].title =)
+						</div>
+					{% endblock rbsCatalogProductVariantSelectorInput %}
 				</div>
 			</div>
 		</div>
