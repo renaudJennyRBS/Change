@@ -23,7 +23,7 @@ class Profile extends \Change\User\AbstractProfile
 			'sendNotificationMailImmediately' => false,
 			'notificationMailInterval' => '',
 			'notificationMailAt' => '',
-			'dateOfLastNotificationMailSent' => 0
+			'dateOfLastNotificationMailSent' => null
 		);
 	}
 

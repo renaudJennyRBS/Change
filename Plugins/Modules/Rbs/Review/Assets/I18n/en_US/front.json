@@ -128,13 +128,13 @@
   "review_vote":{
     "message":"Was this review helpful to you?"
   },
-  "review_upvote":{
+  "review_upVote":{
     "message":"yes"
   },
-  "review_downvote":{
+  "review_downVote":{
     "message":"no"
   },
-  "review_novote":{
+  "review_noVote":{
     "message":"be the first to rate this comment."
   },
   "review_voted":{

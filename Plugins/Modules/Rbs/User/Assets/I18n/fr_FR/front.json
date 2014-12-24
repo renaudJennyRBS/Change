@@ -173,6 +173,15 @@
 	"birthDate":{
 		"message":"date d'anniversaire"
 	},
+	"pseudonym":{
+		"message":"pseudonyme"
+	},
+	"no_pseudonym":{
+		"message":"aucun"
+	},
+	"pseudonym_help":{
+		"message":"Votre pseudonyme pourra être affiché publiquement sur le site, notamment sur vos avis produits."
+	},
 	"birthDate_placeholder":{
 		"message":"date d'anniversaire"
 	},

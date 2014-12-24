@@ -1,3 +1,8 @@
+{% set handleReviews = parameters.handleReviews %}
+{% set reviewsPerPage = parameters.reviewsPerPage %}
+{% set ratingScale = parameters.ratingScale %}
+{% set handleReviewVotes = parameters.handleReviewVotes %}
+
 {% block rbsCatalogProductUse %}
 	{% use 'Rbs_Catalog/product-directives.twig' %}
 	{{ block('rbsCatalogAddToCartPopin') }}
@@ -7,8 +12,13 @@
 	{{ block('rbsCatalogProductSpecifications') }}
 	{{ block('rbsCatalogProductAvailability') }}
 	{{ block('rbsCatalogProductPrice') }}
-	{% set handleReviews = parameters.handleReviews %}
 	{{ block('rbsCatalogProductInformationTabs') }}
+	{% if handleReviews %}
+		{% use 'Rbs_Review/review-directives.twig' %}
+		{{ block('rbsReviewCommon') }}
+		{{ block('rbsReviewReview') }}
+		{{ block('rbsReviewReviews') }}
+	{% endif %}
 
 	{% use 'Rbs_Catalog/product-detail.twig' %}
 {% endblock rbsCatalogProductUse %}
@@ -23,7 +33,7 @@
 	{% block rbsCatalogVariantProduct %}
 		{{ block('rbsCatalogAddToCartVariantProduct') }}
 		{{ block('rbsCatalogProductVariantSelector') }}
-		<article itemscope="" itemtype="http://schema.org/Product" class="product-details"
+		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
 				data-ng-controller="RbsCatalogVariantProductController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
 			<div class="row">
@@ -45,7 +55,7 @@
 {% elseif productData.common.type == 'set' %}
 	{% block rbsCatalogProductSet %}
 		{{ block('rbsCatalogAddToCartSetItemProduct') }}
-		<article itemscope="" itemtype="http://schema.org/Product" class="product-details"
+		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
 				data-ng-controller="RbsCatalogProductSetController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
 			<div class="row">
@@ -67,7 +77,7 @@
 {% else %}
 	{% block rbsCatalogSimpleProduct %}
 		{{ block('rbsCatalogAddToCartSimpleProduct') }}
-		<article itemscope="" itemtype="http://schema.org/Product" class="product-details"
+		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
 				data-ng-controller="RbsCatalogSimpleProductController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
 

@@ -42,6 +42,18 @@ class ProductInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_common_information', $ucf))
 			->setAllowedModelsNames('Rbs_Website_Text');
 
+		$templateInformation = $this->addTemplateInformation('Rbs_Catalog', 'product-with-reviews.twig');
+		$templateInformation->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_with_reviews_label', ['ucf']));
+		$templateInformation->addParameterInformation('handleReviews', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_handle_reviews', $ucf))
+			->setHidden(true);
+		$templateInformation->addParameterInformation('reviewsPerPage', Property::TYPE_INTEGER, false, 10)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_reviews_per_page', $ucf));
+		$templateInformation->addParameterInformation('ratingScale', Property::TYPE_INTEGER, false, 5)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_rating_scale', $ucf));
+		$templateInformation->addParameterInformation('handleReviewVotes', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_handle_review_votes', $ucf));
+
 		$this->addTTL(60);
 	}
 }

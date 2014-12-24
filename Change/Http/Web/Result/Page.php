@@ -242,7 +242,7 @@ class Page extends Result
 	 */
 	public function getJsonObject($name)
 	{
-		return isset($this->jsonObjects[$name]) ? null : $this->jsonObjects[$name];
+		return isset($this->jsonObjects[$name]) ? $this->jsonObjects[$name] : null;
 	}
 
 	/**

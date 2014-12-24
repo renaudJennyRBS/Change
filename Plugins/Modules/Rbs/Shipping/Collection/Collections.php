@@ -35,7 +35,6 @@ class Collections
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Shipping_Collection_ShippingModes', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }

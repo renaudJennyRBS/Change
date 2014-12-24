@@ -57,7 +57,6 @@ class Collections
 				}
 
 				$event->setParam('collection', new CollectionArray('Rbs_Website_AvailablePageFunctions', $parsedFunctions));
-				$event->stopPropagation();
 			}
 			else
 			{
@@ -67,7 +66,6 @@ class Collections
 					$parsedFunctions[$function['code']] = $function['label'];
 				}
 				$event->setParam('collection', new CollectionArray('Rbs_Website_AvailablePageFunctions', $parsedFunctions));
-				$event->stopPropagation();
 			}
 		}
 	}

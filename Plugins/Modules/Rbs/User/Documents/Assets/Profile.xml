@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
+	xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd">
 	<properties>
-		<property name="user" type="Document" document-type="Rbs_User_User"/>
+		<property name="user" type="Document" document-type="Rbs_User_User" />
 		<!-- Technical properties accessible in Change_User profile -->
 		<!-- @see \Rbs\Generic\Events\ProfileManager\Listeners -->
+		<property name="hasChangeUser" type="Boolean" default-value="false" />
 		<property name="defaultLCID" type="String">
-			<dboptions length="5"/>
+			<dboptions length="5" />
 		</property>
 		<property name="defaultTimeZone" type="String">
-			<dboptions length="100"/>
+			<dboptions length="100" />
 		</property>
 		<!-- Profile data properties accessible in Rbs_User profile -->
 		<!-- @see \Rbs\Generic\Events\ProfileManager\Listeners -->
+		<property name="hasRbsUser" type="Boolean" default-value="false" />
 		<property name="firstName" type="String" />
 		<property name="lastName" type="String" />
 		<property name="titleCode" type="String" />
 		<property name="birthDate" type="Date" />
+		<!-- Technical properties accessible in Rbs_Admin profile -->
+		<!-- @see \Rbs\Generic\Events\ProfileManager\Listeners -->
+		<property name="hasRbsAdmin" type="Boolean" default-value="false" />
+		<property name="adminAvatar" type="String" />
+		<property name="pagingSize" type="Integer" />
+		<property name="documentListViewMode" type="String" />
+		<property name="sendNotificationMailImmediately" type="Boolean" />
+		<property name="notificationMailInterval" type="String" />
+		<property name="notificationMailAt" type="String" />
+		<property name="dateOfLastNotificationMailSent" type="DateTime" />
+		<!-- Technical properties accessible in Rbs_Website profile -->
+		<!-- @see \Rbs\Generic\Events\ProfileManager\Listeners -->
+		<property name="hasRbsWebsite" type="Boolean" default-value="false" />
+		<property name="webPseudonym" type="String" />
 	</properties>
 </document>

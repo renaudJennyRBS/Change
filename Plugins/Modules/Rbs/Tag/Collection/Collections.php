@@ -37,7 +37,6 @@ class Collections
 			asort($collection);
 			$collection = new CollectionArray('Rbs_Tag_Collection_TagModules', $collection);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }

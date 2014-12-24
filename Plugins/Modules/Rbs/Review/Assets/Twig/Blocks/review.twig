@@ -1,44 +1,20 @@
-<article id="review-{{ review.id }}" class="panel{{ validationClass }}" itemscope="" itemtype="http://schema.org/Review">
-	<img alt="" src="{{ avatarURL(80, review.email, review.author) }}" class="avatar img-thumbnail pull-right" />
-	<header class="panel-heading">
-		{% if loop and review.url %}
-			<a itemprop="url" rel="nofollow" href="{{ review.url }}">{{ loop.index }}.</a>
-			<span class="divider"> - </span>
-		{% endif %}
-		<time itemprop="dateCreated" datetime="{{ review.reviewDate | date('Y-m-d\TH:i:sO') }}">{{ review.reviewDate | transDateTime }}</time>
-		<span itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
-			<meta itemprop="worstRating" content="0" />
-			{% include 'Rbs_Review/Blocks/star-rating.twig' with { 'reviewStarRating': review.reviewStarRating } %}
-		</span>
-		<small class="text-muted">
-			{{ i18n('m.rbs.review.front.review_about', ['ucf'], { 'target': '<a itemprop="about" href="' ~ review.target.url ~ '">' ~ review.target.title ~ '</a></small>'}) | raw }}
-		</small>
-	</header>
-	<div itemprop="reviewBody" class="panel-body">
-		{{ review.content | raw }}
-	</div>
-	{% if displayVote %}
+{% set ratingScale = parameters.ratingScale %}
+{% set handleVotes = parameters.handleVotes %}
+
+{% block rbsCatalogProductUse %}
+	{% use 'Rbs_Review/review-directives.twig' %}
+	{{ block('rbsReviewCommon') }}
+	{{ block('rbsReviewReview') }}
+{% endblock rbsCatalogProductUse %}
+
+{% block rbsReviewReviewDataCache %}
 	<script type="text/javascript">
-		window.__change.RbsReview{{ review.id }} = {{ review | json_encode() | raw }};
+		window.__change['{{ blockId }}'] = {{ reviewData | json_encode | raw}};
 	</script>
-	<div ng-controller="RbsReviewVoteCtrl" ng-init="reviewId = 'RbsReview{{ review.id }}'">
-		<footer class="panel-footer">
-			<p data-ng-if="review.upvote + review.downvote == 0">
-				{{ i18n('m.rbs.review.front.review_novote', ['ucf']) }}
-			</p>
-			<p data-ng-if="review.voted">
-				{{ i18n('m.rbs.review.front.review_voted', ['ucf']) }}
-			</p>
-			<div data-ng-if="review.upvote + review.downvote > 0">
-				<span class="text-success"><i class="glyphicon glyphicon-thumbs-up"></i> (= review.upvote =)</span>
-				<span class="text-warning"><i class="glyphicon glyphicon-thumbs-down"></i> (= review.downvote =)</span>
-			</div>
-			<div data-ng-if="review.canVote">
-				<span>{{ i18n('m.rbs.review.front.review_vote', ['ucf']) }}</span>
-				<button name="voteup" class="btn btn-xs btn-success" type="button" data-ng-click="vote('up')"><i class="glyphicon glyphicon-thumbs-up"></i> {{ i18n('m.rbs.review.front.review_upvote', ['ucf']) }}</button>
-				<button name="votedown" class="btn btn-xs btn-warning" type="button" data-ng-click="vote('down')"><i class="glyphicon glyphicon-thumbs-down"></i> {{ i18n('m.rbs.review.front.review_downvote', ['ucf']) }}</button>
-			</div>
-		</footer>
-	</div>
-	{% endif %}
-</article>
+{% endblock rbsReviewReviewDataCache %}
+
+{% block rbsReviewReviewContent %}
+	<h1>{{ i18n('m.rbs.review.front.review_detail_title', ['ucf']) }}</h1>
+	<div data-rbs-review-review-details="" data-ajax-data="{}" data-ajax-params="{}" data-cache-key="{{ blockId }}"
+		data-review-id="{{ parameters.toDisplayDocumentId }}"></div>
+{% endblock rbsReviewReviewContent %}

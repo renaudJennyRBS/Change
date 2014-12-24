@@ -10,7 +10,9 @@
 {% endblock rbsUserTokensDataCache %}
 
 {% if parameters.authenticated %}
-	<h1>{{ i18n('m.rbs.user.front.manage_auto_login_token_title', ['ucf']) }}</h1>
-	<div data-rbs-user-manage-auto-login="" data-cache-key="{{ blockId }}"></div>
+	{% block rbsUserTokensContent %}
+		<h1>{{ i18n('m.rbs.user.front.manage_auto_login_token_title', ['ucf']) }}</h1>
+		<div data-rbs-user-manage-auto-login="" data-cache-key="{{ blockId }}"></div>
+	{% endblock rbsUserTokensContent %}
 {% endif %}
 

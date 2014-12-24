@@ -29,18 +29,21 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (Event $event)
 		{
-			switch ($event->getParam('code'))
+			if (!$event->getParam('collection'))
 			{
-				case 'Rbs_Event_Collection_SectionRestrictions':
-					(new \Rbs\Event\Collection\Collections())->sectionRestrictions($event);
-					break;
+				switch ($event->getParam('code'))
+				{
+					case 'Rbs_Event_Collection_SectionRestrictions':
+						(new \Rbs\Event\Collection\Collections())->sectionRestrictions($event);
+						break;
+				}
 			}
 		};
 		$events->attach(CollectionManager::EVENT_GET_COLLECTION, $callback, 10);
 
 		$callback = function (Event $event)
 		{
-			$codes = $event->getParam('codes', array());
+			$codes = $event->getParam('codes', []);
 			$codes[] = 'Rbs_Event_Collection_SectionRestrictions';
 			$event->setParam('codes', $codes);
 		};

@@ -1,0 +1,48 @@
+<ul class="pagination" data-ng-if="pageCount > 1">
+	<li data-ng-class="{'disabled': pageNumber == 1}">
+		{%- spaceless %}
+			<a data-ng-hide="pageNumber == 1" href="javascript:" data-ng-click="setPageNumber(1)"
+				title="{{ i18nAttr('m.rbs.generic.front.first_page', ['ucf']) }}">«</a>
+			<span data-ng-show="pageNumber == 1">«</span>
+		{% endspaceless -%}
+	</li>
+
+	<li data-ng-class="{'disabled': pageNumber == 1}">
+		{%- spaceless %}
+			<a data-ng-hide="pageNumber == 1" href="javascript:" data-ng-click="setPageNumber(pageNumber - 1)"
+				title="{{ i18nAttr('m.rbs.generic.front.previous_page', ['ucf']) }}">‹</a>
+			<span data-ng-show="pageNumber == 1">‹</span>
+		{% endspaceless -%}
+	</li>
+
+	<li data-ng-show="pageNumber > 4"><span>...</span></li>
+
+	<li data-ng-repeat="i in pagesToShow" data-ng-class="{'active': i == pageNumber}">
+		<a data-ng-hide="i == pageNumber" href="javascript:" data-ng-click="setPageNumber(i)">(= i =)</a>
+		<span data-ng-show="i == pageNumber">(= i =)</span>
+	</li>
+
+	<li data-ng-show=" pageCount - pageNumber > 4"><span>...</span></li>
+
+	<li data-ng-class="{'disabled': pageNumber == pageCount}">
+		{%- spaceless %}
+			<a data-ng-hide="pageNumber == pageCount" href="javascript:" data-ng-click="setPageNumber(pageNumber+1)"
+				title="{{ i18nAttr('m.rbs.generic.front.next_page', ['ucf']) }}">›</a>
+			<span data-ng-show="pageNumber == pageCount">›</span>
+		{% endspaceless -%}
+	</li>
+
+	<li data-ng-class="{'disabled': pageNumber == pageCount}">
+		{%- spaceless %}
+			<a data-ng-hide="pageNumber == pageCount" href="javascript:" data-ng-click="setPageNumber(pageCount)"
+				title="{{ i18nAttr('m.rbs.generic.front.last_page', ['ucf']) }}">»</a>
+			<span data-ng-show="pageNumber == pageCount">»</span>
+		{% endspaceless -%}
+	</li>
+
+	<li class="page-count">
+		<span>
+			{{ i18n('m.rbs.generic.front.page_x_of_y', ['ucf'], {pageNumber: '(= pageNumber =)', pageCount: '(= pageCount =)'}) }}
+		</span>
+	</li>
+</ul>

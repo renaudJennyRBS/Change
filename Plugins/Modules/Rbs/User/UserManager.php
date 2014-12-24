@@ -957,9 +957,12 @@ class UserManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function  onDefaultSetUserData(\Change\Events\Event $event)
 	{
-		$context = $event->getParam('context', []) + ['data' => []];
+		$context = $event->getParam('context', []) + ['data' => [], 'useFullNameAsDefaultPseudonym' => true];
 		$userData = $context['data'];
-		if ($userData && isset($userData['profiles']['Rbs_User']) && is_array($userData['profiles']['Rbs_User'])) {
+		$hasUserProfileData = isset($userData['profiles']['Rbs_User']) && is_array($userData['profiles']['Rbs_User']);
+		$hasWebsiteProfileData = isset($userData['profiles']['Rbs_User']) && is_array($userData['profiles']['Rbs_User']);
+		if ($userData && ($hasUserProfileData || $hasWebsiteProfileData))
+		{
 			$user = $event->getParam('user');
 			if (is_numeric($user))
 			{
@@ -971,40 +974,66 @@ class UserManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			if ($user instanceof \Change\User\UserInterface)
 			{
-				$userProfileData = $userData['profiles']['Rbs_User'];
-				$profileManager = $event->getApplicationServices()->getProfileManager();
-				$profile = $profileManager->loadProfile($user, 'Rbs_User');
-				if (array_key_exists('titleCode', $userProfileData))
+				// Rbs_User profile.
+				if ($hasUserProfileData)
 				{
-					$value = trim(strval($userProfileData['titleCode']));
-					$profile->setPropertyValue('titleCode', $value);
-				}
-				if (array_key_exists('firstName', $userProfileData))
-				{
-					$value = trim(strval($userProfileData['firstName']));
-					$profile->setPropertyValue('firstName', $value);
-				}
-
-				if (array_key_exists('lastName', $userProfileData))
-				{
-					$value = trim(strval($userProfileData['lastName']));
-					$profile->setPropertyValue('lastName', $value);
-				}
-
-				if (array_key_exists('birthDate', $userProfileData))
-				{
-					$value = trim(strval($userProfileData['birthDate']));
-					if ($value)
+					$userProfileData = $userData['profiles']['Rbs_User'];
+					$profileManager = $event->getApplicationServices()->getProfileManager();
+					$userProfile = $profileManager->loadProfile($user, 'Rbs_User');
+					if (array_key_exists('titleCode', $userProfileData))
 					{
-						$profile->setPropertyValue('birthDate', (new \DateTime($value))->format('Y-m-d'));
+						$value = trim(strval($userProfileData['titleCode']));
+						$userProfile->setPropertyValue('titleCode', $value);
 					}
-					else
+					if (array_key_exists('firstName', $userProfileData))
 					{
-						$profile->setPropertyValue('birthDate', null);
+						$value = trim(strval($userProfileData['firstName']));
+						$userProfile->setPropertyValue('firstName', $value);
+					}
+					if (array_key_exists('lastName', $userProfileData))
+					{
+						$value = trim(strval($userProfileData['lastName']));
+						$userProfile->setPropertyValue('lastName', $value);
 					}
 
+					if (array_key_exists('birthDate', $userProfileData))
+					{
+						$value = trim(strval($userProfileData['birthDate']));
+						if ($value)
+						{
+							$userProfile->setPropertyValue('birthDate', (new \DateTime($value))->format('Y-m-d'));
+						}
+						else
+						{
+							$userProfile->setPropertyValue('birthDate', null);
+						}
+					}
+					$profileManager->saveProfile($user, $userProfile);
 				}
-				$profileManager->saveProfile($user, $profile);
+
+				// Rbs_Website profile.
+				if ($hasWebsiteProfileData)
+				{
+					$webProfileData = $userData['profiles']['Rbs_Website'];
+					$profileManager = $event->getApplicationServices()->getProfileManager();
+					$webProfile = $profileManager->loadProfile($user, 'Rbs_Website');
+					if (array_key_exists('pseudonym', $webProfileData))
+					{
+						$value = trim(strval($webProfileData['pseudonym']));
+						$webProfile->setPropertyValue('pseudonym', $value);
+					}
+
+					if ($context['useFullNameAsDefaultPseudonym'] && !$webProfile->getPropertyValue('pseudonym'))
+					{
+						if (!isset($userProfile))
+						{
+							$userProfile = $profileManager->loadProfile($user, 'Rbs_User');
+						}
+						$value = $userProfile->getPropertyValue('fullName');
+						$webProfile->setPropertyValue('pseudonym', $value);
+					}
+					$profileManager->saveProfile($user, $webProfile);
+				}
 			}
 		}
 	}

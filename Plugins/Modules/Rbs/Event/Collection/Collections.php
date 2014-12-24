@@ -31,7 +31,6 @@ class Collections
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Event_Collection_SectionRestrictions', $collection);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }

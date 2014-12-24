@@ -29,11 +29,21 @@ class ReviewDetail extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('reviewId');
-		$parameters->addParameterMeta('editionMode', false);
+		$parameters->addParameterMeta('handleVotes', true);
+		$parameters->addParameterMeta('avatarSizes', '60');
+		$parameters->addParameterMeta('ratingScale', '5');
+		$parameters->addParameterMeta('imageFormats');
+		$parameters->addParameterMeta('dataSetNames');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$this->setParameterValueForDetailBlock($parameters, $event);
+
+		$page = $event->getParam('page');
+		if ($page instanceof \Rbs\Website\Documents\Page)
+		{
+			$parameters->setParameterValue('pageId', $page->getId());
+		}
 
 		return $parameters;
 	}
@@ -44,11 +54,7 @@ class ReviewDetail extends Block
 	 */
 	protected function isValidDocument($document)
 	{
-		if ($document instanceof \Rbs\Review\Documents\Review && $document->published())
-		{
-			return true;
-		}
-		return false;
+		return $document instanceof \Rbs\Review\Documents\Review && $document->published();
 	}
 
 	/**
@@ -61,16 +67,33 @@ class ReviewDetail extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$review = $event->getApplicationServices()->getDocumentManager()
-			->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
-		if ($review)
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$genericServices = $event->getServices('genericServices');
+		$review = $documentManager->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
+		if ($review instanceof \Rbs\Review\Documents\Review && $genericServices instanceof \Rbs\Generic\GenericServices)
 		{
-			/* @var $review \Rbs\Review\Documents\Review */
-			$urlManager = $event->getUrlManager();
-			$attributes['review'] = $review->getInfoForTemplate($urlManager);
-			$attributes['displayVote'] = true;
+			$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+			$attributes['reviewData'] = $genericServices->getReviewManager()->getReviewData($review, $context->toArray());
 			return 'review.twig';
 		}
 		return null;
+	}
+
+	/**
+	 * @param \Change\Application $application
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param Parameters $parameters
+	 * @return \Change\Http\Ajax\V1\Context
+	 */
+	protected function populateContext($application, $documentManager, $parameters)
+	{
+		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
+		$context->setDetailed(true);
+		$context->setVisualFormats($parameters->getParameter('imageFormats'));
+		$context->setURLFormats(['canonical']);
+		$context->setDataSetNames($parameters->getParameter('dataSetNames'));
+		$context->setPage($parameters->getParameter('pageId'));
+		$context->addData('avatarSizes', explode(',', $parameters->getParameter('avatarSizes')));
+		return $context;
 	}
 }

@@ -45,22 +45,22 @@
 		"message":"en préparation"
 	},
 	"prepared":{
-		"message":"préparé"
+		"message":"préparée"
 	},
 	"shipped":{
-		"message":"expédié"
+		"message":"expédiée"
 	},
 	"delivered":{
-		"message":"réceptionné"
+		"message":"réceptionnée"
 	},
 	"partially_shipped":{
-		"message":"partiellement expédié"
+		"message":"partiellement expédiée"
 	},
 	"finalized":{
-		"message":"expédié"
+		"message":"expédiée"
 	},
 	"canceled":{
-		"message":"annulé"
+		"message":"annulée"
 	},
 	"edition":{
 		"message":"en cours d'édition"
@@ -153,13 +153,13 @@
 		"message":"inconnu"
 	},
 	"shipping_status_remain":{
-		"message":"partiellement expédié"
+		"message":"partiellement expédiée"
 	},
 	"shipping_status_sent":{
-		"message":"expédié"
+		"message":"expédiée"
 	},
 	"shipping_status_noshipment":{
-		"message":"non-expédié"
+		"message":"non-expédiée"
 	},
 	"shipping_address":{
 		"message":"adresse"

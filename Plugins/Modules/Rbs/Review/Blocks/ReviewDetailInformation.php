@@ -8,7 +8,6 @@
  */
 namespace Rbs\Review\Blocks;
 
-use Change\Documents\Property;
 use Change\Presentation\Blocks\Information;
 
 /**

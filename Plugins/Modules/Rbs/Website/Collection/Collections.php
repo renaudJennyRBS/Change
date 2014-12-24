@@ -15,7 +15,6 @@ use Change\I18n\I18nString;
  */
 class Collections
 {
-
 	/**
 	 * @param \Change\Events\Event $event
 	 */
@@ -32,7 +31,6 @@ class Collections
 			];
 			$collection = new \Change\Collection\CollectionArray('Rbs_Website_InterstitialAudiences', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -53,7 +51,6 @@ class Collections
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Website_InterstitialDisplayFrequencies', $collection);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -73,7 +70,6 @@ class Collections
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Website_InterstitialPopinSizes', $collection);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }

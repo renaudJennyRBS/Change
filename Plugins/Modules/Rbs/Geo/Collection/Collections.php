@@ -31,7 +31,6 @@ class Collections
 			}
 			$collection = new \Change\Collection\CollectionArray('Rbs_Geo_All_Countries_Codes', $array);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -55,7 +54,6 @@ class Collections
 
 		$collection = new \Change\Collection\CollectionArray('Rbs_Geo_Collection_Countries', $array);
 		$event->setParam('collection', $collection);
-		$event->stopPropagation();
 	}
 
 	/**
@@ -83,6 +81,5 @@ class Collections
 
 		$collection = new \Change\Collection\CollectionArray('Rbs_Geo_AddressField_Names', $array);
 		$event->setParam('collection', $collection);
-		$event->stopPropagation();
 	}
 }

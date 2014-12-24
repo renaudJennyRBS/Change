@@ -61,7 +61,7 @@
 		"message":"<strong>$TOTAL$</strong> produits"
 	},
 	"no_other":{
-		"message":"<strong>aucune</strong> autre contenu"
+		"message":"<strong>aucun</strong> autre contenu"
 	},
 	"one_other":{
 		"message":"<strong>un</strong> autre contenu"

@@ -31,7 +31,6 @@ class Collections
 			);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Simpleform_ConfirmationModes', $collection);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -54,7 +53,6 @@ class Collections
 
 			$collection = new \Change\Collection\CollectionArray('Rbs_Simpleform_FieldTypes', $collection);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 
@@ -76,7 +74,6 @@ class Collections
 				'characters' => new I18nString($i18n, 'm.rbs.simpleform.admin.field_parameters_auto_capitalize_characters', array('ucf'))
 			));
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }

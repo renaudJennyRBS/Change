@@ -15,7 +15,6 @@ use Zend\Http\Response as HttpResponse;
  */
 class UpdateCurrentUser
 {
-
 	/**
 	 * @param \Change\Http\Event $event
 	 */

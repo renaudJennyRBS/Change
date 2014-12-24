@@ -31,7 +31,6 @@ class Collections
 			];
 			$collection = new \Change\Collection\CollectionArray('Rbs_Productreturn_FieldDisplayOptions', $items);
 			$event->setParam('collection', $collection);
-			$event->stopPropagation();
 		}
 	}
 }

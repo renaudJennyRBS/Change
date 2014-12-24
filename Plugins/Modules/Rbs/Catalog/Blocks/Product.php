@@ -35,12 +35,24 @@ class Product extends Block
 		$parameters->addParameterMeta('commonInformation', []);
 		$parameters->addParameterMeta('informationDisplayMode', 'tabs');
 		$parameters->addParameterMeta('specificationsDisplayMode', 'table');
+		$parameters->addParameterMeta('handleReviews', false);
+		$parameters->addParameterMeta('reviewsPerPage', 10);
+		$parameters->addParameterMeta('ratingScale', 5);
+		$parameters->addParameterMeta('handleReviewVotes', true);
 		$parameters->addParameterMeta('imageFormats', 'x,detail,detailThumbnail,pictogram,attribute');
 		$parameters->addParameterMeta('dataSetNames', 'rootProduct,productSet');
 		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$this->setParameterValueForDetailBlock($parameters, $event);
+
+		// If reviews are activated, add the data set.
+		if ($parameters->getParameter('handleReviews'))
+		{
+			$dataSetNames = $parameters->getParameter('dataSetNames');
+			$dataSetNames .= ($dataSetNames ? ',' : '') . 'reviews';
+			$parameters->setParameterValue('dataSetNames', $dataSetNames);
+		}
 
 		$parameters->addParameterMeta('redirectUrl');
 		$parameters->addParameterMeta('pageId', null);

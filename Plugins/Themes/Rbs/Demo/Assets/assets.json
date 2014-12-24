@@ -21,31 +21,5 @@
 				"Theme/Rbs/Base/js/ngInfiniteScroll-1.2.0/build/ng-infinite-scroll.min.js"
 			]
 		}
-	},
-
-	"blocks" :
-	{
-		"Rbs_Review_PromotedReviewList" : {
-			"cssAssets" : ["Theme/Rbs/Demo/css/review.css"],
-			"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
-		},
-
-		"Rbs_Review_ReviewList" : {
-			"cssAssets" : ["Theme/Rbs/Demo/css/review.css"],
-			"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
-		},
-
-		"Rbs_Review_ReviewAverageRating": {
-			"cssAssets": ["Theme/Rbs/Demo/css/review.css"]
-		},
-
-		"Rbs_Review_PostReview": {
-			"cssAssets": ["Theme/Rbs/Demo/css/review.css"]
-		},
-
-		"Rbs_Review_ReviewDetail": {
-			"cssAssets": ["Theme/Rbs/Demo/css/review.css"],
-			"jsAssets" : ["Theme/Rbs/Base/Rbs_Review/js/review.js"]
-		}
 	}
 }

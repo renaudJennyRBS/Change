@@ -1,0 +1,428 @@
+{% block rbsReviewCommon %}
+	{% block rbsReviewStarRating %}
+		<script type="text/ng-template" id="/rbsReviewStarRating.tpl">
+			<span class="sr-only">
+			{{ i18n('m.rbs.review.front.review_rating_labeled', ['ucf'],
+			{ 'ratingValue': '<span itemprop="ratingValue">(= scaledRating =)</span>', 'bestRating': '<span itemprop="bestRating">(= scale =)</span>' }) | raw }}
+		</span>
+			<span class="star-rating" aria-hidden="true"
+				title="{{ i18n('m.rbs.review.front.review_rating_labeled', ['ucf'], { 'ratingValue': '(= scaledRating =)', 'bestRating': '(= scale =)' }) }}">
+			<span data-ng-repeat="i in stars" data-ng-class="{'text-muted': scaledRating <= i}" class="glyphicon glyphicon-star"></span>
+		</span>
+		</script>
+	{% endblock rbsReviewStarRating %}
+
+	{% block rbsReviewInputStarRating %}
+		<script type="text/ng-template" id="/rbsReviewInputStarRating.tpl">
+			<ol class="list-inline star-rating-input">
+				<li data-rbs-review-input-star-rating-item="0">
+					{%- spaceless %}
+						<label class="no-bottom-margin"
+							title="{{ i18n('m.rbs.review.front.review_rating', ['ucf'], { 'ratingValue': '0', 'bestRating': '(= scale =)' }) }}">
+							<input type="radio" name="review" data-ng-model="scaled.rating" value="0" class="sr-only" />
+							<span data-ng-class="{'text-primary': scaled.hover == 0}" class="glyphicon glyphicon-star-empty"></span>
+						</label>
+					{% endspaceless -%}
+				</li>
+				<li class="divider">|</li>
+				<li data-ng-repeat="i in stars" data-rbs-review-input-star-rating-item="(= i =)">
+					{%- spaceless %}
+						<label class="no-bottom-margin"
+							title="{{ i18n('m.rbs.review.front.review_rating', ['ucf'], { 'ratingValue': '(= i =)', 'bestRating': '(= scale =)' }) }}">
+							<input type="radio" name="rating" data-ng-model="scaled.rating" data-ng-value="i" class="sr-only no-top-margin" />
+						<span data-ng-class="{'text-primary': scaled.hover == i, 'text-muted': scaled.rating < i && scaled.hover != i}"
+							class="glyphicon glyphicon-star"></span>
+						</label>
+					{% endspaceless -%}
+				</li>
+				<li>{{ i18n('m.rbs.review.front.review_rating', ['ucf'], { 'ratingValue': '(= scaled.rating =)', 'bestRating': '(= scale =)' }) }}</li>
+			</ol>
+		</script>
+	{% endblock rbsReviewInputStarRating %}
+
+	{% block rbsReviewDisplay %}
+		<script type="text/ng-template" id="/rbsReviewDisplay.tpl">
+			<article id="(= idPrefix =)-(= data.id =)" class="panel" data-ng-class="{'panel-warning': !data.common.published}"
+				itemscope="" itemtype="http://schema.org/Review">
+				{% block rbsReviewDisplayHeader %}
+					<img data-ng-if="data.author.avatar['60']" alt="" src="" data-ng-src="(= data.author.avatar['60'] =)"
+						class="img-avatar img-thumbnail pull-right" />
+					<header class="panel-heading">
+						<span data-ng-show="number">
+							<a itemprop="url" rel="nofollow" data-ng-href="(= data.common.url =)">(= number =).</a>
+							<span class="divider"> - </span>
+						</span>
+						{{ i18n('m.rbs.review.front.written_on', ['ucf']) }}
+						<time itemprop="dateCreated" datetime="(= data.common.reviewDate =)">
+							(= data.common.reviewDate | rbsDateTime =)
+						</time>
+						<span data-ng-show="data.author.pseudonym">
+							{{ i18n('m.rbs.review.front.by') }}
+							<span itemprop="author">(= data.author.pseudonym =)</span>
+						</span>
+						<div itemprop="reviewRating" itemscope="" itemtype="http://schema.org/Rating">
+							<meta itemprop="worstRating" content="0" />
+							<span data-rbs-review-star-rating="data.common.rating" data-scale="(= scale =)"></span>
+						</div>
+						<small class="text-muted">
+							{{ i18n('m.rbs.review.front.review_about', ['ucf'], { 'target': '<a itemprop="about" href="(= data.target.url =)">(= data.target.title =)</a>'}) | raw }}
+						</small>
+					</header>
+				{% endblock rbsReviewDisplayHeader %}
+				{% block rbsReviewDisplayMain %}
+					<div itemprop="reviewBody" class="panel-body richtext">
+						<div data-ng-bind-html="trustHtml(data.common.content)"></div>
+					</div>
+				{% endblock rbsReviewDisplayMain %}
+				{% block rbsReviewDisplayFooter %}
+					<footer data-ng-if="handleVotes" class="panel-footer">
+						<div class="row">
+							<div class="col-sm-6">
+								<div data-ng-if="data.votes.total == 0">
+									{{ i18n('m.rbs.review.front.review_noVote', ['ucf']) }}
+								</div>
+								<div data-ng-if="data.votes.total > 0">
+								<span class="text-success">
+									<span class="glyphicon glyphicon-thumbs-up"></span> (= data.votes.up =)
+								</span>
+								<span class="text-warning">
+									<span class="glyphicon glyphicon-thumbs-down"></span> (= data.votes.down =)
+								</span>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div data-ng-if="voted" class="text-right">
+									{{ i18n('m.rbs.review.front.review_voted', ['ucf']) }}
+								</div>
+								<div data-ng-if="canVote" class="text-right">
+									<span>{{ i18n('m.rbs.review.front.review_vote', ['ucf']) }}</span>
+									<button name="voteUp" class="btn btn-xs btn-success" type="button" data-ng-click="vote('up')">
+										<span class="glyphicon glyphicon-thumbs-up"></span>
+										{{ i18n('m.rbs.review.front.review_upVote', ['ucf']) }}
+									</button>
+									<button name="voteDown" class="btn btn-xs btn-warning" type="button" data-ng-click="vote('down')">
+										<span class="glyphicon glyphicon-thumbs-down"></span>
+										{{ i18n('m.rbs.review.front.review_downVote', ['ucf']) }}
+									</button>
+								</div>
+							</div>
+						</div>
+					</footer>
+				{% endblock rbsReviewDisplayFooter %}
+			</article>
+		</script>
+	{% endblock rbsReviewDisplay %}
+
+	{% block rbsReviewEdit %}
+		<script type="text/ng-template" id="/rbsReviewEdit.tpl">
+			<form method="post" class="form-horizontal" name="rbsReview{{ blockId }}">
+				<fieldset>
+					<div class="form-group">
+						<label class="col-sm-4 col-md-3 control-label" for="rbs-review-pseudonym-{{ blockId }}">
+							{{ i18n('m.rbs.review.front.review_post_pseudonym', ['ucf']) }}
+						</label>
+						<div class="col-sm-8 col-md-9">
+							<div class="form-control-static" id="rbs-review-pseudonym-{{ blockId }}">
+								(= editingData.pseudonym =)
+								<em data-ng-show="!editingData.pseudonym">
+									{{ i18n('m.rbs.user.front.no_pseudonym', ['ucf']) }}
+								</em>
+								<p class="help-block">{{ i18nAttr('m.rbs.review.front.pseudonym_help', ['ucf']) }}</p>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 col-md-3 control-label" for="rbs-review-rating-{{ blockId }}">
+							<em class="required-symbol"
+								title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+							{{ i18n('m.rbs.review.front.review_post_rating', ['ucf']) }}
+						</label>
+						<div class="col-sm-8 col-md-9">
+							<div class="form-control-static" id="rbs-review-rating-{{ blockId }}" data-scale="(= scale =)"
+								data-rbs-review-input-star-rating="" data-ng-model="editingData.rating">
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-4 col-md-3 control-label" for="rbs-review-content-{{ blockId }}">
+							<em class="required-symbol"
+								title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+							{{ i18n('m.rbs.review.front.review_post_content', ['ucf']) }}
+						</label>
+						<div class="col-sm-8 col-md-9">
+							<textarea class="form-control" id="rbs-review-content-{{ blockId }}" name="content"
+								data-ng-model="editingData.content.raw" required="required"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
+							<div data-ng-show="data.editableReview">
+								<button class="btn btn-primary" type="button" data-ng-click="saveReview()"
+									data-ng-disabled="rbsReview{{ blockId }}.$invalid">
+									{{ i18n('m.rbs.review.front.review_post_update', ['ucf']) }}
+								</button>
+								<button class="btn btn-default" type="button" data-ng-click="cancelEdition()">
+									{{ i18n('m.rbs.generic.front.cancel', ['ucf']) }}
+								</button>
+								<button class="btn btn-danger" type="button" data-ng-click="deleteReview($event)"
+									data-confirm-message="{{ i18nAttr('m.rbs.review.front.confirm_delete_review') }}">
+									{{ i18n('m.rbs.generic.front.delete', ['ucf']) }}
+								</button>
+							</div>
+							<div data-ng-hide="data.editableReview">
+								<button class="btn btn-primary" type="button" data-ng-click="saveReview()"
+									data-ng-disabled="rbsReview{{ blockId }}.$invalid">
+									{{ i18n('m.rbs.review.front.review_post_submit', ['ucf']) }}
+								</button>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</script>
+	{% endblock rbsReviewEdit %}
+{% endblock rbsReviewCommon %}
+
+{% block rbsReviewReview %}
+	{% block rbsReviewReviewDetails %}
+		<script type="text/ng-template" id="/rbsReviewReviewDetails.tpl">
+			<div data-ng-show="loading" class="text-center">
+				<p><img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" /></p>
+				<p>{{ i18n('m.rbs.generic.front.loading', ['ucf', 'etc']) }}</p>
+			</div>
+			<div data-ng-hide="loading">
+				<p class="text-danger" data-ng-show="error">
+					(= error =)
+				</p>
+
+				<div data-ng-if="data.review">
+					{% block rbsReviewReviewDetailsDisplay %}
+						<div data-rbs-review-display="data.review" data-scale="(= scale =)"
+							data-id-prefix="current-review" data-handle-votes="false">
+						</div>
+					{% endblock rbsReviewReviewDetailsDisplay %}
+				</div>
+
+				<div data-ng-show="loadingEdition" class="text-center">
+					<p><img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" /></p>
+					<p>{{ i18n('m.rbs.generic.front.loading', ['ucf', 'etc']) }}</p>
+				</div>
+				<div data-ng-if="data.editableReview.common && !loadingEdition">
+					<div data-ng-if="data.editableReview.common && !data.isEditing">
+						{% block rbsReviewReviewDetailsToolbar %}
+							<p>
+								<span data-ng-show="!data.editableReview.common.published"
+									class="text-warning">
+									{{ i18n('m.rbs.review.front.review_pending_correction', ['ucf']) }}
+								</span>
+								<span data-ng-show="data.editableReview.common.published" class="text-success">
+									{{ i18n('m.rbs.review.front.published_review', ['ucf']) }}
+								</span>
+								<button type="button" class="btn btn-default btn-xs" data-ng-click="editReview()">
+									{{ i18n('m.rbs.review.front.edit_review', ['ucf']) }}
+								</button>
+							</p>
+						{% endblock rbsReviewReviewDetailsToolbar %}
+
+						<div data-ng-if="!data.editableReview.common.published">
+							{% block rbsReviewReviewDetailsCorrection %}
+								<div data-rbs-review-display="data.editableReview" data-scale="(= scale =)"
+									data-id-prefix="current-review" data-handle-votes="false">
+								</div>
+							{% endblock rbsReviewReviewDetailsCorrection %}
+						</div>
+					</div>
+					<div data-ng-if="data.isEditing">
+						{% block rbsReviewReviewDetailsEdition %}
+							<div data-rbs-review-edit="data" data-scale="(= scale =)" data-id-prefix="current-review"></div>
+						{% endblock rbsReviewReviewDetailsEdition %}
+					</div>
+				</div>
+				<div data-ng-if="!data.review && !data.editableReview.common && !loadingEdition">
+					{% block rbsReviewReviewDetailsDeleted %}
+						<p>{{ i18n('m.rbs.review.front.review_deleted', ['ucf']) }}</p>
+					{% endblock rbsReviewReviewDetailsDeleted %}
+				</div>
+			</div>
+		</script>
+	{% endblock rbsReviewReviewDetails %}
+{% endblock rbsReviewReview %}
+
+{% block rbsReviewReviews %}
+	{% block rbsReviewReviewsSummary %}
+		<script type="text/ng-template" id="/rbsReviewReviewsSummary.tpl">
+			<span data-rbs-review-star-rating="data.rating" data-scale="(= scale =)"></span>
+			(<a href="javascript:" data-ng-click="showReviews()">{{ i18n('m.rbs.review.front.review_count', ['ucf'], { 'COUNT': '(= data.count =)' }) }}</a>)
+		</script>
+	{% endblock rbsReviewReviewsSummary %}
+
+	{% block rbsReviewReviewsDetails %}
+		<script type="text/ng-template" id="/rbsReviewReviewsDetails.tpl">
+			<div class="row" data-ng-if="statsData.common.count">
+				<div class="col-sm-5 col-md-4">
+					{% block rbsReviewReviewsDetailsDistribution %}
+						<div data-ng-show="scaledDistribution">
+							<h3>{{ i18n('m.rbs.review.front.review_note_distribution', ['ucf']) }}</h3>
+							<table class="table review-distribution">
+								<caption>
+									{{ i18n('m.rbs.review.front.average_rating', ['ucf'], { 'averageRating': '(= scaledAverage|number:1 =)' }) }}
+								</caption>
+								<tbody>
+									<tr data-ng-repeat="row in scaledDistribution">
+										{% block rbsReviewReviewsDetailsDistributionItem %}
+											<td>
+												<span data-rbs-review-star-rating="row.rating" data-scale="(= scale =)"
+													data-scaled="true">
+												</span>
+											</td>
+											<td>
+												(= row.count =)
+												(= row.count > 1 ? "{{ i18nAttr('m.rbs.review.front.reviews') }}" : "{{ i18nAttr('m.rbs.review.front.review') }}" =)
+												- (= row.percent | number:0 =)%</td>
+											<td>
+												<div class="progress no-bottom-margin">
+													<div class="progress-bar" role="progressbar" data-ng-style="row.ngStyle"
+														aria-valuenow="(= row.rating =)" aria-valuemin="0"
+														aria-valuemax="(= scale =)">
+														<span class="sr-only">(= row.percent | number:0 =)%</span>
+													</div>
+												</div>
+											</td>
+										{% endblock rbsReviewReviewsDetailsDistributionItem %}
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					{% endblock rbsReviewReviewsDetailsDistribution %}
+				</div>
+				<div class="col-sm-7 col-md-8">
+					{% block rbsReviewReviewsDetailsPromoted %}
+						<div data-ng-show="statsData.promoted.length">
+							<h3>{{ i18n('m.rbs.review.front.promoted_review_list_title_promoted', ['ucf']) }}</h3>
+							<ul class="list-unstyled list-reviews">
+								<li data-ng-repeat="review in statsData.promoted">
+									{% block rbsReviewReviewsDetailsPromotedItem %}
+										<div data-rbs-review-display="review" data-scale="(= scale =)"
+											data-id-prefix="promoted-review" data-handle-votes="handleVotes"></div>
+									{% endblock rbsReviewReviewsDetailsPromotedItem %}
+								</li>
+							</ul>
+						</div>
+					{% endblock rbsReviewReviewsDetailsPromoted %}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+					{% block rbsReviewReviewsDetailsCurrent %}
+						<h3>{{ i18n('m.rbs.review.front.review_post', ['ucf']) }}</h3>
+						<div data-rbs-review-current-review="" data-scale="(= scale =)" data-target-id="targetId"></div>
+					{% endblock rbsReviewReviewsDetailsCurrent %}
+				</div>
+			</div>
+
+			<div class="row" data-ng-show="statsData.common.count">
+				<div class="col-sm-12">
+					{% block rbsReviewReviewsDetailsList %}
+						<h3>{{ i18n('m.rbs.review.front.review_list', ['ucf']) }} ((= statsData.common.count =))</h3>
+						<div data-rbs-review-reviews-list="" data-scale="(= scale =)" data-target-id="targetId"
+							data-ajax-data="ajaxData" data-ajax-params="ajaxParams" data-reviews-per-page="reviewsPerPage"
+							data-is-editing="isEditing" data-handle-votes="handleVotes" data-list-data="listData"></div>
+					{% endblock rbsReviewReviewsDetailsList %}
+				</div>
+			</div>
+		</script>
+	{% endblock rbsReviewReviewsDetails %}
+
+	{% block rbsReviewReviewsList %}
+		<script type="text/ng-template" id="/rbsReviewReviewsList.tpl">
+			<div data-ng-show="loading" class="text-center">
+				<p><img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" /></p>
+				<p>{{ i18n('m.rbs.generic.front.loading', ['ucf', 'etc']) }}</p>
+			</div>
+			<div data-ng-show="!loading">
+				<ul class="list-unstyled list-reviews">
+					<li data-ng-repeat="review in listData.items">
+						{% block rbsReviewReviewsDetailsListItem %}
+							<div data-rbs-review-display="review" data-scale="(= scale =)" data-id-prefix="review"
+								data-handle-votes="handleVotes" data-number="(= 1 + $index + listData.pagination.offset =)"></div>
+						{% endblock rbsReviewReviewsDetailsListItem %}
+					</li>
+				</ul>
+				<div data-rbs-pagination="" data-pagination="listData.pagination"
+					data-update-offset="updateListDataOffset"></div>
+			</div>
+		</script>
+	{% endblock rbsReviewReviewsList %}
+
+	{% block rbsReviewCurrentReview %}
+		<script type="text/ng-template" id="/rbsReviewCurrentReview.tpl">
+			<div data-ng-show="loading" class="text-center">
+				<p><img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" /></p>
+				<p>{{ i18n('m.rbs.generic.front.loading', ['ucf', 'etc']) }}</p>
+			</div>
+			<div data-ng-hide="loading">
+				<p class="text-danger" data-ng-show="error">
+					(= error =)
+				</p>
+				<div data-ng-show="!identified">
+					{% block rbsReviewCurrentReviewGuest %}
+						<p class="muted">
+							{{ i18n('m.rbs.review.front.review_post_not_connected', ['ucf']) }}
+							{# TODO add a button or a link to connect user #}
+						</p>
+					{% endblock rbsReviewCurrentReviewGuest %}
+				</div>
+				<div data-ng-if="identified">
+					<div data-ng-if="data.review">
+						{% block rbsReviewCurrentReviewDisplay %}
+							<div data-rbs-review-display="data.review" data-scale="(= scale =)"
+								data-id-prefix="current-review" data-handle-votes="false">
+							</div>
+						{% endblock rbsReviewCurrentReviewDisplay %}
+					</div>
+
+					<div data-ng-show="loadingEdition" class="text-center">
+						<p><img alt="" src="{{ resourceURL('Theme/Rbs/Base/img/loading.gif') }}" /></p>
+						<p>{{ i18n('m.rbs.generic.front.loading', ['ucf', 'etc']) }}</p>
+					</div>
+					<div data-ng-if="data.editableReview && !loadingEdition">
+						<div data-ng-if="data.editableReview.common && !data.isEditing">
+							{% block rbsReviewCurrentReviewToolbar %}
+								<p>
+									<span data-ng-show="!data.editableReview.common.published && !data.editableReview.common.hasCorrection"
+										class="text-warning">
+										{{ i18n('m.rbs.review.front.pending_publication', ['ucf']) }}
+									</span>
+									<span data-ng-show="!data.editableReview.common.published && data.editableReview.common.hasCorrection"
+										class="text-warning">
+										{{ i18n('m.rbs.review.front.review_pending_correction', ['ucf']) }}
+									</span>
+									<span data-ng-show="data.editableReview.common.published" class="text-success">
+										{{ i18n('m.rbs.review.front.published_review', ['ucf']) }}
+									</span>
+									<button type="button" class="btn btn-default btn-xs" data-ng-click="editReview()">
+										{{ i18n('m.rbs.review.front.edit_review', ['ucf']) }}
+									</button>
+								</p>
+							{% endblock rbsReviewCurrentReviewToolbar %}
+
+							<div data-ng-if="!data.editableReview.common.published">
+								{% block rbsReviewCurrentReviewCorrection %}
+									<div data-rbs-review-display="data.editableReview" data-scale="(= scale =)"
+										data-id-prefix="current-review" data-handle-votes="false">
+									</div>
+								{% endblock rbsReviewCurrentReviewCorrection %}
+							</div>
+						</div>
+						<div data-ng-if="data.isEditing">
+							{% block rbsReviewCurrentReviewEdition %}
+								<div data-rbs-review-edit="data" data-scale="(= scale =)" data-id-prefix="current-review"></div>
+							{% endblock rbsReviewCurrentReviewEdition %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsReviewCurrentReview %}
+{% endblock rbsReviewReviews %}

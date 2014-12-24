@@ -85,15 +85,52 @@
 					if (!scope.maxHeight) {
 						scope.showButtons = false;
 					}
-					else if (scope.contentNode.height() > scope.maxHeight + 20) {
-						scope.showButtons = true;
-					}
 					else {
-						scope.showButtons = false;
+						scope.showButtons = scope.contentNode.height() > scope.maxHeight + 20;
 					}
 					refreshStyles();
 					return scope.showButtons;
 				};
+			}
+		}
+	}]);
+
+	app.directive('rbsPagination', ['RbsChange.AjaxAPI', function (AjaxAPI) {
+		var navigationContext = AjaxAPI.globalVar('navigationContext');
+		var themeName = (angular.isObject(navigationContext) ? navigationContext.themeName : null) || 'Rbs_Base';
+		return {
+			restrict: 'A',
+			templateUrl: 'Theme/' + themeName.split('_').join('/') + '/directives/rbs-pagination.twig',
+			scope: {
+				pagination: '=',
+				updateOffset: '='
+			},
+			link: function(scope) {
+				function refreshData() {
+					if (angular.isObject(scope.pagination)) {
+						scope.pageNumber = Math.floor(scope.pagination.offset / scope.pagination.limit) + 1;
+						scope.pageCount = Math.ceil((scope.pagination.count) / scope.pagination.limit);
+					}
+					else {
+						scope.pageNumber = 0;
+						scope.pageCount = 0;
+					}
+
+					scope.pagesToShow = [];
+					var start = scope.pageNumber > 3 ? scope.pageNumber - 3 : 1;
+					var end = ((scope.pageCount - scope.pageNumber) > 3) ? scope.pageNumber + 3 : scope.pageCount;
+					for (var i = start; i <= end; i++) {
+						scope.pagesToShow.push(i);
+					}
+				}
+
+				scope.$watch('pagination', function () {
+					refreshData();
+				}, true);
+
+				scope.setPageNumber = function(pageNumber) {
+					scope.updateOffset((pageNumber - 1) * scope.pagination.limit);
+				}
 			}
 		}
 	}]);
