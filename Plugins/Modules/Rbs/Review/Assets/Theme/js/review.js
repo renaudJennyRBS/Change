@@ -402,6 +402,8 @@
 					});
 				}
 
+				scope.url = scope.data.common.URL['contextual'] || scope.data.common.URL['canonical'];
+
 				scope.trustHtml = function(html) {
 					return $sce.trustAsHtml(html);
 				};

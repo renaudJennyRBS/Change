@@ -114,6 +114,13 @@ class ReviewDataComposer
 			'votes' => $this->reviewManager->getVotesData($review->getId(), $this->getVoteContext())
 		];
 
+		if (is_array($this->URLFormats) && count($this->URLFormats))
+		{
+			$publishedData = new \Change\Http\Ajax\V1\PublishedData($this->review);
+			$section = $this->section ? $this->section : $this->website;
+			$this->dataSets['common']['URL'] = $publishedData->getURLData($this->URLFormats, $section);
+		}
+
 		if ($this->useCorrection)
 		{
 			$this->dataSets['common']['hasCorrection'] = $review->hasCorrection();

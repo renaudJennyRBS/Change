@@ -49,7 +49,8 @@
 						class="img-avatar img-thumbnail pull-right" />
 					<header class="panel-heading">
 						<span data-ng-show="number">
-							<a itemprop="url" rel="nofollow" data-ng-href="(= data.common.url =)">(= number =).</a>
+							<a data-ng-if="url" itemprop="url" rel="nofollow" data-ng-href="(= url =)">(= number =).</a>
+							<span data-ng-if="!url">(= number =).</span>
 							<span class="divider"> - </span>
 						</span>
 						{{ i18n('m.rbs.review.front.written_on', ['ucf']) }}
@@ -198,7 +199,7 @@
 				<div data-ng-if="data.review">
 					{% block rbsReviewReviewDetailsDisplay %}
 						<div data-rbs-review-display="data.review" data-scale="(= scale =)"
-							data-id-prefix="current-review" data-handle-votes="false">
+							data-id-prefix="current-review" data-handle-votes="handleVotes">
 						</div>
 					{% endblock rbsReviewReviewDetailsDisplay %}
 				</div>
@@ -278,7 +279,8 @@
 											<td>
 												(= row.count =)
 												(= row.count > 1 ? "{{ i18nAttr('m.rbs.review.front.reviews') }}" : "{{ i18nAttr('m.rbs.review.front.review') }}" =)
-												- (= row.percent | number:0 =)%</td>
+												- (= row.percent | number:0 =)%
+											</td>
 											<td>
 												<div class="progress no-bottom-margin">
 													<div class="progress-bar" role="progressbar" data-ng-style="row.ngStyle"
