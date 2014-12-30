@@ -54,8 +54,15 @@ class Listeners implements ListenerAggregateInterface
 		$callback = function ($event)
 		{
 			(new \Rbs\User\Admin\SearchDocuments())->execute($event);
+			(new \Rbs\Geo\Admin\AdminManager())->onSearchDocument($event);
 		};
 		$events->attach('searchDocuments', $callback, 10);
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Geo\Admin\AdminManager())->onGetHomeAttributes($event);
+		};
+		$events->attach('getHomeAttributes', $callback, 10);
 	}
 
 	/**

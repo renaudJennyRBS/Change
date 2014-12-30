@@ -389,4 +389,26 @@ class Address
 			$event->setResult($result);
 		}
 	}
+
+	/**
+	 * Default actionPath: Rbs/Geo/AddressCompletion/
+	 * Event params:
+	 *  - data:
+	 *    - address
+	 *    - countryCode
+	 *    - options:
+	 * @param \Change\Http\Event $event
+	 */
+	public function addressCompletion(\Change\Http\Event $event)
+	{
+		$genericServices = $event->getServices('genericServices');
+		if ($genericServices instanceof \Rbs\Generic\GenericServices)
+		{
+			$context = $event->paramsToArray();
+			$autoCompletionData = $genericServices->getGeoManager()->getAddressCompletion($context);
+			$result = new \Change\Http\Ajax\V1\ItemsResult('Rbs/Geo/AddressCompletion/', $autoCompletionData);
+			$result->setPaginationCount(count($autoCompletionData));
+			$event->setResult($result);
+		}
+	}
 }

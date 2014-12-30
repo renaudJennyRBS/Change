@@ -103,5 +103,14 @@
 	},
 	"zone_fr_d":{
 		"message":"France TOM"
+	},
+	"latitude":{
+		"message":"Latitude"
+	},
+	"longitude":{
+		"message":"Longitude"
+	},
+	"coordinate_by_address":{
+		"message":"Géocoder à partir de l'adresse"
 	}
 }

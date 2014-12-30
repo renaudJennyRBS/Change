@@ -48,25 +48,31 @@ class GetHome
 		$manager->getResources();
 
 		$devMode = $event->getApplication()->inDevelopmentMode();
-		$renderer = function () use ($templateFileName, $manager, $attributes, $devMode)
+		$resourceDirectoryPath = $devMode ? $manager->getResourceDirectoryPath() : null;
+		if ($resourceDirectoryPath)
 		{
-			$resourceDirectoryPath = $devMode ? $manager->getResourceDirectoryPath() : null;
-			if ($resourceDirectoryPath)
-			{
-				\Change\Stdlib\File::rmdir($resourceDirectoryPath);
-				\Change\Stdlib\File::mkdir($resourceDirectoryPath);
-			}
-			$resourceBaseUrl = $manager->getResourceBaseUrl();
+			\Change\Stdlib\File::rmdir($resourceDirectoryPath);
+			\Change\Stdlib\File::mkdir($resourceDirectoryPath);
+		}
+		$resourceBaseUrl = $manager->getResourceBaseUrl();
 
-			$scripts = $manager->prepareScriptAssets($resourceDirectoryPath, $resourceBaseUrl);
-			$attributes = ['scripts' => $scripts] + $attributes;
+		$scripts = $manager->prepareScriptAssets($resourceDirectoryPath, $resourceBaseUrl);
+		$attributes = ['scripts' => $scripts] + $attributes;
 
-			$styles = $manager->prepareCssAssets($resourceDirectoryPath, $resourceBaseUrl);
-			$attributes = ['styles' => $styles] + $attributes;
+		$styles = $manager->prepareCssAssets($resourceDirectoryPath, $resourceBaseUrl);
+		$attributes = ['styles' => $styles] + $attributes;
 
-			$manager->prepareImageAssets($resourceDirectoryPath);
+		$manager->prepareImageAssets($resourceDirectoryPath);
+		$eventManager = $manager->getEventManager();
+		$args = $eventManager->prepareArgs(['attributes' => $attributes]);
 
-			return $manager->renderTemplateFile($templateFileName, $attributes);
+		$manager->getEventManager()->trigger('getHomeAttributes', $manager, $args);
+
+		$html =  $manager->renderTemplateFile($templateFileName, $args['attributes']);
+
+		$renderer = function () use ($html)
+		{
+			return $html;
 		};
 		$result->setRenderer($renderer);
 		$event->setResult($result);

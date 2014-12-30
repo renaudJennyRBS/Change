@@ -33,8 +33,11 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getDefaultForNames', [$this, 'onDefaultGetDefaultForNames'], 5);
 		$eventManager->attach(static::EVENT_COUNTRIES_BY_ZONE_CODE, [$this, 'onDefaultGetCountriesByZoneCode'], 5);
 		$eventManager->attach(static::EVENT_FORMAT_ADDRESS, [$this, 'onDefaultFormatAddress'], 5);
+		$eventManager->attach('getCountyByCode', [$this, 'onDefaultGetCountyByCode'], 5);
+
 		$eventManager->attach('getAddresses', [$this, 'onDefaultGetAddresses'], 5);
 		$eventManager->attach('deleteAddress', [$this, 'onDefaultDeleteAddress'], 5);
+
 
 		$eventManager->attach('validateAddress', [$this, 'onDefaultValidateAddress'], 5);
 		$eventManager->attach('addAddress', [$this, 'onDefaultAddAddress'], 5);
@@ -44,6 +47,8 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach('getDefaultAddress', [$this, 'onDefaultGetDefaultAddress'], 5);
 		$eventManager->attach('getZoneByCode', [$this, 'onDefaultGetZoneByCode'], 5);
 		$eventManager->attach('getAddressFieldsData', [$this, 'onDefaultGetAddressFieldsData'], 5);
+
+		$eventManager->attach('getCoordinatesByAddress', [$this, 'onDefaultGetCoordinatesByAddress'], 5);
 	}
 
 	/**
@@ -136,6 +141,38 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			$pb = $query->getPredicateBuilder();
 			$query->andPredicates($pb->activated());
 			$event->setParam('countries', $query->getDocuments()->toArray());
+		}
+	}
+
+	/**
+	 * @param string $code
+	 * @return \Rbs\Geo\Documents\Country|null
+	 */
+	public function getCountyByCode($code)
+	{
+		$em = $this->getEventManager();
+		$args = $em->prepareArgs(['code' => $code]);
+		$em->trigger('getCountyByCode', $this, $args);
+		$country = (isset($args['country'])) ? $args['country'] : null;
+		return ($country instanceof \Rbs\Geo\Documents\Country) ? $country : null;
+	}
+
+	/**
+	 * Event Params: code
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetCountyByCode(\Change\Events\Event $event)
+	{
+		$code = $event->getParam('code');
+		if ($event->getParam('country') === null && $code && is_string($code) && !\Change\Stdlib\String::isEmpty($code))
+		{
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			$query = $documentManager->getNewQuery('Rbs_Geo_Country');
+			$country = $query->andPredicates($query->activated(), $query->eq('code', $code))->getFirstDocument();
+			if ($country)
+			{
+				$event->setParam('country', $country);
+			}
 		}
 	}
 
@@ -389,10 +426,8 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultValidateAddress($event)
 	{
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
-
 		$addressData = $event->getParam('addressData');
-		$addressFieldsId = intval($addressData['common']['addressFieldsId']);
-
+		$addressFieldsId = intval(isset($addressData['common']['addressFieldsId']) ? $addressData['common']['addressFieldsId'] : 0);
 		/** @var \Rbs\Geo\Documents\AddressFields $addressFields */
 		$addressFields = $documentManager->getDocumentInstance($addressFieldsId, 'Rbs_Geo_AddressFields');
 		if ($addressFields) {
@@ -879,6 +914,27 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 		return [];
 	}
 
+	/**
+	 * Default context params:
+	 *  - data:
+	 *    - address
+	 *    - countryCode
+	 *    - options:
+	 * @param array $context
+	 * @return array
+	 */
+	public function getAddressCompletion(array $context)
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['context' => $context]);
+		$eventManager->trigger('getAddressCompletion', $this, $args);
+		if (isset($args['addresses']) && is_array($args['addresses']))
+		{
+			return $args['addresses'];
+		}
+		return [];
+	}
+
 
 	/**
 	 * Default context params:
@@ -974,6 +1030,63 @@ class GeoManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			$dataSets['fieldsLayoutData'] = $addressFields->getFieldsLayoutData();
 			$event->setParam('addressFieldsData', $dataSets);
+		}
+	}
+
+	/**
+	 * @param AddressInterface $address
+	 * @return array
+	 */
+	public function getCoordinatesByAddress(\Rbs\Geo\Address\AddressInterface $address)
+	{
+		$em = $this->getEventManager();
+		$eventArgs = $em->prepareArgs(['address' => $address]);
+		$em->trigger('getCoordinatesByAddress', $this, $eventArgs);
+		if (isset($eventArgs['coordinates']) && is_array($eventArgs['coordinates']))
+		{
+			return $eventArgs['coordinates'];
+		}
+		return [];
+	}
+
+	/**
+	 * Input param address
+	 * Output param coordinates, formattedAddress
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetCoordinatesByAddress($event)
+	{
+		if ($event->getParam('coordinates'))
+		{
+			return;
+		}
+
+		$address = $event->getParam('address');
+		if ($address instanceof AddressInterface) {
+			$validAddress = $this->validateAddress($address->toArray());
+			if ($validAddress) {
+				$address = $validAddress;
+			}
+
+			$googleApiKey = $event->getApplication()->getConfiguration('Rbs/Geo/Google/APIKey');
+			if (is_string($googleApiKey)) {
+				$googleGeoCode =  new \Rbs\Geo\Address\GoogleGeoCode($this);
+				$googleGeoCode->setLogging($event->getApplication()->getLogging());
+				$googleGeoCode->setKey($googleApiKey);
+				$coordinates = $googleGeoCode->getCoordinates($address);
+				if (is_array($coordinates)) {
+					$event->setParam('coordinates', $coordinates);
+				}
+			}
+			else
+			{
+				$nominatimOSM = new \Rbs\Geo\Address\NominatimOSM($this);
+				$nominatimOSM->setLogging($event->getApplication()->getLogging());
+				$coordinates = $nominatimOSM->getCoordinates($address);
+				if (is_array($coordinates)) {
+					$event->setParam('coordinates', $coordinates);
+				}
+			}
 		}
 	}
 }
