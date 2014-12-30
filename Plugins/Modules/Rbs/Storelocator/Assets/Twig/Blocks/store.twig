@@ -1,0 +1,11 @@
+{% block rbsStorelocatorStoreDataCache %}
+	<script type="text/javascript">
+		window.__change['{{ blockId }}'] = {{ controllerInit | json_encode | raw}};
+	</script>
+{% endblock rbsStorelocatorStoreDataCache %}
+{% block rbsStorelocatorUse %}
+	{% use 'Rbs_Storelocator/store-directives.twig' %}
+	{{ block('rbsStorelocatorStore') }}
+{% endblock rbsStorelocatorUse %}
+<div data-rbs-storelocator-store="" data-cache-key="{{ blockId }}">
+</div>

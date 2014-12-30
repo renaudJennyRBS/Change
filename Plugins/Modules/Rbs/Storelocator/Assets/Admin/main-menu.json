@@ -1,0 +1,10 @@
+{
+	"entries": [
+		{
+			"section": "cms",
+			"label": "m.rbs.storelocator.admin.module_name",
+			"url": "Rbs/Storelocator",
+			"keywords": "m.rbs.storelocator.admin.module_keywords"
+		}
+	]
+}

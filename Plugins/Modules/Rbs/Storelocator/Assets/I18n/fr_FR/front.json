@@ -1,0 +1,71 @@
+{
+	"search_result_text": {
+		"message": "Résultats pour votre recherche $SIGN$ près de"
+	},
+	"my_coordinates": {
+		"message": "Ma position"
+	},
+	"view_store_detail": {
+		"message": "voir la fiche"
+	},
+	"call_store": {
+		"message": "Appeler le magasin"
+	},
+	"locate_store_on_map": {
+		"message": "localiser sur la carte"
+	},
+	"choose_this_store": {
+		"message": "Choisir ce magasin"
+	},
+	"sign_stores": {
+		"message": "Magasins $SIGN$"
+	},
+	"all_stores": {
+		"message": "Tous nos points de ventes"
+	},
+	"unable_to_resolve_address": {
+		"message": "L'adresse n'a pas été reconnue, merci de la préciser."
+	},
+	"unable_to_geo_locate": {
+		"message": "Impossible de vous géo localiser."
+	},
+	"itinerary": {
+		"message": "Itinéraire"
+	},
+	"receive_contact_information": {
+		"message": "recevoir les coordonnées"
+	},
+	"print_map": {
+		"message": "Imprimer la carte"
+	},
+	"zoom_map": {
+		"message": "Agrandir la carte"
+	},
+	"contact_information": {
+		"message": "Coordonnées"
+	},
+	"opening_hours": {
+		"message": "Horaire d'ouverture"
+	},
+	"store_presentation": {
+		"message": "Présentation magasin"
+	},
+	"store_services": {
+		"message": "Services"
+	},
+	"closed": {
+		"message": "Fermé"
+	},
+	"locate_me": {
+		"message": "Localisez-moi"
+	},
+	"or_enter_a_location": {
+		"message": "Ou saisir un lieu"
+	},
+	"location_placeholder": {
+		"message": "Veuillez saisir une ville, votre code postal ou une adresse"
+	},
+	"launch_search": {
+		"message": "Rechercher"
+	}
+}

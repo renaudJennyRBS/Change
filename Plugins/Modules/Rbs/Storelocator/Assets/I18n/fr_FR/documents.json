@@ -1,0 +1,47 @@
+{
+	"store": {
+		"message": "magasin"
+	},
+	"store_description": {
+		"message": "description"
+	},
+	"store_visuals": {
+		"message": "visuels"
+	},
+	"store_territorialunit": {
+		"message": "zone géographique"
+	},
+	"store_commercialsigns": {
+		"message": "enseignes"
+	},
+	"store_services": {
+		"message": "services"
+	},
+	"storelocatorindex": {
+		"message": "Index de recherche magasin"
+	},
+	"storelocatorindex_website": {
+		"message": "site web"
+	},
+	"commercialsign": {
+		"message": "enseigne"
+	},
+	"commercialsign_marker": {
+		"message": "marqueur"
+	},
+	"commercialsign_description": {
+		"message": "description"
+	},
+	"commercialsign_visuals": {
+		"message": "visuels"
+	},
+	"service": {
+		"message": "service"
+	},
+	"service_pictogram": {
+		"message": "picto"
+	},
+	"service_description": {
+		"message": "description"
+	}
+}

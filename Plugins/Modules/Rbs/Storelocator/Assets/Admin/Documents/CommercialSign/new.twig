@@ -1,0 +1,57 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Storelocator_CommercialSign">
+	<div class="col-md-12">
+		<rbs-page-header title="{{ i18nAttr('m.rbs.admin.adminjs.new_resource', ['ucf']) }}"
+			sub-title="{{ i18nAttr(modelKey('Rbs_Storelocator_CommercialSign'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-new=""
+			data-rbs-document-editor-rbs-storelocator-commercial-sign-new="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field property="refLCID" required="true"
+					label="{{ i18nAttr(propertyKey('Rbs_Storelocator_CommercialSign', 'refLCID'), ['ucf']) }}">
+					<select class="form-control" data-ng-model="document.refLCID"
+						data-rbs-items-from-collection="Rbs_Generic_Collection_Languages" data-ucfirst="true">
+					</select>
+				</rbs-field>
+
+				<hr />
+
+				<rbs-field-label-title property="title" required="true"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_CommercialSign', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Storelocator_CommercialSign', 'title'), ['ucf']) }}">
+				</rbs-field-label-title>
+
+				<rbs-field-rich-text property="description" 
+					label="{{ i18nAttr(propertyKey('Rbs_Storelocator_CommercialSign', 'description'), ['ucf']) }}">
+				</rbs-field-rich-text>
+
+				<rbs-field-picker-multiple property="visuals" 
+					label="{{ i18nAttr(propertyKey('Rbs_Storelocator_CommercialSign', 'visuals'), ['ucf']) }}"
+					accepted-model="Rbs_Media_Image">
+				</rbs-field-picker-multiple>
+
+				<rbs-field-text property="code"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_CommercialSign', 'code'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-picker property="marker"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_CommercialSign', 'marker'), ['ucf']) }}"
+						accepted-model="Rbs_Media_Image">
+				</rbs-field-picker>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

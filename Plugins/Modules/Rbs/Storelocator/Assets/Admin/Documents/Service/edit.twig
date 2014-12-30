@@ -1,0 +1,43 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Storelocator_Service">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Storelocator_Service'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit=""
+			data-rbs-document-editor-rbs-storelocator-service-edit="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-label-title property="title" required="true"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Service', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Storelocator_Service', 'title'), ['ucf']) }}">
+				</rbs-field-label-title>
+
+				<rbs-field-picker property="pictogram"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Service', 'pictogram'), ['ucf']) }}"
+						accepted-model="Rbs_Media_Image">
+				</rbs-field-picker>
+
+				<rbs-field-rich-text property="description"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Service', 'description'), ['ucf']) }}">
+				</rbs-field-rich-text>
+
+				<rbs-field-text property="code"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Service', 'code'), ['ucf']) }}">
+				</rbs-field-text>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

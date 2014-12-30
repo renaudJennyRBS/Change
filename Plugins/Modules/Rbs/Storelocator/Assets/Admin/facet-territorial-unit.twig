@@ -1,0 +1,15 @@
+<rbs-field property="unitType" required="true"
+		label="{{ i18nAttr(propertyKey('Rbs_Geo_TerritorialUnit', 'unitType'), ['ucf']) }}">
+	<select data-ng-required="true" data-ng-model="facet.parameters.unitType"
+			data-rbs-items-from-collection="Rbs_Geo_Collection_UnitType" class="form-control">
+		<option value=""> {{ i18n('m.rbs.geo.admin.select_unittype', ['ucf']) }}</option>
+	</select>
+</rbs-field>
+
+<rbs-field property="showEmptyItem" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_show_empty_item', ['ucf']) }}">
+	<rbs-switch data-ng-model="facet.parameters.showEmptyItem"></rbs-switch>
+</rbs-field>
+
+<rbs-field property="multipleChoice" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_multiple_choice', ['ucf']) }}">
+	<rbs-switch data-ng-model="facet.parameters.multipleChoice"></rbs-switch>
+</rbs-field>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://www.rbs.fr/schema/change-document/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
+	localized="true" publishable="true" editable="true">
+	<properties>
+		<property name="code" type="String" />
+
+		<property name="addressData" type="JSON" internal="true" />
+		<property name="geoData" type="JSON" internal="true" />
+		<property name="territorialUnit" type="Document" document-type="Rbs_Geo_TerritorialUnit"/>
+
+		<property name="openingHoursData" type="JSON" internal="true" />
+		<property name="cardData" type="JSON" internal="true" />
+
+		<property name="title" localized="true" has-correction="true" />
+		<property name="publicationSections" type="DocumentArray" document-type="Rbs_Website_Section" />
+		<property name="description" type="RichText" localized="true" has-correction="true" />
+		<property name="visuals" type="DocumentArray" document-type="Rbs_Media_Image" has-correction="true" />
+
+		<property name="commercialSigns" type="DocumentArray" document-type="Rbs_Storelocator_CommercialSign" />
+		<property name="services" type="DocumentArray" document-type="Rbs_Storelocator_Service" />
+	</properties>
+</document>

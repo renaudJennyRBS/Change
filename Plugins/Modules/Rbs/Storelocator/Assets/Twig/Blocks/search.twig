@@ -1,0 +1,35 @@
+{% block rbsStorelocatorSearchDataCache %}
+	<script type="text/javascript">
+		window.__change['{{ blockId }}'] = {{ controllerInit | json_encode | raw}};
+	</script>
+{% endblock rbsStorelocatorSearchDataCache %}
+
+{% block rbsStorelocatorUse %}
+	{% use 'Rbs_Storelocator/store-directives.twig' %}
+	{{ block('rbsStorelocatorSearch') }}
+	{{ block('rbsStorelocatorStoreItem') }}
+	{{ block('rbsStorelocatorStorePopup') }}
+{% endblock rbsStorelocatorUse %}
+
+{% block rbsStorelocatorMapResources %}
+	{% use 'Rbs_Storelocator/map-resources.twig' %}
+	{{ block('rbsStorelocatorLeafletMap') }}
+{% endblock rbsStorelocatorMapResources %}
+
+<div data-rbs-storelocator-search="" data-cache-key="{{ blockId }}" data-facet-value-title="{{ facetValueTitle }}">
+</div>
+
+<div data-rbs-storelocator-search-home="" data-ng-hide="hideStorelocatorSearchHome">
+	<img src="{{ imageURL(parameters.backgroundEmptyImage) }}" />
+	{% if facetsData | length %}
+		<ol class="list-unstyled">
+			{% set facetData = facetsData[0] %}
+			{% for facetValue in facetData.values %}
+				{% set facetData = facetsData[0] %}
+			<li>
+				<a href="{{ currentURL({('facetFilters'): {(facetData.fieldName) : {(facetValue.key) : 1 }}}) }}">{{ facetValue.title }} ({{ facetValue.value }})</a>
+			</li>
+			{% endfor %}
+		</ol>
+	{% endif %}
+</div>

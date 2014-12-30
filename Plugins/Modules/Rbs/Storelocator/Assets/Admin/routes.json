@@ -1,0 +1,146 @@
+{
+	"/Rbs/Elasticsearch/StoreLocatorIndex/:id": {
+		"model": "Rbs_Storelocator_StoreLocatorIndex",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/StoreLocatorIndex/edit.twig",
+			"labelKey": "m.rbs.storelocator.documents.storelocatorindex | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Elasticsearch/StoreLocatorIndex/new": {
+		"model": "Rbs_Storelocator_StoreLocatorIndex",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/StoreLocatorIndex/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Storelocator/": {
+		"module": "Rbs_Storelocator",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Storelocator/Store/",
+			"labelKey": "m.rbs.storelocator.admin.module_name | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Storelocator/CommercialSign/": {
+		"model": "Rbs_Storelocator_CommercialSign",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/CommercialSign/list.twig",
+			"labelKey": "m.rbs.storelocator.admin.commercialsign_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/CommercialSign/:id": {
+		"model": "Rbs_Storelocator_CommercialSign",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/CommercialSign/edit.twig",
+			"labelKey": "m.rbs.storelocator.documents.commercialsign | ucf",
+			"labelId": "id"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/CommercialSign/:id/translate/:LCID": {
+		"model": "Rbs_Storelocator_CommercialSign",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/CommercialSign/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/CommercialSign/new": {
+		"model": "Rbs_Storelocator_CommercialSign",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/CommercialSign/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/Service/": {
+		"model": "Rbs_Storelocator_Service",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/Service/list.twig",
+			"labelKey": "m.rbs.storelocator.admin.service_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/Service/:id": {
+		"model": "Rbs_Storelocator_Service",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/Service/edit.twig",
+			"labelKey": "m.rbs.storelocator.documents.service | ucf",
+			"labelId": "id"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/Service/:id/translate/:LCID": {
+		"model": "Rbs_Storelocator_Service",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/Service/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/Service/new": {
+		"model": "Rbs_Storelocator_Service",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/Service/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/Store/": {
+		"model": "Rbs_Storelocator_Store",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/Store/list.twig",
+			"labelKey": "m.rbs.storelocator.admin.store_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/Store/:id": {
+		"model": "Rbs_Storelocator_Store",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/Store/edit.twig",
+			"labelKey": "m.rbs.storelocator.documents.store | ucf",
+			"labelId": "id"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/Store/:id/translate/:LCID": {
+		"model": "Rbs_Storelocator_Store",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/Store/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/Store/new": {
+		"model": "Rbs_Storelocator_Store",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storelocator/Store/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Storelocator/StoreLocatorIndex/:id": false,
+	"/Rbs/Storelocator/StoreLocatorIndex/new": false
+}
