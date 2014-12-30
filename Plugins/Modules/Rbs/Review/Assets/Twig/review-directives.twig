@@ -252,8 +252,21 @@
 {% block rbsReviewReviews %}
 	{% block rbsReviewReviewsSummary %}
 		<script type="text/ng-template" id="/rbsReviewReviewsSummary.tpl">
-			<span data-rbs-review-star-rating="data.rating" data-scale="(= scale =)"></span>
-			(<a href="javascript:" data-ng-click="showReviews()">{{ i18n('m.rbs.review.front.review_count', ['ucf'], { 'COUNT': '(= data.count =)' }) }}</a>)
+			<span data-ng-hide="data.count">
+				{% block rbsReviewReviewsSummaryWithoutReview %}
+					<a href="javascript:" data-ng-click="showReviews()">
+						{{ i18n('m.rbs.review.front.no_review_yey', ['ucf']) }}
+					</a>
+				{% endblock rbsReviewReviewsSummaryWithoutReview %}
+			</span>
+			<span data-ng-show="data.count">
+				{% block rbsReviewReviewsSummaryWithReview %}
+					<span data-rbs-review-star-rating="data.rating" data-scale="(= scale =)"></span>
+					(<a href="javascript:" data-ng-click="showReviews()">
+						{{ i18n('m.rbs.review.front.review_count', ['ucf'], { 'COUNT': '(= data.count =)' }) }}
+					</a>)
+				{% endblock rbsReviewReviewsSummaryWithReview %}
+			</span>
 		</script>
 	{% endblock rbsReviewReviewsSummary %}
 

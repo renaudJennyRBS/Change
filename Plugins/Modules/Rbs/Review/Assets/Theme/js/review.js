@@ -402,7 +402,10 @@
 					});
 				}
 
-				scope.url = scope.data.common.URL['contextual'] || scope.data.common.URL['canonical'];
+				scope.url = null;
+				if (angular.isObject(scope.data.common) && angular.isObject(scope.data.common.URL)) {
+					scope.url = scope.data.common.URL['contextual'] || scope.data.common.URL['canonical'];
+				}
 
 				scope.trustHtml = function(html) {
 					return $sce.trustAsHtml(html);
