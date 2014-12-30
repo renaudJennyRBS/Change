@@ -7,8 +7,8 @@
 
 			<div class="grid-list-cell" data-rbs-catalog-product-item-data="">
 				<div class="product-visual">
-					<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:;">
-						<img data-ng-if="visual.listItem" alt="(= visual.alt =)" data-ng-src="(= visual.listItem =)" />
+					<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:">
+						<img data-ng-if="visual.listItem" alt="(= visual.alt =)" src="" data-ng-src="(= visual.listItem =)" />
 						<div class="text-center text-muted" data-ng-if="!visual.listItem">
 							<span class="glyphicon glyphicon-camera" style="font-size: 100px"></span>
 						</div>
@@ -16,7 +16,7 @@
 					<div data-rbs-catalog-product-pictograms="" data-pictogram-format="'pictogram'" data-pictograms="pictograms"></div>
 				</div>
 				<div class="product-label">
-					<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:;">(= productData.common.title =)</a>
+					<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:">(= productData.common.title =)</a>
 				</div>
 				<div class="product-availability">(= productData.stock.thresholdTitle =) </div>
 				<div data-rbs-catalog-product-price=""
@@ -30,7 +30,7 @@
 					</button>
 				</div>
 				<div class="product-add" data-ng-if="!productData.stock.sku">
-					<a class="btn btn-primary btn-sm"  data-ng-href="(= url =)" href="javascript:;"
+					<a class="btn btn-primary btn-sm"  data-ng-href="(= url =)" href="javascript:"
 							title="(= viewDetailTitle =)">
 						<i class="glyphicon glyphicon-arrow-right"></i>
 						(= viewDetailTitle =)

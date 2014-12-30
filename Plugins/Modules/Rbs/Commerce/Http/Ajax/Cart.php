@@ -9,8 +9,8 @@
 namespace Rbs\Commerce\Http\Ajax;
 
 /**
-* @name \Rbs\Commerce\Http\Ajax\Cart
-*/
+ * @name \Rbs\Commerce\Http\Ajax\Cart
+ */
 class Cart
 {
 	/**
@@ -84,7 +84,8 @@ class Cart
 			{
 				if (isset($transactionData['errors']))
 				{
-					$message = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.commerce.front.new_transaction_error', ['ucf']);
+					$message = $event->getApplicationServices()->getI18nManager()
+						->trans('m.rbs.commerce.front.new_transaction_error', ['ucf']);
 					$result = new \Change\Http\Ajax\V1\ErrorResult(null, $message, \Zend\Http\Response::STATUS_CODE_409);
 					$result->setData($transactionData['errors']);
 					$event->setResult($result);
@@ -107,7 +108,8 @@ class Cart
 	 *
 	 * @param \Change\Http\Event $event
 	 */
-	public function getShippingFeesEvaluation(\Change\Http\Event $event) {
+	public function getShippingFeesEvaluation(\Change\Http\Event $event)
+	{
 		/** @var \Rbs\Commerce\CommerceServices $commerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		if (!$commerceServices)
@@ -123,13 +125,14 @@ class Cart
 			if ($process)
 			{
 				$context = $event->paramsToArray();
-				$shippingFeesEvaluationData = $commerceServices->getProcessManager()->getShippingFeesEvaluation($process, $cart, $context);
-				$result = new \Change\Http\Ajax\V1\ItemResult('Rbs/Commerce/Cart/ShippingFeesEvaluation', $shippingFeesEvaluationData);
+				$shippingFeesEvaluationData = $commerceServices->getProcessManager()
+					->getShippingFeesEvaluation($process, $cart, $context);
+				$result = new \Change\Http\Ajax\V1\ItemResult('Rbs/Commerce/Cart/ShippingFeesEvaluation',
+					$shippingFeesEvaluationData);
 				$event->setResult($result);
 			}
 		}
 	}
-
 
 	/**
 	 * @param \Change\Http\Event $event
@@ -148,8 +151,8 @@ class Cart
 		{
 			return;
 		}
-		$acceptedCommands = array_flip(['addProducts', 'updateLinesQuantity', 'setZone', 'updateContext', 'setAccount', 'setAddress',
-			'setShippingModes', 'setCoupons']);
+		$acceptedCommands = array_flip(['addProducts', 'addSet', 'updateLinesQuantity', 'setZone', 'updateContext', 'setAccount',
+			'setAddress', 'setShippingModes', 'setCoupons']);
 		$commands = array_intersect_key($data, $acceptedCommands);
 		if (!count($commands))
 		{
@@ -161,23 +164,34 @@ class Cart
 		$this->documentManager = $event->getApplicationServices()->getDocumentManager();
 
 		$commerceContext = $commerceServices->getContext();
-		$cartManager = $commerceServices->getCartManager();
 		$cartIdentifier = $commerceContext->getCartIdentifier();
-		$cart = ($cartIdentifier) ? $cartManager->getCartByIdentifier($cartIdentifier) : null;
+		$cart = ($cartIdentifier) ? $this->cartManager->getCartByIdentifier($cartIdentifier) : null;
+		$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
 		$updatedDataSet = [];
 
 		if (isset($data['addProducts']) && is_array($data['addProducts']) && count($data['addProducts']))
 		{
-			if ((!$cart || $cart->isLocked()))
-			{
-				$cart = $cartManager->getNewCart($commerceContext->getWebStore(),
-					$commerceContext->getBillingArea(), $commerceContext->getZone(),
-					['user' => $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser()]);
-				$commerceContext->setCartIdentifier($cart->getIdentifier());
-				$commerceContext->save();
-			}
+			$cart = $this->initCartIfNeeded($cart, $commerceContext, $currentUser);
 			$productsData = $data['addProducts'];
 			$updatedDataSet['addProducts'] = $this->addProducts($cart, $productsData);
+		}
+
+		if (isset($data['addSet']) && is_array($data['addSet'])
+			&& isset($data['addSet']['setData'])
+			&& is_array($data['addSet']['setData'])
+			&& count($data['addSet']['setData'])
+			&& isset($data['addSet']['products'])
+			&& is_array($data['addSet']['products'])
+			&& count($data['addSet']['products'])
+		)
+		{
+			$cart = $this->initCartIfNeeded($cart, $commerceContext, $currentUser);
+			$setData = $data['addSet']['setData'];
+			$productsData = $data['addSet']['products'];
+			$updatedDataSet['addSet'] = [
+				'modalContentUrl' => $this->getModalContentUrl($setData),
+				'addProducts' => $this->addProducts($cart, $productsData)
+			];
 		}
 
 		if (!$cart)
@@ -186,56 +200,65 @@ class Cart
 		}
 		elseif ($cart->isLocked())
 		{
-			$cart = $cartManager->getUnlockedCart($cart);
+			$cart = $this->cartManager->getUnlockedCart($cart);
 		}
 
-		if (isset($data['updateLinesQuantity']) && is_array($data['updateLinesQuantity']) && count($data['updateLinesQuantity'])) {
+		if (isset($data['updateLinesQuantity']) && is_array($data['updateLinesQuantity']) && count($data['updateLinesQuantity']))
+		{
 			$updatedDataSet['updateLinesQuantity'] = $this->updateLinesQuantity($cart, $data['updateLinesQuantity']);
 		}
 
-		if (isset($data['setZone']) && is_array($data['setZone']) && count($data['setZone'])) {
+		if (isset($data['setZone']) && is_array($data['setZone']) && count($data['setZone']))
+		{
 			$updatedDataSet['setZone'] = $this->setZone($cart, $data['setZone']);
 		}
 
-		if (isset($data['updateContext']) && is_array($data['updateContext']) && count($data['updateContext'])) {
+		if (isset($data['updateContext']) && is_array($data['updateContext']) && count($data['updateContext']))
+		{
 			$updatedDataSet['updateContext'] = $this->updateContext($cart, $data['updateContext']);
 		}
 
-		if (isset($data['setAccount']) && is_array($data['setAccount']) && count($data['setAccount'])) {
+		if (isset($data['setAccount']) && is_array($data['setAccount']) && count($data['setAccount']))
+		{
 			$updatedDataSet['setAccount'] = $this->setAccount($cart, $data['setAccount']);
 		}
 
-		if (isset($data['setAddress']) && is_array($data['setAddress'])) {
+		if (isset($data['setAddress']) && is_array($data['setAddress']))
+		{
 			/** @var \Rbs\Generic\GenericServices $genericServices */
 			$genericServices = $event->getServices('genericServices');
 			$updatedDataSet['setAddress'] = $this->setAddress($cart, $data['setAddress'], $genericServices->getGeoManager());
 		}
 
-		if (isset($data['setShippingModes']) && is_array($data['setShippingModes'])) {
+		if (isset($data['setShippingModes']) && is_array($data['setShippingModes']))
+		{
 			/** @var \Rbs\Generic\GenericServices $genericServices */
 			$genericServices = $event->getServices('genericServices');
-			$updatedDataSet['setShippingModes'] = $this->setShippingModes($cart, $data['setShippingModes'], $genericServices->getGeoManager());
+			$updatedDataSet['setShippingModes'] = $this->setShippingModes($cart, $data['setShippingModes'],
+				$genericServices->getGeoManager());
 		}
 
-		if (isset($data['setCoupons']) && is_array($data['setCoupons'])) {
+		if (isset($data['setCoupons']) && is_array($data['setCoupons']))
+		{
 			$updatedDataSet['setCoupons'] = $this->setCoupons($cart, $data['setCoupons']);
 		}
 
-		$currentUser = $event->getApplicationServices()->getAuthenticationManager()->getCurrentUser();
 		if ($currentUser->authenticated())
 		{
 			$cart->setUserId($currentUser->getId());
-			if (!$cart->getEmail()) {
+			if (!$cart->getEmail())
+			{
 				$userDocument = $this->documentManager->getDocumentInstance($currentUser->getId());
-				if ($userDocument instanceof \Rbs\User\Documents\User) {
+				if ($userDocument instanceof \Rbs\User\Documents\User)
+				{
 					$cart->setEmail($userDocument->getEmail());
 				}
 			}
 			$cart->getContext()->set('userName', $currentUser->getName());
 		}
 
-		$cartManager->normalize($cart);
-		$cartManager->saveCart($cart);
+		$this->cartManager->normalize($cart);
+		$this->cartManager->saveCart($cart);
 
 		if ($commerceContext->getCartIdentifier() !== $cart->getIdentifier())
 		{
@@ -243,11 +266,29 @@ class Cart
 			$commerceContext->save();
 		}
 
-		$cartData = $cartManager->getCartData($cart, $event->paramsToArray());
+		$cartData = $this->cartManager->getCartData($cart, $event->paramsToArray());
 		$cartData['updated'] = $updatedDataSet;
 
 		$result = new \Change\Http\Ajax\V1\ItemResult('Rbs/Commerce/Cart', $cartData);
 		$event->setResult($result);
+	}
+
+	/**
+	 * @param \Rbs\Commerce\Cart\Cart|null $cart
+	 * @param \Rbs\Commerce\Std\Context $commerceContext
+	 * @param \Change\User\UserInterface $currentUser
+	 * @return \Rbs\Commerce\Cart\Cart
+	 */
+	protected function initCartIfNeeded($cart, $commerceContext, $currentUser)
+	{
+		if ((!$cart || $cart->isLocked()))
+		{
+			$cart = $this->cartManager->getNewCart($commerceContext->getWebStore(),
+				$commerceContext->getBillingArea(), $commerceContext->getZone(), ['user' => $currentUser]);
+			$commerceContext->setCartIdentifier($cart->getIdentifier());
+			$commerceContext->save();
+		}
+		return $cart;
 	}
 
 	/**
@@ -259,7 +300,7 @@ class Cart
 	{
 		$dataSet = [];
 		$productContext = ['detailed' => false,
-			'data' =>[
+			'data' => [
 				'webStoreId' => $cart->getWebStoreId(),
 				'billingAreaId' => $cart->getBillingArea() ? $cart->getBillingArea()->getId() : 0,
 				'zone' => $cart->getZone(), 'targetIds' => $cart->getPriceTargetIds()]];
@@ -268,22 +309,27 @@ class Cart
 		{
 			if (is_array($productLineData) && isset($productLineData['productId']))
 			{
-				$productContext['data']['options'] = isset($productLineData['options']) && is_array($productLineData['options']) ? $productLineData['options'] : [];
+				$productContext['data']['options'] =
+					(isset($productLineData['options']) && is_array($productLineData['options'])) ? $productLineData['options'] :
+						[];
 				$productData = $this->catalogManager->getProductData($productLineData['productId'], $productContext);
 				if ($productData && isset($productData['cart']['key']))
 				{
-					$lineData = ['key' => $productData['cart']['key'], 'quantity' => 1, 'designation' => $productData['common']['title']];
+					$lineData = ['key' => $productData['cart']['key'], 'quantity' => 1,
+						'designation' => $productData['common']['title']];
 					$lineData['items'][] = ['codeSKU' => $productData['stock']['sku'], 'reservationQuantity' => 1];
-					$lineData['options']  = ['productId' => $productData['common']['id']];
+					$lineData['options'] = ['productId' => $productData['common']['id']];
 					$lineData['options'] = array_merge($productContext['data']['options'], $lineData['options']);
 					if (isset($productLineData['quantity']) && is_numeric($productLineData['quantity']))
 					{
 						$lineData['quantity'] = intval($productLineData['quantity']);
 					}
 					$result = $this->addLine($cart, $lineData);
-					if ($result) {
+					if ($result)
+					{
 						$modalContentUrl = $this->getModalContentUrl($productLineData);
-						if ($modalContentUrl) {
+						if ($modalContentUrl)
+						{
 							$result['modalContentUrl'] = $modalContentUrl;
 						}
 						$dataSet[] = $result;
@@ -307,7 +353,8 @@ class Cart
 			$previousLine = $this->cartManager->getLineByKey($cart, $line->getKey());
 			if ($previousLine)
 			{
-				$this->cartManager->updateLineQuantityByKey($cart, $line->getKey(), $previousLine->getQuantity() + $line->getQuantity());
+				$this->cartManager->updateLineQuantityByKey($cart, $line->getKey(),
+					$previousLine->getQuantity() + $line->getQuantity());
 			}
 			else
 			{
@@ -337,6 +384,13 @@ class Cart
 					{
 						$query['themeName'] = $modalInfo['themeName'];
 					}
+					if (isset($modalInfo['modalUrlQuery']) && is_array($modalInfo['modalUrlQuery'])
+						&& count($modalInfo['modalUrlQuery'])
+					)
+					{
+						$query = array_merge($query, $modalInfo['modalUrlQuery']);
+					}
+
 					$urlManager = $website->getUrlManager($website->getLCID());
 					$absoluteUrl = $urlManager->absoluteUrl(true);
 					$section = isset($this->context['section']) ? $this->context['section'] : null;
@@ -366,8 +420,10 @@ class Cart
 		$dataSet = [];
 		foreach ($linesQuantity as $lineQuantity)
 		{
-			if (is_array($lineQuantity) && isset($lineQuantity['key']) && isset($lineQuantity['quantity'])) {
-				$key = $lineQuantity['key']; $quantity = intval($lineQuantity['quantity']);
+			if (is_array($lineQuantity) && isset($lineQuantity['key']) && isset($lineQuantity['quantity']))
+			{
+				$key = $lineQuantity['key'];
+				$quantity = intval($lineQuantity['quantity']);
 
 				$previousLine = $this->cartManager->getLineByKey($cart, $key);
 				if ($previousLine)
@@ -406,6 +462,7 @@ class Cart
 		}
 		return $dataSet;
 	}
+
 	/**
 	 * @param \Rbs\Commerce\Cart\Cart $cart
 	 * @param array $context
@@ -482,16 +539,18 @@ class Cart
 	protected function setAddress(\Rbs\Commerce\Cart\Cart $cart, array $addressData, \Rbs\Geo\GeoManager $geoManager)
 	{
 		$dataSet = [];
-		if (!$addressData) {
+		if (!$addressData)
+		{
 			$address = null;
 		}
-		else {
+		else
+		{
 			$address = new \Rbs\Geo\Address\BaseAddress($addressData);
 			$address->setLines($geoManager->getFormattedAddress($address));
 		}
 
 		$cart->setAddress($address);
-		$dataSet[] = ['address' => $address->toArray()] ;
+		$dataSet[] = ['address' => $address->toArray()];
 		return $dataSet;
 	}
 
@@ -517,7 +576,7 @@ class Cart
 					$address->setLines($lines);
 				}
 			}
-			$dataSet[] = ['mode' => $mode->toArray()] ;
+			$dataSet[] = ['mode' => $mode->toArray()];
 			$shippingModes[] = $mode;
 		}
 		$cart->setShippingModes($shippingModes);

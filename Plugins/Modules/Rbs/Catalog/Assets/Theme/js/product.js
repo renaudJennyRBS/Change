@@ -26,7 +26,9 @@
 			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
 		};
 	}
-	RbsCatalogProductItemController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+
+	RbsCatalogProductItemController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window',
+		'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
 
 	function rbsCatalogProductsList(AjaxAPI) {
@@ -34,13 +36,13 @@
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductsList.tpl',
 			scope: {},
-			controller: ['$scope', '$element', function (scope, elem) {
+			controller: ['$scope', '$element', function(scope, elem) {
 				var cacheKey = elem.attr('data-cache-key');
 				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
 				var data = AjaxAPI.globalVar(cacheKey);
 				scope.productsData = data.productsData;
 				scope.contextData = data.context.data;
-				scope.context = {URLFormats : data.context.URLFormats, pagination: data.context.pagination, visualFormats: []};
+				scope.context = { URLFormats: data.context.URLFormats, pagination: data.context.pagination, visualFormats: [] };
 				angular.forEach(data.context.visualFormats, function(size, name) {
 					scope.context.visualFormats.push(name);
 				})
@@ -64,7 +66,7 @@
 				};
 
 				scope.scrollDisabled = function() {
-					var productCount = parseInt(attrs.productCount);
+					var productCount = parseInt(attrs['productCount']);
 					return scope.loading || scope.productsData.length >= productCount;
 				}
 			}
@@ -77,7 +79,7 @@
 	function rbsCatalogProductItemData($http, $compile, $rootScope, $window, AjaxAPI) {
 		return {
 			restrict: 'A',
-			link: function (scope, elem, attrs) {
+			link: function(scope) {
 				var productData = scope.productData;
 
 				scope.pictograms = null;
@@ -91,16 +93,8 @@
 
 				scope.viewDetailTitle = scope.viewDetailTitleMask.replace('PRODUCT_TITLE', productData.common.title);
 
-				if (productData.common.attributes && productData.common.attributes.pictograms) {
-					var attr = productData.attributes[productData.common.attributes.pictograms];
-					if (attr && attr.value && attr.value.length) {
-						scope.pictograms = attr.value;
-					}
-				}
-
-				if (productData.common.URL) {
-					scope.url = productData.common.URL.contextual || productData.common.URL.canonical;
-				}
+				scope.pictograms = extractPictogram(productData);
+				scope.url = extractURL(productData);
 
 				if (productData.common.visuals && productData.common.visuals.length) {
 					scope.visual = productData.common.visuals[0];
@@ -125,91 +119,8 @@
 			link: productDataLink
 		}
 	}
+
 	app.directive('rbsCatalogAddListItemProductToCart', rbsCatalogAddListItemProductToCart);
-
-	function productDataLink(scope, elm, attrs) {
-		scope.$watch('productData', function(productData) {
-			if (productData && productData.cart) {
-				var cart = productData.cart;
-				if (attrs.hasOwnProperty('productQuantity')) {
-					cart.quantity = parseInt(attrs['productQuantity']);
-				}
-				else {
-					cart.quantity = (cart.minQuantity) ? cart.minQuantity : 1;
-				}
-				if (attrs.modalId) {
-					cart.modalId = attrs.modalId;
-				}
-			}
-		});
-	}
-
-	function addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI) {
-		var productData = scope.productData;
-		if (productData && productData.cart && productData.cart.key) {
-			var data = {productId: productData.common.id, quantity: productData.cart.quantity};
-			var modalId = productData.cart.modalId;
-			if (modalId) {
-				data.sectionPageFunction = 'Rbs_Catalog_ProductAddedToCart';
-				if (angular.isObject($window['__change']) && angular.isObject($window['__change']['navigationContext'])) {
-					var navigationContext = $window['__change']['navigationContext'];
-					data.themeName = navigationContext.themeName;
-				}
-			}
-
-			scope.modalContentLoading = true;
-
-			var cartParams = {
-				detailed: false,
-				URLFormats: 'canonical',
-				visualFormats: 'shortCartItem'
-			};
-
-			var request = AjaxAPI.putData('Rbs/Commerce/Cart', {addProducts:[data]}, cartParams);
-			request.success(function(resultData) {
-					var cart = resultData.dataSets;
-					$rootScope.$broadcast('rbsRefreshCart', {'cart': cart});
-					if (modalId && cart.updated && cart.updated.addProducts && cart.updated.addProducts.length) {
-						var addData = cart.updated.addProducts[0];
-						if (addData['modalContentUrl']) {
-							var mainContentElement = jQuery('#' + modalId + ' .modal-main-content');
-							mainContentElement.html('<div class="text-center"><img alt="" src="data:image/gif;base64,R0lGODlhGAAYAIQAACQmJJyenNTS1Ozq7GRiZLy+vNze3PT29MzKzDw+PIyKjNza3PTy9GxubMTGxOTm5Pz+/CwqLNTW1Ozu7GRmZMTCxOTi5Pz6/MzOzExOTP///wAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJCQAaACwAAAAAGAAYAAAF6qAmjho0GcKBUIpzkfAIWU5VFUwB7EnwxiLVbZjbRQCRzAKoYQwLt+Ju2ogdJBeGA1pAHASZ446QZcgQFQxEuziQBooIgeFEQEQWrgDyiy3oNwUWJVtETCIQNVAOJjZQS4ciC1wVE5NcbpEaFwVcCwJDCJojGEMYDBOpZqNNE6h0rhOZo6iuDAJcoqylnQIGlLOHnEMLE08GowtPExeKUZEQT4waeTcCF3dADGtDgyUIBddaBsEXyntadiO3WU8YBwzgneFlMVqUFQwDUE8STCqUcOxztwrIDEUFDuxbZCEbtBMpbhmY4JBECAAh+QQJCQAaACwAAAAAGAAYAIQkJiScnpzU0tTs6uxkZmQ8Pjy8vrzc3tz09vTMysw0NjTc2tz08vRMTkzExsTk5uT8/vwsKizU1tTs7uyMiozEwsTk4uT8+vzMzsxUUlT///8AAAAAAAAAAAAAAAAAAAAF76Amjho0HQLCCMcEkfAIWU5VGcxg3In1xiJE4kacTHaGXQIB1DCIyBzyZpDEEJILw4FcMhJTAUSwkA0xkO3iQkIcKmiBosHWWJDieowxVkQAASVcRAxNQQUAiQUXEzY7ZYYiFImJFQtJN0yRGg9/iRQCRAmbIxmUBAxGE4WkGgsOCQkCqamapAw5qwJdrRpgNyxTtoYXSAYLjUgHpAtEFRMXNVGREFxJDi93wBc/e2k2FRYiEGACWg4HwxfN5k8J3StaUBgqYEkGYhPDIltTFVKOblgBImQKDh3zWAGZIc0AAh07HPggZQKFChYugIQAACH5BAkJABoALAAAAAAYABgAhCQmJJyenNTS1Ozq7GRmZDw+PLy+vNze3PT29MzKzDQ2NNza3PTy9MTGxOTm5Pz+/CwqLNTW1Ozu7IyKjExOTMTCxOTi5Pz6/MzOzDw6PP///wAAAAAAAAAAAAAAAAAAAAXroCaO2iMdAsIIh/SQ8PhYTVUZzGDcifXGIkTiRpRIdoZdAgHUMIjIHPJmiMQQkQujgVwyElPBg8EUPYaYcWNxISEOlfQz8bMgxW0gY0y0lLhEDE1mNUkNJjY7C4MjCzs3Eo5IZYwXSTcLAkQJjCRDOwIMRhKCnSKiRgyiopSdCw0JCQICXaYiFAC5BAdTrU0DELkAExJQB6YTucEVF4U3pU0XGcIZbXY3Ahc/MXsCCrkBZmDZWwetFwtxD94UeU7kUBgqYJdpAoswW1MVUok2Ak2ETMGhA8qSQTMKGUCgY0cDH6ZMoFDBwgWQEAAh+QQJCQAcACwAAAAAGAAYAIQkJiScnpzU0tTs6uxkYmS8urzc3tz09vTExsQ8PjyMiozc2tz08vR0cnTEwsTk5uT8/vzMzsxMTkwsKizU1tTs7uxkZmS8vrzk4uT8+vzMysxUUlT///8AAAAAAAAAAAAF6iAnjhxUGcLBCEYFkfAIYYjjXMxw3Rr2xqKD5kasVHaXneYA5DCIyBzydqHEDpQMA4FcMjRTAYTBFEGGkTFikSEdDI70U/PDIMVtIGNMxJS4RAxNZjVJCCY2OwuDIws7NxWOSGWMGUk3CwJEGowkQzsCDEYVgp0iokYMoqKUnSqkK12mImA3LFOtTZZUCxVQBqYLUBUZhTelTRBcO4ccdrYZPzELKol+JWACWggGrQMKEwTVdCMrWlARBwISEwDu4mQxW1MODAXu+BMNTUJTOPf4AEhYlIwGFXv4EgTIw8gEigMILChwwJBECAAh+QQJCQAZACwAAAAAGAAYAIQkJiScnpzU0tTs6uxkZmS8vrzc3tz09vQ8PjzMysw0NjTc2tz08vTExsTk5uT8/vwsKizU1tTs7uyMiozEwsTk4uT8+vxMTkzMzsz///8AAAAAAAAAAAAAAAAAAAAAAAAF7mAmjtkjGcLBCIb0kPD4VA1FFcxQ3En1xqJD4kaUSHaFXeIAzDCIyBzyVojEDhELo4FcMhJTwYPBFD2GmHFjYSEdDJT0M/GrIMVtIGNMrJS4RAxNZjVJDSY2OwuDIws7NxKOSGWMFkk3CwJECYwkQzsCDEYSgp0iokYMoqKUnSqkK12mImA3LFOtTZZUCxJQBqYLUBIWhTelTQ9cO4cZdrYWeTF7Tzd+JWACFgIIEw4kFo5icz9O2hEKAAAQFxVflwXaErkZ6OrqEBE6UFVNCxf31C3Y92jJIAsBENwTQLCBD1MWKEwgUEECCxdAQgAAIfkECQkAGgAsAAAAABgAGAAABeqgJo4aNBnCwQjGBJHwCFlOVRXMUNyI9caiA+JGnEx2hR3iANQwiMgc8laQxA6SC8OBXDIQUwGEwRRBhpixY3EhHQyV9BPxsyDFbSBjTLSUuEQMTWY1SQ4mNjsLgyMLOzcTjkhljBdJNwsCRAiMJEM7AgxGE4KdIqJGDBIICGumQaSkFAC0Ga8an3EKtBERD6aWVHC0tAqmjjYVAxcJxBGLgxdchi8BvAQHPzF7TzZ+GhcZAAQMWwaU4AtxfHSNDVpEFV5glwIXE+inUDtSiUlWesBA6fdoyaAZhQoc0LHDgQ9TJlCoYOECSAgAIfkECQkAGgAsAAAAABgAGACEJCYknJ6c1NLU7OrsZGJk3N7c9Pb0PD48vL68jIqMxMbE3Nrc9PL0dHJ05Obk/P78TE5MLCos1NbU7O7sZGZk5OLk/Pr8xMLEzMrMVFJU////AAAAAAAAAAAAAAAAAAAABemgJo7aMxWCwQjF9JDw+FTKdSHMgNxY9cYiA+ZGnEx2iB3GANQwiMgc8oaQxBYNlQK5ZGCmggeDKbJAABTtwkIyFC4YMfwXANgJll+MId9VNBYHABGDVk0lNUkKDxd2dgmHIws7NxMJjhEDkUFQCwSOGZsjXzYCEhioC6IiDEYTDK0DE2SisK8TAlyrGl87LFO0hxZICAsTUAWiC0QXExaJNwyRD1s3ixoVSAJ5TXxPfiIPX9sMCgXBFsvkcyMrFt88Kr1JYbB71ZRSNkiGMUJTCAzogLLk0IxEOI7sUOBDlAkUKgQY00MiBAAh+QQJCQAaACwAAAAAGAAYAIQkJiScnpzU0tTs6uxkZmQ8Pjy8vrzc3tz09vTMysw0NjTc2tz08vTExsTk5uT8/vwsKizU1tTs7uyMioxMTkzEwsTk4uT8+vzMzsw8Ojz///8AAAAAAAAAAAAAAAAAAAAF76AmjtrVTMTBCIf0kPB4BQVgR4NRVY31xqIFBQAhAgS5ikGXQAA1AoVtKpAor4ZIDBG5RG0QioWR0C0FD4ZT9CgLvJmJhXRZVN6MSuJnMb/XMQxpSgZzDw2EFQxPbA1mDQ9WZgeMIwc6ShILZhWAjBdLSgcCZgmVJBhXAgwSEgyLpyKsDAOvrhKelaytK6GmsRoJVxgHiblACFgtmAaUp3ZmEiahBrBPh6UXGhaqFz+BgzrObQZ4DQeedRUYg3sjDF15ZhgIZEs6eMcMjleKSYlakJXBQouanmMjHlhAtARBEgMJDnxjFGlUPRYugIQAADs=" /></div>');
-							scope.hideModalContent = false;
-							$http.get(addData['modalContentUrl'])
-								.success(function(resultData2) {
-									jQuery('#' + modalId + ' .modal-loading').hide();
-									mainContentElement.html(resultData2);
-									$compile(mainContentElement.contents())(scope);
-									mainContentElement.show();
-									scope.modalContentLoading = false;
-								})
-								.error(function(data, status, headers) {
-									scope.hideModalContent = true;
-									scope.modalContentLoading = false;
-									console.log('error', data, status, headers);
-								});
-						}
-						else {
-							scope.hideModalContent = true;
-						}
-						jQuery('#' + modalId).modal({});
-					}
-				})
-				.error(function(data, status, headers) {
-					console.log('error', data, status, headers);
-				});
-		}
-	}
-
-	function extractPictogram(productData) {
-		if (productData && productData.common && productData.common.attributes && productData.common.attributes.pictograms) {
-			var attr = productData.attributes[productData.common.attributes.pictograms];
-			if (attr && attr.value && attr.value.length) {
-				return attr.value;
-			}
-		}
-		return null;
-	}
 
 	function rbsCatalogProductPictograms() {
 		return {
@@ -224,16 +135,6 @@
 	}
 
 	app.directive('rbsCatalogProductPictograms', rbsCatalogProductPictograms);
-
-	function extractVisuals(productData) {
-		if (productData && productData.common && productData.common.visuals) {
-			var visuals = productData.common.visuals;
-			if (visuals && visuals.length) {
-				return visuals;
-			}
-		}
-		return null;
-	}
 
 	// Uses scope.visuals.
 	function rbsCatalogProductVisuals() {
@@ -305,7 +206,7 @@
 			scope.productAjaxData.webStoreId = scope.parameters.webStoreId;
 			scope.productAjaxData.billingAreaId = scope.parameters.billingAreaId;
 			scope.productAjaxData.zone = scope.parameters.zone;
-			scope.productAjaxParams.visualFormats = scope.parameters.imageFormats;
+			scope.productAjaxParams.visualFormats = scope.parameters['imageFormats'];
 			scope.productAjaxParams.URLFormats = 'canonical,contextual';
 		}
 
@@ -330,7 +231,8 @@
 		};
 	}
 
-	RbsCatalogSimpleProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	RbsCatalogSimpleProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window',
+		'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogSimpleProductController', RbsCatalogSimpleProductController);
 
 	function rbsCatalogAddSimpleProductToCart() {
@@ -364,29 +266,17 @@
 			scope.productAjaxData.webStoreId = scope.parameters.webStoreId;
 			scope.productAjaxData.billingAreaId = scope.parameters.billingAreaId;
 			scope.productAjaxData.zone = scope.parameters.zone;
-			scope.productAjaxParams.visualFormats = scope.parameters.imageFormats;
+			scope.productAjaxParams.visualFormats = scope.parameters['imageFormats'];
 			scope.productAjaxParams.URLFormats = 'canonical,contextual';
 		}
 
 		scope.$watch('productData', function(productData) {
 			if (productData) {
-				scope.pictograms = extractPictogram(productData);
-				if (!scope.pictograms && productData.rootProduct) {
-					scope.pictograms = extractPictogram(productData.rootProduct);
-				}
-
-				scope.visuals = extractVisuals(productData);
-				if (!scope.visuals && productData.rootProduct) {
-					scope.visuals = extractVisuals(productData.rootProduct);
-				}
+				scope.pictograms = extractPictogram(productData, productData.rootProduct);
+				scope.visuals = extractVisuals(productData, productData.rootProduct);
 
 				if (productData && productData.cart && !productData.cart.quantity) {
-					if (productData.cart.minQuantity) {
-						productData.cart.quantity = productData.cart.minQuantity;
-					}
-					else {
-						productData.cart.quantity = 1;
-					}
+					productData.cart.quantity = productData.cart['minQuantity'] || 1;
 				}
 			}
 		});
@@ -433,7 +323,7 @@
 						scope.rootProductData = scope.productData.rootProduct || scope.productData;
 
 						scope.$watchCollection('selectedAxesValues', function(definedAxes) {
-							var axesDefinition = scope.rootProductData.variants ? scope.rootProductData.variants.axes : [];
+							var axesDefinition = scope.rootProductData.variants ? scope.rootProductData.variants['axes'] : [];
 							scope.axesItems = [];
 
 							var currentAxesValue = [], axisIndex, values, axisItems;
@@ -539,7 +429,7 @@
 					var index = axesValue.length - 1,
 						axisItem = {
 							value: axesValue[index], title: axesValue[index],
-							lastAxis: axesValue.length == scope.rootProductData.variants.axes.length
+							lastAxis: axesValue.length == scope.rootProductData.variants['axes'].length
 						},
 						variantProducts = scope.rootProductData.variants.products, variantAxesValue;
 					for (var i = 0; i < variantProducts.length; i++) {
@@ -548,11 +438,11 @@
 							angular.extend(axisItem, variantAxesValue);
 						}
 					}
-					var axis = scope.rootProductData.variants.axes[index];
-					if (axis.defaultItems && axis.defaultItems.length) {
-						for (i = 0; i < axis.defaultItems.length; i++) {
-							if (axis.defaultItems[i].value == axisItem.value) {
-								axisItem.title = axis.defaultItems[i].title;
+					var axis = scope.rootProductData.variants['axes'][index];
+					if (axis['defaultItems'] && axis['defaultItems'].length) {
+						for (i = 0; i < axis['defaultItems'].length; i++) {
+							if (axis['defaultItems'][i].value == axisItem.value) {
+								axisItem.title = axis['defaultItems'][i].title;
 								break;
 							}
 						}
@@ -689,6 +579,11 @@
 			scope.productAjaxData.zone = scope.parameters.zone;
 			scope.productAjaxParams.visualFormats = scope.parameters['imageFormats'];
 			scope.productAjaxParams.URLFormats = 'canonical,contextual';
+
+			scope.itemsToAdd = [];
+			for (var i = 0; i < scope.productData['productSet']['products'].length; i++) {
+				scope.itemsToAdd.push(null);
+			}
 		}
 
 		this.setPictograms = function(productData) {
@@ -706,7 +601,16 @@
 		scope.showReviews = function() {
 			scope.$broadcast('showReviews', $element.attr('data-block-id'));
 		};
+
+		scope.$on('setItemChanged', function (event, itemIndex, itemData) {
+			if (angular.isFunction(event.stopPropagation)) {
+				event.stopPropagation();
+				scope.itemsToAdd[itemIndex] = itemData;
+				scope.$broadcast('setItemChanged');
+			}
+		});
 	}
+
 	RbsCatalogProductSetController.$inject = ['$scope', '$element', 'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogProductSetController', RbsCatalogProductSetController);
 
@@ -715,34 +619,98 @@
 			restrict: 'A',
 			templateUrl: '/rbsCatalogAddSetItemProductToCart.tpl',
 			replace: false,
-			scope: {productData: "="},
+			scope: {
+				productData: "="
+			},
 			link: function(scope, elm, attrs) {
 				scope.addLine = function() {
-					console.log('addLine');
 					addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
 				};
 				productDataLink(scope, elm, attrs);
 			}
 		}
 	}
+
 	rbsCatalogAddSetItemProductToCart.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
 	app.directive('rbsCatalogAddSetItemProductToCart', rbsCatalogAddSetItemProductToCart);
+
+	function rbsCatalogAddSetProductToCart($http, $compile, $rootScope, $window, AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogAddSetProductToCart.tpl',
+			replace: false,
+			scope: {
+				productData: "=",
+				itemsToAdd: "=",
+				parameters: "=",
+				modalId: "@"
+			},
+			link: function(scope) {
+				scope.addToCartData = {};
+				refreshData(scope);
+
+				scope.$on('setItemChanged', function () {
+					refreshData(scope);
+				});
+
+				scope.addSetItems = function() {
+					addSetItems(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+				};
+
+				function refreshData(scope) {
+					scope.addToCartData.hasItemsToAdd = false;
+					scope.productData.price.hasDifferentPrices = false;
+					scope.productData.price.baseValueWithTax = 0;
+					scope.productData.price.baseValueWithoutTax = 0;
+					scope.productData.price.valueWithTax = 0;
+					scope.productData.price.valueWithoutTax = 0;
+					for (var i = 0; i < scope.itemsToAdd.length; i++) {
+						var itemData = scope.itemsToAdd[i];
+						if (!itemData || !itemData.cart.key || !itemData.cart.quantity) {
+							continue;
+						}
+						var price = itemData.price;
+						scope.addToCartData.hasItemsToAdd = true;
+						var quantity = itemData.cart.quantity;
+
+						var baseValueWithTax = price['baseValueWithTax'] || price['valueWithTax'];
+						scope.productData.price.baseValueWithTax += quantity * baseValueWithTax;
+						var baseValueWithoutTax = price['baseValueWithoutTax'] || price['valueWithoutTax'];
+						scope.productData.price.baseValueWithoutTax += quantity * baseValueWithoutTax;
+
+						scope.productData.price.valueWithTax += quantity * price['valueWithTax'];
+						scope.productData.price.valueWithoutTax += quantity * price['valueWithoutTax'];
+					}
+
+					if (scope.productData.price.valueWithTax == scope.productData.price.baseValueWithTax) {
+						scope.productData.price.baseValueWithTax = null;
+					}
+					if (scope.productData.price.valueWithoutTax == scope.productData.price.baseValueWithoutTax) {
+						scope.productData.price.baseValueWithoutTax = null;
+					}
+				}
+			}
+		}
+	}
+
+	rbsCatalogAddSetProductToCart.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	app.directive('rbsCatalogAddSetProductToCart', rbsCatalogAddSetProductToCart);
 
 	function rbsCatalogProductPrice() {
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductPrice.tpl',
 			link: function(scope, elm, attrs) {
-				scope.displayWithoutTax = (attrs.hasOwnProperty('displayWithoutTax')) ? (attrs.displayWithoutTax == "1") : false;
-				scope.displayWithTax = (attrs.hasOwnProperty('displayWithTax')) ? (attrs.displayWithTax == "1") : false;
+				scope.displayWithoutTax = attrs.displayWithoutTax == "1" || attrs.displayWithoutTax == "true";
+				scope.displayWithTax = attrs.displayWithTax == "1" || attrs.displayWithTax == "true";
 			}
 		}
 	}
 
 	app.directive('rbsCatalogProductPrice', rbsCatalogProductPrice);
 
-	app.filter('rbsCatalogGetAttribute', function() {
-		function filter(productData, name) {
+	function rbsCatalogGetAttribute() {
+		function rbsCatalogGetAttributeFilter(productData, name) {
 			if (!angular.isObject(productData) || !angular.isString(name)) {
 				return null;
 			}
@@ -761,9 +729,10 @@
 			}
 			return null;
 		}
+		return rbsCatalogGetAttributeFilter;
+	}
 
-		return filter;
-	});
+	app.filter('rbsCatalogGetAttribute', rbsCatalogGetAttribute);
 
 	function rbsCatalogAttributeValue($sce) {
 		return {
@@ -817,7 +786,7 @@
 				scope.isString = function(attribute) {
 					attribute = attribute || scope.attribute;
 					return (attribute && !scope.isDocument(attribute) && !scope.isArrayValue(attribute)
-						&& !scope.isHtml(attribute) && !scope.isDate(attribute) && !scope.isDateTime(attribute));
+					&& !scope.isHtml(attribute) && !scope.isDate(attribute) && !scope.isDateTime(attribute));
 				};
 
 				scope.trustHtml = function(html) {
@@ -1038,10 +1007,11 @@
 				scope.baseId = 'block-' + scope.blockId + '-information-accordion';
 				var selector = '#' + scope.baseId + '-reviews';
 
-				scope.$on('showReviews', function (event, blockId) {
+				scope.$on('showReviews', function(event, blockId) {
 					if (blockId == scope.blockId) {
 						elm.find(selector).collapse('show');
-						jQuery('html, body').animate({ scrollTop: elm.find('a[href="' + selector + '"]').offset().top - 20 }, 1000);
+						jQuery('html, body').animate({ scrollTop: elm.find('a[href="' + selector + '"]').offset().top - 20 },
+							1000);
 					}
 				});
 			}
@@ -1059,7 +1029,7 @@
 				scope.baseId = 'block-' + scope.blockId + '-information-flat';
 				var selector = '#' + scope.baseId + '-reviews';
 
-				scope.$on('showReviews', function (event, blockId) {
+				scope.$on('showReviews', function(event, blockId) {
 					if (blockId == scope.blockId) {
 						jQuery('html, body').animate({ scrollTop: elm.find(selector).offset().top - 20 }, 1000);
 					}
@@ -1079,7 +1049,7 @@
 				scope.baseId = 'block-' + scope.blockId + '-information-tab';
 				var selector = 'a[href="#' + scope.baseId + '-reviews"]';
 
-				scope.$on('showReviews', function (event, blockId) {
+				scope.$on('showReviews', function(event, blockId) {
 					if (blockId == scope.blockId) {
 						elm.find(selector).tab('show');
 						jQuery('html, body').animate({ scrollTop: elm.find(selector).offset().top - 20 }, 1000);
@@ -1090,4 +1060,320 @@
 	}
 
 	app.directive('rbsCatalogProductInformationTabs', rbsCatalogProductInformationTabs);
+
+	// Set items.
+
+	function rbsCatalogProductSetItemSimple($http, $compile, $rootScope, $window, AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductSetItemSimple.tpl',
+			replace: false,
+			scope: {
+				productSetData: "=",
+				parameters: "=",
+				productAjaxData: "=",
+				productAjaxParams: "="
+			},
+			link: function(scope, elm, attrs) {
+				var itemIndex = attrs['itemIndex'];
+				scope.productData = scope.productSetData['productSet']['products'][itemIndex];
+				scope.rootProductData = scope.productData;
+
+				scope.pictograms = null;
+				scope.visuals = extractVisuals(scope.productData);
+				scope.brand = extractBrand(scope.productData);
+				scope.url = extractURL(scope.productData);
+
+				scope.addLine = function() {
+					addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+				};
+
+				// On quantity changed, emit an event.
+				scope.$watch('productData.cart.quantity', function (value, oldValue) {
+					if (value != oldValue) {
+						scope.$emit('setItemChanged', itemIndex, scope.productData);
+					}
+				}, true);
+			}
+		}
+	}
+
+	rbsCatalogProductSetItemSimple.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	app.directive('rbsCatalogProductSetItemSimple', rbsCatalogProductSetItemSimple);
+
+	function rbsCatalogProductSetItemVariant($http, $compile, $rootScope, $window, AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductSetItemVariant.tpl',
+			replace: false,
+			scope: {
+				productSetData: "=",
+				parameters: "=",
+				productAjaxData: "=",
+				productAjaxParams: "="
+			},
+			link: function(scope, elm, attrs) {
+				var itemIndex = attrs['itemIndex'];
+				scope.productData = scope.productSetData['productSet']['products'][itemIndex];
+				scope.rootProductData = scope.productData.rootProduct || scope.productData;
+
+				scope.pictograms = null;
+				scope.visuals = null;
+				scope.brand = null;
+				scope.url = null;
+
+				scope.$watch('productData', function(productData, oldValue) {
+					if (productData) {
+						scope.visuals = extractVisuals(productData, productData.rootProduct);
+						scope.brand = extractBrand(scope.productData, productData.rootProduct);
+						scope.url = extractURL(productData, productData.rootProduct);
+
+						if (productData.cart && !productData.cart.quantity) {
+							productData.cart.quantity = productData.cart['minQuantity'] || 1;
+						}
+					}
+
+					// On variant changed, emit an event.
+					if (productData != oldValue) {
+						scope.$emit('setItemChanged', itemIndex, productData);
+					}
+				});
+
+				// On quantity changed, emit an event.
+				scope.$watch('productData.cart.quantity', function (value, oldValue) {
+					if (value != oldValue) {
+						scope.$emit('setItemChanged', itemIndex, scope.productData);
+					}
+				});
+
+				scope.addLine = function() {
+					addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+				};
+			}
+		}
+	}
+
+	rbsCatalogProductSetItemVariant.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	app.directive('rbsCatalogProductSetItemVariant', rbsCatalogProductSetItemVariant);
+
+	function rbsCatalogProductSetItemVisual() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductSetItemVisual.tpl',
+			replace: false,
+			link: function(scope, elm, attrs) {
+			}
+		}
+	}
+
+	app.directive('rbsCatalogProductSetItemVisual', rbsCatalogProductSetItemVisual);
+
+	function rbsCatalogProductSetItemHeader() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductSetItemHeader.tpl',
+			replace: false,
+			link: function(scope, elm, attrs) {
+			}
+		}
+	}
+
+	app.directive('rbsCatalogProductSetItemHeader', rbsCatalogProductSetItemHeader);
+
+	// Shared functions.
+
+	function productDataLink(scope, elm, attrs) {
+		scope.$watch('productData', function(productData) {
+			if (productData && productData.cart) {
+				var cart = productData.cart;
+				if (attrs.hasOwnProperty('productQuantity')) {
+					cart.quantity = parseInt(attrs['productQuantity']);
+				}
+				else {
+					cart.quantity = (cart['minQuantity']) ? cart['minQuantity'] : 1;
+				}
+				if (attrs.modalId) {
+					cart.modalId = attrs.modalId;
+				}
+			}
+		});
+	}
+
+	function addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI) {
+		var productData = scope.productData;
+		if (!productData || !productData.cart || !productData.cart.key) {
+			return;
+		}
+
+		scope.modalContentLoading = true;
+
+		var data = { productId: productData.common.id, quantity: productData.cart.quantity };
+
+		var modalId = productData.cart.modalId;
+		if (modalId) {
+			data.sectionPageFunction = 'Rbs_Catalog_ProductAddedToCart';
+			if (angular.isObject($window['__change']) && angular.isObject($window['__change']['navigationContext'])) {
+				var navigationContext = $window['__change']['navigationContext'];
+				data.themeName = navigationContext.themeName;
+			}
+		}
+
+		var request = AjaxAPI.putData('Rbs/Commerce/Cart', { addProducts: [data] }, getCartParams());
+		request.success(function(resultData) {
+			var cart = resultData.dataSets;
+			$rootScope.$broadcast('rbsRefreshCart', { 'cart': cart });
+			if (modalId && cart.updated && cart.updated.addProducts && cart.updated.addProducts.length) {
+				var addData = cart.updated.addProducts[0];
+				loadAddedToCartModal(scope, modalId, addData, $http, $compile);
+			}
+		});
+		request.error(function(data, status, headers) {
+			console.log('error', data, status, headers);
+		});
+	}
+
+	function addSetItems(scope, $http, $compile, $rootScope, $window, AjaxAPI) {
+		var productSetData = scope.productData;
+		if (!productSetData || !productSetData['productSet'] || !angular.isArray(productSetData['productSet']['products'])) {
+			return;
+		}
+
+		var totalCount = 0;
+		var products = [];
+		for (var i = 0; i < scope.itemsToAdd.length; i++) {
+			var itemData = scope.itemsToAdd[i];
+			if (!itemData || !itemData.cart.key || !itemData.cart.quantity) {
+				continue;
+			}
+			totalCount += itemData.cart.quantity;
+			products.push({ productId: itemData.common.id, quantity: itemData.cart.quantity });
+		}
+
+		if (!products.length) {
+			return;
+		}
+
+		scope.modalContentLoading = true;
+
+		var data = {
+			setData: { productId: productSetData.common.id },
+			products: products
+		};
+
+		var modalId = scope.modalId;
+		if (modalId) {
+			data.setData.sectionPageFunction = 'Rbs_Catalog_ProductAddedToCart';
+			data.setData.modalUrlQuery = { itemCount: products.length, totalCount: totalCount };
+			if (angular.isObject($window['__change']) && angular.isObject($window['__change']['navigationContext'])) {
+				var navigationContext = $window['__change']['navigationContext'];
+				data.setData.themeName = navigationContext.themeName;
+			}
+		}
+
+		var request = AjaxAPI.putData('Rbs/Commerce/Cart', { addSet: data }, getCartParams());
+		request.success(function(resultData) {
+			var cart = resultData.dataSets;
+			$rootScope.$broadcast('rbsRefreshCart', { 'cart': cart });
+			if (modalId && cart.updated && cart.updated.addSet.addProducts && cart.updated.addSet.addProducts.length) {
+				var addData = cart.updated.addSet;
+				loadAddedToCartModal(scope, modalId, addData, $http, $compile);
+			}
+		});
+		request.error(function(data, status, headers) {
+			console.log('error', data, status, headers);
+		});
+	}
+
+	function loadAddedToCartModal(scope, modalId, addData, $http, $compile) {
+		console.log('loadAddedToCartModal', addData);
+		if (addData['modalContentUrl']) {
+			var mainContentElement = jQuery('#' + modalId + ' .modal-main-content');
+			mainContentElement.html('<div class="text-center"><img alt="" src="data:image/gif;base64,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" /></div>');
+			scope.hideModalContent = false;
+			$http.get(addData['modalContentUrl'])
+				.success(function(resultData2) {
+					jQuery('#' + modalId + ' .modal-loading').hide();
+					mainContentElement.html(resultData2);
+					$compile(mainContentElement.contents())(scope);
+					mainContentElement.show();
+					scope.modalContentLoading = false;
+				})
+				.error(function(data, status, headers) {
+					scope.hideModalContent = true;
+					scope.modalContentLoading = false;
+					console.log('error', data, status, headers);
+				});
+		}
+		else {
+			scope.hideModalContent = true;
+		}
+		jQuery('#' + modalId).modal({});
+	}
+
+	function getCartParams() {
+		return {
+			detailed: false,
+			URLFormats: 'canonical',
+			visualFormats: 'shortCartItem'
+		};
+	}
+
+	function extractVisuals(productData, rootProductData) {
+		if (productData && productData.common && productData.common.visuals) {
+			var visuals = productData.common.visuals;
+			if (visuals && visuals.length) {
+				return visuals;
+			}
+		}
+		if (rootProductData && rootProductData.common && rootProductData.common.visuals) {
+			visuals = rootProductData.common.visuals;
+			if (visuals && visuals.length) {
+				return visuals;
+			}
+		}
+		return null;
+	}
+
+	function extractPictogram(productData, rootProductData) {
+		if (productData && productData.common && productData.common.attributes && productData.common.attributes.pictograms) {
+			var attr = productData.attributes[productData.common.attributes.pictograms];
+			if (attr && attr.value && attr.value.length) {
+				return attr.value;
+			}
+		}
+		if (rootProductData && rootProductData.common && rootProductData.common.attributes
+			&& rootProductData.common.attributes.pictograms) {
+			attr = productData.attributes[productData.common.attributes.pictograms];
+			if (attr && attr.value && attr.value.length) {
+				return attr.value;
+			}
+		}
+		return null;
+	}
+
+	function extractBrand(productData, rootProductData) {
+		if (productData && productData.common.attributes && productData.common.attributes.brand) {
+			var attr = productData.attributes[productData.common.attributes.brand];
+			if (attr && angular.isObject(attr.value)) {
+				return attr.value;
+			}
+		}
+		if (rootProductData && rootProductData.common.attributes && rootProductData.common.attributes.brand) {
+			attr = rootProductData.attributes[rootProductData.common.attributes.brand];
+			if (attr && angular.isObject(attr.value)) {
+				return attr.value;
+			}
+		}
+		return null;
+	}
+
+	function extractURL(productData, rootProductData) {
+		if (productData && angular.isObject(productData.common.URL)) {
+			return productData.common.URL['contextual'] || productData.common.URL['canonical'];
+		}
+		if (rootProductData && angular.isObject(rootProductData.common.URL)) {
+			return rootProductData.common.URL['contextual'] || rootProductData.common.URL['canonical'];
+		}
+		return null;
+	}
 })(jQuery);

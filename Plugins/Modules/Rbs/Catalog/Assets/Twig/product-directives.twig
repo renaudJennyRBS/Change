@@ -25,16 +25,16 @@
 	</div>
 {% endblock rbsCatalogAddToCartPopin %}
 
-{% block rbsCatalogAddToCartListItem %}
+{% block rbsCatalogAddListItemProductToCart %}
 	<script type="text/ng-template" id="/rbsCatalogAddListItemProductToCart.tpl">
 		<button type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()">
 			<span class="glyphicon glyphicon-shopping-cart"></span>
 			{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
 		</button>
 	</script>
-{% endblock rbsCatalogAddToCartListItem %}
+{% endblock rbsCatalogAddListItemProductToCart %}
 
-{% block rbsCatalogAddToCartSimpleProduct %}
+{% block rbsCatalogAddSimpleProductToCart %}
 	<script type="text/ng-template" id="/rbsCatalogAddSimpleProductToCart.tpl">
 		<div data-ng-show="productData.stock.sku">
 			<div class="row no-bottom-margin">
@@ -53,9 +53,13 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<button type="button" class="btn btn-primary btn-lg btn-block" data-ng-click="addLine()">
-					<span class="glyphicon glyphicon-shopping-cart"></span>
-					{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+				<button type="button" class="btn btn-primary btn-lg btn-block" data-ng-click="addLine()"
+					data-ng-disabled="!productData.cart.key">
+					<span data-ng-show="productData.cart.key">
+						<span class="glyphicon glyphicon-shopping-cart"></span>
+						{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+					</span>
+					<span data-ng-hide="productData.cart.key">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
 				</button>
 			</div>
 		</div>
@@ -65,9 +69,9 @@
 			</button>
 		</div>
 	</script>
-{% endblock rbsCatalogAddToCartSimpleProduct %}
+{% endblock rbsCatalogAddSimpleProductToCart %}
 
-{% block rbsCatalogAddToCartVariantProduct %}
+{% block rbsCatalogAddVariantProductToCart %}
 	<script type="text/ng-template" id="/rbsCatalogAddVariantProductToCart.tpl">
 		<div data-ng-show="productData.stock.sku">
 			<div class="row no-bottom-margin">
@@ -97,21 +101,66 @@
 			</div>
 		</div>
 	</script>
-{% endblock rbsCatalogAddToCartVariantProduct %}
+{% endblock rbsCatalogAddVariantProductToCart %}
 
-{% block rbsCatalogAddToCartSetItemProduct %}
+{% block rbsCatalogAddSetItemProductToCart %}
 	<script type="text/ng-template" id="/rbsCatalogAddSetItemProductToCart.tpl">
-		<div data-ng-show="productData.stock.sku">
-			<button type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()">
+		<div class="row form-horizontal">
+			<div class="col-sm-5">
+				<div class="form-group" data-ng-show="productData.cart.key">
+					<label for="product-quantity-{{ blockId }}-(= productData.common.id =)"
+						class="col-sm-6 control-label">
+						{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}
+					</label>
+					<div class="col-sm-6">
+						<input id="product-quantity-{{ blockId }}-(= productData.common.id =)"
+							class="form-control" type="number" data-ng-model="productData.cart.quantity"
+							max="(= productData.cart.maxQuantity =)" min="0" step="(= productData.cart.quantityIncrement =)" />
+					</div>
+				</div>
+				<div data-ng-show="productData.stock.sku" data-rbs-catalog-product-availability=""></div>
+			</div>
+			<div class="col-sm-7">
+				<div class="form-group">
+					<div class="col-sm-12">
+						<button type="button" class="btn btn-primary btn-block" data-ng-click="addLine()"
+							data-ng-disabled="!productData.cart.key || !productData.cart.quantity">
+							<span data-ng-show="productData.cart.key">
+								<span class="glyphicon glyphicon-shopping-cart"></span>
+								{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+							</span>
+							<span data-ng-hide="productData.cart.key">
+								{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
+							</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>
+{% endblock rbsCatalogAddSetItemProductToCart %}
+
+{% block rbsCatalogAddSetProductToCart %}
+	<script type="text/ng-template" id="/rbsCatalogAddSetProductToCart.tpl">
+		<div data-ng-show="addToCartData.hasItemsToAdd">
+			<div data-rbs-catalog-product-price=""
+				data-display-without-tax="(= parameters.displayPricesWithoutTax =)"
+				data-display-with-tax="(= parameters.displayPricesWithTax =)">
+			</div>
+		</div>
+		<p data-ng-hide="addToCartData.hasItemsToAdd" class="text-warning">
+			{{ i18n('m.rbs.catalog.front.no_selected_item', ['ucf']) }}
+		</p>
+
+		<div class="form-group">
+			<button type="button" class="btn btn-primary btn-lg btn-block" data-ng-click="addSetItems()"
+				data-ng-disabled="!addToCartData.hasItemsToAdd">
 				<span class="glyphicon glyphicon-shopping-cart"></span>
-				{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+				{{ i18n('m.rbs.commerce.front.add_selected_to_cart', ['ucf']) }}
 			</button>
 		</div>
-		<button data-ng-hide="productData.stock.sku" type="button" class="btn btn-primary btn-sm" disabled="disabled">
-			{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-		</button>
 	</script>
-{% endblock rbsCatalogAddToCartSetItemProduct %}
+{% endblock rbsCatalogAddSetProductToCart %}
 
 {% block rbsCatalogProductPictograms %}
 	<script type="text/ng-template" id="/rbsCatalogProductPictograms.tpl">
@@ -119,7 +168,7 @@
 			{% spaceless %}
 				<ul class="list-inline">
 					<li data-ng-repeat="pictogramData in pictograms track by $index">
-						<img alt="(= pictogramData.alt =)" data-ng-src="(= pictogramData[pictogramFormat] =)" />
+						<img alt="(= pictogramData.alt =)" src="" data-ng-src="(= pictogramData[pictogramFormat] =)" />
 					</li>
 				</ul>
 			{% endspaceless %}
@@ -131,11 +180,11 @@
 	<script type="text/ng-template" id="/rbsCatalogAttributeValue.tpl">
 		<span data-ng-if="isArrayValue()">
 			<span data-ng-repeat="item in attribute.value track by $index">
-				<img data-ng-if="isImageValue(item)" data-ng-src="(= item.attribute =)" alt="(= item.alt =)" />
+				<img data-ng-if="isImageValue(item)" src="" data-ng-src="(= item.attribute =)" alt="(= item.alt =)" />
 				<a data-ng-if="isLinkValue(item)" data-ng-href="(= item.URL.canonical =)" data-ng-bind="item.title"></a>
 			</span>
 		</span>
-		<img data-ng-if="isImage()" data-ng-src="(= attribute.value.attribute =)" alt="(= attribute.value.alt =)" />
+		<img data-ng-if="isImage()" src="" data-ng-src="(= attribute.value.attribute =)" alt="(= attribute.value.alt =)" />
 		<a data-ng-if="isLink()" data-ng-href="(= attribute.value.URL.canonical =)" data-ng-bind="attribute.value.title"></a>
 		<div data-ng-if="isHtml()" data-ng-bind-html="trustHtml(attribute.value)"></div>
 		<span data-ng-if="isDate()" data-ng-bind="attribute.value | rbsDate"></span>
@@ -516,3 +565,90 @@
 		</script>
 	{% endblock rbsCatalogProductInformationFlat %}
 {% endblock rbsCatalogProductInformation %}
+
+{% block rbsCatalogProductSetItem %}
+	{% block rbsCatalogProductSetItemVisual %}
+		<script type="text/ng-template" id="/rbsCatalogProductSetItemVisual.tpl">
+			<div class="text-center">
+				<img data-ng-if="visuals.length" src="" data-ng-src="(= visuals[0].detail =)" alt="(= visuals[0].alt =)"
+					class="img-responsive" />
+				<div data-ng-if="!visuals.length" class="text-muted">
+					<span class="glyphicon glyphicon-camera" style="font-size: 75px"></span>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsCatalogProductSetItemVisual %}
+
+	{% block rbsCatalogProductSetItemHeader %}
+		<script type="text/ng-template" id="/rbsCatalogProductSetItemHeader.tpl">
+			<h2>
+				<a data-ng-if="url" href="javascript:" data-ng-href="url">(= rootProductData.common.title =)</a>
+				<span data-ng-if="!url">(= rootProductData.common.title =)</span>
+			</h2>
+			{% spaceless %}
+				<dl class="list-inline list-divided">
+					<dt data-ng-if="productData.common.reference" class="sr-only">
+						{{ i18n('m.rbs.catalog.front.reference', ['ucf']) }}
+					</dt>
+					<dd data-ng-if="productData.common.reference">(= productData.common.reference =)</dd>
+					<dt data-ng-if="brand" class="sr-only">{{ i18n('m.rbs.catalog.front.brand', ['ucf']) }}</dt>
+					<dd data-ng-if="brand">
+						<a data-ng-if="brand.URL.canonical" href="javascript:" data-ng-href="(= brand.URL.canonical =)">
+							(= brand.title =)
+						</a>
+						<span data-ng-if="!brand.URL.canonical">(= brand.title =)</span>
+					</dd>
+				</dl>
+			{% endspaceless %}
+			<div data-rbs-catalog-product-price=""
+				data-display-without-tax="(= parameters.displayPricesWithoutTax =)"
+				data-display-with-tax="(= parameters.displayPricesWithTax =)">
+			</div>
+		</script>
+	{% endblock rbsCatalogProductSetItemHeader %}
+
+	{% block rbsCatalogProductSetItemSimple %}
+		<script type="text/ng-template" id="/rbsCatalogProductSetItemSimple.tpl">
+			<div class="row">
+				<div class="col-sm-5">
+					<div data-rbs-catalog-product-set-item-visual=""></div>
+				</div>
+				<div class="col-sm-7">
+					<div data-rbs-catalog-product-set-item-header=""></div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div data-rbs-catalog-add-set-item-product-to-cart="" data-product-data="productData"
+						data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsCatalogProductSetItemSimple %}
+
+	{% block rbsCatalogProductSetItemVariant %}
+		<script type="text/ng-template" id="/rbsCatalogProductSetItemVariant.tpl">
+			<div class="row">
+				<div class="col-sm-5">
+					<div data-rbs-catalog-product-set-item-visual=""></div>
+				</div>
+				<div class="col-sm-7">
+					<div data-rbs-catalog-product-set-item-header=""></div>
+
+					<div data-rbs-catalog-variant-selector="" data-product-data="productData" data-ajax-data="productAjaxData"
+						data-ajax-params="productAjaxParams">
+					</div>
+					<div data-ng-hide="productData.stock.sku" data-ng-cloak="" class="alert warning">
+						{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div data-rbs-catalog-add-set-item-product-to-cart="" data-product-data="productData"
+						data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsCatalogProductSetItemVariant %}
+{% endblock rbsCatalogProductSetItem %}

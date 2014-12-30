@@ -639,3 +639,8 @@ form .description {
 .img-avatar {
 	margin: 5px;
 }
+
+/** Visual adjustments */
+.form-horizontal .control-label {
+	text-align: left;
+}

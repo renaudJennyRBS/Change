@@ -26,6 +26,9 @@
 	"add_to_cart":{
 		"message":"ajouter au panier"
 	},
+	"add_selected_to_cart":{
+		"message":"ajouter la sélection au panier"
+	},
 	"not_available":{
 		"message":"indisponible"
 	},

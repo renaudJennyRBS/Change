@@ -45,6 +45,17 @@ class ProductAddedToCart extends \Change\Presentation\Blocks\Standard\Block
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
 		$this->setCommerceContextParameters($commerceServices->getContext(), $parameters);
+
+		$request = $event->getHttpRequest();
+		if ($request->getQuery('itemCount'))
+		{
+			$parameters->setParameterValue('itemCount', $request->getQuery('itemCount'));
+		}
+		if ($request->getQuery('totalCount'))
+		{
+			$parameters->setParameterValue('totalCount', $request->getQuery('totalCount'));
+		}
+
 		return $parameters;
 	}
 

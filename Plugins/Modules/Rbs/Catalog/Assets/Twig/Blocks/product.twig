@@ -13,6 +13,8 @@
 	{{ block('rbsCatalogProductAvailability') }}
 	{{ block('rbsCatalogProductPrice') }}
 	{{ block('rbsCatalogProductInformationTabs') }}
+	{{ block('rbsCatalogProductSetItem') }}
+
 	{% if handleReviews %}
 		{% use 'Rbs_Review/review-directives.twig' %}
 		{{ block('rbsReviewCommon') }}
@@ -31,7 +33,7 @@
 
 {% if productData.common.type == 'variant' %}
 	{% block rbsCatalogVariantProduct %}
-		{{ block('rbsCatalogAddToCartVariantProduct') }}
+		{{ block('rbsCatalogAddVariantProductToCart') }}
 		{{ block('rbsCatalogProductVariantSelector') }}
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
 				data-ng-controller="RbsCatalogVariantProductController" data-cache-key="{{ blockId }}">
@@ -54,15 +56,17 @@
 	{% endblock rbsCatalogVariantProduct %}
 {% elseif productData.common.type == 'set' %}
 	{% block rbsCatalogProductSet %}
-		{{ block('rbsCatalogAddToCartSetItemProduct') }}
+		{{ block('rbsCatalogAddSetItemProductToCart') }}
+		{{ block('rbsCatalogAddSetProductToCart') }}
+		{{ block('rbsCatalogProductVariantSelector') }}
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
 				data-ng-controller="RbsCatalogProductSetController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
 			<div class="row">
-				<div class="col-sm-6 col-md-8">
+				<div class="col-sm-5 col-lg-6">
 					{{ block('rbsCatalogProductVisuals') }}
 				</div>
-				<div class="col-sm-6 col-md-4">
+				<div class="col-sm-7 col-lg-6">
 					<header>{{ block('rbsCatalogProductHeader') }}</header>
 					{{ block('rbsCatalogProductOfferSet') }}
 				</div>
@@ -76,11 +80,10 @@
 	{% endblock rbsCatalogProductSet %}
 {% else %}
 	{% block rbsCatalogSimpleProduct %}
-		{{ block('rbsCatalogAddToCartSimpleProduct') }}
+		{{ block('rbsCatalogAddSimpleProductToCart') }}
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
 				data-ng-controller="RbsCatalogSimpleProductController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
-
 			<div class="row">
 				<div class="col-sm-6 col-md-8">
 					{{ block('rbsCatalogProductVisuals') }}
