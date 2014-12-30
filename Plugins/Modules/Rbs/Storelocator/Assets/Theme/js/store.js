@@ -81,10 +81,8 @@
 					return controllerInit && controllerInit['storesData'] ? controllerInit['storesData'] : null;
 				};
 
-
 				this.search = function(data) {
 					var params = this.getSearchContext();
-
 					var request = AjaxAPI.getData('Rbs/Storelocator/Store/', data, params);
 					request.success(function() {
 						scope.$emit('rbsStorelocatorSearchHome', true);
@@ -166,6 +164,8 @@
 				scope.searchContext = controller.getSearchContext();
 				scope.loadingAddresses = false;
 				scope.country = 'France';
+				scope.defaultDistance = '50km';
+				scope.distance = '50km';
 				scope.options = {};
 
 				if (scope.parameters.commercialSignId) {
@@ -202,7 +202,8 @@
 							scope.map.setView(latLng);
 						}
 						scope.addressLoading = true;
-						controller.search({coordinates:coordinates, commercialSign: scope.commercialSignId ? scope.commercialSignId : 0})
+						controller.search({coordinates:coordinates, distance: scope.distance,
+							commercialSign: scope.commercialSignId ? scope.commercialSignId : 0})
 							.success(function(data) {
 								scope.addressLoading = false;
 								scope.stores = data.items;
@@ -223,6 +224,7 @@
 							scope.formatedAddress = null;
 							scope.addressCoordinates = null;
 							scope.myCoordinates = {latitude: position.coords.latitude, longitude: position.coords.longitude};
+							scope.distance = scope.defaultDistance;
 							scope.search();
 						},
 						function (error) {
@@ -290,6 +292,7 @@
 							scope.filteredAddress = null;
 							scope.addressCoordinates = {latitude: data.dataSets.latitude, longitude: data.dataSets.longitude};
 							scope.formatedAddress = data.dataSets.formattedAddress || address.lines[1];
+							scope.distance = scope.defaultDistance;
 							scope.search();
 						} else {
 							scope.stores = [];
@@ -299,6 +302,11 @@
 						scope.addressLoading = false;
 						scope.error = 1;
 					});
+				};
+
+				scope.updateDistance = function(distance) {
+					scope.distance = distance;
+					scope.search();
 				};
 
 				scope.$watchCollection('stores', function(stores, old) {

@@ -163,17 +163,32 @@
 	</nav>
 
 	<div data-ng-hide="showHome()">
-		<p data-ng-hide="error">{{ i18n('m.rbs.storelocator.front.search_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
-			<span data-ng-show="myCoordinates">{{ i18n('m.rbs.storelocator.front.my_coordinates', ['ucf'])}}</span>
-			<span data-ng-show="formatedAddress">(= formatedAddress =)</span>
-			<span data-ng-show="filteredAddress">(= filteredAddress =)</span>
+		<p data-ng-hide="error">
+			<span data-ng-show="myCoordinates">
+				{{ i18n('m.rbs.storelocator.front.search_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
+				{{ i18n('m.rbs.storelocator.front.my_coordinates', ['ucf'])}}</span>
+			<span data-ng-show="formatedAddress">
+				{{ i18n('m.rbs.storelocator.front.search_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
+				(= formatedAddress =)</span>
+			<span data-ng-show="filteredAddress">
+				{{ i18n('m.rbs.storelocator.front.for_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
+				(= filteredAddress =)</span>
 		</p>
+
 		<ul class="text-danger" data-ng-show="error">
 			<li data-ng-if="error == 1">{{ i18n('m.rbs.storelocator.front.unable_to_resolve_address', ['ucf'])}}</li>
 			<li data-ng-if="error == 2">{{ i18n('m.rbs.storelocator.front.unable_to_geo_locate', ['ucf'])}}</li>
 		</ul>
-		<ul class="text-danger" data-ng-hide="stores.length">
-			<li>Aucun magasin trouvé</li>
+
+		<ul class="text-danger" data-ng-hide="stores.length || filteredAddress">
+			<li>{{ i18n('m.rbs.storelocator.front.empty_search_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
+				<span data-ng-show="myCoordinates">{{ i18n('m.rbs.storelocator.front.my_coordinates', ['ucf'])}}</span>
+				<span data-ng-show="formatedAddress">(= formatedAddress =)</span>
+			</li>
+			<li>{{ i18n('m.rbs.storelocator.front.select_search_distance', ['ucf', 'lab']) }}
+				<button class="btn btn-link" type="button" data-ng-disabled="addressLoading" data-ng-click="updateDistance('100km')">100km</button>
+				,<button class="btn btn-link" type="button" data-ng-disabled="addressLoading" data-ng-click="updateDistance('200km')">200km</button>
+			</li>
 		</ul>
 	</div>
 

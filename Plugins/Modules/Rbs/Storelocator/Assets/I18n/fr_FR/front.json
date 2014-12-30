@@ -2,6 +2,15 @@
 	"search_result_text": {
 		"message": "Résultats pour votre recherche $SIGN$ près de"
 	},
+	"for_result_text": {
+		"message": "Résultats pour votre recherche $SIGN$ pour"
+	},
+	"empty_search_result_text": {
+		"message": "Désolé mais aucun magasin $SIGN$ n'est disponible pour votre recherche"
+	},
+	"select_search_distance": {
+		"message": "Elargir ma recherche à"
+	},
 	"my_coordinates": {
 		"message": "Ma position"
 	},
