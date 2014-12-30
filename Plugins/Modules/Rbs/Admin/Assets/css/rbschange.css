@@ -546,7 +546,9 @@ a.go-to-link:after {
 [size="2"],
 [size="2"].form-control,
 [size="4"],
-[size="4"].form-control {
+[size="4"].form-control,
+[size="5"],
+[size="5"].form-control {
 	max-width: 5em;
 }
 

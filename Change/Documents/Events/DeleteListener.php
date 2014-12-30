@@ -341,35 +341,34 @@ class DeleteListener
 				}
 			}
 
-			if ($model->isPublishable())
-			{
-				$qb = $dbp->getNewStatementBuilder();
-				$fb = $qb->getFragmentBuilder();
-				$qb->delete($fb->table('change_path_rule'));
-				$qb->where(
-					$fb->logicOr(
-						$fb->eq($fb->column('website_id'), $fb->number($documentId)),
-						$fb->eq($fb->column('document_id'), $fb->number($documentId))
-					));
-				$dq = $qb->deleteQuery();
-				$dq->execute();
+			$qb = $dbp->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->delete($fb->table('change_path_rule'));
+			$qb->where(
+				$fb->logicOr(
+					$fb->eq($fb->column('website_id'), $fb->number($documentId)),
+					$fb->eq($fb->column('document_id'), $fb->number($documentId))
+				));
+			$dq = $qb->deleteQuery();
+			$dq->execute();
 
-				$qb = $dbp->getNewStatementBuilder();
-				$fb = $qb->getFragmentBuilder();
-				$qb->update($fb->table('change_path_rule'));
-				$qb->assign($fb->column('section_id'), $fb->number(0));
-				$qb->where($fb->eq($fb->column('section_id'), $fb->number($documentId)));
-				$dq = $qb->updateQuery();
-				$dq->execute();
+			$qb = $dbp->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->update($fb->table('change_path_rule'));
+			$qb->assign($fb->column('section_id'), $fb->number(0));
+			$qb->assign($fb->column('http_status'), $fb->number(301));
+			$qb->assign($fb->column('user_edited'), $fb->number(0));
+			$qb->where($fb->eq($fb->column('section_id'), $fb->number($documentId)));
+			$dq = $qb->updateQuery();
+			$dq->execute();
 
-				$qb = $dbp->getNewStatementBuilder();
-				$fb = $qb->getFragmentBuilder();
-				$qb->update($fb->table('change_path_rule'));
-				$qb->assign($fb->column('document_alias_id'), $fb->number(0));
-				$qb->where($fb->eq($fb->column('document_alias_id'), $fb->number($documentId)));
-				$dq = $qb->updateQuery();
-				$dq->execute();
-			}
+			$qb = $dbp->getNewStatementBuilder();
+			$fb = $qb->getFragmentBuilder();
+			$qb->update($fb->table('change_path_rule'));
+			$qb->assign($fb->column('document_alias_id'), $fb->number(0));
+			$qb->where($fb->eq($fb->column('document_alias_id'), $fb->number($documentId)));
+			$dq = $qb->updateQuery();
+			$dq->execute();
 
 			$applicationServices->getDocumentCodeManager()->clearAllDocumentCodes($documentId);
 

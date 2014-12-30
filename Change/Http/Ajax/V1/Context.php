@@ -494,6 +494,7 @@ class Context
 	public function toArray()
 	{
 		$context = ['detailed' => $this->detailed, 'dataSetNames' => $this->dataSetNames, 'data' => $this->data];
+
 		if ($this->page)
 		{
 			$context['page'] = $this->page;
@@ -554,7 +555,7 @@ class Context
 			$context['detailed'] = 1;
 		}
 		if (count($this->dataSetNames)){
-			$context['dataSets'] = implode(',', $this->dataSetNames);
+			$context['dataSets'] = implode(',', array_keys($this->dataSetNames));
 		}
 		if (count($this->URLFormats))
 		{
