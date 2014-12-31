@@ -13,3 +13,13 @@
 	initLeafletMap();
 </script>
 {% endblock rbsStorelocatorLeafletMap %}
+
+
+{% block rbsStorelocatorGoogleMap %}
+	<script type="text/javascript">
+		function initGoogleMap() {
+			document.write('<scr' + 'ipt type="text/javascript" src="//maps.googleapis.com/maps/api/js?key={{ controllerInit.googleAPIKey }}&v=3.exp&libraries=places"></scr' + 'ipt>');
+		}
+		initGoogleMap();
+	</script>
+{% endblock rbsStorelocatorGoogleMap %}

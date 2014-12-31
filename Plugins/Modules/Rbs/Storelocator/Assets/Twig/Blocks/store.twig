@@ -7,5 +7,14 @@
 	{% use 'Rbs_Storelocator/store-directives.twig' %}
 	{{ block('rbsStorelocatorStore') }}
 {% endblock rbsStorelocatorUse %}
-<div data-rbs-storelocator-store="" data-cache-key="{{ blockId }}">
-</div>
+
+{% use 'Rbs_Storelocator/map-resources.twig' %}
+{% if controllerInit.googleAPIKey %}
+	{{ block('rbsStorelocatorGoogleMap') }}
+	<div data-rbs-storelocator-google-store="" data-cache-key="{{ blockId }}">
+	</div>
+{% else %}
+	{{ block('rbsStorelocatorLeafletMap') }}
+	<div data-rbs-storelocator-store="" data-cache-key="{{ blockId }}">
+	</div>
+{% endif %}

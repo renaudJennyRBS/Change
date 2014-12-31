@@ -143,21 +143,28 @@
 	<nav class="navbar navbar-inverse">
 		<div class="container-fluid">
 			<div class="navbar-form navbar-left">
-				<button type="button" data-ng-click="locateMe()" class="btn btn-default navbar-btn" data-ng-disabled="addressLoading">
+				<button type="button" data-ng-click="locateMe()" class="btn btn-default" data-ng-disabled="addressLoading">
 					<span class="glyphicon glyphicon-map-marker"></span> {{ i18n('m.rbs.storelocator.front.locate_me', ['ucf'])}}
 				</button>
 			</div>
-
+			<p class="navbar-text navbar-left">{{ i18n('m.rbs.storelocator.front.or_enter_a_location', ['ucf', 'lab'])}}</p>
 			<div class="navbar-form navbar-left">
-				<p class="navbar-text" >{{ i18n('m.rbs.storelocator.front.or_enter_a_location', ['ucf', 'lab'])}}</p>
+				{% if controllerInit.googleAPIKey %}
 				<div class="form-group">
-					<input type="text" data-ng-model="searchAddress" placeholder="{{ i18nAttr('m.rbs.storelocator.front.location_placeholder', ['ucf'])}}"
-							style="width: auto;" class="form-control" data-ng-disabled="addressLoading"
-							data-ng-blur="selectLoadedAddress()" data-ng-keypress=selectLoadedAddress($event) />
+					<input id="{{ blockId }}_autocomplete"
+							style="width: 30em;" class="form-control"
+							placeholder="{{ i18nAttr('m.rbs.storelocator.front.location_placeholder', ['ucf'])}}" />
+				{% else %}
+				<div class="form-group">
+					<input type="text" data-ng-model="searchAddress"
+							placeholder="{{ i18nAttr('m.rbs.storelocator.front.location_placeholder', ['ucf'])}}"
+							style="width: 30em;" class="form-control" data-ng-disabled="addressLoading"
+							data-ng-blur="selectLoadedAddress()" data-ng-keypress="selectLoadedAddress($event)" />
 				</div>
-				<button class="btn btn-default navbar-btn" type="button" data-ng-click="selectLoadedAddress()" data-ng-disabled="addressLoading">
+				<button class="btn btn-default" type="button" data-ng-click="selectLoadedAddress()" data-ng-disabled="addressLoading">
 					<span class="glyphicon glyphicon-search"></span> {{ i18n('m.rbs.storelocator.front.launch_search', ['ucf'])}}
 				</button>
+				{% endif %}
 			</div>
 		</div>
 	</nav>
@@ -180,7 +187,7 @@
 			<li data-ng-if="error == 2">{{ i18n('m.rbs.storelocator.front.unable_to_geo_locate', ['ucf'])}}</li>
 		</ul>
 
-		<ul class="text-danger" data-ng-hide="stores.length || filteredAddress">
+		<ul class="text-danger" data-ng-hide="stores.length || filteredAddress || error">
 			<li>{{ i18n('m.rbs.storelocator.front.empty_search_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
 				<span data-ng-show="myCoordinates">{{ i18n('m.rbs.storelocator.front.my_coordinates', ['ucf'])}}</span>
 				<span data-ng-show="formatedAddress">(= formatedAddress =)</span>
@@ -234,8 +241,8 @@
 <script type="text/ng-template" id="/rbsStorelocatorStoreItem.tpl">
 	<div class="row">
 		<div class="col-xs-2 text-center" data-ng-click="viewStoreOnMap(storeData)" style="cursor: pointer">
-			<span class="glyphicon glyphicon-map-marker" style="font-size: x-large" data-ng-hide="markerIcon"></span>
-			<img data-ng-src="(= markerIcon.options.iconUrl =)" data-ng-show="markerIcon" />
+			<span class="glyphicon glyphicon-map-marker" style="font-size: x-large" data-ng-hide="markerIconUrl"></span>
+			<img data-ng-src="(= markerIconUrl =)" data-ng-show="markerIconUrl" />
 			<div>(= getDistance() =)</div>
 		</div>
 		<div class="col-xs-10">
