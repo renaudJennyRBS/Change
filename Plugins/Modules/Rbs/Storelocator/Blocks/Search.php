@@ -152,7 +152,6 @@ class Search extends \Change\Presentation\Blocks\Standard\Block
 			$storelocatorServices = $event->getServices('Rbs_StorelocatorServices');
 			$storeManager = $storelocatorServices->getStoreManager();
 			$facetsData = $storeManager->getFacetsData($context->toArray());
-
 			$attributes['facetsData'] = $facetsData['items'];
 		}
 		else

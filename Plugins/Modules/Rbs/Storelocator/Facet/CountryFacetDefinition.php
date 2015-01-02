@@ -116,6 +116,7 @@ class CountryFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacetDefin
 	{
 		$mappingName = $this->getMappingName();
 		$aggregation = new \Elastica\Aggregation\Terms($mappingName);
+		$aggregation->setSize(0);
 		if ($this->getParameters()->get('showEmptyItem'))
 		{
 			$aggregation->setMinimumDocumentCount(0);

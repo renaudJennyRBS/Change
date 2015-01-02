@@ -182,8 +182,9 @@ class TerritorialUnitFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFa
 		if ($this->collectionItems === null)
 		{
 			$docQuery = $this->getDocumentManager()->getNewQuery('Rbs_Geo_TerritorialUnit');
-			$selectQuery = $docQuery->andPredicates($docQuery->eq('unitType', $this->unitType));
-			$dbQueryBuilder = $selectQuery->dbQueryBuilder();
+			$docQuery->andPredicates($docQuery->eq('unitType', $this->unitType));
+			$docQuery->addOrder('code');
+			$dbQueryBuilder = $docQuery->dbQueryBuilder();
 			$fb = $dbQueryBuilder->getFragmentBuilder();
 			$dbQueryBuilder->addColumn($fb->alias($fb->getDocumentColumn('id'), 'id'))
 				->addColumn($fb->getDocumentColumn('title'));
@@ -203,6 +204,7 @@ class TerritorialUnitFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFa
 	{
 		$mappingName = $this->getMappingName() . '_id';
 		$aggregation = new \Elastica\Aggregation\Terms($mappingName);
+		$aggregation->setSize(0);
 		if ($this->getParameters()->get('showEmptyItem'))
 		{
 			$aggregation->setMinimumDocumentCount(0);
@@ -221,7 +223,6 @@ class TerritorialUnitFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFa
 		$items = $this->getCollectionItemsTitle();
 		$av = new \Rbs\Elasticsearch\Facet\AggregationValues($this);
 		$mappingName = $this->getMappingName() . '_id';
-
 		if (isset($aggregations[$mappingName]['buckets']))
 		{
 			$buckets = $aggregations[$mappingName]['buckets'];
