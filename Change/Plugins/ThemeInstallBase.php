@@ -56,6 +56,8 @@ class ThemeInstallBase extends InstallBase
 		}
 
 		$transactionManager = $applicationServices->getTransactionManager();
+
+		$applicationServices->getI18nManager()->compilePluginI18nFiles($plugin);
 		$theme = $this->createOrUpdateTheme($plugin, $applicationServices, $transactionManager);
 
 		// Fetch and create theme if necessary
