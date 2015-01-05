@@ -18,22 +18,27 @@
 			</button>
 
 			{% if controllerInit.googleAPIKey %}
-			<button type="button" class="btn btn-default">
+			<!--
+			<button type="button" class="btn btn-sm btn-default">
 				<span class="glyphicon glyphicon-road"></span> {{ i18n('m.rbs.storelocator.front.itinerary', ['ucf']) }}
 			</button>
+			-->
 			{% endif %}
 
-			<button type="button" class="btn btn-default">
+			<!--
+			<button type="button" class="btn btn-sm btn-default">
 				<span class="glyphicon glyphicon-envelope"></span> {{ i18n('m.rbs.storelocator.front.receive_contact_information', ['ucf']) }}
 			</button>
+			-->
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-4">
 			<div id="map-{{ blockId }}" data-role="map" style="min-height: 300px"></div>
-
+			<!--
 			<a><span class="glyphicon glyphicon-print"> {{ i18n('m.rbs.storelocator.front.print_map', ['ucf']) }}</span></a>
 			<a><span class="glyphicon glyphicon-resize-full"> {{ i18n('m.rbs.storelocator.front.zoom_map', ['ucf']) }}</span></a>
+			-->
 		</div>
 		<div class="col-md-8">
 			<div class="row">
@@ -154,6 +159,7 @@
 					<input id="{{ blockId }}_autocomplete"
 							style="width: 30em;" class="form-control"
 							placeholder="{{ i18nAttr('m.rbs.storelocator.front.location_placeholder', ['ucf'])}}" />
+				</div>
 				{% else %}
 				<div class="form-group">
 					<input type="text" data-ng-model="searchAddress"
