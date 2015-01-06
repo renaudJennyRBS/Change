@@ -201,7 +201,7 @@ class StoreManager implements \Zend\EventManager\EventsCapableInterface
 		$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Storelocator_Store');
 		if ($commercialSignId)
 		{
-			$query->andPredicates($query->published(), $query->eq('commercialSigns', $commercialSignId));
+			$query->andPredicates($query->published(), $query->eq('commercialSign', $commercialSignId));
 		}
 		else
 		{

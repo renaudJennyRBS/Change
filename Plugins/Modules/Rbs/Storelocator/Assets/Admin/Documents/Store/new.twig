@@ -35,15 +35,15 @@
 					label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'description'), ['ucf']) }}">
 				</rbs-field-rich-text>
 
-				<rbs-field-picker-multiple property="visuals" 
+				<rbs-field-picker-multiple property="visuals"
 					label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'visuals'), ['ucf']) }}"
 					accepted-model="Rbs_Media_Image">
 				</rbs-field-picker-multiple>
 
-				<rbs-field-picker-multiple property="commercialSigns"
-						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'commercialSigns'), ['ucf']) }}"
+				<rbs-field-picker property="commercialSign"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'commercialSign'), ['ucf']) }}"
 						accepted-model="Rbs_Storelocator_CommercialSign">
-				</rbs-field-picker-multiple>
+				</rbs-field-picker>
 
 				<rbs-field-picker-multiple property="services"
 						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'services'), ['ucf']) }}"
@@ -51,7 +51,6 @@
 				</rbs-field-picker-multiple>
 
 			</fieldset>
-
 			<fieldset data-rbs-editor-section="geo" data-editor-section-icon="icon-map-marker"
 					data-editor-section-label="{{ i18nAttr('m.rbs.storelocator.admin.geo_section', ['ucf']) }}">
 
@@ -60,14 +59,12 @@
 						selector-title="{{ i18nAttr('m.rbs.storelocator.admin.territorialunit_picker_title', ['ucf']) }}">
 				</rbs-field-picker>
 
-				<rbs-field property="coordinates" label="²Coordonnées">
+				<div rbs-geo-address-field="" data-ng-model="document.address"></div>
+
+				<rbs-field property="coordinates" label="{{ i18nAttr('m.rbs.storelocator.admin.coordinates', ['ucf']) }}">
 					<div data-ng-model="document.coordinates" data-rbs-geo-coordinates-field="" data-address="document.address">
 					</div>
 				</rbs-field>
-
-				<div rbs-geo-address-field="" data-ng-model="document.address"></div>
-
-
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="publication"

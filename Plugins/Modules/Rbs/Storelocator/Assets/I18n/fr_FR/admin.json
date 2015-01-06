@@ -32,6 +32,42 @@
 	"opening_hours_section": {
 		"message": "Horaires"
 	},
+	"week_hours": {
+		"message": "Horaires de la semaine"
+	},
+	"week_day": {
+		"message": "Jour"
+	},
+	"day_am": {
+		"message": "Matin"
+	},
+	"day_pm": {
+		"message": "Après-midi"
+	},
+	"actions": {
+		"message": "Actions"
+	},
+	"apply_to_all": {
+		"message": "Appliquer à tous"
+	},
+	"continuous_day": {
+		"message": "Journée continue"
+	},
+	"closed_day": {
+		"message": "Fermé"
+	},
+	"exceptional_hours": {
+		"message": "Horaire exceptionnel"
+	},
+	"exceptional_date": {
+		"message": "Date"
+	},
+	"add": {
+		"message": "Ajouter"
+	},
+	"coordinates": {
+		"message": "Coordonnées"
+	},
 	"storelocatorindex_create": {
 		"message": "ajouter un index de recherche magasin"
 	},

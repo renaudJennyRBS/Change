@@ -194,7 +194,8 @@ class StoreLocatorIndex extends \Compilation\Rbs\Storelocator\Documents\StoreLoc
 				}
 			}
 
-			foreach ($store->getCommercialSigns() as $commercialSign)
+			$commercialSign = $store->getCommercialSign();
+			if ($commercialSign instanceof \Rbs\Storelocator\Documents\CommercialSign)
 			{
 				$documentData['commercialSigns'][] = [
 					'commercialSignId' => $commercialSign->getId(),

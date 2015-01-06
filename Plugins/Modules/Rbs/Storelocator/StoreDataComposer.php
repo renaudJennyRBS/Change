@@ -68,11 +68,22 @@ class StoreDataComposer
 
 		if ($this->detailed || $this->hasDataSet('coordinates')) {
 			$this->dataSets['coordinates'] = $this->store->getCoordinates();
+			$commercialSign = $this->store->getCommercialSign();
+			if ($commercialSign && $commercialSign->getMarker()) {
+				$marker = $commercialSign->getMarker();
+				$imagesFormats = new \Rbs\Media\Http\Ajax\V1\ImageFormats($commercialSign->getMarker());
+				$format = $imagesFormats->getFormatsData(['original' => [0, 0]]);
+				$format['id'] = $marker->getId();
+				$format['size'] = [$marker->getWidth(), $marker->getHeight()];
+				unset($format['alt']);
+				$this->dataSets['coordinates']['marker'] = $format;
+			}
 		}
 
-		if ($this->detailed || $this->hasDataSet('commercialSigns')) {
-			$this->dataSets['commercialSigns'] = [];
-			foreach ($this->store->getCommercialSigns() as $commercialSign)
+		if ($this->detailed || $this->hasDataSet('commercialSign')) {
+			$this->dataSets['commercialSign'] = null;
+			$commercialSign = $this->store->getCommercialSign();
+			if ($commercialSign instanceof \Rbs\Storelocator\Documents\CommercialSign)
 			{
 				$data = ['common' => ['id' => $commercialSign->getId(), 'code' => $commercialSign->getCode()]];
 				$data['common']['title'] = $commercialSign->getCurrentLocalization()->getTitle();
@@ -90,7 +101,7 @@ class StoreDataComposer
 						}
 					}
 				}
-				$this->dataSets['commercialSigns'][] = $data;
+				$this->dataSets['commercialSign'] = $data;
 			}
 		}
 

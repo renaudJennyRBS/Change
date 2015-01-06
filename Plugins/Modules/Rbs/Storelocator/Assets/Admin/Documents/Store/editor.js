@@ -17,6 +17,7 @@
 				scope.onReload = function() {
 					if (angular.isArray(scope.document.card) || !angular.isObject(scope.document.card)) {
 						scope.document.card = {};
+						scope.original.card = {};
 					}
 				};
 
