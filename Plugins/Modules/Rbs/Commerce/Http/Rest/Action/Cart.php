@@ -75,7 +75,7 @@ class Cart
 				$qb->select($fb->column('identifier'), $fb->column('user_id'), $fb->column('store_id')
 					,$fb->column('locked'), $fb->column('processing'),
 					$fb->column('owner_id'), $fb->column('transaction_id'), $fb->column('line_count'),
-					$fb->column('payment_amount_with_taxes'), $fb->column('total_amount_with_taxes'),
+					$fb->column('payment_amount'), $fb->column('total_amount_with_taxes'),
 					$fb->column('currency_code'),
 					$fb->column('last_update'));
 				$qb->from($fb->table('rbs_commerce_dat_cart'));
@@ -101,7 +101,7 @@ class Cart
 					->addStrCol('identifier', 'currency_code')
 					->addIntCol('user_id', 'store_id', 'owner_id', 'transaction_id', 'line_count')
 					->addBoolCol('locked', 'processing')
-					->addNumCol('payment_amount_with_taxes', 'total_amount_with_taxes')
+					->addNumCol('payment_amount', 'total_amount_with_taxes')
 					->addDtCol('last_update'));
 
 				$vc = new \Change\Http\Rest\V1\ValueConverter($urlManager, $documentManager);
@@ -109,6 +109,7 @@ class Cart
 				{
 					$link = new Link($event->getUrlManager(), 'commerce/cart/' . $row['identifier']);
 					$row['link'] = $link->toArray();
+					$row['payment_amount_with_taxes'] = $row['payment_amount'];
 
 					if ($row['store_id'])
 					{
