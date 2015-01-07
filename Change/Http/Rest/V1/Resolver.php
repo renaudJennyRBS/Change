@@ -34,6 +34,7 @@ class Resolver extends BaseResolver implements NameSpaceDiscoverInterface
 		$this->addResolverClasses('actions', '\Change\Http\Rest\V1\Actions\ActionsResolver');
 		$this->addResolverClasses('jobs', '\Change\Http\Rest\V1\Jobs\JobsResolver');
 		$this->addResolverClasses('commands', '\Change\Http\Rest\V1\Commands\CommandsResolver');
+		$this->addResolverClasses('resourcescode', '\Change\Http\Rest\V1\ResourcesCode\ResourcesCodeResolver');
 	}
 
 	/**
