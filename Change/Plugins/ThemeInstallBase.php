@@ -250,7 +250,7 @@ class ThemeInstallBase extends InstallBase
 		$existingEditableContent = $template->getEditableContent();
 		if (is_array($existingEditableContent))
 		{
-			$editableContent = array_merge($editableContent, $existingEditableContent);
+			$editableContent = array_merge($editableContent, array_intersect_key($existingEditableContent, $editableContent));
 		}
 		$mailSuitable = isset($templateDefinition['mailSuitable'])
 			&& is_bool($templateDefinition['mailSuitable']) ? $templateDefinition['mailSuitable'] : false;
