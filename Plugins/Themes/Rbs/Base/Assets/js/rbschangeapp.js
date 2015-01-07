@@ -276,7 +276,7 @@
 				$rootScope.$emit('rbsAjaxCloseWaitingModal');
 			}
 
-			// Public API
+			// Public API.
 			return {
 				getVersion: getVersion,
 				getLCID: getLCID,
