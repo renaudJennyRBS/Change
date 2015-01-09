@@ -21,112 +21,143 @@ class InitializeOrderProcess extends \Rbs\Generic\Commands\AbstractInitialize
 	{
 		$response = $event->getCommandResponse();
 		$applicationServices = $event->getApplicationServices();
+		$documentManager = $applicationServices->getDocumentManager();
 
 		$params = new \Zend\Stdlib\Parameters((array)$event->getParams());
-		$website = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('websiteId'));
-		$store = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('storeId'));
+		$website = $documentManager->getDocumentInstance($params->get('websiteId'));
+		$store = $documentManager->getDocumentInstance($params->get('storeId'));
 		$LCID = $params->get('LCID');
-		$sidebarTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('sidebarTemplateId'));
-		$noSidebarTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('noSidebarTemplateId'));
-		$popinTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('popinTemplateId'));
-		$userAccountTopic = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('userAccountTopicId'));
+		$sidebarTemplate = $documentManager->getDocumentInstance($params->get('sidebarTemplateId'));
+		$noSidebarTemplate = $documentManager->getDocumentInstance($params->get('noSidebarTemplateId'));
+		$popinTemplate = $documentManager->getDocumentInstance($params->get('popinTemplateId'));
+		$userAccountTopic = $documentManager->getDocumentInstance($params->get('userAccountTopicId'));
+		$override = $params->get('override') == 'true';
 
-		if ($sidebarTemplate instanceof \Rbs\Theme\Documents\Template &&
-			$noSidebarTemplate instanceof \Rbs\Theme\Documents\Template &&
-			$popinTemplate instanceof \Rbs\Theme\Documents\Template &&
-			$website instanceof \Rbs\Website\Documents\Website && $store instanceof \Rbs\Store\Documents\WebStore && $LCID)
+		if (!($website instanceof \Rbs\Website\Documents\Website))
 		{
-			$context = 'Rbs Commerce Order Process Initialize ' . $website->getId() . ' ' . $store->getId();
-			if ($userAccountTopic instanceof \Rbs\Website\Documents\Topic)
-			{
-				$applicationServices->getDocumentCodeManager()->addDocumentCode($userAccountTopic, 'rbs_commerce_initialize_user_account_topic', $context);
-			}
-
-			$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'order-process.json';
-			$json = json_decode(file_get_contents($filePath), true);
-			$json['contextId'] = $context;
-
-			$import = $this->getImport($applicationServices, $LCID);
-
-			$resolveDocument = function ($id, $contextId) use ($website, $store, $sidebarTemplate, $noSidebarTemplate, $popinTemplate)
-			{
-				$document = null;
-				switch ($id)
-				{
-					case 'no_side_bar_template':
-						$document = $noSidebarTemplate;
-						break;
-					case 'side_bar_template':
-						$document = $sidebarTemplate;
-						break;
-					case 'popin_template':
-						$document = $popinTemplate;
-						break;
-					case 'website':
-						$document = $website;
-						break;
-					case 'store':
-						$document = $store;
-						break;
-				}
-				return $document;
-			};
-			$import->getOptions()->set('resolveDocument', $resolveDocument);
-
-			try
-			{
-				$applicationServices->getTransactionManager()->begin();
-				$documents = $import->fromArray($json);
-				$applicationServices->getTransactionManager()->commit();
-			}
-			catch (\Exception $e)
-			{
-				throw $applicationServices->getTransactionManager()->rollBack($e);
-			}
-
-			//set initialized process to given store
-			$orderProcesses = $applicationServices->getDocumentCodeManager()->getDocumentsByCode('rbs_commerce_initialize_order_process', $context);
-			if (isset($orderProcesses[0]) && $orderProcesses[0] instanceof \Rbs\Commerce\Documents\Process)
-			{
-				$store->setOrderProcess($orderProcesses[0]);
-				try
-				{
-					$applicationServices->getTransactionManager()->begin();
-					$store->save();
-					$applicationServices->getTransactionManager()->commit();
-				}
-				catch (\Exception $e)
-				{
-					throw $applicationServices->getTransactionManager()->rollBack($e);
-				}
-			}
-
-			$this->publishDocuments($documents, $applicationServices->getDocumentManager(), $applicationServices->getAuthenticationManager()->getCurrentUser());
-
-			//keep generic document code if it's useful
-			if (!$userAccountTopic)
-			{
-				$documents = $applicationServices->getDocumentCodeManager()->getDocumentsByCode('rbs_commerce_initialize_user_account_topic', $context);
-				if (isset($documents[0]) && $documents[0] != null)
-				{
-					$applicationServices->getDocumentCodeManager()->addDocumentCode($documents[0], 'user_account_topic', 'Website_' . $website->getId());
-				}
-			}
-
-			$this->addMenuToTemplates($website->getId(), $noSidebarTemplate, $sidebarTemplate, $applicationServices);
-
 			if ($response)
 			{
-				$response->addInfoMessage('Done.');
+				$response->addErrorMessage('Invalid arguments: website is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: website is not valid', 999999);
+		}
+		if (!($store instanceof \Rbs\Store\Documents\WebStore))
+		{
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: store is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: store is not valid', 999999);
+		}
+		if (!($sidebarTemplate instanceof \Rbs\Theme\Documents\Template))
+		{
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: sidebarTemplate is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: sidebarTemplate is not valid', 999999);
+		}
+		if (!($noSidebarTemplate instanceof \Rbs\Theme\Documents\Template))
+		{
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: noSidebarTemplate is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: noSidebarTemplate is not valid', 999999);
+		}
+		if (!($popinTemplate instanceof \Rbs\Theme\Documents\Template))
+		{
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: popinTemplate is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: popinTemplate is not valid', 999999);
+		}
+		if (!$LCID)
+		{
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: LCID is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: LCID is not valid', 999999);
+		}
+
+		$context = 'Rbs Commerce Order Process Initialize ' . $website->getId() . ' ' . $store->getId();
+		if ($userAccountTopic instanceof \Rbs\Website\Documents\Topic)
+		{
+			$applicationServices->getDocumentCodeManager()
+				->addDocumentCode($userAccountTopic, 'rbs_commerce_initialize_user_account_topic', $context);
+		}
+
+		$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'order-process.json';
+		$json = json_decode(file_get_contents($filePath), true);
+		$json['contextId'] = $context;
+
+		$import = $this->getImport($applicationServices, $LCID, !$override);
+
+		$resolveDocument = function ($id, $contextId, $jsonDocument) use (
+			$website, $store, $sidebarTemplate, $noSidebarTemplate, $popinTemplate, $documentManager, $import
+		)
+		{
+			$document = null;
+			switch ($id)
+			{
+				case 'no_side_bar_template':
+					$document = $noSidebarTemplate;
+					break;
+				case 'side_bar_template':
+					$document = $sidebarTemplate;
+					break;
+				case 'popin_template':
+					$document = $popinTemplate;
+					break;
+				case 'website':
+					$document = $website;
+					break;
+				case 'store':
+					$document = $store;
+					break;
+
+				default:
+					if (substr($id, 0, 3) == 'f::')
+					{
+						$document = $this->resolveSectionPageFunction($jsonDocument, $import, $documentManager);
+					}
+			}
+			return $document;
+		};
+		$import->getOptions()->set('resolveDocument', $resolveDocument);
+
+		try
+		{
+			$applicationServices->getTransactionManager()->begin();
+			$documents = $import->fromArray($json);
+			$applicationServices->getTransactionManager()->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $applicationServices->getTransactionManager()->rollBack($e);
+		}
+
+		$this->publishDocuments($documents, $documentManager, $applicationServices->getAuthenticationManager()->getCurrentUser());
+
+		// Keep generic document code if it's useful.
+		if (!$userAccountTopic)
+		{
+			$documents = $applicationServices->getDocumentCodeManager()
+				->getDocumentsByCode('rbs_commerce_initialize_user_account_topic', $context);
+			if (isset($documents[0]) && $documents[0] != null)
+			{
+				$applicationServices->getDocumentCodeManager()
+					->addDocumentCode($documents[0], 'user_account_topic', 'Website_' . $website->getId());
 			}
 		}
-		else
+
+		$this->addMenuToTemplates($website->getId(), $noSidebarTemplate, $sidebarTemplate, $applicationServices);
+
+		if ($response)
 		{
-			if ($response)
-			{
-				$response->addErrorMessage('templates, store or website are not valid');
-			}
-			throw new \RuntimeException('Invalid arguments: templates, store or website are not valid', 999999);
+			$response->addInfoMessage('Done.');
 		}
 	}
 

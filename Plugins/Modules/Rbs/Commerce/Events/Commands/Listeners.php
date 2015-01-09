@@ -58,6 +58,13 @@ class Listeners implements ListenerAggregateInterface
 		};
 		$events->attach('rbs_commerce:initialize-order-process', $callback);
 
+
+		$callback = function ($event)
+		{
+			(new \Rbs\Commerce\Commands\InitializeReturnProcess())->execute($event);
+		};
+		$events->attach('rbs_commerce:initialize-return-process', $callback);
+
 		$callback = function ($event)
 		{
 			(new \Rbs\Stock\Commands\CheckInventoryEntries())->execute($event);

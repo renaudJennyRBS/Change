@@ -1,0 +1,214 @@
+{
+	"documents": [
+		{
+			"_id": "rbs_commerce_initialize_user_account_topic",
+			"_model": "Rbs_Website_Topic",
+			"label": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"},
+			"versionOfId": 0,
+			"_LCID": {
+				"fr_FR": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"}
+				},
+				"en_US": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.user_account_topic"}
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_return_process",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.return_process"},
+			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"hideLinks": true,
+			"versionOfId": 0,
+			"pageTemplate": {"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 2,
+									"parameters": {"TTL": 60},
+									"name": "Rbs_Productreturn_ReturnProcess",
+									"label": "Rbs_Productreturn_ReturnProcess",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.return_process"}
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 2,
+									"parameters": {"TTL": 60},
+									"name": "Rbs_Productreturn_ReturnProcess",
+									"label": "Rbs_Productreturn_ReturnProcess",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.return_process"}
+				}
+			}
+		},
+		{
+			"_id": "f::rbs_commerce_initialize_return_process_function",
+			"functionCode": "Rbs_Productreturn_ReturnProcess",
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_commerce_initialize_return_process"}
+		},
+		{
+			"_id": "rbs_commerce_initialize_return_list",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.return_list"},
+			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"versionOfId": 0,
+			"pageTemplate": {"_id": "side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 5,
+									"parameters": {
+										"TTL": 60,
+										"itemsPerPage": 5
+									},
+									"name": "Rbs_Productreturn_ReturnList",
+									"label": "Rbs_Productreturn_ReturnList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.return_list"}
+				},
+				"en_US": {
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 5,
+									"parameters": {
+										"TTL": 60,
+										"itemsPerPage": 5
+									},
+									"name": "Rbs_Productreturn_ReturnList",
+									"label": "Rbs_Productreturn_ReturnList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.return_list"}
+				}
+			}
+		},
+		{
+			"_id": "f::rbs_commerce_initialize_return_list_function",
+			"functionCode": "Rbs_Productreturn_ReturnList",
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_commerce_initialize_return_list"}
+		},
+		{
+			"_id": "rbs_commerce_initialize_return_sheet",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.return_sheet"},
+			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
+			"website": {"_id": "website"},
+			"hideLinks": true,
+			"versionOfId": 0,
+			"pageTemplate": {"_id": "print_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 2,
+									"parameters": {"TTL": 60},
+									"name": "Rbs_Productreturn_ReturnSheet",
+									"label": "Rbs_Productreturn_ReturnSheet",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.return_sheet"}
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 2,
+									"parameters": {"TTL": 60},
+									"name": "Rbs_Productreturn_ReturnSheet",
+									"label": "Rbs_Productreturn_ReturnSheet",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.return_sheet"}
+				}
+			}
+		},
+		{
+			"_id": "f::rbs_commerce_initialize_return_sheet_function",
+			"functionCode": "Rbs_Productreturn_ReturnSheet",
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_commerce_initialize_return_sheet"}
+		}
+	],
+	"contextId": "Autogenerated"
+}

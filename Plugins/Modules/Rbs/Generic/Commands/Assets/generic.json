@@ -6,18 +6,20 @@
 			"label": {"_i18n": "m.rbs.generic.initialize.homepage"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_Richtext", "id": 2, "label": "Rbs_Website_Richtext",
+									"type": "block",
+									"name": "Rbs_Website_Richtext",
+									"id": 2,
+									"label": "Rbs_Website_Richtext",
 									"parameters": {
 										"contentType": "Markdown",
 										"content": "###Bienvenue sur mon site web",
@@ -31,14 +33,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_Richtext", "id": 2, "label": "Rbs_Website_Richtext",
+									"type": "block",
+									"name": "Rbs_Website_Richtext",
+									"id": 2,
+									"label": "Rbs_Website_Richtext",
 									"parameters": {
 										"contentType": "Markdown",
 										"content": "###Welcome to my website",
@@ -53,13 +57,11 @@
 			}
 		},
 		{
-			"_id": "rbs_generic_initialize_homepage_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_generic_initialize_homepage_function",
 			"functionCode": "Rbs_Website_Section",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_generic_initialize_homepage"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_homepage"}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_create_account",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -67,18 +69,20 @@
 			"website": {"_id": "website"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_User_CreateAccount", "id": 2, "label": "Rbs_User_CreateAccount"
+									"type": "block",
+									"name": "Rbs_User_CreateAccount",
+									"id": 2,
+									"label": "Rbs_User_CreateAccount"
 								}
 							]
 						}
@@ -87,14 +91,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_User_CreateAccount", "id": 2, "label": "Rbs_User_CreateAccount"
+									"type": "block",
+									"name": "Rbs_User_CreateAccount",
+									"id": 2,
+									"label": "Rbs_User_CreateAccount"
 								}
 							]
 						}
@@ -104,13 +110,11 @@
 			}
 		},
 		{
-			"_id": "rbs_generic_initialize_create_account_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_generic_initialize_create_account_function",
 			"functionCode": "Rbs_User_CreateAccount",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_generic_initialize_create_account"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_create_account"}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_login",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -118,18 +122,20 @@
 			"website": {"_id": "website"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+									"type": "block",
+									"name": "Rbs_User_Login",
+									"id": 2,
+									"label": "Rbs_User_Login"
 								}
 							]
 						}
@@ -138,14 +144,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+									"type": "block",
+									"name": "Rbs_User_Login",
+									"id": 2,
+									"label": "Rbs_User_Login"
 								}
 							]
 						}
@@ -155,13 +163,11 @@
 			}
 		},
 		{
-			"_id": "rbs_generic_initialize_login_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_generic_initialize_login_function",
 			"functionCode": "Rbs_User_Login",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_generic_initialize_login"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_login"}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_reset_password",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -169,18 +175,20 @@
 			"website": {"_id": "website"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_User_ResetPassword", "id": 2, "label": "Rbs_User_ResetPassword"
+									"type": "block",
+									"name": "Rbs_User_ResetPassword",
+									"id": 2,
+									"label": "Rbs_User_ResetPassword"
 								}
 							]
 						}
@@ -189,14 +197,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_User_ResetPassword", "id": 2, "label": "Rbs_User_ResetPassword"
+									"type": "block",
+									"name": "Rbs_User_ResetPassword",
+									"id": 2,
+									"label": "Rbs_User_ResetPassword"
 								}
 							]
 						}
@@ -206,13 +216,11 @@
 			}
 		},
 		{
-			"_id": "rbs_generic_initialize_reset_password_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_generic_initialize_reset_password_function",
 			"functionCode": "Rbs_User_ResetPassword",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_generic_initialize_reset_password"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_reset_password"}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_user_account_topic",
 			"_model": "Rbs_Website_Topic",
@@ -220,22 +228,17 @@
 			"website": {"_id": "website"},
 			"versionOfId": 0,
 			"_LCID": {
-				"fr_FR": {
-					"title": "Mon Compte"
-				},
-				"en_US": {
-					"title": "My Account"
-				}
+				"fr_FR": {"title": "Mon Compte"},
+				"en_US": {"title": "My Account"}
 			}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_edit_account",
 			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.generic.initialize.edit_account"},
 			"section": {"_id": "rbs_generic_initialize_user_account_topic"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "side_bar_template"},
+			"pageTemplate": {"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"title": {"_i18n": "m.rbs.generic.initialize.edit_account"},
@@ -317,14 +320,13 @@
 				}
 			}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_manage_addresses",
 			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.generic.initialize.manage_addresses"},
 			"section": {"_id": "rbs_generic_initialize_user_account_topic"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "side_bar_template"},
+			"pageTemplate": {"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"title": {"_i18n": "m.rbs.generic.initialize.manage_addresses"},
@@ -385,6 +387,12 @@
 					}
 				}
 			}
+		},
+		{
+			"_id": "f::rbs_generic_initialize_manage_addresses_function",
+			"functionCode": "Rbs_Geo_ManageAddresses",
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_manage_addresses"}
 		},
 
 		{
@@ -394,18 +402,21 @@
 			"website": {"_id": "website"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_Exception", "id": 2, "label": "Rbs_Website_Exception", "showStackTrace": false
+									"type": "block",
+									"name": "Rbs_Website_Exception",
+									"id": 2,
+									"label": "Rbs_Website_Exception",
+									"showStackTrace": false
 								}
 							]
 						}
@@ -414,14 +425,17 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_Exception", "id": 2, "label": "Rbs_Website_Exception", "showStackTrace": false
+									"type": "block",
+									"name": "Rbs_Website_Exception",
+									"id": 2,
+									"label": "Rbs_Website_Exception",
+									"showStackTrace": false
 								}
 							]
 						}
@@ -431,13 +445,11 @@
 			}
 		},
 		{
-			"_id": "rbs_generic_initialize_Error_500_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_generic_initialize_Error_500_function",
 			"functionCode": "Error_500",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_generic_initialize_exception"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_exception"}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_error",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -445,18 +457,20 @@
 			"website": {"_id": "website"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_Error", "id": 2, "label": "Rbs_Website_Error"
+									"type": "block",
+									"name": "Rbs_Website_Error",
+									"id": 2,
+									"label": "Rbs_Website_Error"
 								}
 							]
 						}
@@ -465,14 +479,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_Error", "id": 2, "label": "Rbs_Website_Error"
+									"type": "block",
+									"name": "Rbs_Website_Error",
+									"id": 2,
+									"label": "Rbs_Website_Error"
 								}
 							]
 						}
@@ -482,13 +498,11 @@
 			}
 		},
 		{
-			"_id": "rbs_generic_initialize_Error_404_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_generic_initialize_Error_404_function",
 			"functionCode": "Error_404",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_generic_initialize_error"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_error"}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_unauthorized",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -496,21 +510,23 @@
 			"section": {"_id": "website"},
 			"website": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_Richtext", "id": 2, "label": "Rbs_Website_Richtext",
+									"type": "block",
+									"name": "Rbs_Website_Richtext",
+									"id": 2,
+									"label": "Rbs_Website_Richtext",
 									"parameters": {
 										"contentType": "Markdown",
-										"content": "###Accès interdit\nVous n'êtes pas autorisé à accéder à cette ressource. Veuillez vous identifier." ,
+										"content": "###Accès interdit\nVous n'êtes pas autorisé à accéder à cette ressource. Veuillez vous identifier.",
 										"TTL": 60
 									}
 								}
@@ -521,14 +537,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+									"type": "block",
+									"name": "Rbs_User_Login",
+									"id": 2,
+									"label": "Rbs_User_Login"
 								}
 							]
 						}
@@ -538,13 +556,11 @@
 			}
 		},
 		{
-			"_id": "rbs_generic_initialize_Error_401_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_generic_initialize_Error_401_function",
 			"functionCode": "Error_401",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_generic_initialize_unauthorized"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_unauthorized"}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_forbidden",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -552,18 +568,20 @@
 			"website": {"_id": "website"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+									"type": "block",
+									"name": "Rbs_User_Login",
+									"id": 2,
+									"label": "Rbs_User_Login"
 								}
 							]
 						}
@@ -572,14 +590,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_User_Login", "id": 2, "label": "Rbs_User_Login"
+									"type": "block",
+									"name": "Rbs_User_Login",
+									"id": 2,
+									"label": "Rbs_User_Login"
 								}
 							]
 						}
@@ -589,13 +609,11 @@
 			}
 		},
 		{
-			"_id": "rbs_generic_initialize_Error_403_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_generic_initialize_Error_403_function",
 			"functionCode": "Error_403",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_generic_initialize_forbidden"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_forbidden"}
 		},
-
 		{
 			"_id": "rbs_generic_initialize_site_map",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -603,18 +621,20 @@
 			"website": {"_id": "website"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_SiteMap", "id": 2, "label": "Rbs_Website_SiteMap"
+									"type": "block",
+									"name": "Rbs_Website_SiteMap",
+									"id": 2,
+									"label": "Rbs_Website_SiteMap"
 								}
 							]
 						}
@@ -623,14 +643,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_SiteMap", "id": 2, "label": "Rbs_Website_SiteMap"
+									"type": "block",
+									"name": "Rbs_Website_SiteMap",
+									"id": 2,
+									"label": "Rbs_Website_SiteMap"
 								}
 							]
 						}
@@ -640,11 +662,64 @@
 			}
 		},
 		{
-			"_id": "rbs_generic_initialize_site_map_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_generic_initialize_site_map_function",
 			"functionCode": "Rbs_Website_Website_SiteMap",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_generic_initialize_site_map"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_site_map"}
+		},
+
+		{
+			"_id": "rbs_generic_initialize_simpleform_detail",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.generic.initialize.simpleform_detail"},
+			"website": {"_id": "website"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate": {"_id": "side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent": {
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items": [
+								{
+									"type": "block",
+									"name": "Rbs_Simpleform_Form",
+									"id": 3,
+									"label": "Rbs_Simpleform_Form"
+								}
+							]
+						}
+					},
+					"title": {"_i18n": "m.rbs.generic.initialize.simpleform_detail"}
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent": {
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items": [
+								{
+									"type": "block",
+									"name": "Rbs_Simpleform_Form",
+									"id": 3,
+									"label": "Rbs_Simpleform_Form"
+								}
+							]
+						}
+					},
+					"title": {"_i18n": "m.rbs.generic.initialize.simpleform_detail"}
+				}
+			}
+		},
+		{
+			"_id": "f::rbs_generic_initialize_simpleform_detail_function",
+			"functionCode": "Rbs_Simpleform_Form",
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_generic_initialize_simpleform_detail"}
 		}
 	],
 	"contextId": "Autogenerated"

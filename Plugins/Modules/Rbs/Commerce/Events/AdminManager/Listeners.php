@@ -40,6 +40,7 @@ class Listeners implements ListenerAggregateInterface
 		{
 			(new \Rbs\Commerce\Commands\InitializeWebStore())->getGenericSettingsStructures($event);
 			(new \Rbs\Commerce\Commands\InitializeOrderProcess())->getGenericSettingsStructures($event);
+			(new \Rbs\Commerce\Commands\InitializeReturnProcess())->getGenericSettingsStructures($event);
 		};
 		$events->attach('getGenericSettingsStructures', $callback, 5);
 

@@ -184,6 +184,10 @@
 			"userAccountTopicId": {
 				"description": "use existing user account topic instead of creating a new one",
 				"default":""
+			},
+			"override": {
+				"description": "override existing documents",
+				"default":"false"
 			}
 		},
 		"arguments": {

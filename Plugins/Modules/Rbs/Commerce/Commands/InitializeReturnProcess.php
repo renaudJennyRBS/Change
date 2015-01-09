@@ -1,17 +1,17 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Proximis
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Generic\Commands;
+namespace Rbs\Commerce\Commands;
 
 /**
- * @name \Rbs\Generic\Commands\InitializeWebsite
+ * @name \Rbs\Commerce\Commands\InitializeReturnProcess
  */
-class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
+class InitializeReturnProcess extends \Rbs\Generic\Commands\AbstractInitialize
 {
 	/**
 	 * @param \Change\Commands\Events\Event $event
@@ -25,9 +25,11 @@ class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
 
 		$params = new \Zend\Stdlib\Parameters((array)$event->getParams());
 		$website = $documentManager->getDocumentInstance($params->get('websiteId'));
+		$store = $documentManager->getDocumentInstance($params->get('storeId'));
 		$LCID = $params->get('LCID');
 		$sidebarTemplate = $documentManager->getDocumentInstance($params->get('sidebarTemplateId'));
 		$noSidebarTemplate = $documentManager->getDocumentInstance($params->get('noSidebarTemplateId'));
+		$printTemplate = $documentManager->getDocumentInstance($params->get('printTemplateId'));
 		$userAccountTopic = $documentManager->getDocumentInstance($params->get('userAccountTopicId'));
 		$override = $params->get('override') == 'true';
 
@@ -38,6 +40,14 @@ class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
 				$response->addErrorMessage('Invalid arguments: website is not valid');
 			}
 			throw new \RuntimeException('Invalid arguments: website is not valid', 999999);
+		}
+		if (!($store instanceof \Rbs\Store\Documents\WebStore))
+		{
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: store is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: store is not valid', 999999);
 		}
 		if (!($sidebarTemplate instanceof \Rbs\Theme\Documents\Template))
 		{
@@ -55,6 +65,14 @@ class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
 			}
 			throw new \RuntimeException('Invalid arguments: noSidebarTemplate is not valid', 999999);
 		}
+		if (!($printTemplate instanceof \Rbs\Theme\Documents\Template))
+		{
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: printTemplate is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: printTemplate is not valid', 999999);
+		}
 		if (!$LCID)
 		{
 			if ($response)
@@ -64,21 +82,21 @@ class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
 			throw new \RuntimeException('Invalid arguments: LCID is not valid', 999999);
 		}
 
-		$context = 'Rbs Generic Website Initialize ' . $website->getId();
+		$context = 'Rbs Commerce Return Process Initialize ' . $website->getId() . ' ' . $store->getId();
 		if ($userAccountTopic instanceof \Rbs\Website\Documents\Topic)
 		{
 			$applicationServices->getDocumentCodeManager()
-				->addDocumentCode($userAccountTopic, 'rbs_generic_initialize_user_account_topic', $context);
+				->addDocumentCode($userAccountTopic, 'rbs_commerce_initialize_user_account_topic', $context);
 		}
 
-		$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'generic.json';
+		$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'return-process.json';
 		$json = json_decode(file_get_contents($filePath), true);
 		$json['contextId'] = $context;
 
 		$import = $this->getImport($applicationServices, $LCID, !$override);
 
 		$resolveDocument = function ($id, $contextId, $jsonDocument) use (
-			$website, $sidebarTemplate, $noSidebarTemplate, $documentManager, $import
+			$website, $store, $sidebarTemplate, $noSidebarTemplate, $printTemplate, $documentManager, $import
 		)
 		{
 			$document = null;
@@ -90,8 +108,14 @@ class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
 				case 'side_bar_template':
 					$document = $sidebarTemplate;
 					break;
+				case 'print_template':
+					$document = $printTemplate;
+					break;
 				case 'website':
 					$document = $website;
+					break;
+				case 'store':
+					$document = $store;
 					break;
 
 				default:
@@ -121,7 +145,7 @@ class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
 		if (!$userAccountTopic)
 		{
 			$documents = $applicationServices->getDocumentCodeManager()
-				->getDocumentsByCode('rbs_generic_initialize_user_account_topic', $context);
+				->getDocumentsByCode('rbs_commerce_initialize_user_account_topic', $context);
 			if (isset($documents[0]) && $documents[0] != null)
 			{
 				$applicationServices->getDocumentCodeManager()
@@ -131,7 +155,10 @@ class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
 
 		$this->addMenuToTemplates($website->getId(), $noSidebarTemplate, $sidebarTemplate, $applicationServices);
 
-		$response->addInfoMessage('Done.');
+		if ($response)
+		{
+			$response->addInfoMessage('Done.');
+		}
 	}
 
 	/**
@@ -141,10 +168,10 @@ class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
 	{
 		$structures = $event->getParam('structures', []);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$structures['Rbs_Generic_Website'] = [
-			'title' => $i18nManager->trans('m.rbs.generic.admin.initialize_for_website', ['ucf']),
-			'href' => 'Rbs/Generic/InitializeWebsite/',
-			'description' => $i18nManager->trans('m.rbs.generic.admin.initialize_for_website_description', ['ucf'])
+		$structures['Rbs_Commerce_ReturnProcess'] = [
+			'title' => $i18nManager->trans('m.rbs.commerce.admin.initialize_for_return_process', ['ucf']),
+			'href' => 'Rbs/Generic/InitializeReturnProcess/',
+			'description' => $i18nManager->trans('m.rbs.commerce.admin.initialize_for_return_process_description', ['ucf'])
 		];
 		$event->setParam('structures', $structures);
 	}
