@@ -20,8 +20,12 @@
 			{% set brandAttribute = getAttributeByName(productData, 'brand') %}
 			{% if brandAttribute.value %}
 				<dt class="sr-only">{{ i18n('m.rbs.catalog.front.brand', ['ucf']) }}</dt>
-				<dd>
-					<a itemprop="brand" href="{{ brandAttribute.value.URL.canonical }}">{{ brandAttribute.value.title }}</a>
+				<dd itemprop="brand">
+					{% if brandAttribute.value.URL.canonical and brandAttribute.value.URL.publishedInWebsite %}
+						<a href="{{ brandAttribute.value.URL.canonical }}">{{ brandAttribute.value.title }}</a>
+					{% else %}
+						{{ brandAttribute.value.title }}
+					{% endif %}
 				</dd>
 			{% endif %}
 			{% if handleReviews %}

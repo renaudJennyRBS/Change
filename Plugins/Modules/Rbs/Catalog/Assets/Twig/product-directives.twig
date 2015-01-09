@@ -582,7 +582,7 @@
 	{% block rbsCatalogProductSetItemHeader %}
 		<script type="text/ng-template" id="/rbsCatalogProductSetItemHeader.tpl">
 			<h2>
-				<a data-ng-if="url" href="javascript:" data-ng-href="url">(= rootProductData.common.title =)</a>
+				<a data-ng-if="url" href="javascript:" data-ng-href="(= url =)">(= rootProductData.common.title =)</a>
 				<span data-ng-if="!url">(= rootProductData.common.title =)</span>
 			</h2>
 			{% spaceless %}
@@ -593,10 +593,11 @@
 					<dd data-ng-if="productData.common.reference">(= productData.common.reference =)</dd>
 					<dt data-ng-if="brand" class="sr-only">{{ i18n('m.rbs.catalog.front.brand', ['ucf']) }}</dt>
 					<dd data-ng-if="brand">
-						<a data-ng-if="brand.URL.canonical" href="javascript:" data-ng-href="(= brand.URL.canonical =)">
+						<a data-ng-if="brand.URL.canonical && brand.URL.publishedInWebsite" href="javascript:"
+							data-ng-href="(= brand.URL.canonical =)">
 							(= brand.title =)
 						</a>
-						<span data-ng-if="!brand.URL.canonical">(= brand.title =)</span>
+						<span data-ng-if="!brand.URL.canonical || !brand.URL.publishedInWebsite">(= brand.title =)</span>
 					</dd>
 				</dl>
 			{% endspaceless %}
