@@ -1,13 +1,28 @@
-<div class="row">
-	<div class="col-sm-6 col-md-8">
-		<img class="pull-left" src="{{ imageURL(visual, 540, 405) }}" alt="" />
-	</div>
-	<div class="col-sm-6 col-md-4">
-		<p>{{ i18n('m.rbs.brand.documents.brand_websiteurl', ['ucf', 'lab']) }} <a href="{{ websiteURL }}">{{ websiteURL }}</a></p>
-	</div>
-</div>
-<div class="row">
-	<div class="col-sm-12">
-		{{ description | richText }}
-	</div>
-</div>
+{% block rbsBrandBrand %}
+	{% block rbsBrandBrandTitle %}
+		<h1>{{ brandData.common.title }}</h1>
+	{% endblock rbsBrandBrandTitle %}
+
+	{% block rbsBrandBrandVisual %}
+		{% if brandData.common.visual.detail %}
+			<p class="text-center">
+				<img src="{{ brandData.common.visual.detail }}" alt="{{ brandData.common.visual.alt }}" class="img-responsive-inline" />
+			</p>
+		{% endif %}
+	{% endblock rbsBrandBrandVisual %}
+
+	{% block rbsBrandBrandDescription %}
+		{% if brandData.common.description %}
+			{{ brandData.common.description | raw }}
+		{% endif %}
+	{% endblock rbsBrandBrandDescription %}
+
+	{% block rbsBrandBrandWebsiteURL %}
+		{% if brandData.common.websiteURL %}
+			<p>
+				{{ i18n('m.rbs.brand.documents.brand_websiteurl', ['ucf', 'lab']) }}
+				<a href="{{ brandData.common.websiteURL }}">{{ brandData.common.websiteURL }}</a>
+			</p>
+		{% endif %}
+	{% endblock rbsBrandBrandWebsiteURL %}
+{% endblock rbsBrandBrand %}

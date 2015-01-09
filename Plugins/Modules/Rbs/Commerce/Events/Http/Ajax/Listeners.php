@@ -48,7 +48,25 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$actionPath = $event->getParam('actionPath');
 		$request = $event->getRequest();
-		if (preg_match('#^Rbs/Catalog/Product/([0-9]+)$#', $actionPath, $matches))
+		if (preg_match('#^Rbs/Brand/Brand/([0-9]+)$#', $actionPath, $matches))
+		{
+			if ($request->isGet())
+			{
+				$event->setParam('brandId', intval($matches[1]));
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Brand\Http\Ajax\Brand())->getData($event);
+					}
+				);
+			}
+			else
+			{
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+			}
+		}
+		elseif (preg_match('#^Rbs/Catalog/Product/([0-9]+)$#', $actionPath, $matches))
 		{
 			if ($request->isGet())
 			{

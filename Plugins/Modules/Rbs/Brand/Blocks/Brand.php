@@ -28,10 +28,17 @@ class Brand extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-
+		$parameters->addParameterMeta('imageFormats', 'detail');
+		$parameters->addParameterMeta('dataSetNames', '');
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$parameters = $this->setParameterValueForDetailBlock($parameters, $event);
+
+		$page = $event->getParam('page');
+		if ($page instanceof \Rbs\Website\Documents\Page)
+		{
+			$parameters->setParameterValue('pageId', $page->getId());
+		}
 
 		return $parameters;
 	}
@@ -54,23 +61,42 @@ class Brand extends Block
 	protected function execute($event, $attributes)
 	{
 		$parameters = $event->getBlockParameters();
-		$brandId = $parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		if ($brandId)
+		$documentManager = $event->getApplicationServices()->getDocumentManager();
+		$brand = $documentManager->getDocumentInstance($parameters->getParameter(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME));
+		if ($brand instanceof \Rbs\Brand\Documents\Brand)
 		{
+			/* @var $commerceServices \Rbs\Commerce\CommerceServices */
+			$commerceServices = $event->getServices('commerceServices');
+			$brandManager = $commerceServices->getBrandManager();
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 
-			$brand = $documentManager->getDocumentInstance($brandId);
-			if ($brand instanceof \Rbs\Brand\Documents\Brand)
+			$context = $this->populateContext($event->getApplication(), $documentManager, $parameters);
+			$section = $event->getParam('section');
+			if ($section)
 			{
-				$attributes['visual'] = $brand->getVisual() ? $brand->getVisual()->getPublicURL(540, 405) : null;
-				$attributes['websiteURL'] = $brand->getCurrentLocalization()->getWebsiteUrl();
-				$attributes['description'] = $brand->getCurrentLocalization()->getDescription();
-
-				return 'brand.twig';
+				$context->setSection($section);
 			}
+			$attributes['brandData'] = $brandManager->getBrandData($brand, $context->toArray());
+
+			return 'brand.twig';
 		}
 		return null;
 	}
 
-
+	/**
+	 * @param \Change\Application $application
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @param Parameters $parameters
+	 * @return \Change\Http\Ajax\V1\Context
+	 */
+	protected function populateContext($application, $documentManager, $parameters)
+	{
+		$context = new \Change\Http\Ajax\V1\Context($application, $documentManager);
+		$context->setDetailed(true);
+		$context->setVisualFormats($parameters->getParameter('imageFormats'));
+		$context->setURLFormats(['canonical', 'contextual']);
+		$context->setDataSetNames($parameters->getParameter('dataSetNames'));
+		$context->setPage($parameters->getParameter('pageId'));
+		return $context;
+	}
 }
