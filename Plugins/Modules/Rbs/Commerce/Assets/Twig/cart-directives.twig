@@ -1,9 +1,9 @@
-{% block emptyCart %}
+{% block rbsCommerceEmptyCart %}
 	<h1>{{ i18n('m.rbs.commerce.front.empty_cart', (['ucf'])) }}</h1>
 	<p>{{ i18n('m.rbs.commerce.front.empty_cart_message', (['ucf'])) }}</p>
-{% endblock emptyCart %}
+{% endblock rbsCommerceEmptyCart %}
 
-{% block cartStructure %}
+{% block rbsCommerceCartStructure %}
 	{% block rbsCommerceShippingFeesEvaluation %}
 		<script type="text/ng-template" id="/rbsCommerceShippingFeesEvaluation.tpl">
 			<div data-ng-show="data" class="vertical-if-animation panel panel-default">
@@ -21,7 +21,7 @@
 					<div class="row" data-ng-repeat="mode in currentShippingModes track by $index">
 						<div class="col-xs-6 col-md-4">
 							<img data-ng-show="mode.presentation.visual" alt="(= mode.presentation.visual.alt =)"
-								data-ng-src="(= mode.presentation.visual.modeThumbnail =)" class="img-responsive" />
+								src="" data-ng-src="(= mode.presentation.visual.modeThumbnail =)" class="img-responsive" />
 						</div>
 						<div class="col-xs-6 col-md-8">
 							<div class="row">
@@ -54,56 +54,45 @@
 
 	<script type="text/ng-template" id="/rbsCommerceCart.tpl">
 		<h1>{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}</h1>
-		{% block cartLoader %}
-			<div data-ng-show="loading">
-				<div class="modal-backdrop fade in"></div>
-				<div data-ng-show="loading" class="modal" style="display: block;">
-					<div class="modal-dialog">
-						<div class="modal-content text-center well">
-							<p>{{ i18n('m.rbs.commerce.front.please_wait_loading_cart', ['ucf', 'etc']) | raw }}</p>
-							<img alt="" src="data:image/gif;base64,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" />
-						</div>
-					</div>
-				</div>
-			</div>
-		{% endblock cartLoader%}
 
-		{% block cartErrors %}
+		{% block rbsCommerceCartErrors %}
 			<div class="alert alert-danger" data-ng-show="cartData.common.errors.length">
 				<ul class="list-unstyled">
 					<li data-ng-repeat="error in cartData.common.errors">(= error.message =)</li>
 				</ul>
 			</div>
-		{% endblock cartErrors %}
+		{% endblock rbsCommerceCartErrors %}
 
-		{% block cartLines %}
+		{% block rbsCommerceCartLines %}
 			<div class="table-responsive" data-ng-show="cartData">
-				<table summary="{{ i18nAttr('m.rbs.commerce.front.cart_contents', ['ucf']) }}" class="table table-striped table-vertical-middle">
+				<table summary="{{ i18nAttr('m.rbs.commerce.front.cart_contents', ['ucf']) }}" class="table table-striped">
 					<thead>
 					<tr>
 						<th>{{ i18n('m.rbs.commerce.front.line_product', ['ucf']) }}</th>
 						<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
 						<th>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
-						<th data-ng-if="showPrices" colspan="2">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
+						<th data-ng-if="showPrices" colspan="2" class="text-right">
+							{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}
+						</th>
 					</tr>
 					</thead>
 					<tbody data-role="cart-lines">
 					</tbody>
 				</table>
 			</div>
-		{% endblock cartLines %}
+		{% endblock rbsCommerceCartLines %}
 
 		<div class="row" data-ng-if="showPrices"  data-ng-show="cartData">
 			<div class="col-md-6">
-				{% block cartFeesEvaluation %}
+				{% block rbsCommerceCartFeesEvaluation %}
 					<div data-rbs-commerce-shipping-fees-evaluation=""
-							{% if parameters.displayPricesWithoutTax %}data-display-prices-without-tax=""{% endif %}
-							{% if parameters.displayPricesWithTax %}data-display-prices-with-tax=""{% endif %}
-							></div>
-				{% endblock cartFeesEvaluation %}
+						{% if parameters.displayPricesWithoutTax %}data-display-prices-without-tax=""{% endif %}
+						{% if parameters.displayPricesWithTax %}data-display-prices-with-tax=""{% endif %}
+						></div>
+				{% endblock rbsCommerceCartFeesEvaluation %}
 			</div>
 			<div class="col-md-6">
-				{% block cartAmounts %}
+				{% block rbsCommerceCartAmounts %}
 					<table summary="" class="table table-striped table-bordered">
 						<tbody>
 						{% if parameters.displayPricesWithoutTax and cartData.amounts.linesAmountWithoutTaxes %}<tr>
@@ -116,12 +105,12 @@
 						</tr>{% endif %}
 						</tbody>
 					</table>
-				{% endblock cartAmounts %}
+				{% endblock rbsCommerceCartAmounts %}
 			</div>
 		</div>
 
 		<div class="clearfix">
-			{% block startOrderProcess %}
+			{% block rbsCommerceStartOrderProcess %}
 				<p class=" text-right">
 					<label>
 						<input type="checkbox" data-ng-model="acceptTermsAndConditions" />
@@ -139,44 +128,47 @@
 						{{ i18n('m.rbs.commerce.front.proceed_to_checkout', ['ucf']) }}
 					</a>
 				</p>
-			{% endblock startOrderProcess %}
+			{% endblock rbsCommerceStartOrderProcess %}
 		</div>
 	</script>
-{% endblock cartStructure %}
+{% endblock rbsCommerceCartStructure %}
 
-{% block cartLine %}
+{% block rbsCommerceCartLine %}
 	<script type="text/ng-template" id="/rbsCommerceCartLineDefault.tpl">
 		<tr>
 			<td>
-				<div data-rbs-commerce-cart-line-visual="" data-product="line.product"></div>
+				<div data-rbs-commerce-cart-line-visual="" data-product="line.product" data-format="cartItem"></div>
 			</td>
 			<td>
 				<ul class="list-unstyled">
 					<li data-ng-bind="line.product.common.title"></li>
 					<li data-ng-show="line.product.common.reference" data-ng-bind="line.product.common.reference"></li>
 				</ul>
-				<dl class="dl-inline-items" data-ng-if="line.options.axesInfo.length">
+				<dl class="dl-inline-items no-bottom-margin" data-ng-if="line.options.axesInfo.length">
 					<dt data-ng-repeat-start="(index, axisInfo) in line.options.axesInfo">(= axisInfo.name =)</dt>
 					<dd data-ng-repeat-end="">(= axisInfo.value =)</dd>
 				</dl>
 			</td>
 			<td  style="min-width: 150px">
-				<div class="form-inline">
+				<p class="form-inline">
 					<input type="number" min="(=line.product.cart.minQuantity =)" max="(= line.product.cart.maxQuantity =)"
-							step="(= line.product.cart.quantityIncrement =)" data-ng-disabled="disabledQuantity()"
-							data-ng-model="quantity" class="form-control"  style="width:75px;"/>
+						step="(= line.product.cart.quantityIncrement =)" data-ng-disabled="disabledQuantity()"
+						data-ng-model="quantity" class="form-control"  style="width:75px;"/>
 					<button type="button" data-ng-click="updateQuantity()" data-ng-hide="quantity == line.quantity"
-							class="btn btn-icon btn-default btn-primary"
-							title="{{ i18nAttr('m.rbs.commerce.front.update', ['ucf']) }}">
-						<i class="glyphicon glyphicon-refresh"></i>
+						class="btn btn-icon btn-default btn-primary"
+						title="{{ i18nAttr('m.rbs.commerce.front.update', ['ucf']) }}">
+						{{ block('rbsGenericIconRefresh') }}
 					</button>
-				</div>
-				<a href="javascript:" data-ng-click="remove()">{{ i18n('m.rbs.commerce.front.remove', ['ucf']) }}</a>
+				</p>
+				<button type="button" class="btn btn-xs btn-default" data-ng-click="remove()">
+					{{ block('rbsGenericIconRemove') }}
+					{{ i18n('m.rbs.commerce.front.remove', ['ucf']) }}
+				</button>
 			</td>
-			<td data-ng-if="showPrices" class="text-right">
+			<td data-ng-if="showPrices" class="price text-right text-muted hidden-xs">
 				<ul class="list-unstyled" data-ng-show="line.quantity != 1">
-					<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
-						<del class="text-muted">
+					<li data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
+						<del>
 							(= line.quantity =) x (= line.unitBasedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
 								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
@@ -184,46 +176,42 @@
 						</del>
 
 					</li>
-					<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
-						<del class="text-muted">
+					<li data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
+						<del>
 							(= line.quantity =) x (= line.unitBasedAmountWithTaxes | rbsFormatPrice:currencyCode =)
 						</del>
 					</li>
-					<li class="price" data-ng-show="parameters.displayPricesWithoutTax">
-						<span class="text-muted">
-							(= quantity =) x (= line.unitAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
-							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-							</abbr>
-						</span>
+					<li data-ng-show="parameters.displayPricesWithoutTax">
+						(= quantity =) x (= line.unitAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
+						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+						</abbr>
 					</li>
-					<li class="price" data-ng-show="parameters.displayPricesWithTax">
-						<span class="text-muted">
-							(= line.quantity =) x (= line.unitAmountWithTaxes | rbsFormatPrice:currencyCode =)
-						</span>
+					<li data-ng-show="parameters.displayPricesWithTax">
+						(= line.quantity =) x (= line.unitAmountWithTaxes | rbsFormatPrice:currencyCode =)
 					</li>
 				</ul>
 			</td>
-			<td data-ng-if="showPrices" class="text-right">
-				<ul class="list-unstyled main-price">
-					<li class="price" data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
+			<td data-ng-if="showPrices" class="price main-price text-right">
+				<ul class="list-unstyled">
+					<li data-ng-show="parameters.displayPricesWithoutTax && line.basedAmountWithoutTaxes">
 						<del>(= line.basedAmountWithoutTaxes | rbsFormatPrice:currencyCode =)
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
 								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
 							</abbr>
 						</del>
 					</li>
-					<li class="price" data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
+					<li data-ng-show="parameters.displayPricesWithTax && line.basedAmountWithTaxes">
 						<del>(= line.basedAmountWithTaxes | rbsFormatPrice:currencyCode =)</del>
 					</li>
-					<li class="price" data-ng-show="parameters.displayPricesWithoutTax">
+					<li data-ng-show="parameters.displayPricesWithoutTax">
 						<span>(= line.amountWithoutTaxes | rbsFormatPrice:currencyCode =)
 							<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
 								{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
 							</abbr>
 						</span>
 					</li>
-					<li class="price" data-ng-show="parameters.displayPricesWithTax">
+					<li data-ng-show="parameters.displayPricesWithTax">
 						<span>(= line.amountWithTaxes | rbsFormatPrice:currencyCode =)</span>
 					</li>
 				</ul>
@@ -233,20 +221,142 @@
 
 	{% block rbsCommerceCartLineVisual %}
 		<script type="text/ng-template" id="/rbsCommerceCartLineVisual.tpl">
-			<a data-ng-if="product" title="(= product.common.title =)"
-				href="javascript:" data-ng-href="(= product.common.URL.canonical =)">
-				<img data-ng-show="product.common.visuals[0].cartItem" src=""
-					alt="(= product.common.title =)" data-ng-src="(= product.common.visuals[0].cartItem =)" />
-				<img data-ng-show="!product.common.visuals[0].cartItem && product.rootProduct.common.visuals[0].cartItem" src=""
-					alt="(= product.common.title =)" data-ng-src="(= product.rootProduct.common.visuals[0].cartItem =)" />
-				<div data-ng-show="!product.common.visuals[0].cartItem && !product.rootProduct.common.visuals[0].cartItem"
-					class="text-left text-muted">
-					<span class="glyphicon glyphicon-camera" style="font-size:80px"></span>
+			<a title="(= product.common.title =)" href="javascript:" data-ng-if="product"
+				data-ng-href="(= product.common.URL.canonical =)">
+				<img data-ng-show="product.common.visuals[0][format]" src="" data-ng-class="ngClasses.maxSize"
+					alt="(= product.common.title =)" data-ng-src="(= product.common.visuals[0][format] =)" />
+				<img data-ng-show="!product.common.visuals[0][format] && product.rootProduct.common.visuals[0][format]"
+					src="" alt="(= product.common.title =)"
+					data-ng-src="(= product.rootProduct.common.visuals[0][format] =)" />
+				<div data-ng-show="!product.common.visuals[0][format] && !product.rootProduct.common.visuals[0][format]"
+					class="text-muted" data-ng-class="ngClasses.iconSize">
+					{{ block('rbsGenericIconVisual') }}
 				</div>
 			</a>
-			<div class="text-left text-muted" data-ng-if="!product">
-				<span class="glyphicon glyphicon-camera" style="font-size:80px"></span>
+			<div data-ng-if="!product" class="text-muted" data-ng-class="ngClasses.iconSize">
+				{{ block('rbsGenericIconVisual') }}
 			</div>
 		</script>
 	{% endblock rbsCommerceCartLineVisual %}
-{% endblock cartLine %}
+{% endblock rbsCommerceCartLine %}
+
+{% block rbsCommerceShortCart %}
+	<script type="text/ng-template" id="/rbsCommerceShortCart.tpl">
+		{% block rbsCommerceShortCartLoading %}
+			<div data-ng-show="loading" class="dropdown">
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+					{{ block('rbsCommerceIconCart') }}
+					{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
+					<span class="badge">...</span>
+					<span class="caret"></span >
+				</a>
+				<ul class="dropdown-menu dropdown-menu-{{ parameters.dropdownPosition }}">
+					<li>
+						<a href="{{ functionURL('Rbs_Commerce_Cart') }}">
+							{{ i18n('m.rbs.commerce.front.please_wait_loading_cart', ['ucf', 'etc']) }}
+						</a>
+					</li>
+				</ul>
+			</div>
+		{% endblock rbsCommerceShortCartLoading %}
+
+		{% block rbsCommerceShortCartEmpty %}
+			<div data-ng-show="!loading && !cartData.lines.length" class="dropdown">
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+					{{ block('rbsCommerceIconCart') }}
+					{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
+					<span class="badge">{{ i18n('m.rbs.commerce.front.empty') }}</span>
+					<span class="caret"></span >
+				</a>
+				<ul class="dropdown-menu dropdown-menu-{{ parameters.dropdownPosition }}">
+					<li>
+						<a href="{{ functionURL('Rbs_Commerce_Cart') }}">{{ i18n('m.rbs.commerce.front.empty_cart', ['ucf']) }}</a>
+					</li>
+				</ul>
+			</div>
+		{% endblock rbsCommerceShortCartEmpty %}
+
+		{% block rbsCommerceShortCartNotEmpty %}
+			<div data-ng-show="!loading && cartData.lines.length" class="dropdown">
+				<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+					{{ block('rbsCommerceIconCart') }}
+					{{ i18n('m.rbs.commerce.front.my_cart', ['ucf']) }}
+					<span class="badge">(= cartData.lines.length =)</span>
+					<span  class="caret"></span >
+				</a>
+				<div class="dropdown-menu dropdown-menu-{{ parameters.dropdownPosition }} dropdown-menu-custom dropdown-cart">
+					{% block rbsCommerceShortCartDropdownHeader %}
+						<h3 class="no-top-margin text-center">
+							(= cartData.lines.length =)
+							<span data-ng-show="cartData.lines.length == 1">{{ i18n('m.rbs.commerce.front.article') }}</span>
+							<span data-ng-show="cartData.lines.length > 1">{{ i18n('m.rbs.commerce.front.articles') }}</span>
+						</h3>
+					{% endblock rbsCommerceShortCartDropdownHeader %}
+
+					{% block rbsCommerceShortCartDropdownLines %}
+						<ul class="media-list">
+							<li class="media" data-ng-repeat="line in cartData.lines | orderBy:'index':true | limitTo:3">
+								<div class="media-left" data-rbs-commerce-cart-line-visual="" data-product="line.product"
+									data-format="shortCartItem">
+								</div>
+								<div class="media-body">
+									<h4 class="media-heading">(= line.designation =)</h4>
+									<dl class="dl-inline-items no-bottom-margin">
+										<dt data-ng-repeat-start="axeInfo in line.options.axesInfo">(= axeInfo.name =)</dt>
+										<dd data-ng-repeat-end="">(= axeInfo.value =)</dd>
+										<dt>{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</dt>
+										<dd>(= line.quantity =)</dd>
+									</dl>
+									<strong data-ng-show="parameters.displayPricesWithTax && line.amountWithTaxes">
+										(= line.amountWithTaxes | rbsFormatPrice:cartData.common.currencyCode =)
+									</strong>
+									<strong data-ng-show="!parameters.displayPricesWithTax && parameters.displayPricesWithoutTax && line.amountWithoutTaxes">
+										(= line.amountWithoutTaxes | rbsFormatPrice:cartData.common.currencyCode =)
+										<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+											{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+										</abbr>
+									</strong>
+									<div data-ng-if="!readOnly">
+										<button type="button" class="btn btn-xs btn-default"
+											data-ng-click="updateLineQuantity(line.key, 0)">
+											{{ block('rbsGenericIconRemove') }}
+											{{ i18n('m.rbs.generic.front.delete', ['ucf']) }}
+										</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<p data-ng-if="cartData.lines.length > 3">
+							{{ i18n('m.rbs.commerce.front.and', ['ucf']) }}
+							<a href="{{ functionURL('Rbs_Commerce_Cart') }}">
+								{{ i18n('m.rbs.commerce.front.n_other_articles', ['etc'], {count: '(= cartData.lines.length - 3 =)'}) }}
+							</a>
+						</p>
+					{% endblock rbsCommerceShortCartDropdownLines %}
+
+					{% block rbsCommerceShortCartDropdownFooter %}
+						<ul class="list-unstyled">
+							<li>
+								<strong>
+									{{ i18n('m.rbs.commerce.front.sub_total', ['ucf', 'lab']) }}
+									<span data-ng-show="parameters.displayPricesWithTax && cartData.amounts.linesAmountWithTaxes">
+										(= cartData.amounts.linesAmountWithTaxes | rbsFormatPrice:cartData.common.currencyCode =)
+									</span>
+									<span data-ng-show="!parameters.displayPricesWithTax && parameters.displayPricesWithoutTax && cartData.amounts.linesAmountWithoutTaxes">
+										(= cartData.amounts.linesAmountWithoutTaxes | rbsFormatPrice:cartData.common.currencyCode =)
+										<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+											{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+										</abbr>
+									</span>
+								</strong>
+							</li>
+						</ul>
+						<a href="{{ functionURL('Rbs_Commerce_Cart') }}" class="btn btn-primary btn-block">
+							{{ i18n('m.rbs.commerce.front.view_my_cart', ['ucf']) }}
+						</a>
+					{% endblock rbsCommerceShortCartDropdownFooter %}
+				</div>
+			</div>
+		{% endblock rbsCommerceShortCartNotEmpty %}
+	</script>
+{% endblock rbsCommerceShortCart %}

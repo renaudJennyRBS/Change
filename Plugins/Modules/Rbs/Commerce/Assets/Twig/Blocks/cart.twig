@@ -9,13 +9,13 @@
 	</script>
 	{% endblock rbsCommerceCartDataCache %}
 
-	{{ block('cartStructure') }}
-	{{ block('cartLine') }}
+	{{ block('rbsCommerceCartStructure') }}
+	{{ block('rbsCommerceCartLine') }}
 
 	{% block cart %}
 		<div data-rbs-commerce-cart="" data-cache-key="{{ blockId }}">
 		</div>
 	{% endblock cart %}
 {% else %}
-	{{ block('emptyCart') }}
+	{{ block('rbsCommerceEmptyCart') }}
 {% endif %}
