@@ -367,7 +367,7 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 			$bucket = isset($bucketByKey[$key]) ? $bucketByKey[$key] : [];
 			if ($showEmptyItem || count($bucket))
 			{
-				$count = $bucket['doc_count'] ? $bucket['doc_count'] : 0;
+				$count = isset($bucket['doc_count']) && $bucket['doc_count'] ? $bucket['doc_count'] : 0;
 				$v = new \Rbs\Elasticsearch\Facet\AggregationValue($key, $count, $title);
 				$av->addValue($v);
 				$this->formatChildren($v, $bucket);

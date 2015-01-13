@@ -37,7 +37,9 @@
 				templateUrl: 'Rbs/Admin/js/directives/date-selector.twig',
 				require: 'ngModel',
 				replace: true,
-				scope: true,
+				scope: {
+					hideTime : '@'
+				},
 
 				link: function(scope, elm, attrs, ngModel) {
 

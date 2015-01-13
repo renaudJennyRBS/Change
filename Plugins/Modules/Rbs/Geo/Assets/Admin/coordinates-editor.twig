@@ -1,0 +1,12 @@
+<div data-ng-form="innerForm" class="form-inline">
+	<label>{{ i18n('m.rbs.geo.admin.latitude', ['ucf', 'lab']) }}<input class="form-control"
+				data-ng-disabled="readOnly || locate" type="number" step="any"
+				data-ng-model="coordinates.latitude" data-ng-change="coordinateChange()"></label>
+	<span>, </span>
+	<label>{{ i18n('m.rbs.geo.admin.longitude', ['ucf', 'lab']) }}<input class="form-control"
+				data-ng-disabled="readOnly || locate" type="number" step="any"
+				data-ng-model="coordinates.longitude" data-ng-change="coordinateChange()"></label>
+	<button data-ng-show="address && !readOnly" data-ng-disabled="locate" type="button" data-ng-click="locateAddress(address)"
+			class="btn btn-default">{{ i18n('m.rbs.geo.admin.coordinate_by_address', ['ucf']) }}</button>
+</div>
+<div id="(= mapId =)" style="min-height: 360px"></div>

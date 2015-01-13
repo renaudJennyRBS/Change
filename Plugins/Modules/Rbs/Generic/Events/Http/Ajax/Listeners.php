@@ -409,6 +409,19 @@ class Listeners implements ListenerAggregateInterface
 					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
+		elseif ('Rbs/Geo/AddressCompletion/' == $actionPath)
+		{
+			if ($request->isGet())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\Geo\Http\Ajax\Address())->addressCompletion($event);
+				});
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+			}
+		}
 		elseif ('Rbs/Geo/Points/' == $actionPath)
 		{
 			if ($request->isGet())
@@ -670,6 +683,19 @@ class Listeners implements ListenerAggregateInterface
 			{
 				$event->setResult($event->getController()
 					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+			}
+		}
+		elseif ('Rbs/Geo/CoordinatesByAddress' == $actionPath)
+		{
+			if ($request->isGet())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\Geo\Http\Ajax\Points())->getCoordinatesByAddress($event);
+				});
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
 	}

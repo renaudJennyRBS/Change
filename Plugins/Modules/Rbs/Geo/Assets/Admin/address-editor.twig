@@ -1,0 +1,32 @@
+<div data-ng-form="innerForm">
+	<rbs-field label="{{ i18nAttr('m.rbs.geo.documents.addressfields', ['ucf']) }}">
+		<rbs-document-select ng-model="address.common.addressFieldsId" accepted-model="Rbs_Geo_AddressFields"
+				value-ids="true" empty-label="{{ i18nAttr('m.rbs.geo.admin.address_fields_select', ['ucf']) }}">
+		</rbs-document-select>
+	</rbs-field>
+	<div data-ng-repeat="fieldDef in fieldsDef">
+		<rbs-field label="(= fieldDef.title | rbsCapitalize =)" data-ng-class="{'required': fieldDef.required}" >
+			<div data-ng-if="fieldDef.collectionCode">
+				<select data-ng-model="address.fields[fieldDef.code]" class="form-control"
+						data-rbs-items-from-collection="(= fieldDef.collectionCode =)">
+					<option value=""></option>
+				</select>
+			</div>
+			<div data-ng-if="!fieldDef.collectionCode">
+				<input data-ng-if="!fieldDef.match" type="text" class="form-control" data-ng-required="fieldDef.required"
+						name="field" id="fieldInput_(= fieldDef.code =)" data-ng-model="address.fields[fieldDef.code]" />
+				<input data-ng-if="fieldDef.match" data-ng-pattern="/(= fieldDef.match =)/" type="text" class="form-control"
+						data-ng-required="fieldDef.required" name="field" id="fieldInput_(= fieldDef.code =)"
+						data-ng-model="address.fields[fieldDef.code]" />
+			</div>
+			<div data-ng-show="innerForm.field.$dirty && innerForm.field.$error.pattern" class="text-danger">
+				<span data-ng-hide="fieldDef.matchErrorMessage">
+					{{ i18n('c.constraints.notmatch', ['ucf'])|replace({'%pattern%': '(= fieldDef.match =)'}) }}
+				</span>
+				<span data-ng-show="fieldDef.matchErrorMessage">
+					(= fieldDef.matchErrorMessage =)
+				</span>
+			</div>
+		</rbs-field>
+	</div>
+</div>

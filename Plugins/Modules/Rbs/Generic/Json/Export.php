@@ -45,7 +45,7 @@ class Export
 	/**
 	 * @var array
 	 */
-	protected $ignoredProperties = ['id', 'model', 'refLCID', 'LCID', 'modificationDate', 'documentVersion', 'authorId'];
+	protected $ignoredProperties = ['id', 'model', 'refLCID', 'LCID', 'modificationDate', 'documentVersion', 'authorId', 'authorName'];
 
 	/**
 	 * @var integer[]
@@ -307,7 +307,7 @@ class Export
 	 * @param integer $level
 	 * @return array|null
 	 */
-	protected function getDocumentAsArray(AbstractDocument $document, $level = 0)
+	public function getDocumentAsArray(AbstractDocument $document, $level = 0)
 	{
 		$model = $document->getDocumentModel();
 		$id = $this->getContextCode($document);
@@ -447,7 +447,7 @@ class Export
 	 * @param integer $level
 	 * @return array|null
 	 */
-	protected function getInlineDocumentAsArray(AbstractInline $document, $level = 0)
+	public function getInlineDocumentAsArray(AbstractInline $document, $level = 0)
 	{
 		$model = $document->getDocumentModel();
 		$array = ['_model' => $model->getName(), '_inline' => true];

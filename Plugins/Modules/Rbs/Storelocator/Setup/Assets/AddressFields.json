@@ -1,0 +1,131 @@
+{
+	"documents": [
+		{
+			"_id": "AddressFields",
+			"_model": "Rbs_Geo_AddressFields",
+			"fields": [
+				{
+					"_model": "Rbs_Geo_AddressField",
+					"_inline": true,
+					"locked": false,
+					"code": "name",
+					"required": true,
+					"collectionCode": null,
+					"defaultValue": null,
+					"match": null,
+					"label": "Nom",
+					"_LCID": {
+						"fr_FR": {
+							"title": "Nom",
+							"matchErrorMessage": null
+						}
+					}
+				},
+				{
+					"_model": "Rbs_Geo_AddressField",
+					"_inline": true,
+					"locked": false,
+					"code": "name_extend",
+					"required": false,
+					"collectionCode": null,
+					"defaultValue": null,
+					"match": null,
+					"label": "Mentions complémentaires",
+					"_LCID": {
+						"fr_FR": {
+							"title": "Mentions complémentaires",
+							"matchErrorMessage": null
+						}
+					}
+				},
+				{
+					"_model": "Rbs_Geo_AddressField",
+					"_inline": true,
+					"locked": false,
+					"code": "street",
+					"required": false,
+					"collectionCode": null,
+					"defaultValue": null,
+					"match": null,
+					"label": "Voie",
+					"_LCID": {
+						"fr_FR": {
+							"title": "Voie",
+							"matchErrorMessage": null
+						}
+					}
+				},
+				{
+					"_model": "Rbs_Geo_AddressField",
+					"_inline": true,
+					"locked": true,
+					"code": "zipCode",
+					"required": false,
+					"collectionCode": null,
+					"defaultValue": null,
+					"match": null,
+					"label": "Code postal",
+					"_LCID": {
+						"fr_FR": {
+							"title": "Code postal",
+							"matchErrorMessage": null
+						}
+					}
+				},
+				{
+					"_model": "Rbs_Geo_AddressField",
+					"_inline": true,
+					"locked": true,
+					"code": "locality",
+					"required": false,
+					"collectionCode": null,
+					"defaultValue": null,
+					"match": null,
+					"label": "Commune",
+					"_LCID": {
+						"fr_FR": {
+							"title": "Commune",
+							"matchErrorMessage": null
+						}
+					}
+				},
+				{
+					"_model": "Rbs_Geo_AddressField",
+					"_inline": true,
+					"locked": true,
+					"code": "countryCode",
+					"required": false,
+					"collectionCode": "Rbs_Geo_Collection_Countries",
+					"defaultValue": null,
+					"match": null,
+					"label": "Pays",
+					"_LCID": {
+						"fr_FR": {
+							"title": "Pays",
+							"matchErrorMessage": null
+						}
+					}
+				}
+			],
+			"fieldsLayoutData": [
+				[
+					"name"
+				],
+				[
+					"name_extend"
+				],
+				[
+					"street"
+				],
+				[
+					"zipCode", "locality"
+				],
+				[
+					"country"
+				]
+			],
+			"label": "Adresse magasin"
+		}
+	],
+	"contextId": "Rbs_Storelocator_Setup"
+}

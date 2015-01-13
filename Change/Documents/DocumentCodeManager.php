@@ -545,11 +545,30 @@ class DocumentCodeManager
 	}
 
 	/**
+	 * @api
+	 * @return integer[]
+	 */
+	public function getAllContextIds()
+	{
+		$qb = $this->getDbProvider()->getNewQueryBuilder('DocumentCodeManager_getAllContextIds');
+		if (!$qb->isCached())
+		{
+			$fb = $qb->getFragmentBuilder();
+			$qb->select($fb->alias($fb->column('context_id'), 'contextId'))
+				->from($fb->table('change_document_code'))
+				->distinct();
+		}
+		$sq = $qb->query();
+		return $sq->getResults($sq->getRowsConverter()->addIntCol('contextId')->singleColumn('contextId'));
+	}
+
+	/**
 	 * @param integer $contextId
 	 * @return string|false
 	 */
-	protected function getContextById($contextId)
+	public function getContextById($contextId)
 	{
+		$contextId = intval($contextId);
 		if ($contextId == 0)
 		{
 			return '';

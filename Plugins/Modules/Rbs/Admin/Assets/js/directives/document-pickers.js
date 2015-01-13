@@ -264,8 +264,7 @@
 					ngModel.$setViewValue(contextValue);
 					ngModel.$render();
 				}
-
-				Navigation.popContext(currentContext);
+				Navigation.popContext();
 			});
 		}
 
@@ -279,13 +278,20 @@
 			return (scope.doc.list.length < 1);
 		};
 
+
 		var currentContext = Navigation.getCurrentContext();
 		if (currentContext) {
-			var contextValue = currentContext.getSelectionValue(getContextValueKey());
-			if (contextValue !== undefined) {
+			var ck = getContextValueKey();
+			if (currentContext.validValueKey(ck)) {
 				selectModelName(currentContext.param('model'));
-				applyContextValue(contextValue);
+				var contextValue = currentContext.value();
+				if (contextValue !== undefined) {
+					applyContextValue(contextValue);
+				} else {
+					Navigation.popContext(currentContext);
+				}
 			}
+			currentContext = null;
 		}
 
 		scope.$on('updateContextValue', function(event, args) {

@@ -1,0 +1,283 @@
+{% block rbsStorelocatorStore %}
+<script type="text/ng-template" id="/rbsStorelocatorStore.tpl">
+	<div class="row">
+		<div class="col-md-4">
+			<h1>{{ storeData.common.title }}</h1>
+		</div>
+		<div class="col-md-8">
+			<button type="button" class="btn btn-default" data-ng-show="parameters.showChooseStore"
+					data-ng-click="chooseStore(storeData)">
+				<span class="glyphicon glyphicon-heart"></span> {{ i18n('m.rbs.storelocator.front.choose_this_store', ['ucf']) }}
+			</button>
+
+			<button type="button" class="btn btn-sm btn-default" data-ng-disabled="!storeData.card.phone"
+					data-ng-click="storeData.card.showPhone = true">
+				<span class="glyphicon glyphicon-earphone"></span>
+				<span data-ng-show="storeData.card.showPhone"> (= storeData.card.phone =)</span>
+				<span data-ng-hide="storeData.card.showPhone"> {{ i18n('m.rbs.storelocator.front.call_store', ['ucf']) }}</span>
+			</button>
+
+			{% if controllerInit.googleAPIKey %}
+			<!--
+			<button type="button" class="btn btn-sm btn-default">
+				<span class="glyphicon glyphicon-road"></span> {{ i18n('m.rbs.storelocator.front.itinerary', ['ucf']) }}
+			</button>
+			-->
+			{% endif %}
+
+			<!--
+			<button type="button" class="btn btn-sm btn-default">
+				<span class="glyphicon glyphicon-envelope"></span> {{ i18n('m.rbs.storelocator.front.receive_contact_information', ['ucf']) }}
+			</button>
+			-->
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<div id="map-{{ blockId }}" data-role="map" style="min-height: 300px"></div>
+			<!--
+			<a><span class="glyphicon glyphicon-print"> {{ i18n('m.rbs.storelocator.front.print_map', ['ucf']) }}</span></a>
+			<a><span class="glyphicon glyphicon-resize-full"> {{ i18n('m.rbs.storelocator.front.zoom_map', ['ucf']) }}</span></a>
+			-->
+		</div>
+		<div class="col-md-8">
+			<div class="row">
+				<div class="col-md-4">
+					<h2><span class="glyphicon glyphicon-map-marker"></span> {{ i18n('m.rbs.storelocator.front.contact_information', ['ucf']) }}</h2>
+					<address>
+						<strong>{{ storeData.address.lines[0] }}</strong>
+						{% for line in storeData.address.lines %}
+							{% if not loop.first %}<br />{{ line }}{% endif %}
+						{% endfor %}
+					</address>
+				</div>
+				<div class="col-md-8">
+					<div data-rbs-storelocator-store-advertising=""></div>
+				</div>
+			</div>
+
+			<h2><span class="glyphicon glyphicon-time"></span> {{ i18n('m.rbs.storelocator.front.opening_hours', ['ucf']) }}</h2>
+			<table class="table table-striped text-center">
+				<thead>
+				<tr>
+					{% for day in storeData.hours.openingHours %}<th class="text-center">{{ day.title }}</th>{% endfor %}
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					{% for day in storeData.hours.openingHours %}
+						<td>
+							{%- if not day.amBegin -%}
+								{{ i18n('m.rbs.storelocator.front.closed', ['ucf']) }}
+							{%- else -%}
+								{{ day.amBegin }}<br />
+								{%- if day.amEnd -%}
+									{{ day.amEnd }}
+								{%- else -%}
+									-
+								{%- endif -%}
+							{%- endif -%}
+						</td>
+					{% endfor %}
+				</tr>
+				<tr>
+					{% for day in storeData.hours.openingHours %}
+						<td>
+							{%- if not day.pmEnd -%}
+								{{ i18n('m.rbs.storelocator.front.closed', ['ucf']) }}
+							{%- else -%}
+								{%- if day.pmBegin -%}
+									{{ day.pmBegin }}
+								{%- else -%}
+									-
+								{%- endif -%}
+								<br />{{ day.pmEnd }}
+							{%- endif -%}
+						</td>
+					{% endfor %}
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<ul id="block-{{ blockId }}-attribute-group-tabs" class="nav nav-tabs">
+				<li class="active">
+					<a data-ng-href="#block-{{ blockId }}-attribute-group-tab-0" data-toggle="tab">
+						{{ i18n('m.rbs.storelocator.front.store_presentation', ['ucf']) }}
+					</a>
+				</li>
+				<li>
+					<a data-ng-href="#block-{{ blockId }}-attribute-group-tab-1" data-toggle="tab">
+						{{ i18n('m.rbs.storelocator.front.store_services', ['ucf']) }}
+					</a>
+				</li>
+			</ul>
+			<div class="tab-content">
+				<div id="block-{{ blockId }}-attribute-group-tab-0" class="tab-pane fade active in">
+					<div class="row">
+						<div class="col-md-4">
+							<img src="{{ storeData.common.visuals[0].listItem }}" alt="{{ storeData.common.visuals[0].alt }}" />
+						</div>
+						<div class="col-md-8">
+							{{ storeData.common.description | raw }}
+						</div>
+					</div>
+				</div>
+				<div id="block-{{ blockId }}-attribute-group-tab-1" class="tab-pane fade">
+					<ul class="list-unstyled">
+						{% for service in storeData.services %}
+							<li>
+								<img src="{{ service.presentation.pictogram.pictogram }}" alt="{{ service.presentation.pictogram.alt }}" />
+								<h3>{{ service.common.title }}</h3>
+								<p>{{ service.presentation.description|raw }}</p>
+							</li>
+						{% endfor %}
+					</ul>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+{% endblock rbsStorelocatorStore %}
+
+{% block rbsStorelocatorSearch %}
+<script type="text/ng-template" id="/rbsStorelocatorSearch.tpl">
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-form navbar-left">
+				<button type="button" data-ng-click="locateMe()" class="btn btn-default" data-ng-disabled="addressLoading">
+					<span class="glyphicon glyphicon-map-marker"></span> {{ i18n('m.rbs.storelocator.front.locate_me', ['ucf'])}}
+				</button>
+			</div>
+			<p class="navbar-text navbar-left">{{ i18n('m.rbs.storelocator.front.or_enter_a_location', ['ucf', 'lab'])}}</p>
+			<div class="navbar-form navbar-left">
+				{% if controllerInit.googleAPIKey %}
+				<div class="form-group">
+					<input id="{{ blockId }}_autocomplete"
+							style="width: 30em;" class="form-control"
+							placeholder="{{ i18nAttr('m.rbs.storelocator.front.location_placeholder', ['ucf'])}}" />
+				</div>
+				{% else %}
+				<div class="form-group">
+					<input type="text" data-ng-model="searchAddress"
+							placeholder="{{ i18nAttr('m.rbs.storelocator.front.location_placeholder', ['ucf'])}}"
+							style="width: 30em;" class="form-control" data-ng-disabled="addressLoading"
+							data-ng-blur="selectLoadedAddress()" data-ng-keypress="selectLoadedAddress($event)" />
+				</div>
+				<button class="btn btn-default" type="button" data-ng-click="selectLoadedAddress()" data-ng-disabled="addressLoading">
+					<span class="glyphicon glyphicon-search"></span> {{ i18n('m.rbs.storelocator.front.launch_search', ['ucf'])}}
+				</button>
+				{% endif %}
+			</div>
+		</div>
+	</nav>
+
+	<div data-ng-hide="showHome()">
+		<p data-ng-hide="error">
+			<span data-ng-show="myCoordinates">
+				{{ i18n('m.rbs.storelocator.front.search_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
+				{{ i18n('m.rbs.storelocator.front.my_coordinates', ['ucf'])}}</span>
+			<span data-ng-show="formatedAddress">
+				{{ i18n('m.rbs.storelocator.front.search_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
+				(= formatedAddress =)</span>
+			<span data-ng-show="filteredAddress">
+				{{ i18n('m.rbs.storelocator.front.for_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
+				(= filteredAddress =)</span>
+		</p>
+
+		<ul class="text-danger" data-ng-show="error">
+			<li data-ng-if="error == 1">{{ i18n('m.rbs.storelocator.front.unable_to_resolve_address', ['ucf'])}}</li>
+			<li data-ng-if="error == 2">{{ i18n('m.rbs.storelocator.front.unable_to_geo_locate', ['ucf'])}}</li>
+		</ul>
+
+		<ul class="text-danger" data-ng-hide="stores.length || filteredAddress || error">
+			<li>{{ i18n('m.rbs.storelocator.front.empty_search_result_text', ['ucf', 'lab'], {'SIGN': commercialSignTitle}) }}
+				<span data-ng-show="myCoordinates">{{ i18n('m.rbs.storelocator.front.my_coordinates', ['ucf'])}}</span>
+				<span data-ng-show="formatedAddress">(= formatedAddress =)</span>
+			</li>
+			<li>{{ i18n('m.rbs.storelocator.front.select_search_distance', ['ucf', 'lab']) }}
+				<button class="btn btn-link" type="button" data-ng-disabled="addressLoading" data-ng-click="updateDistance('100km')">100km</button>
+				,<button class="btn btn-link" type="button" data-ng-disabled="addressLoading" data-ng-click="updateDistance('200km')">200km</button>
+			</li>
+		</ul>
+	</div>
+
+	<div class="row" data-ng-hide="showHome()">
+		<div class="col-md-6">
+			{% if commercialSignTitle %}
+			<div class="btn-group">
+				<button class="btn btn-default" type="button" data-ng-click="searchInSignStores()"
+						data-ng-class="{'btn-default': !commercialSignId, 'btn-primary': commercialSignId}">
+					{{ i18n('m.rbs.storelocator.front.sign_stores', ['ucf'], {'SIGN': commercialSignTitle}) }}
+				</button>
+				<button class="btn btn-default" type="button" data-ng-click="searchInAllStores()"
+						data-ng-class="{'btn-default': commercialSignId, 'btn-primary': !commercialSignId}">
+					{{ i18n('m.rbs.storelocator.front.all_stores', ['ucf']) }}
+				</button>
+			</div>
+			{% endif %}
+			<ol class="list-unstyled" style="overflow-y: auto;overflow-x: hidden;max-height: 500px" >
+				<li data-ng-repeat="storeData in stores" data-rbs-storelocator-store-item="" data-store="store">
+				</li>
+			</ol>
+		</div>
+		<div class="col-md-6">
+			<div id="map-{{ blockId }}" data-role="map" style="min-height: 500px"></div>
+		</div>
+	</div>
+</script>
+{% endblock rbsStorelocatorSearch %}
+
+{% block rbsStorelocatorStorePopup %}
+<script type="text/ng-template" id="/rbsStorelocatorStorePopup.tpl">
+	<strong>(= popupStore.common.title =)</strong>
+	<div data-ng-repeat="line in popupStore.address.lines">
+		<span data-ng-show="$index">(= line =)</span>
+	</div>
+	<button type="button" class="btn btn-sm btn-link" data-ng-click="showStoreDetail(popupStore)">
+		<span class="glyphicon glyphicon glyphicon-eye-open"></span> {{ i18n('m.rbs.storelocator.front.view_store_detail', ['ucf']) }}
+	</button>
+</script>
+{% endblock rbsStorelocatorStorePopup %}
+
+{% block rbsStorelocatorStoreItem %}
+<script type="text/ng-template" id="/rbsStorelocatorStoreItem.tpl">
+	<div class="row">
+		<div class="col-xs-2 text-center" data-ng-click="viewStoreOnMap(storeData)" style="cursor: pointer">
+			<span class="glyphicon glyphicon-map-marker" style="font-size: x-large" data-ng-hide="markerIconUrl"></span>
+			<img data-ng-src="(= markerIconUrl =)" data-ng-show="markerIconUrl" />
+			<div>(= getDistance() =)</div>
+		</div>
+		<div class="col-xs-10">
+			<strong>(= storeData.common.title =)</strong>
+			<div data-ng-repeat="line in storeData.address.lines">
+				<span data-ng-show="$index">(= line =)</span>
+			</div>
+		</div>
+	</div>
+	<p>
+		<button data-ng-show="parameters.showChooseStore" type="button" class="btn btn-sm btn-default"
+				data-ng-click="chooseStore(storeData)">
+			<span class="glyphicon glyphicon-heart"></span> {{ i18n('m.rbs.storelocator.front.choose_this_store', ['ucf']) }}
+		</button>
+
+		<button type="button" class="btn btn-sm btn-default" data-ng-disabled="!storeData.card.phone"
+				data-ng-click="storeData.card.showPhone = true">
+			<span class="glyphicon glyphicon-earphone"></span>
+			<span data-ng-show="storeData.card.showPhone"> (= storeData.card.phone =)</span>
+			<span data-ng-hide="storeData.card.showPhone"> {{ i18n('m.rbs.storelocator.front.call_store', ['ucf']) }}</span>
+		</button>
+
+		<button type="button" class="btn btn-sm btn-default" data-ng-click="viewStoreOnMap(storeData)">
+			<span class="glyphicon glyphicon-map-marker"></span> {{ i18n('m.rbs.storelocator.front.locate_store_on_map', ['ucf']) }}
+		</button>
+
+		<button type="button" class="btn btn-sm btn-default" data-ng-click="showStoreDetail(storeData)">
+			<span class="glyphicon glyphicon glyphicon-eye-open"></span> {{ i18n('m.rbs.storelocator.front.view_store_detail', ['ucf']) }}
+		</button>
+	</p>
+</script>
+{% endblock rbsStorelocatorStoreItem %}

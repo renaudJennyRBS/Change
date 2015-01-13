@@ -11,9 +11,9 @@ namespace Rbs\Geo\Map;
 /**
  * @name \Rbs\Geo\Map\Point
  */
-
 class Point
 {
+
 	/**
 	 * @var string
 	 */
@@ -45,7 +45,23 @@ class Point
 	protected $options = [];
 
 	/**
-	 * @return \Rbs\Geo\Address\BaseAddress
+	 * @param \Rbs\Geo\Map\Point|array $data
+	 */
+	function __construct($data)
+	{
+		if ($data instanceof Point)
+		{
+			$data = $data->toArray();
+		}
+
+		if (is_array($data))
+		{
+			$this->fromArray($data);
+		}
+	}
+
+	/**
+	 * @return \Rbs\Geo\Address\BaseAddress|null
 	 */
 	public function getAddress()
 	{
@@ -53,12 +69,24 @@ class Point
 	}
 
 	/**
-	 * @param \Rbs\Geo\Address\BaseAddress $address
+	 * @param \Rbs\Geo\Address\BaseAddress|\Rbs\Geo\Address\AddressInterface|array|null $address
 	 * @return $this
 	 */
 	public function setAddress($address)
 	{
-		$this->address = $address;
+		if ($address instanceof \Rbs\Geo\Address\BaseAddress)
+		{
+			$this->address = $address;
+		}
+		elseif ($address instanceof \Rbs\Geo\Address\AddressInterface || is_array($address))
+		{
+			$this->address = new \Rbs\Geo\Address\BaseAddress($address);
+		}
+		else
+		{
+			$this->address = null;
+		}
+
 		return $this;
 	}
 
@@ -130,7 +158,7 @@ class Point
 	 */
 	public function setOptions($options)
 	{
-		$this->options = $options;
+		$this->options = is_array($options) ? $options : [];
 		return $this;
 	}
 
@@ -152,6 +180,26 @@ class Point
 		return $this;
 	}
 
+	/**
+	 * @param array $data
+	 * @return $this
+	 */
+	public function fromArray(array $data)
+	{
+		foreach ($data as $name => $value)
+		{
+			$callable = [$this, 'set' . ucfirst($name)];
+			if (is_callable($callable))
+			{
+				call_user_func($callable, $value);
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
 	public function toArray()
 	{
 		$result = [];
@@ -159,11 +207,8 @@ class Point
 		$result['title'] = $this->title;
 		$result['longitude'] = $this->longitude;
 		$result['latitude'] = $this->latitude;
-		if ($this->address != null)
-		{
-			$result['address'] = $this->address->toArray();
-		}
-		$result['options'] = $this->options;
+		$result['address'] = $this->address ? $this->address->toArray() : null;
+		$result['options'] = count($this->options) ? $this->options : null;
 		return $result;
 	}
 }

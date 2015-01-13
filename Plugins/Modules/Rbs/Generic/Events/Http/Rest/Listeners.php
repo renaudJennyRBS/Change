@@ -227,6 +227,12 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Geo\Http\Rest\AddressLines())->execute($event);
 					});
 					break;
+				case 'Rbs/Geo/CoordinatesByAddress' :
+					$event->setAction(function (Event $event)
+					{
+						(new \Rbs\Geo\Http\Rest\CoordinatesByAddress())->execute($event);
+					});
+					break;
 				case 'Rbs/Mail/AddMailVariation' :
 					$event->setAction(function (Event $event)
 					{

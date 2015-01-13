@@ -90,36 +90,41 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @param string $code
 	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param string $LCID
 	 * @param string|array $to
 	 * @param array $substitutions
 	 * @param \DateTime $at
-	 * @throws \RuntimeException
+	 * @return boolean
 	 */
 	public function send($code, $website, $LCID, $to, $substitutions = [], $at = null)
 	{
 		$mail = $this->getMailByCode($code, $website, $LCID);
 		if ($mail === null)
 		{
-			throw new \RuntimeException('Mail not available for code, website, LCID');
+			$this->getApplication()->getLogging()->error('Mail ' . $code . ' not found');
+			return false;
 		}
-
-		$emails = $this->convertEmailsParam($to);
-		if (count($emails) === 0)
-		{
-			throw new \RuntimeException('No dest');
-		}
-
 		if ($mail->activated())
 		{
+			$emails = $this->convertEmailsParam($to);
+			if (count($emails) === 0)
+			{
+				$this->getApplication()->getLogging()->error('No receiver for mail ' . $code);
+				return false;
+			}
 			$argument = ['mailId' => $mail->getId(), 'websiteId' => $website->getId(), 'emails' => $emails, 'LCID' => $LCID, 'substitutions' => $substitutions];
 			$this->getJobManager()->createNewJob('Rbs_Mail_SendMail', $argument, $at);
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
+	 * @api
 	 * @return string[]
 	 */
 	public function getCodes()
@@ -133,6 +138,7 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Mail\Documents\Mail $mail
 	 * @param \Change\Presentation\Interfaces\Website $website
 	 * @param string $LCID
@@ -331,6 +337,7 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @param \Rbs\Theme\Documents\Template $template
 	 * @param string[] $filters
 	 */
@@ -365,6 +372,7 @@ class MailManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @api
 	 * @param string $string
 	 * @param array $substitutions
 	 * @return string|null

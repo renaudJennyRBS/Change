@@ -1,0 +1,119 @@
+{
+	"module_name": {
+		"message": "magasins"
+	},
+	"module_keywords": {
+		"message": "magasin,recherche,boutique,store,locator"
+	},
+	"select_webstore": {
+		"message": "sélectionner une boutique"
+	},
+	"store_list": {
+		"message": "magasins"
+	},
+	"store_create": {
+		"message": "ajouter un magasin"
+	},
+	"commercialsign_list": {
+		"message": "enseignes"
+	},
+	"commercialsign_create": {
+		"message": "ajouter une enseigne"
+	},
+	"service_list": {
+		"message": "services"
+	},
+	"service_create": {
+		"message": "ajouter un service"
+	},
+	"geo_section": {
+		"message": "Localisation"
+	},
+	"opening_hours_section": {
+		"message": "Horaires"
+	},
+	"week_hours": {
+		"message": "Horaires de la semaine"
+	},
+	"week_day": {
+		"message": "Jour"
+	},
+	"day_am": {
+		"message": "Matin"
+	},
+	"day_pm": {
+		"message": "Après-midi"
+	},
+	"actions": {
+		"message": "Actions"
+	},
+	"apply_to_all": {
+		"message": "Appliquer à tous"
+	},
+	"continuous_day": {
+		"message": "Journée continue"
+	},
+	"closed_day": {
+		"message": "Fermé"
+	},
+	"exceptional_hours": {
+		"message": "Horaire exceptionnel"
+	},
+	"exceptional_date": {
+		"message": "Date"
+	},
+	"add": {
+		"message": "Ajouter"
+	},
+	"coordinates": {
+		"message": "Coordonnées"
+	},
+	"storelocatorindex_create": {
+		"message": "ajouter un index de recherche magasin"
+	},
+	"store_label_website": {
+		"message": "index magasin de $WEBSITELABEL$"
+	},
+	"territorialunit_picker_title": {
+		"message": "sélectionner une zone géographique"
+	},
+	"store_function": {
+		"message": "détail d'un magasin"
+	},
+	"store_label": {
+		"message": "détail d'un magasin"
+	},
+	"search_label": {
+		"message": "recherche de magasins"
+	},
+	"search_function": {
+		"message": "recherche de magasins"
+	},
+	"store_master_phone": {
+		"message": "Téléphone principal"
+	},
+	"store_email": {
+		"message": "Adresse email"
+	},
+	"card_section": {
+		"message": "Contact"
+	},
+	"commercial_sign": {
+		"message": "enseigne"
+	},
+	"background_empty_image": {
+		"message": "Image de fond avant recherche"
+	},
+	"show_choose_store": {
+		"message": "voir le bouton 'Choisir ce magasin'"
+	},
+	"facet_territorial_unit": {
+		"message": "Zone d'implentation géographique des magasins"
+	},
+	"facet_country": {
+		"message": "Pays d'implentation des magasins"
+	},
+	"search_facet": {
+		"message": "facette"
+	}
+}

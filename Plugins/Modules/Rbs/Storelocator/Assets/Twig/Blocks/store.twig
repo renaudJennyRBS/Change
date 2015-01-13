@@ -1,0 +1,20 @@
+{% block rbsStorelocatorStoreDataCache %}
+	<script type="text/javascript">
+		window.__change['{{ blockId }}'] = {{ controllerInit | json_encode | raw}};
+	</script>
+{% endblock rbsStorelocatorStoreDataCache %}
+{% block rbsStorelocatorUse %}
+	{% use 'Rbs_Storelocator/store-directives.twig' %}
+	{{ block('rbsStorelocatorStore') }}
+{% endblock rbsStorelocatorUse %}
+
+{% use 'Rbs_Storelocator/map-resources.twig' %}
+{% if controllerInit.googleAPIKey %}
+	{{ block('rbsStorelocatorGoogleMap') }}
+	<div data-rbs-storelocator-google-store="" data-cache-key="{{ blockId }}">
+	</div>
+{% else %}
+	{{ block('rbsStorelocatorLeafletMap') }}
+	<div data-rbs-storelocator-store="" data-cache-key="{{ blockId }}">
+	</div>
+{% endif %}

@@ -232,60 +232,39 @@
 				};
 			}
 
+			function buildConfigData(data, params) {
+				var configData = getDefaultParams();
+				if (angular.isObject(params)) {
+					angular.extend(configData, params);
+				}
+
+				if (angular.isObject(data)) {
+					angular.extend(configData.data, data);
+				}
+				return configData;
+			}
+
 			function getData(actionPath, data, params) {
 				var config = getHttpConfig('GET', actionPath);
-
-				var defaultParams = getDefaultParams();
-				if (angular.isObject(params)) {
-					angular.extend(defaultParams, params);
-				}
-				if (angular.isObject(data)) {
-					defaultParams.data = data;
-				}
-				config.data = defaultParams;
+				config.data = buildConfigData(data, params);
 				return $http(config);
 			}
 
 			function postData(actionPath, data, params) {
 				var config = getHttpConfig('POST', actionPath);
-
-				var defaultParams = getDefaultParams();
-				if (angular.isObject(params)) {
-					angular.extend(defaultParams, params);
-				}
-				if (angular.isObject(data)) {
-					defaultParams.data = data;
-				}
-				config.data = defaultParams;
+				config.data = buildConfigData(data, params);
 				return $http(config);
 			}
 
 			function putData(actionPath, data, params) {
 				var config = getHttpConfig('PUT', actionPath);
-
-				var defaultParams = getDefaultParams();
-				if (angular.isObject(params)) {
-					angular.extend(defaultParams, params);
-				}
-				if (angular.isObject(data)) {
-					defaultParams.data = data;
-				}
-				config.data = defaultParams;
+				config.data = buildConfigData(data, params);
 				return $http(config);
 			}
 
 			function deleteData(actionPath, data, params) {
-
 				var config = getHttpConfig('DELETE', actionPath);
-
-				var defaultParams = getDefaultParams();
-				if (angular.isObject(params)) {
-					angular.extend(defaultParams, params);
-				}
-				if (angular.isObject(data)) {
-					defaultParams.data = data;
-				}
-				config.data = defaultParams;
+				config.data = buildConfigData(data, params);
 				return $http(config);
 			}
 

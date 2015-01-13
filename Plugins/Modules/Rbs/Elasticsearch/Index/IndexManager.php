@@ -288,7 +288,7 @@ class IndexManager implements \Zend\EventManager\EventsCapableInterface
 				foreach ($facetsMappings as $indexType => $mappings)
 				{
 					$typeMapping = \Elastica\Type\Mapping::create($mappings);
-					$typeMapping->setParam('ignore_conflicts', true);
+					$typeMapping->setMeta(['ignore_conflicts' => true]);
 					$index->getType($indexType)->setMapping($typeMapping);
 				}
 			}

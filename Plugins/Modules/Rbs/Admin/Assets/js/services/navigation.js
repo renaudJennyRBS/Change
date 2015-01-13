@@ -71,6 +71,10 @@
 					return this.param('label', labelKey);
 				};
 
+				this.validValueKey = function(valueKey) {
+					return (valueKey === k);
+				};
+
 				this.getSelectionValue = function(valueKey) {
 					if (valueKey === k) {
 						return v;
@@ -113,6 +117,7 @@
 							context.param(key, value);
 						});
 					}
+
 					activeContexts.push(context);
 					$location.url(targetUrl).hash(context.id);
 				}
@@ -232,6 +237,7 @@
 
 			link: function(scope, iElement) {
 				scope.activeContexts = activeContexts;
+
 				scope.$watchCollection('activeContexts', function() {
 					if (scope.activeContexts.length > 0) {
 						iElement.show();
