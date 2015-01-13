@@ -31,10 +31,71 @@
 		'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
 
-	function rbsCatalogProductsList(AjaxAPI) {
+	function rbsCatalogProductsListSlider(AjaxAPI) {
 		return {
 			restrict: 'A',
-			templateUrl: '/rbsCatalogProductsList.tpl',
+			templateUrl: '/rbsCatalogProductsListSlider.tpl',
+			scope: {},
+			controller: ['$scope', '$element', function(scope, elem) {
+				var cacheKey = elem.attr('data-cache-key');
+				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
+				var data = AjaxAPI.globalVar(cacheKey);
+				scope.productsData = data.productsData;
+				scope.contextData = data.context.data;
+				scope.context = { URLFormats: data.context.URLFormats, pagination: data.context.pagination, visualFormats: [] };
+				angular.forEach(data.context.visualFormats, function(size, name) {
+					scope.context.visualFormats.push(name);
+				})
+			}],
+			link: function(scope, elem, attrs) {
+				scope.viewDetailTitleMask = attrs.viewDetailTitleMask || 'PRODUCT_TITLE';
+				scope.itemsPerSlide = attrs['itemsPerSlide'] || 3;
+				scope.interval = attrs['interval'] || 1000;
+
+				scope.controls = {
+					prev: function(event, sliderId) {
+						event.preventDefault();
+						elem.find('#' + sliderId).carousel('prev');
+					},
+					next: function(event, sliderId) {
+						event.preventDefault();
+						elem.find('#' + sliderId).carousel('next');
+					}
+				};
+
+				// Init slides.
+				scope.slides = { 'size1': [], 'size2': [], 'size3': [], 'size4': [] };
+
+				var slide = [];
+
+				for (var i = 0; i < scope.productsData.length; i++) {
+					for (var j = 0; j < 4; j++) {
+						if (i % (j + 1) == 0) {
+							if (slide[j]) {
+								scope.slides['size' + (j + 1)].push(slide[j]);
+							}
+							slide[j] = {productsData: []};
+						}
+						slide[j].productsData.push(scope.productsData[i]);
+					}
+				}
+
+				for (var k = 0; k < 4; k++) {
+					if (slide[k].productsData.length) {
+						scope.slides['size' + (k+1)].push(slide[k]);
+					}
+				}
+			}
+		}
+	}
+
+	rbsCatalogProductsListSlider.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsCatalogProductsListSlider', rbsCatalogProductsListSlider);
+
+	function rbsCatalogProductsListInfiniteScroll(AjaxAPI) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductsListInfiniteScroll.tpl',
 			scope: {},
 			controller: ['$scope', '$element', function(scope, elem) {
 				var cacheKey = elem.attr('data-cache-key');
@@ -73,8 +134,8 @@
 		}
 	}
 
-	rbsCatalogProductsList.$inject = ['RbsChange.AjaxAPI'];
-	app.directive('rbsCatalogProductsList', rbsCatalogProductsList);
+	rbsCatalogProductsListInfiniteScroll.$inject = ['RbsChange.AjaxAPI'];
+	app.directive('rbsCatalogProductsListInfiniteScroll', rbsCatalogProductsListInfiniteScroll);
 
 	function rbsCatalogProductItemData($http, $compile, $rootScope, $window, AjaxAPI) {
 		return {
@@ -109,6 +170,17 @@
 
 	rbsCatalogProductItemData.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
 	app.directive('rbsCatalogProductItemData', rbsCatalogProductItemData);
+
+	function rbsCatalogProductsItem() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductsItem.tpl',
+			link: function(scope) {
+			}
+		}
+	}
+
+	app.directive('rbsCatalogProductsItem', rbsCatalogProductsItem);
 
 	function rbsCatalogAddListItemProductToCart() {
 		return {

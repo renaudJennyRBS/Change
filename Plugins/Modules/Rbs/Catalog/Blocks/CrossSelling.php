@@ -35,6 +35,7 @@ class CrossSelling extends Block
 		$parameters->addParameterMeta('crossSellingType', 'ACCESSORIES');
 
 		$parameters->addParameterMeta('itemsPerSlide', 3);
+		$parameters->addParameterMeta('interval', 1000);
 		$parameters->addParameterMeta('slideCount');
 
 		$this->initCommerceContextParameters($parameters);
@@ -100,12 +101,9 @@ class CrossSelling extends Block
 				$rows = $commerceServices->getProductManager()->getCrossSellingForProduct($product, $csParameters);
 			}
 
-			$attributes['rows'] = $rows;
+			$attributes['productsData'] = $rows;
+			$attributes['context'] = $csParameters;
 			$attributes['itemsPerSlide'] = $parameters->getParameter('itemsPerSlide');
-			if (count($rows) && isset($attributes['itemsPerSlide']))
-			{
-				$attributes['slideCount'] = ceil(count($rows)/$attributes['itemsPerSlide']);
-			}
 
 			return 'product-list-slider.twig';
 		}

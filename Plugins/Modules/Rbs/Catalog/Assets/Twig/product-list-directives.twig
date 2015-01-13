@@ -1,48 +1,173 @@
-{% block rbsCatalogProductsList %}
-<script type="text/ng-template" id="/rbsCatalogProductsList.tpl">
-	<ul class="grid-list grid-list-{{ itemsPerLine }} grid-list-bordered grid-list-align-top product-list"
-			data-infinite-scroll="addMoreProducts()" data-infinite-scroll-container=""
-			data-infinite-scroll-disabled="scrollDisabled()">
-		<li data-ng-repeat="productData in productsData">
-
-			<div class="grid-list-cell" data-rbs-catalog-product-item-data="">
-				<div class="product-visual">
-					<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:">
-						<img data-ng-if="visual.listItem" alt="(= visual.alt =)" src="" data-ng-src="(= visual.listItem =)" />
-						<div class="text-center text-muted" data-ng-if="!visual.listItem">
-							<span class="glyphicon glyphicon-camera" style="font-size: 100px"></span>
+{% block rbsCatalogProductsListSlider %}
+	<script type="text/ng-template" id="/rbsCatalogProductsListSlider.tpl">
+		{# One item per slide. #}
+		{% set sliderId = 'slider-1-' ~ blockId %}
+		<div id="{{ sliderId }}" class="carousel slide" data-ride="carousel"
+			data-ng-class="{
+				'visible-lg-block': itemsPerSlide == 1,
+				'visible-md-block': itemsPerSlide == 1,
+				'visible-sm-block': itemsPerSlide <= 2,
+				'visible-xs-block': true
+			}">
+			<div class="carousel-inner">
+				<div data-ng-repeat="slide in slides.size1" class="item" data-ng-class="{'active': $index == 1}">
+					<div class="row product-list">
+						<div class="col-xs-12" data-ng-repeat="productData in slide.productsData">
+							{{ block('rbsCatalogProductsListItem') }}
 						</div>
-					</a>
-					<div data-rbs-catalog-product-pictograms="" data-pictogram-format="'pictogram'" data-pictograms="pictograms"></div>
-				</div>
-				<div class="product-label">
-					<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:">(= productData.common.title =)</a>
-				</div>
-				<div class="product-availability">(= productData.stock.thresholdTitle =) </div>
-				<div data-rbs-catalog-product-price=""
-						data-display-without-tax="(= parameters.displayPricesWithoutTax ? '1' : '0' =)"
-						data-display-with-tax="(= parameters.displayPricesWithTax ? '1' : '0' =)"></div>
-				<div class="product-add" data-ng-if="productData.stock.sku">
-					<div data-ng-if="productData.cart.key" data-rbs-catalog-add-list-item-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}">
 					</div>
-					<button data-ng-if="!productData.cart.key"   type="button" class="btn btn-primary btn-sm" disabled="disabled">
-						{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-					</button>
-				</div>
-				<div class="product-add" data-ng-if="!productData.stock.sku">
-					<a class="btn btn-primary btn-sm"  data-ng-href="(= url =)" href="javascript:"
-							title="(= viewDetailTitle =)">
-						<i class="glyphicon glyphicon-arrow-right"></i>
-						(= viewDetailTitle =)
-					</a>
 				</div>
 			</div>
-		</li>
-	</ul>
+			{% block rbsCatalogProductsListSliderControls %}
+				<a class="left carousel-control" href="#{{ sliderId }}" data-ng-click="controls.prev($event, '{{ sliderId }}')">
+					<span class="icon-prev"></span>
+				</a>
+				<a class="right carousel-control" href="#{{ sliderId }}" data-ng-click="controls.next($event, '{{ sliderId }}')">
+					<span class="icon-next"></span>
+				</a>
+			{% endblock rbsCatalogProductsListSliderControls %}
+		</div>
+		{# Two items per slide. #}
+		{% set sliderId = 'slider-2-' ~ blockId %}
+		<div data-ng-if="itemsPerSlide > 1" id="{{ sliderId }}" class="carousel slide" data-ride="carousel"
+			data-ng-class="{
+				'visible-lg-block': itemsPerSlide == 2,
+				'visible-md-block': itemsPerSlide == 2,
+				'visible-sm-block': itemsPerSlide >= 3
+			}">
+			<div class="carousel-inner">
+				<div data-ng-repeat="slide in slides.size2" class="item" data-ng-class="{'active': $index == 1}">
+					<div class="row product-list">
+						<div class="col-xs-6" data-ng-repeat="productData in slide.productsData">
+							{{ block('rbsCatalogProductsListItem') }}
+						</div>
+					</div>
+				</div>
+			</div>
+			{{ block('rbsCatalogProductsListSliderControls') }}
+		</div>
+		{# Three items per slide. #}
+		{% set sliderId = 'slider-3-' ~ blockId %}
+		<div data-ng-if="itemsPerSlide > 2" id="{{ sliderId }}" class="carousel slide" data-ride="carousel"
+			data-ng-class="{'visible-lg-block': itemsPerSlide == 3, 'visible-md-block': itemsPerSlide >= 3}">
+			<div class="carousel-inner">
+				<div data-ng-repeat="slide in slides.size3" class="item" data-ng-class="{'active': $index == 1}">
+					<div class="row product-list">
+						<div class="col-xs-4" data-ng-repeat="productData in slide.productsData">
+							{{ block('rbsCatalogProductsListItem') }}
+						</div>
+					</div>
+				</div>
+			</div>
+			{{ block('rbsCatalogProductsListSliderControls') }}
+		</div>
+		{# Four items per slide. #}
+		{% set sliderId = 'slider-4-' ~ blockId %}
+		<div data-ng-if="itemsPerSlide > 3" id="{{ sliderId }}" class="carousel slide" data-ride="carousel"
+			data-ng-class="{'visible-lg-block': itemsPerSlide == 4}">
+			<div class="carousel-inner">
+				<div data-ng-repeat="slide in slides.size4" class="item" data-ng-class="{'active': $index == 1}">
+					<div class="row product-list">
+						<div class="col-xs-3" data-ng-repeat="productData in slide.productsData">
+							{{ block('rbsCatalogProductsListItem') }}
+						</div>
+					</div>
+				</div>
+			</div>
+			{{ block('rbsCatalogProductsListSliderControls') }}
+		</div>
+	</script>
+{% endblock rbsCatalogProductsListSlider %}
 
-	<div class="text-center well" data-ng-show="loading">
-		<p data-ng-hide="message">{{ i18n('t.rbs.base.front.loading', ['ucf', 'etc']) }}</p>
-		<img alt="" src="data:image/gif;base64,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" />
-	</div>
-</script>
-{% endblock rbsCatalogProductsList %}
+{% block rbsCatalogProductsListInfiniteScroll %}
+	<script type="text/ng-template" id="/rbsCatalogProductsListInfiniteScroll.tpl">
+		{# One item per line. #}
+		<div data-ng-if="parameters.itemsPerLine == 1" class="row product-list">
+			<div data-infinite-scroll="addMoreProducts()" data-infinite-scroll-container=""
+				data-infinite-scroll-disabled="scrollDisabled()">
+				<div class="col-sm-12" data-ng-repeat="productData in productsData">
+					{% block rbsCatalogProductsListItem %}
+						<div class="thumbnail" data-rbs-catalog-product-item-data="" data-rbs-catalog-products-item=""></div>
+					{% endblock rbsCatalogProductsListItem %}
+				</div>
+			</div>
+		</div>
+		{# Two items per line. #}
+		<div data-ng-if="parameters.itemsPerLine == 2" class="row product-list">
+			<div data-infinite-scroll="addMoreProducts()" data-infinite-scroll-container=""
+				data-infinite-scroll-disabled="scrollDisabled()">
+				<div class="col-sm-12 col-md-6" data-ng-repeat-start="productData in productsData">
+					{{ block('rbsCatalogProductsListItem') }}
+				</div>
+				<div data-ng-if="($index+1) % 2 == 0" class="clearfix visible-md-block"></div>
+				<div data-ng-repeat-end="" data-ng-if="($index+1) % 2 == 0"  class="clearfix visible-lg-block"></div>
+			</div>
+		</div>
+		{# Three items per line. #}
+		<div data-ng-if="parameters.itemsPerLine == 3" class="row product-list">
+			<div data-infinite-scroll="addMoreProducts()" data-infinite-scroll-container=""
+				data-infinite-scroll-disabled="scrollDisabled()">
+				<div class="col-sm-6 col-md-4" data-ng-repeat-start="productData in productsData">
+					{{ block('rbsCatalogProductsListItem') }}
+				</div>
+				<div data-ng-if="($index+1) % 2 == 0" class="clearfix visible-sm-block"></div>
+				<div data-ng-if="($index+1) % 3 == 0" class="clearfix visible-md-block"></div>
+				<div data-ng-repeat-end="" data-ng-if="($index+1) % 3 == 0"  class="clearfix visible-lg-block"></div>
+			</div>
+		</div>
+		{# Four items per line. #}
+		<div data-ng-if="parameters.itemsPerLine != 3 && parameters.itemsPerLine != 2 && parameters.itemsPerLine != 1"
+			class="row product-list">
+			<div data-infinite-scroll="addMoreProducts()" data-infinite-scroll-container=""
+				data-infinite-scroll-disabled="scrollDisabled()">
+				<div class="col-sm-6 col-md-4 col-lg-3" data-ng-repeat-start="productData in productsData">
+					{{ block('rbsCatalogProductsListItem') }}
+				</div>
+				<div data-ng-if="($index+1) % 2 == 0" class="clearfix visible-sm-block"></div>
+				<div data-ng-if="($index+1) % 3 == 0" class="clearfix visible-md-block"></div>
+				<div data-ng-repeat-end="" data-ng-if="($index+1) % 4 == 0"  class="clearfix visible-lg-block"></div>
+			</div>
+		</div>
+
+		<div class="text-center well" data-ng-show="loading">
+			<p data-ng-hide="message">{{ i18n('t.rbs.base.front.loading', ['ucf', 'etc']) }}</p>
+			<img alt="" src="data:image/gif;base64,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" />
+		</div>
+	</script>
+{% endblock rbsCatalogProductsListInfiniteScroll %}
+
+{% block rbsCatalogProductsItem %}
+	<script type="text/ng-template" id="/rbsCatalogProductsItem.tpl">
+		<div class="product-visual media-pictograms-container">
+			<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:">
+				<img data-ng-if="visual.listItem" alt="(= visual.alt =)" src="" data-ng-src="(= visual.listItem =)"
+					class="image-format-listItem-max-size" />
+				<div class="text-center text-muted image-format-listItem-icon-size" data-ng-if="!visual.listItem">
+					{{ block('rbsGenericIconVisual') }}
+				</div>
+			</a>
+			<div data-rbs-media-pictograms="pictograms"></div>
+		</div>
+		<div class="product-label">
+			<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:">(= productData.common.title =)</a>
+		</div>
+		<div class="product-availability">(= productData.stock.thresholdTitle =) </div>
+		<div data-rbs-catalog-product-price=""
+			data-display-without-tax="(= parameters.displayPricesWithoutTax ? '1' : '0' =)"
+			data-display-with-tax="(= parameters.displayPricesWithTax ? '1' : '0' =)"></div>
+		<div class="product-add" data-ng-if="productData.stock.sku">
+			<div data-ng-if="productData.cart.key" data-rbs-catalog-add-list-item-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}">
+			</div>
+			<button data-ng-if="!productData.cart.key"   type="button" class="btn btn-primary btn-sm" disabled="disabled">
+				{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
+			</button>
+		</div>
+		<div class="product-add" data-ng-if="!productData.stock.sku">
+			<a class="btn btn-primary btn-sm"  data-ng-href="(= url =)" href="javascript:"
+				title="(= viewDetailTitle =)">
+				{{ block('rbsGenericIconGoto') }}
+				(= viewDetailTitle =)
+			</a>
+		</div>
+	</script>
+{% endblock rbsCatalogProductsItem %}

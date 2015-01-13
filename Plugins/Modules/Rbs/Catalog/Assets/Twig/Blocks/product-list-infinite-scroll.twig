@@ -3,7 +3,8 @@
 	{{ parent() }}
 	{{ block('rbsCatalogProductPrice') }}
 	{% use 'Rbs_Catalog/product-list-directives.twig' %}
-	{{ block('rbsCatalogProductsList') }}
+	{{ block('rbsCatalogProductsListInfiniteScroll') }}
+	{{ block('rbsCatalogProductsItem') }}
 	<script type="application/javascript">
 		window.__change['{{ blockId }}'] = {context : {{ context | json_encode | raw }}, productsData : {{ productsData | json_encode | raw }} };
 	</script>
@@ -14,8 +15,8 @@
 
 {% block rbsCatalogProductList %}
 	{% spaceless %}
-		<div data-rbs-catalog-products-list="" data-cache-key="{{ blockId }}" data-product-count="{{ pagination.count }}"
-				data-view-detail-title-mask="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: 'PRODUCT_TITLE'}) }}">
+		<div data-rbs-catalog-products-list-infinite-scroll="" data-cache-key="{{ blockId }}" data-product-count="{{ pagination.count }}"
+			data-view-detail-title-mask="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: 'PRODUCT_TITLE'}) }}">
 		</div>
 	{% endspaceless %}
 {% endblock rbsCatalogProductList %}
