@@ -21,7 +21,7 @@
 		"message":"la ligne $NUMBER$ ne possède pas un prix valide"
 	},
 	"cart_reservation_error":{
-		"message":"impossible de réserver certains produits"
+		"message":"l'article $TITLE$ $AXESINFOS$ n'est pas disponible pour la quantité souhaitée"
 	},
 	"add_to_cart":{
 		"message":"ajouter au panier"

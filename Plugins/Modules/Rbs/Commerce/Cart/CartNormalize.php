@@ -412,11 +412,46 @@ class CartNormalize
 			if (count($reservations))
 			{
 				$unreserved = $commerceServices->getStockManager()->setReservations($cart->getIdentifier(), $reservations);
+
 				if (count($unreserved))
 				{
-					$message = $i18nManager->trans('m.rbs.commerce.front.cart_reservation_error', array('ucf'));
-					$err = new CartError($message);
-					$errors[] = $err;
+
+					foreach ($unreserved as $unreservedInfo)
+					{
+						/** @var $unreservedInfo \Rbs\Commerce\Cart\CartReservation */
+
+						foreach ($cart->getLines() as $line)
+						{
+							$concernedLine = false;
+							// Search if item has SKU
+							foreach ($line->getItems() as $item)
+							{
+								if ($item->getCodeSKU() == $unreservedInfo->getCodeSku())
+								{
+									$concernedLine = true;
+								}
+							}
+
+							if ($concernedLine)
+							{
+								$axesInfo = $line->getOptions()->get('axesInfo');
+								$axesInfoString = '';
+								if ($axesInfo && count($axesInfo) > 0)
+								{
+									$axesInfoString = '-';
+									foreach ($axesInfo as $axeInfo)
+									{
+										$axesInfoString .= ' ' . $axeInfo['value'];
+									}
+									$axesInfoString .= ' -';
+								}
+								$stock = $unreservedInfo->getQuantity() - $unreservedInfo->getQuantityNotReserved();
+								$message = $i18nManager->trans('m.rbs.commerce.front.cart_reservation_error', array('ucf'), ['title' => $line->getDesignation(), 'quantity' => $unreservedInfo->getQuantity(), 'notReservedQuantity' => $unreservedInfo->getQuantityNotReserved(), 'stock' => $stock, 'axesInfos' => $axesInfoString]);
+								$err = new CartError($message, $line->getKey());
+								$errors[] = $err;
+							}
+						}
+					}
 				}
 			}
 			else
