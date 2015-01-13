@@ -123,7 +123,7 @@ class TwitterBootstrapHtml
 	public function getResourceParts()
 	{
 		$cssHead = '{% for cssAsset in pageResult.getCssAssets() %}
-	<link rel="stylesheet" type="text/css" href="{{ resourceURL(cssAsset) }}">
+	<link rel="stylesheet" type="text/css" href="{{ resourceURL(cssAsset) }}" />
 {% endfor %}';
 
 		$jsFooter = '{% for jsFooter in pageResult.getJsAssets() %}
@@ -155,15 +155,11 @@ class TwitterBootstrapHtml
 		}
 		elseif ($item instanceof Row)
 		{
-			$class = 'row';
-			return
-				'<div class="' . $class . '" data-id="' . $item->getId() . '" data-grid="' . $item->getGrid() . '">' . $innerHTML
-				. '</div>';
+			return '<div class="row" data-id="' . $item->getId() . '" data-grid="' . $item->getGrid() . '">' . $innerHTML . '</div>';
 		}
 		elseif ($item instanceof Container)
 		{
-			//return '<div data-id="' . $item->getId() . '" data-grid="' . $item->getGrid() . '">' . $innerHTML . '</div>';
-			return $innerHTML;
+			return '<div class="editable-zone" data-id="' . $item->getId() . '">' . $innerHTML . '</div>';
 		}
 		return (!empty($innerHTML)) ? $innerHTML : null;
 	}
