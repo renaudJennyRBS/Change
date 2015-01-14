@@ -113,12 +113,12 @@ class SetupTest extends \ChangeTests\Change\TestAssets\TestCase
 		$this->assertArrayNotHasKey('error', $result);
 	}
 
-	public function testInstallDemoPlugin()
+	public function testInstallBlankPlugin()
 	{
 		$application = $this->getApplication();
 		$eventManager = $this->getCommandsEventManager($this->getApplication());
 		$cmd = 'change:install-plugin';
-		$arguments = array('type' => 'theme', 'vendor' => 'Rbs', 'name' => 'Demo');
+		$arguments = array('type' => 'theme', 'vendor' => 'Rbs', 'name' => 'Blank');
 		$commandResponse = $this->executeCommand($application, $eventManager, $cmd, $arguments);
 		$this->assertInstanceOf('\Change\Commands\Events\CommandResponseInterface', $commandResponse);
 		$result = $commandResponse->toArray();
