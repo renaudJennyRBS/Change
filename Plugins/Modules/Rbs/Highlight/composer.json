@@ -1,0 +1,9 @@
+{
+	"license": "MPL-2.0",
+	"name": "rbs/highlight",
+	"type":"rbschange-module",
+	"require": {
+		"rbschange/plugin-installer": "*",
+		"rbschange/core": "self.version"
+	}
+}

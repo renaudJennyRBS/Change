@@ -34,7 +34,8 @@ class InitializePlugin
 		{
 			$applicationServices->getTransactionManager()->begin();
 
-			$path = $applicationServices->getPluginManager()->initializePlugin($type, $vendor, $name, $package);
+			$defaultLCID = $event->getApplicationServices()->getI18nManager()->getDefaultLCID();
+			$path = $applicationServices->getPluginManager()->initializePlugin($type, $vendor, $name, $defaultLCID, $package);
 			$response->addInfoMessage('Plugin skeleton generated at ' . $path);
 			
 			$applicationServices->getTransactionManager()->commit();

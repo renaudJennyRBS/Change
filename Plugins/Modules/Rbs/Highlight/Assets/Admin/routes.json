@@ -1,0 +1,49 @@
+{
+	"/Rbs/Highlight/": {
+		"module": "Rbs_Highlight",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/Rbs/Highlight/Highlight/",
+			"labelKey": "m.rbs.highlight.admin.module_name | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Highlight/Highlight/": {
+		"model": "Rbs_Highlight_Highlight",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Highlight/Highlight/list.twig",
+			"labelKey": "m.rbs.highlight.admin.highlight_list | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Highlight/Highlight/:id": {
+		"model": "Rbs_Highlight_Highlight",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Highlight/Highlight/edit.twig",
+			"labelKey": "m.rbs.highlight.documents.highlight | ucf",
+			"labelId": "id"
+		},
+		"auto": true
+	},
+	"/Rbs/Highlight/Highlight/:id/translate/:LCID": {
+		"model": "Rbs_Highlight_Highlight",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Highlight/Highlight/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": true
+	},
+	"/Rbs/Highlight/Highlight/new": {
+		"model": "Rbs_Highlight_Highlight",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Highlight/Highlight/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": true
+	}
+}

@@ -121,7 +121,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function scanPlugins()
 	{
-		$plugins = array();
+		$plugins = [];
 
 		// Plugin Modules.
 		$pluginsModulesPattern = $this->getWorkspace()->pluginsModulesPath('*', '*', 'plugin.json');
@@ -282,7 +282,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->plugins === null)
 		{
-			$this->plugins = array();
+			$this->plugins = [];
 			$compiledPluginsPath = $this->getCompiledPluginsPath();
 			if (is_readable($compiledPluginsPath))
 			{
@@ -391,13 +391,13 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 					$plugin->setConfigured($infos['configured']);
 					$plugin->setRegistrationDate($infos['registration_date']);
 
-					$configDatas = array();
+					$configDatas = [];
 					if ($infos['config_datas'])
 					{
 						$configDatas = json_decode($infos['config_datas'], true);
 						if (!is_array($configDatas))
 						{
-							$configDatas = array();
+							$configDatas = [];
 						}
 					}
 					$plugin->setConfiguration($configDatas);
@@ -431,25 +431,25 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		$sq->bindParameter('name', $plugin->getShortName());
 
 		$resultsConverter = new ResultsConverter($this->getDbProvider(),
-			array('registration_date' => ScalarType::DATETIME,
+			['registration_date' => ScalarType::DATETIME,
 				'configured' => ScalarType::BOOLEAN,
 				'activated' => ScalarType::BOOLEAN,
-				'config_datas' => ScalarType::LOB));
+				'config_datas' => ScalarType::LOB]);
 
-		$infos = $sqb->from($fb->getPluginTable())->query()->getFirstResult(array($resultsConverter, 'convertRow'));
+		$infos = $sqb->from($fb->getPluginTable())->query()->getFirstResult([$resultsConverter, 'convertRow']);
 		if (is_array($infos))
 		{
 			$plugin->setPackage($infos['package']);
 			$plugin->setActivated($infos['activated']);
 			$plugin->setConfigured($infos['configured']);
 			$plugin->setRegistrationDate($infos['registration_date']);
-			$configDatas = array();
+			$configDatas = [];
 			if ($infos['config_datas'])
 			{
 				$configDatas = json_decode($infos['config_datas'], true);
 				if (!is_array($configDatas))
 				{
-					$configDatas = array();
+					$configDatas = [];
 				}
 			}
 			$plugin->setConfiguration($configDatas);
@@ -631,7 +631,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param array $context
 	 * @return \Change\Plugins\Plugin[]
 	 */
-	public function installPackage($vendor, $packageName, $context = array())
+	public function installPackage($vendor, $packageName, $context = [])
 	{
 		$vendor = $this->normalizeVendorName($vendor);
 		return $this->doInstall(static::EVENT_TYPE_PACKAGE, $vendor, $packageName, $context);
@@ -645,7 +645,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	 * @throws \InvalidArgumentException
 	 * @return \Change\Plugins\Plugin[]
 	 */
-	public function installPlugin($type, $vendor, $name, $context = array())
+	public function installPlugin($type, $vendor, $name, $context = [])
 	{
 		if ($type == 'module')
 		{
@@ -698,7 +698,7 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if (!($this->getApplication()->getConfiguration() instanceof \Change\Configuration\EditableConfiguration))
 		{
-			$editableConfiguration = new \Change\Configuration\EditableConfiguration(array());
+			$editableConfiguration = new \Change\Configuration\EditableConfiguration([]);
 			$this->getApplication()->setConfiguration($editableConfiguration->import($this->getApplication()->getConfiguration()));
 		}
 		else
@@ -709,8 +709,8 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 		$installEventManager = $this->getEventManager();
 
 		/* @var $plugins \Change\Plugins\Plugin[] */
-		$plugins = array();
-		$eventArgs = $installEventManager->prepareArgs(array('context' => $context, 'type' => $eventType, 'vendor' => $vendor, 'name' => $name));
+		$plugins = [];
+		$eventArgs = $installEventManager->prepareArgs(['context' => $context, 'type' => $eventType, 'vendor' => $vendor, 'name' => $name]);
 
 		$event = new \Change\Events\Event(static::EVENT_SETUP_INITIALIZE, $this, $eventArgs);
 		$results = $installEventManager->trigger($event);
@@ -825,17 +825,19 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string $type
 	 * @param string $vendor
 	 * @param string $name
+	 * @param string $defaultLCID
 	 * @param string|null $package
 	 * @return string
 	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
 	 */
-	public function initializePlugin($type, $vendor, $name, $package = null)
+	public function initializePlugin($type, $vendor, $name, $defaultLCID, $package = null)
 	{
 		if ($type != 'module' && $type != 'theme')
 		{
 			throw new \InvalidArgumentException('Type must be either "module" or "theme"');
 		}
+
 		$normalizedVendor = $this->normalizeVendorName($vendor);
 		$normalizedName = $this->normalizePluginName($name);
 		$path = null;
@@ -862,12 +864,14 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 				$path = $this->getWorkspace()->pluginsThemesPath($normalizedVendor, $normalizedName, 'plugin.json');
 			}
 			$twigFileName = 'Assets/Install.theme.php.twig';
+			$this->initializeTheme($normalizedVendor, $normalizedName, $defaultLCID);
 		}
 		if (file_exists($path))
 		{
 			throw new \RuntimeException('Plugin already exists at path ' . $path, 999999);
 		}
-		$attributes = array('type' => $type, 'vendor' => $normalizedVendor, 'name' => $normalizedName);
+
+		$attributes = ['type' => $type, 'vendor' => $normalizedVendor, 'name' => $normalizedName, 'defaultLCID' => $defaultLCID];
 		if ($package)
 		{
 			$attributes['package'] = $package;
@@ -876,7 +880,6 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 
 		$loader = new \Twig_Loader_Filesystem(__DIR__);
 		$twig = new \Twig_Environment($loader);
-
 		File::write(dirname($path) . DIRECTORY_SEPARATOR . 'Setup' . DIRECTORY_SEPARATOR . 'Install.php',
 			$twig->render($twigFileName, $attributes));
 
@@ -885,5 +888,38 @@ class PluginManager implements \Zend\EventManager\EventsCapableInterface
 
 		$this->compile();
 		return dirname($path);
+	}
+
+	/**
+	* @param string $normalizedVendor
+	* @param string $normalizedName
+	* @param string $defaultLCID
+	 */
+	protected function initializeTheme($normalizedVendor, $normalizedName, $defaultLCID)
+	{
+		if ($normalizedVendor === 'Project')
+		{
+			$path = $this->getWorkspace()->projectThemesPath('Project', $normalizedName, 'Assets', 'I18n', $defaultLCID, 'admin.json');
+		}
+		else
+		{
+			$path = $this->getWorkspace()->pluginsThemesPath($normalizedVendor, $normalizedName, 'Assets', 'I18n', $defaultLCID, 'admin.json');
+		}
+		$content = ['label' => ['message' => $normalizedVendor . ' ' . $normalizedName]];
+		File::write($path, Json::prettyPrint(Json::encode($content)));
+
+		$assetsDirectories = ['img', 'less', 'Templates'];
+		foreach ($assetsDirectories as $directory)
+		{
+			if ($normalizedVendor === 'Project')
+			{
+				$path = $this->getWorkspace()->projectThemesPath('Project', $normalizedName, 'Assets', $directory);
+			}
+			else
+			{
+				$path = $this->getWorkspace()->pluginsThemesPath($normalizedVendor, $normalizedName, 'Assets', $directory);
+			}
+			\Change\Stdlib\File::mkdir($path);
+		}
 	}
 }

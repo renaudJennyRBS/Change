@@ -1,0 +1,46 @@
+<div class="row" data-rbs-document-editor-base="" data-model="Rbs_Highlight_Highlight">
+	<div class="col-md-12">
+		<rbs-page-header sub-title="{{ i18nAttr(modelKey('Rbs_Highlight_Highlight'), ['ucf']) }}"></rbs-page-header>
+	</div>
+
+	<div data-rbs-aside-column="">
+		{% include '@Rbs_Admin/view/asides.twig' %}
+		{% include '@Rbs_Admin/view/links.twig' %}
+	</div>
+
+	<div class="document-form" data-rbs-main-column="">
+		<form data-ng-submit="submit()" data-rbs-document-editor-edit="" data-rbs-document-editor-translate=""
+			data-rbs-document-editor-rbs-highlight-highlight-translate="">
+			<fieldset data-rbs-editor-section=""
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
+
+				<rbs-field-text property="title" 
+					label="{{ i18nAttr(propertyKey('Rbs_Highlight_Highlight', 'title'), ['ucf']) }}">
+				</rbs-field-text>
+
+				<rbs-field-rich-text property="description" 
+					label="{{ i18nAttr(propertyKey('Rbs_Highlight_Highlight', 'description'), ['ucf']) }}">
+				</rbs-field-rich-text>
+
+				<hr />
+
+				<h3>{{ i18n(propertyKey('Rbs_Highlight_Highlight', 'items'), ['ucf']) }}</h3>
+				<rbs-inline-array inline-array="document.items" new-model="Rbs_Highlight_HighlightItem"
+						data-ref-lcid="document.refLCID" data-lcid="document.LCID">
+				</rbs-inline-array>
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="activation"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"
+				data-rbs-document-activation-section="">
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="systeminfo"
+				data-editor-section-label="{{ i18nAttr('m.rbs.admin.adminjs.status', ['ucf']) }}"
+				data-rbs-document-system-info-section="">
+			</fieldset>
+
+			<rbs-document-editor-button-bar></rbs-document-editor-button-bar>
+		</form>
+	</div>
+</div>

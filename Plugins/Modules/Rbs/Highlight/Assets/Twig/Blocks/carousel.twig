@@ -1,0 +1,50 @@
+<div id="slider-{{ blockId }}" class="carousel slide" data-interval="{{parameters.interval}}" data-ride="carousel">
+	{% set activeItems = highlight.activeItems %}
+	<div class="carousel-inner">
+		{% for item in activeItems %}
+			{% if loop.first %}
+				{% set itemClass = "item active" %}
+			{% else  %}
+				{% set itemClass = "item" %}
+			{% endif %}
+			<div class="{{ itemClass }}" >
+				{% if item.currentLocalization.targetUrl %}
+					{% set linkUrl = item.currentLocalization.targetUrl %}
+				{% elseif item.targetDocument %}
+					{% set linkUrl = canonicalURL(item.targetDocument) %}
+				{% else  %}
+					{% set linkUrl = null %}
+				{% endif %}
+				<div class="text-center">
+					{% if linkUrl %}
+						<a href="{{linkUrl}}"><img src="{{imageURL(item.visual, 0, parameters.height)}}" alt="item.visual.alt" /></a>
+					{% else  %}
+						<img src="{{imageURL(item.visual, 0, parameters.height)}}" alt="item.visual.alt" />
+					{% endif %}
+				</div>
+				<div class="carousel-caption">
+					{{ item.currentLocalization.description | richText }}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	{% spaceless %}
+		<a class="left carousel-control" href="#slider-{{ blockId }}"
+			onclick="jQuery('#slider-{{ blockId }}').carousel('prev'); return false;">
+			<span class="glyphicon glyphicon-chevron-left"></span>
+		</a>
+		<a class="right carousel-control" href="#slider-{{ blockId }}"
+			onclick="jQuery('#slider-{{ blockId }}').carousel('next'); return false;">
+			<span class="glyphicon glyphicon-chevron-right"></span>
+		</a>
+	{% endspaceless %}
+	<ol class="carousel-indicators">
+		{% for item in activeItems %}
+			{% if loop.first %}
+				<li class="active" data-target="#slider-{{ blockId }}" data-slide-to="{{loop.index}}"></li>
+			{% else  %}
+				<li data-target="#slider-{{ blockId }}" data-slide-to="{{loop.index}}"></li>
+			{% endif %}
+		{% endfor %}
+	</ol>
+</div>

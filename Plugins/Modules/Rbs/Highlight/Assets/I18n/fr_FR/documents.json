@@ -1,0 +1,26 @@
+{
+	"highlight":{
+		"message":"mise en avant"
+	},
+	"highlight_description":{
+		"message":"description"
+	},
+	"highlight_items":{
+		"message":"éléments"
+	},
+	"highlightitem":{
+		"message":"élément"
+	},
+	"highlightitem_visual":{
+		"message":"visuel"
+	},
+	"highlightitem_targetdocument":{
+		"message":"document cible"
+	},
+	"highlightitem_targeturl":{
+		"message":"URL cible"
+	},
+	"highlightitem_description":{
+		"message":"description"
+	}
+}

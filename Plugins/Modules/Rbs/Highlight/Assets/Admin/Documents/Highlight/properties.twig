@@ -1,0 +1,14 @@
+<rbs-field-label-title property="title" required="true"
+	label="{{ i18nAttr(propertyKey('Rbs_Highlight_Highlight', 'label'), ['ucf']) }} / {{ i18nAttr(propertyKey('Rbs_Highlight_Highlight', 'title'), ['ucf']) }}">
+</rbs-field-label-title>
+
+<rbs-field-rich-text property="description"
+	label="{{ i18nAttr(propertyKey('Rbs_Highlight_Highlight', 'description'), ['ucf']) }}">
+</rbs-field-rich-text>
+
+<hr />
+
+<h3>{{ i18n(propertyKey('Rbs_Highlight_Highlight', 'items'), ['ucf']) }}</h3>
+<rbs-inline-array inline-array="document.items" new-model="Rbs_Highlight_HighlightItem"
+		data-ref-lcid="document.refLCID">
+</rbs-inline-array>

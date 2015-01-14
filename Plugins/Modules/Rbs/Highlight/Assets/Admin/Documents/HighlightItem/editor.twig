@@ -1,0 +1,40 @@
+<div data-rbs-highlight-highlight-item-editor="">
+
+	<rbs-field-text data-ng-if="!localization.inTranslation()" property="label" required="true"
+			label="{{ i18nAttr(propertyKey('Rbs_Highlight_HighlightItem', 'label'), ['ucf']) }}">
+	</rbs-field-text>
+
+	<rbs-field property="title" label="{{ i18nAttr(propertyKey('Rbs_Highlight_HighlightItem', 'title'), ['ucf']) }}">
+		<input type="text" name="title" class="form-control" ng-model="document.LCID[localization.currentLCID()].title" />
+	</rbs-field>
+
+	<rbs-field data-ng-if="!localization.inTranslation()" property="visual"
+			label="{{ i18nAttr(propertyKey('Rbs_Highlight_HighlightItem', 'visual'), ['ucf']) }}">
+		<rbs-document-picker-single ng-model="document.visual" accepted-model="Rbs_Media_Image"
+				property-label="{{ i18nAttr(propertyKey('Rbs_Highlight_HighlightItem', 'visual'), ['ucf']) }}"
+				context-key="(= getContextKey() =)_visual">
+		</rbs-document-picker-single>
+	</rbs-field>
+
+	<rbs-field data-ng-if="!localization.inTranslation()" property="targetDocument"
+			label="{{ i18nAttr(propertyKey('Rbs_Highlight_HighlightItem', 'targetDocument'), ['ucf']) }}">
+		<rbs-document-picker-single ng-model="document.targetDocument" select-model="{publishable:true, abstract:false}"
+				property-label="{{ i18nAttr(propertyKey('Rbs_Highlight_HighlightItem', 'targetDocument'), ['ucf']) }}"
+				context-key="(= getContextKey() =)_targetDocument">
+		</rbs-document-picker-single>
+	</rbs-field>
+
+	<rbs-field property="targetUrl"
+			label="{{ i18nAttr(propertyKey('Rbs_Highlight_HighlightItem', 'targetUrl'), ['ucf']) }}">
+		<input type="text" name="targetUrl" class="form-control" ng-model="document.LCID[localization.currentLCID()].targetUrl" />
+	</rbs-field>
+
+	<rbs-field property="description"
+			label="{{ i18nAttr(propertyKey('Rbs_Highlight_HighlightItem', 'description'), ['ucf']) }}">
+		<rbs-rich-text-input ng-model="document.LCID[localization.currentLCID()].description" ></rbs-rich-text-input>
+	</rbs-field>
+
+	<hr />
+
+	<rbs-inline-activation-section></rbs-inline-activation-section>
+</div>
