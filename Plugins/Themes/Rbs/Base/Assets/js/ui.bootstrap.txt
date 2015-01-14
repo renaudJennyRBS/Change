@@ -1,1 +1,0 @@
-Include only typeahead component of ui-bootstrap because other components cause conflicts with static usage of Bootstrap (dropdowns, carousels and maybe other).

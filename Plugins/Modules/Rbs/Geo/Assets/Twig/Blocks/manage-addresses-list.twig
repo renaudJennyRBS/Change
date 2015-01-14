@@ -1,4 +1,7 @@
-{% include 'Rbs_Geo/address-editor.twig' %}
+{% block rbsGeoManageAddressUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+	{% include 'Rbs_Geo/address-editor.twig' %}
+{% endblock rbsGeoManageAddressUse %}
 
 <div data-ng-controller="rbsGeoManageAddressesController">
 	<h1>{{ i18n('m.rbs.geo.front.manage_addresses_title', ['ucf']) }}</h1>
@@ -16,13 +19,13 @@
 					</address>
 					{% block defaultAddresses %}
 					<p>
-						<div data-ng-show="address.default.default">
-							<span class="glyphicon glyphicon-heart"></span>
+						<span data-ng-show="address.default.default">
+							{{ block('rbsGenericIconFavorite') }}
 							{{ i18n('m.rbs.geo.front.by_default', ['ucf']) }}
-						</div>
+						</span>
 						<button data-ng-hide="address.default.default" class="btn btn-sm btn-default"
 								data-ng-click="setDefaultAddress(address, 'default')">
-							<span class="glyphicon glyphicon-heart-empty text-muted"></span>
+							<span class="text-muted">{{ block('rbsGenericIconNotFavorite') }}</span>
 							{{ i18n('m.rbs.geo.front.button_set_default', ['ucf']) }}
 						</button>
 					</p>
@@ -33,7 +36,7 @@
 						</button>
 						<button type="button" class="btn btn-sm btn-danger btn-icon" data-ng-click="deleteAddress(address)"
 							title="{{ i18nAttr('m.rbs.geo.front.button_delete', ['ucf']) }}">
-							<span class="glyphicon glyphicon-trash"></span>
+							{{ block('rbsGenericIconDelete') }}
 						</button>
 					</p>
 				</div>
@@ -62,14 +65,13 @@
 	<div class="vertical-if-animation" data-ng-if="data.editedAddress" data-ng-cloak="">
 		<div class="vertical-if-animation-content">
 			<h2>{{ i18n('m.rbs.geo.front.add_edit_address_title', ['ucf']) }}</h2>
-			<div data-rbs-geo-address-editor="" data-address="data.editedAddress"
-					data-manage-name="required" data-accept-zones=""
-					data-valid="data.isEditedAddressValid">
+			<div data-rbs-geo-address-editor="" data-address="data.editedAddress" data-manage-name="required" data-accept-zones=""
+				data-valid="data.isEditedAddressValid">
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
 					<button type="button" class="btn btn-primary" data-ng-disabled="!data.isEditedAddressValid"
-							data-ng-click="updateAddress()">
+						data-ng-click="updateAddress()">
 						{{ i18n('m.rbs.geo.front.button_save', ['ucf']) }}
 					</button>
 					<button type="button" class="btn btn-sm btn-default" data-ng-click="cancelEdition()">
@@ -82,9 +84,8 @@
 	<div class="vertical-if-animation" data-ng-if="data.newAddress" data-ng-cloak="">
 		<div class="vertical-if-animation-content">
 			<h2>{{ i18n('m.rbs.geo.front.add_new_address_title', ['ucf']) }}</h2>
-			<div data-rbs-geo-address-editor="" data-address="data.newAddress"
-					data-manage-name="required" data-accept-zones=""
-					data-valid="data.isNewAddressValid">
+			<div data-rbs-geo-address-editor="" data-address="data.newAddress" data-manage-name="required" data-accept-zones=""
+				data-valid="data.isNewAddressValid">
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">

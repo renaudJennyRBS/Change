@@ -122,24 +122,25 @@
 	{% endblock rbsOrderBillingInformationEmail %}
 {% endblock rbsOrderBillingInformation %}
 
-{# Used parameters: designation, product, imageFormat = 'cartItem', defaultVisualFontSize = '80px' #}
+{# Used parameters: designation, product, imageFormat = 'cartItem' #}
 {% block rbsOrderLineVisual %}
 	{% set imageFormat = imageFormat ? imageFormat : 'cartItem' %}
-	{% set defaultVisualFontSize = defaultVisualFontSize ? defaultVisualFontSize : '80px' %}
 	{% if product %}
 		<a title="{{ product.common.title }}" href="{{ product.common.URL.canonical }}">
 			{% if product.common.visuals|length %}
-				<img alt="{{ product.common.visuals[0].alt }}"
+				<img alt="{{ product.common.visuals[0].alt }}" class=" image-format-{{ imageFormat }}-max-size"
 					src="{{ product.common.visuals[0][imageFormat] }}" />
 			{% else %}
-				<div class="text-left text-muted">
-					<span class="glyphicon glyphicon-camera" style="font-size: {{ defaultVisualFontSize }}"></span>
+				<div class="text-left text-muted image-format-{{ imageFormat }}-icon-size">
+					{{ block('rbsGenericIconVisual') }}
 				</div>
 			{% endif %}
 		</a>
 	{% else %}
 		<div title="{{ designation }}" class="text-left text-muted">
-			<span class="glyphicon glyphicon-camera" style="font-size: {{ defaultVisualFontSize }}"></span>
+			<div class="text-left text-muted image-format-{{ imageFormat }}-icon-size">
+				{{ block('rbsGenericIconVisual') }}
+			</div>
 		</div>
 	{% endif %}
 {% endblock rbsOrderLineVisual %}
@@ -173,45 +174,40 @@
 {% endblock rbsOrderLineDescription %}
 
 {# Used parameters: line, currencyCode, displayPricesWithoutTax, displayPricesWithTax #}
-{% block rbsOrderLinePrices %}
+{% block rbsOrderLinePricesDetails %}
 	{% if displayPricesWithoutTax %}
-		<div class="row">
-			{% if line.unitAmountWithoutTaxes and line.quantity > 1 %}
-				<div class="col-sm-6 small">
-					{{ line.quantity }} x {{ formatPrice(line.unitAmountWithoutTaxes, currencyCode) }}
-				</div>
-				<div class="col-sm-6">
-					{{ formatPrice(line.amountWithoutTaxes, currencyCode)}}
-					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-						{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-					</abbr>
-				</div>
-			{% else %}
-				<div class="col-sm-12">
-					{{ formatPrice(line.amountWithoutTaxes, currencyCode)}}
-					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-						{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-					</abbr>
-				</div>
-			{% endif %}
-		</div>
+		{% if line.unitAmountWithoutTaxes and line.quantity > 1 %}
+			<div>
+				{{ line.quantity }} x {{ formatPrice(line.unitAmountWithoutTaxes, currencyCode) }}
+			</div>
+		{% endif %}
 	{% endif %}
 	{% if displayPricesWithTax %}
-		<div class="row">
-			{% if line.unitAmountWithTaxes and line.quantity > 1 %}
-				<div class="col-sm-6 small">
-					{{ line.quantity }} x {{ formatPrice(line.unitAmountWithTaxes, currencyCode) }}
-				</div>
-				<div class="col-sm-6">
-					{{ formatPrice(line.amountWithTaxes, currencyCode)}}
-				</div>
-			{% else %}
-				<div class="col-sm-12">
-					{{ formatPrice(line.amountWithTaxes, currencyCode)}}
-				</div>
-			{% endif %}
-		</div>
+		{% if line.unitAmountWithTaxes and line.quantity > 1 %}
+			<div>
+				{{ line.quantity }} x {{ formatPrice(line.unitAmountWithTaxes, currencyCode) }}
+			</div>
+		{% endif %}
 	{% endif %}
+{% endblock rbsOrderLinePricesDetails %}
+
+{# Used parameters: line, currencyCode, displayPricesWithoutTax, displayPricesWithTax #}
+{% block rbsOrderLinePrices %}
+	<ul class="list-unstyled no-bottom-margin">
+		{% if displayPricesWithoutTax %}
+			<li>
+				{{ formatPrice(line.amountWithoutTaxes, currencyCode)}}
+				<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+					{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+				</abbr>
+			</li>
+		{% endif %}
+		{% if displayPricesWithTax %}
+			<li>
+				{{ formatPrice(line.amountWithTaxes, currencyCode)}}
+			</li>
+		{% endif %}
+	</ul>
 {% endblock rbsOrderLinePrices %}
 
 {# Used parameter: orderData, displayPricesWithTax, displayPricesWithoutTax #}
@@ -228,7 +224,7 @@
 						<th>{{ i18n('m.rbs.commerce.front.line_detail', ['ucf']) }}</th>
 						<th class="text-right">{{ i18n('m.rbs.commerce.front.line_quantity', ['ucf']) }}</th>
 						{% if displayPrices %}
-							<th class="text-right">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
+							<th class="text-right" colspan="2">{{ i18n('m.rbs.commerce.front.line_prices', ['ucf']) }}</th>
 						{% endif %}
 					</tr>
 				{% endblock rbsOrderLinesHead %}
@@ -257,7 +253,10 @@
 							{% endblock rbsOrderLinesItemQuantity %}
 							{% if displayPrices %}
 								{% block rbsOrderLinesItemPrice %}
-									<td class="price text-right">
+									<td class="price text-right text-muted hidden-xs">
+										{{ block('rbsOrderLinePricesDetails') }}
+									</td>
+									<td class="price main-price text-right">
 										{{ block('rbsOrderLinePrices') }}
 									</td>
 								{% endblock rbsOrderLinesItemPrice %}

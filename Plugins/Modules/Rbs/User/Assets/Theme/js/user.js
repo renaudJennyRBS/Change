@@ -422,6 +422,7 @@
 					request.success(function(data) {
 						AjaxAPI.closeWaitingModal();
 						scope.readonly = true;
+						scope.success = true;
 						scope.data = data.dataSets;
 						var params = {'profile': scope.data, 'userId': scope.data.common.id};
 						$rootScope.$broadcast('rbsUserProfileUpdated', params);
@@ -440,6 +441,7 @@
 				scope.readonly = true;
 
 				scope.openEdit = function() {
+					scope.success = false;
 					scope.readonly = false;
 					scope.dataBackup = angular.copy(scope.data);
 				};

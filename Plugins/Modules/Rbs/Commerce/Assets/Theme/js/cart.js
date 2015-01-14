@@ -13,36 +13,34 @@
 				var self = this;
 				var modifications = {};
 
-				scope.loading = false;
-
 				this.loadCartData = function() {
-					scope.loading = true;
+					AjaxAPI.openWaitingModal();
 					var request = AjaxAPI.getData('Rbs/Commerce/Cart', null, {detailed: true, URLFormats: 'canonical', visualFormats: scope.parameters['imageFormats']});
-					request.success(function(data, status, headers, config) {
+					request.success(function(data) {
 						var cartData = data.dataSets;
 						if (cartData && !angular.isArray(cartData)) {
 							self.setCartData(cartData);
 						}
-						scope.loading = false;
-					}).error(function(data, status, headers, config) {
+						AjaxAPI.closeWaitingModal();
+					}).error(function(data, status) {
 						console.log('loadCartData error', data, status);
-						scope.loading = false;
+						AjaxAPI.closeWaitingModal();
 					});
 					return request;
 				};
 
 				this.updateCartData = function(actions) {
-					scope.loading = true;
+					AjaxAPI.openWaitingModal();
 					var request = AjaxAPI.putData('Rbs/Commerce/Cart', actions, {detailed: true, URLFormats: 'canonical', visualFormats: scope.parameters['imageFormats']});
-					request.success(function(data, status, headers, config) {
+					request.success(function(data) {
 						var cartData = data.dataSets;
 						if (cartData && !angular.isArray(cartData)) {
 							self.setCartData(cartData);
 						}
-						scope.loading = false;
-					}).error(function(data, status, headers, config) {
+						AjaxAPI.closeWaitingModal();
+					}).error(function(data, status) {
 						console.log('updateCartData error', data, status);
-						scope.loading = false;
+						AjaxAPI.closeWaitingModal();
 					});
 					return request;
 				};
@@ -123,7 +121,7 @@
 
 				this.hasModifications = function() {
 					var modified = false;
-					angular.forEach(modifications, function(modification, key) {
+					angular.forEach(modifications, function(modification) {
 						if (modification) {
 							modified = true;
 						}
@@ -140,7 +138,7 @@
 					}
 				};
 
-				scope.$watch('cartData', function(cartData, oldCartData) {
+				scope.$watch('cartData', function(cartData) {
 						if (cartData) {
 							self.redrawLines();
 							scope.acceptTermsAndConditions = scope.cartData.context.acceptTermsAndConditions;
@@ -183,7 +181,7 @@
 					var cartData = scope.cartData;
 					if (!cartData
 						|| !cartData.lines || !cartData.lines.length
-						|| !cartData.process || !cartData.process.orderProcessId || !cartData.process.validTaxBehavior
+						|| !cartData.process || !cartData.process.orderProcessId || !cartData.process['validTaxBehavior']
 						|| (cartData.common.errors && cartData.common.errors.length)
 						|| !cartData.context.acceptTermsAndConditions) {
 						return false;
@@ -209,11 +207,11 @@
 				scope.currencyCode = cartController.getCurrencyCode();
 				scope.parameters = cartController.parameters();
 				scope.quantity = scope.line.quantity;
-				if (!scope.line.unitBasedAmountWithTaxes && scope.line.basedAmountWithTaxes) {
-					scope.line.unitBasedAmountWithTaxes = (scope.line.basedAmountWithTaxes / scope.quantity);
+				if (!scope.line.unitBasedAmountWithTaxes && scope.line['basedAmountWithTaxes']) {
+					scope.line.unitBasedAmountWithTaxes = (scope.line['basedAmountWithTaxes'] / scope.quantity);
 				}
-				if (!scope.line.unitBasedAmountWithoutTaxes && scope.line.basedAmountWithoutTaxes) {
-					scope.line.unitBasedAmountWithoutTaxes = (scope.line.basedAmountWithoutTaxes / scope.quantity);
+				if (!scope.line.unitBasedAmountWithoutTaxes && scope.line['basedAmountWithoutTaxes']) {
+					scope.line.unitBasedAmountWithoutTaxes = (scope.line['basedAmountWithoutTaxes'] / scope.quantity);
 				}
 
 				scope.updateQuantity = function() {
@@ -243,7 +241,16 @@
 			restrict: 'A',
 			templateUrl: '/rbsCommerceCartLineVisual.tpl',
 			scope: { product: "=" },
-			link: function(scope, elem, attrs, cartController) {
+			link: function(scope, elem, attrs) {
+				scope.format = angular.isString(attrs['format']) ? attrs['format'] : 'cartItem';
+				scope.ngClasses = {
+					size: {},
+					maxSize: {},
+					iconSize: {}
+				};
+				scope.ngClasses.size['image-format-' + scope.format + '-size'] = true;
+				scope.ngClasses.maxSize['image-format-' + scope.format + '-max-size'] = true;
+				scope.ngClasses.iconSize['image-format-' + scope.format + '-icon-size'] = true;
 			}
 		}
 	}
@@ -269,8 +276,8 @@
 				AjaxAPI.getData('Rbs/Commerce/Cart/ShippingFeesEvaluation', {}, {visualFormats: visualFormats})
 					.success(function(data) {
 						scope.data = data.dataSets;
-						if (scope.data.countriesCount) {
-							if (scope.data.countriesCount == 1) {
+						if (scope.data['countriesCount']) {
+							if (scope.data['countriesCount'] == 1) {
 								scope.currentCountry = scope.data.countries[0].code;
 							}
 						} else {
@@ -288,7 +295,7 @@
 					scope.currentShippingModes = [];
 					if (scope.currentCountry != null) {
 						angular.forEach(scope.data.shippingModes, function(shippingMode){
-							angular.forEach(shippingMode.deliveryZones, function(zone) {
+							angular.forEach(shippingMode['deliveryZones'], function(zone) {
 								if (zone.countryCode == scope.currentCountry && !ids.hasOwnProperty(shippingMode.common.id)) {
 									ids[shippingMode.common.id] = true;
 									scope.currentShippingModes.push(shippingMode);

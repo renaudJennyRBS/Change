@@ -1,0 +1,39 @@
+.media-pictograms-container {
+	position: relative;
+}
+
+.media-pictograms {
+	position: absolute;
+	z-index: 10;
+
+	&.media-pictograms-left {
+		left: 10px;
+	}
+	&.media-pictograms-center {
+		width: 100%;
+		text-align: center;
+	}
+	&.media-pictograms-right {
+		right: 10px;
+	}
+	&.media-pictograms-top {
+		top: 10px;
+	}
+	&.media-pictograms-bottom {
+		bottom: 10px;
+	}
+
+	.media-pictograms-item {
+		.inline-block();
+		vertical-align: middle;
+		margin: 5px;
+	}
+}
+
+.media-pictograms-format(@width, @height) {
+	line-height: @height;
+}
+
+.media-pictograms-format-pictogram {
+	.media-pictograms-format(@image-format-pictogram-width, @image-format-pictogram-height);
+}

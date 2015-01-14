@@ -1,26 +1,31 @@
 {% extends 'Rbs_Geo/Blocks/manage-addresses-list.twig' %}
+{% block rbsGeoManageAddressUse %}
+	{{ parent() }}
+	{% use 'Rbs_Commerce/icon-templates.twig' %}
+{% endblock rbsGeoManageAddressUse %}
+
 {% block defaultAddresses %}
 	<p>
-	<div data-ng-show="address.default.shipping">
-		<span class="glyphicon glyphicon-plane"></span>
-		{{ i18n('m.rbs.commerce.front.by_shipping_default', ['ucf']) }}
-	</div>
-	<button data-ng-hide="address.default.shipping" class="btn btn-sm btn-default"
-			data-ng-click="setDefaultAddress(address, 'shipping')">
-		<span class="glyphicon glyphicon-plane text-muted"></span>
-		{{ i18n('m.rbs.commerce.front.button_set_shipping_default', ['ucf']) }}
-	</button>
+		<span data-ng-show="address.default.shipping">
+			{{ block('rbsCommerceIconShipping') }}
+			{{ i18n('m.rbs.commerce.front.by_shipping_default', ['ucf']) }}
+		</span>
+		<button data-ng-hide="address.default.shipping" class="btn btn-sm btn-default"
+				data-ng-click="setDefaultAddress(address, 'shipping')">
+			<span class="text-muted">{{ block('rbsCommerceIconShipping') }}</span>
+			{{ i18n('m.rbs.commerce.front.button_set_shipping_default', ['ucf']) }}
+		</button>
 	</p>
 
 	<p>
-	<div data-ng-show="address.default.billing">
-		<span class="glyphicon glyphicon-credit-card"></span>
-		{{ i18n('m.rbs.commerce.front.by_billing_default', ['ucf']) }}
-	</div>
-	<button data-ng-hide="address.default.billing" class="btn btn-sm btn-default"
-			data-ng-click="setDefaultAddress(address, 'billing')">
-		<span class="glyphicon glyphicon-credit-card text-muted"></span>
-		{{ i18n('m.rbs.commerce.front.button_set_billing_default', ['ucf']) }}
-	</button>
+		<span data-ng-show="address.default.billing">
+			{{ block('rbsCommerceIconBilling') }}
+			{{ i18n('m.rbs.commerce.front.by_billing_default', ['ucf']) }}
+		</span>
+		<button data-ng-hide="address.default.billing" class="btn btn-sm btn-default"
+				data-ng-click="setDefaultAddress(address, 'billing')">
+			<span class="text-muted">{{ block('rbsCommerceIconBilling') }}</span>
+			{{ i18n('m.rbs.commerce.front.button_set_billing_default', ['ucf']) }}
+		</button>
 	</p>
 {% endblock %}

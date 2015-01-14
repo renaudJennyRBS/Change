@@ -3,6 +3,7 @@
 		"Product": {
 			"jsAssets": [
 				"Theme/Rbs/Base/Rbs_Catalog/js/product.js",
+				"Theme/Rbs/Base/Rbs_Media/js/media.js",
 				"Theme/Rbs/Base/Rbs_Review/js/review.js"
 			],
 			"cssAssets": [
@@ -11,17 +12,20 @@
 		},
 		"ProductList": {
 			"jsAssets": [
-				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js",
+				"Theme/Rbs/Base/Rbs_Media/js/media.js"
 			]
 		},
 		"CrossSelling": {
 			"jsAssets": [
-				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js",
+				"Theme/Rbs/Base/Rbs_Media/js/media.js"
 			]
 		},
 		"CartCrossSelling": {
 			"jsAssets": [
-				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js",
+				"Theme/Rbs/Base/Rbs_Media/js/media.js"
 			]
 		}
 	}

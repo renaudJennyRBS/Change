@@ -1,13 +1,17 @@
+{% block rbsUserAccountShortUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+{% endblock rbsUserAccountShortUse %}
+
 <script type="text/ng-template" id="/rbsUserShortAccount.tpl">
 	<div class="dropdown">
 		<a href="#" data-toggle="dropdown" class="dropdown-toggle">
-			<i class="glyphicon glyphicon-user"></i> {{ i18n('m.rbs.user.front.my_account', ['ucf']) }} <b class="caret"></b>
+			{{ block('rbsGenericIconUser') }} {{ i18n('m.rbs.user.front.my_account', ['ucf']) }} <b class="caret"></b>
 		</a>
-		<ul class="dropdown-menu" data-ng-show="accessorId">
+		<ul class="dropdown-menu dropdown-menu-{{ parameters.dropdownPosition }}" data-ng-show="accessorId">
 			{% if parameters.userAccountPage != null %}
 				<li><a href="{{ canonicalURL(parameters.userAccountPage) }}">(= accessorName =)</a></li>
 			{% else %}
-				<li class="dropdown-text">(= accessorName =)</li>
+				<li role="presentation" class="dropdown-header">(= accessorName =)</li>
 			{% endif %}
 			{% if rootMenuEntry and rootMenuEntry.hasChild %}
 				<li class="divider"></li>
@@ -22,12 +26,11 @@
 			<li class="divider"></li>
 			<li><a href="javascript:" data-ng-click="logout()">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></li>
 		</ul>
-		<ul class="dropdown-menu" data-ng-show="!accessorId">
+		<ul class="dropdown-menu dropdown-menu-{{ parameters.dropdownPosition }}" data-ng-show="!accessorId">
 			<li><a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</a></li>
 			<li><a href="{{ functionURL('Rbs_User_CreateAccount') }}">{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}</a></li>
 		</ul>
 	</div>
 </script>
 
-<div data-rbs-user-short-account="" data-cache-key="{{ blockId }}">
-</div>
+<div data-rbs-user-short-account="" data-cache-key="{{ blockId }}"></div>

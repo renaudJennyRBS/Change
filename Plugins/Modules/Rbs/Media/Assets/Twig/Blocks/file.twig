@@ -7,7 +7,7 @@
 <ul class="list-unstyled">
 	{% for file in files %}
 		<li>
-			<span class="glyphicon glyphicon-save"></span>
+			{{ block('rbsGenericIconDownload') }}
 			<a href="{{ ajaxURL('Rbs_Media', 'Download', {'documentId': file.document.id}) }}">
 				{{ file.document.currentLocalization.title }}
 			</a>

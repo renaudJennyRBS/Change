@@ -2,6 +2,8 @@
 {% set handleVotes = parameters.handleVotes %}
 
 {% block rbsCatalogProductUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+
 	{% use 'Rbs_Review/review-directives.twig' %}
 	{{ block('rbsReviewCommon') }}
 	{{ block('rbsReviewReview') }}

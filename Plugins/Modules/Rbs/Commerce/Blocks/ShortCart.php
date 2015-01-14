@@ -30,6 +30,7 @@ class ShortCart extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('imageFormats', 'shortCartItem');
+		$parameters->addParameterMeta('dropdownPosition', 'right');
 		$this->initCommerceContextParameters($parameters);
 		$parameters->setLayoutParameters($event->getBlockLayout());
 

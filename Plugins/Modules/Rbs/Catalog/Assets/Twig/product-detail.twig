@@ -40,36 +40,9 @@
 {% endblock rbsCatalogProductHeader %}
 
 {% block rbsCatalogProductVisuals %}
-	<div data-rbs-catalog-product-visuals="" data-visuals="visuals" data-visual-formats="['detail', 'detailThumbnail']"
-		data-full-base-id="full-visual-{{ blockId }}-">
-		<div id="visuals-{{ blockId }}" class="product-visuals" data-ng-class="{'product-visuals-multiple': visuals.length > 1}">
-			<div class="full-visual">
-				<ul data-ng-show="visuals" class="list-unstyled full-visuals">
-					<li data-ng-repeat="visual in visuals track by $index" id="full-visual-{{ blockId }}-(= $index =)">
-						{% if parameters.activateZoom -%}
-						<a data-ng-href="(= visual.original =)" data-ng-mouseover="startZoom($event)">
-							{%- endif -%}
-							<img itemprop="image" src="" data-ng-src="(= visual.detail =)" alt="(= visual.alt =)" />
-							{%- if parameters.activateZoom -%}
-						</a>
-						{%- endif %}
-					</li>
-				</ul>
-				<div data-ng-show="!visuals" class="text-center text-muted">
-					<span class="glyphicon glyphicon-camera" style="font-size: 200px"></span><br />
-					<span>{{ i18n('m.rbs.catalog.front.no_visual', ['ucf']) }}</span>
-				</div>
-				<div data-rbs-catalog-product-pictograms="" data-pictogram-format="'pictogram'" data-pictograms="pictograms"></div>
-			</div>
-			<ul data-ng-if="visuals.length > 1" class="list-unstyled thumbnail-visuals">
-				<li data-ng-repeat="visual in visuals track by $index" class="thumbnail" id="thumbnail-visual-{{ blockId }}-(= $index =)"
-					title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
-					<img src="" data-ng-src="(= visual.detailThumbnail =)" alt="(= visual.alt =)" data-index="(= $index =)"
-						data-ng-click="showVisual($event)" />
-				</li>
-			</ul>
-		</div>
-	</div>
+	<div data-rbs-media-visuals="visuals" data-visual-format="detail" data-enable-zoom="{{ parameters.activateZoom }}"
+		data-thumbnail-format="detailThumbnail" data-thumbnail-position="right"
+		data-pictograms="pictograms" data-pictogram-format="pictogram" data-pictogram-position="bottom right"></div>
 {% endblock rbsCatalogProductVisuals %}
 
 {% block rbsCatalogProductDescription %}

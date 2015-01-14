@@ -48,7 +48,7 @@
 
 				<button type="button" class="btn btn-primary" data-ng-disabled="{{ commonFormName }}.$invalid || isEditing()"
 					data-ng-click="sendReturnRequest('{{ i18nAttr('m.rbs.productreturn.front.please_wait_saving_request', ['ucf', 'etc']) }}')">
-					<span class="glyphicon glyphicon-ok"></span>
+					{{ block('rbsGenericIconOk') }}
 					{{ i18n('m.rbs.productreturn.front.send_return_request', ['ucf']) }}
 				</button>
 			</form>
@@ -89,43 +89,49 @@
 							(= line.alreadyReturned =)
 						</span>
 					</p>
-					<a href="javascript:;" data-ng-click="newReturnLine(shipmentIndex, lineIndex)"
+					<a href="javascript:" data-ng-click="newReturnLine(shipmentIndex, lineIndex)"
 						data-ng-hide="line.alreadyReturned >= line.shipmentLine.quantity || hasReturnLine(shipmentIndex, lineIndex) || isEditingLine()">
 						{{ i18n('m.rbs.productreturn.front.return_product', ['ucf']) }}
 					</a>
 				</td>
 				{% if showPrices %}
-					<td class="price text-right">
-						<div data-ng-show="line.orderLine && line.shipmentLine.quantity != 1" class="small">
+					<td class="price text-right text-muted hidden-xs">
+						<ul class="list-unstyled" data-ng-show="line.orderLine && line.shipmentLine.quantity != 1">
 							{% if parameters.displayPricesWithoutTax %}
-								(= line.shipmentLine.quantity =)
-								x
-								(= line.orderLine.unitAmountWithoutTaxes | rbsFormatPrice:orderData.common.currencyCode =)
-								<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-									{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-								</abbr>
+								<li>
+									(= line.shipmentLine.quantity =)
+									x
+									(= line.orderLine.unitAmountWithoutTaxes | rbsFormatPrice:orderData.common.currencyCode =)
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+										{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+									</abbr>
+								</li>
 							{% endif %}
-							{% if parameters.displayPricesWithoutTax and parameters.displayPricesWithTax %}<br />{% endif %}
 							{% if parameters.displayPricesWithTax %}
-								(= line.shipmentLine.quantity =)
-								x
-								(= line.orderLine.unitAmountWithTaxes | rbsFormatPrice:orderData.common.currencyCode =)
+								<li>
+									(= line.shipmentLine.quantity =)
+									x
+									(= line.orderLine.unitAmountWithTaxes | rbsFormatPrice:orderData.common.currencyCode =)
+								</li>
 							{% endif %}
-						</div>
+						</ul>
 					</td>
-					<td class="price text-right">
-						<div class="line.orderLine">
+					<td class="price main-price text-right">
+						<ul class="list-unstyled" data-ng-show="line.orderLine">
 							{% if parameters.displayPricesWithoutTax %}
-								(= line.shipmentLine.quantity * line.orderLine.unitAmountWithTaxes | rbsFormatPrice:orderData.common.currencyCode =)
-								<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-									{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-								</abbr>
+								<li>
+									(= line.shipmentLine.quantity * line.orderLine.unitAmountWithTaxes | rbsFormatPrice:orderData.common.currencyCode =)
+									<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+										{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+									</abbr>
+								</li>
 							{% endif %}
-							{% if parameters.displayPricesWithoutTax and parameters.displayPricesWithTax %}<br />{% endif %}
 							{% if parameters.displayPricesWithTax %}
-								(= line.shipmentLine.quantity * line.orderLine.unitAmountWithTaxes | rbsFormatPrice:orderData.common.currencyCode =)
+								<li>
+									(= line.shipmentLine.quantity * line.orderLine.unitAmountWithTaxes | rbsFormatPrice:orderData.common.currencyCode =)
+								</li>
 							{% endif %}
-						</div>
+						</ul>
 					</td>
 				{% endif %}
 			</tr>
@@ -160,7 +166,7 @@
 					<div data-ng-if="getLineRemainingQuantity(shipmentIndex, lineIndex)" data-ng-hide="isEditingLine()">
 						{{ i18n('m.rbs.productreturn.front.remaining_quatity', ['ucf', 'lab']) }}
 						(= getLineRemainingQuantity(shipmentIndex, lineIndex) =)<br />
-						<a href="javascript:;" data-ng-click="newReturnLine(shipmentIndex, lineIndex)">
+						<a href="javascript:" data-ng-click="newReturnLine(shipmentIndex, lineIndex)">
 							{{ i18n('m.rbs.productreturn.front.return_remaining_quantity_for_other_reason', ['ucf']) }}
 						</a>
 					</div>
@@ -319,7 +325,7 @@
 					<div class="{{ fieldOffsetClasses }} {{ fieldColClasses }}">
 						<button type="button" class="btn btn-default pull-right"
 							data-ng-click="cancelLine(shipmentIndex, lineIndex, returnLineIndex)">
-							<span class="glyphicon glyphicon-remove"></span>
+							{{ block('rbsGenericIconRemove') }}
 							<span class="visible-md-inline visible-lg-inline">
 								{{ i18n('m.rbs.productreturn.front.cancel_returning_this_product', ['ucf']) }}
 							</span>
@@ -327,7 +333,7 @@
 						<button type="button" class="btn btn-primary"
 							data-ng-disabled="!isLineValid(line, returnLine)"
 							data-ng-click="validateLine(shipmentIndex, lineIndex, returnLineIndex)">
-							<span class="glyphicon glyphicon-ok"></span>
+							{{ block('rbsGenericIconOk') }}
 							{{ i18n('m.rbs.productreturn.front.validate_returning_this_product', ['ucf']) }}
 						</button>
 					</div>

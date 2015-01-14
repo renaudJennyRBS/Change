@@ -8,7 +8,8 @@
 		"WishlistDetail": {
 			"jsAssets": [
 				"Theme/Rbs/Base/Rbs_Wishlist/js/wishlistDetail.js",
-				"Theme/Rbs/Base/Rbs_Catalog/js/product.js"
+				"Theme/Rbs/Base/Rbs_Catalog/js/product.js",
+				"Theme/Rbs/Base/Rbs_Media/js/media.js"
 			]
 		},
 		"WishlistList": {

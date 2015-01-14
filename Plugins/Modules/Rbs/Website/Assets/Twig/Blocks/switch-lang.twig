@@ -1,7 +1,11 @@
+{% block rbsWebsiteSwitchLangUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+{% endblock rbsWebsiteSwitchLangUse %}
+
 <div class="dropdown switch-language">
 	{% if langsCount > 1 %}
 	<a href="#" data-toggle="dropdown" class="dropdown-toggle">
-		<i class="glyphicon glyphicon-comment"></i> {{ currentLang }} <b class="caret"></b>
+		{{ block('rbsGenericIconLang') }} {{ currentLang }} <b class="caret"></b>
 	</a>
 	<ul class="dropdown-menu">
 		{% for key, lang in langs %}
@@ -9,7 +13,7 @@
 		{% endfor %}
 	</ul>
 	{% else %}
-		<i class="glyphicon glyphicon-comment"></i> {{ currentLang }}
+		{{ block('rbsGenericIconLang') }} {{ currentLang }}
 	{% endif %}
 </div>
 

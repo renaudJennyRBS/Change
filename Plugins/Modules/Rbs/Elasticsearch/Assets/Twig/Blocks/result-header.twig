@@ -7,7 +7,7 @@
 		{% else %}
 			<p>{{ i18n('m.rbs.elasticsearch.front.several_results_for_search', ['ucf'], {TOTAL: resultCounts.total, TEXT: parameters.searchText|e('html') })|raw }}</p>
 		{% endif %}
-		<ul class="nav nav-tabs" role="tablist">
+		<ul class="nav nav-tabs one-line-bottom-margin" role="tablist">
 			<li{% if isProductPage %} class="active"{% endif %}>
 				<a href="{{ canonicalURL(parameters.productResultsPage, {searchText: parameters.searchText}) }}">
 					{% if resultCounts.products == 0 %}

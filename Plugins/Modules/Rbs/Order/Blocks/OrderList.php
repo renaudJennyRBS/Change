@@ -42,7 +42,6 @@ class OrderList extends Block
 
 		$request = $event->getHttpRequest();
 		$parameters->setParameterValue('pageNumber', intval($request->getQuery('pageNumber-' . $event->getBlockLayout()->getId(), 1)));
-
 		return $parameters;
 	}
 
