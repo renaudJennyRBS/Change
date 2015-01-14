@@ -1,0 +1,8 @@
+{
+	"license": "MPL-2.0",
+	"name": "rbs/blank",
+	"type":"rbschange-theme",
+	"require": {
+		"rbschange/plugin-installer": "*"
+	}
+}
