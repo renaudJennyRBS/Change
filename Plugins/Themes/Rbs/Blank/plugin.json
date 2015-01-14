@@ -1,5 +1,6 @@
 {
 	"type":"theme",
 	"vendor":"Rbs",
-	"name":"Blank"
+	"name":"Blank",
+	"defaultLCID":"fr_FR"
 }
