@@ -1,0 +1,213 @@
+.media-visuals {
+	position: relative;
+	text-align: center;
+	width: 100%;
+
+	.media-visuals-main {
+		vertical-align: middle;
+
+		[data-index] {
+			display: none;
+		}
+		[data-index].visible {
+			display: block;
+		}
+		a {
+			display: block;
+			cursor: default;
+		}
+		img {
+			.img-responsive(inline-block);
+		}
+	}
+
+	.media-visuals-thumbnails {
+		.thumbnail {
+			display: inline-block;
+			vertical-align: middle;
+		}
+		[data-index] {
+			-webkit-box-sizing: content-box;
+			box-sizing: content-box;
+			cursor: pointer;
+			vertical-align: middle;
+			transition: none;
+		}
+		img {
+			.img-responsive(inline-block);
+		}
+	}
+
+	.media-visuals-zoom {
+		z-index: 100;
+		position: absolute;
+		top: 0;
+		background: #fff;
+		border: 1px solid @thumbnail-border;
+		overflow: hidden;
+		box-shadow: 0 0 7px rgba(0,0,0,.125), 0 0 15px rgba(0,0,0,.125);
+
+		[data-index] {
+			display: none;
+		}
+		[data-index].visible {
+			display: block;
+		}
+		img {
+			position: absolute;
+		}
+	}
+
+	/* On small screens, the thumbnails are on the bottom and zoom is disabled. */
+	@media (max-width: 767px) {
+		/* Thumbnails. */
+		.media-visuals-main {
+			position: relative;
+		}
+
+		.media-visuals-thumbnails {
+			[data-index] {
+				.inline-block();
+			}
+			.thumbnail {
+				margin: 5px;
+			}
+		}
+
+		/* Zoom. */
+		.media-visuals-main a,
+		.media-visuals-main a img {
+			cursor: default;
+		}
+
+		.media-visuals-zoom {
+			display: none;
+		}
+	}
+	/* On other sizes, the thumbnails are on the right and zoom is activated. */
+	@media (min-width: 768px) {
+		/* Thumbnails. */
+		&.media-visuals-multiple {
+			.media-visuals-thumbnails {
+				vertical-align: middle;
+				z-index: 10;
+			}
+
+			&.media-visuals-multiple-top,
+			&.media-visuals-multiple-bottom {
+				.thumbnail {
+					margin: 5px;
+				}
+			}
+			&.media-visuals-multiple-top {
+				.media-visuals-main {
+					width: 100%;
+				}
+			}
+			&.media-visuals-multiple-bottom {
+				.media-visuals-thumbnails {
+					margin-top: 10px;
+				}
+			}
+
+			&.media-visuals-multiple-right,
+			&.media-visuals-multiple-left {
+				.media-visuals-thumbnails {
+					position: absolute;
+					top: 0;
+				}
+				.thumbnail {
+					margin: 5px 0;
+				}
+			}
+			&.media-visuals-multiple-right {
+				.media-visuals-thumbnails {
+					right: 0;
+				}
+			}
+			&.media-visuals-multiple-left {
+				.media-visuals-thumbnails {
+					left: 0;
+				}
+			}
+		}
+
+		/* Zoom. */
+		.media-visuals-main a,
+		.media-visuals-main a img {
+			cursor: crosshair;
+		}
+	}
+}
+
+.media-visuals-format(@mainWidth, @mainHeight, @thumbnailWidth, @thumbnailHeight, @zoomWidth) {
+	.media-visuals-main {
+		height: @mainHeight;
+		line-height: @mainHeight - 2;
+
+		.media-visuals-main-item-default {
+			line-height: @line-height-base;
+		}
+		.media-visuals-main-item-default .glyphicon {
+			font-size: @mainHeight / 2;
+		}
+	}
+
+	.media-visuals-thumbnails {
+		.thumbnail {
+			width: @thumbnailWidth + (@thumbnail-padding * 2) + (1px * 2);
+			height: @thumbnailHeight + (@thumbnail-padding * 2) + (1px * 2);
+			line-height: @thumbnailHeight - 2;
+		}
+	}
+
+	.media-visuals-thumbnails {
+		[data-index] {
+			max-width: @thumbnailWidth;
+			max-height: @thumbnailHeight;
+		}
+	}
+
+	.media-visuals-zoom {
+		right: -10 - @zoomWidth;
+		width: @zoomWidth;
+		height: @mainHeight;
+	}
+
+	@media (min-width: 768px) {
+		/* Thumbnails. */
+		&.media-visuals-multiple {
+			&.media-visuals-multiple-top,
+			&.media-visuals-multiple-bottom {
+				.media-visuals-thumbnails {
+					height: @thumbnailWidth + (@thumbnail-padding * 2) + (1px * 2);
+				}
+			}
+
+			@mediaVisualsThumbnailWidth: @thumbnailWidth + (@thumbnail-padding * 2) + (1px * 2);
+			@mediaVisualsMainPadding: @mediaVisualsThumbnailWidth + @line-height-computed;
+			&.media-visuals-multiple-right,
+			&.media-visuals-multiple-left {
+				.media-visuals-thumbnails {
+					width: @mediaVisualsThumbnailWidth;
+				}
+			}
+			&.media-visuals-multiple-right {
+				padding-right: @mediaVisualsMainPadding;
+				.media-visuals-thumbnails {
+					margin: 0 0 -5px @line-height-computed;
+				}
+			}
+			&.media-visuals-multiple-left {
+				padding-left: @mediaVisualsMainPadding;
+				.media-visuals-thumbnails {
+					margin: 0 @line-height-computed -5px 0;
+				}
+			}
+		}
+	}
+}
+
+.media-visuals-format-detail-detailThumbnail {
+	.media-visuals-format(@image-format-detail-width, @image-format-detail-height, @image-format-detailThumbnail-width, @image-format-detailThumbnail-height, @rbs-media-visuals-zoom-with);
+}

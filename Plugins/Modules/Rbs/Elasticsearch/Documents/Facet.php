@@ -220,7 +220,6 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet
 		$facet = $event->getDocument();
 
 		$facetDefinition = $event->getParam('facetDefinition');
-
 		$applicationServices = $event->getApplicationServices();
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */

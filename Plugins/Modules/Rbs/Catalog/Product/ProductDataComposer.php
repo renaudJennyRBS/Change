@@ -348,6 +348,10 @@ class ProductDataComposer
 		}
 	}
 
+	/**
+	 * @param \Change\Documents\AbstractDocument $document
+	 * @return array|mixed|null
+	 */
 	protected function getDocumentData($document)
 	{
 		if ($document instanceof \Rbs\Media\Documents\Image)
@@ -357,14 +361,16 @@ class ProductDataComposer
 		return $this->getPublishedData($document);
 	}
 
+	/**
+	 * @param \Rbs\Media\Documents\Image $image
+	 * @return array|null
+	 */
 	protected function getImageData($image)
 	{
 		$imagesFormats = new \Rbs\Media\Http\Ajax\V1\ImageFormats($image);
 		$formats = $imagesFormats->getFormatsData($this->visualFormats);
 		return count($formats) ? $formats : null;
 	}
-
-
 
 	protected function generateAttributesDataSet()
 	{

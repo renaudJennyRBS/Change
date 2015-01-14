@@ -1,0 +1,83 @@
+{
+	"editableContent":{
+		"headSeo" : {
+			"id" : "headSeo",
+			"type" : "block",
+			"name" : "Rbs_Seo_HeadMetas",
+			"visibility" : "raw",
+			"parameters" : {
+			}
+		},
+
+		"switchLang" : {
+			"id" : "switchLang",
+			"type" : "block",
+			"name" : "Rbs_Website_SwitchLang",
+			"parameters" : {
+			}
+		},
+		"accountShort" : {
+			"id" : "accountShort",
+			"type" : "block",
+			"name" : "Rbs_User_AccountShort",
+			"parameters" : {
+			}
+		},
+		"shortCart" : {
+			"id" : "shortCart",
+			"type" : "block",
+			"name" : "Rbs_Commerce_ShortCart",
+			"parameters" : {
+			}
+		},
+		"mainMenu" : {
+			"id" : "mainMenu",
+			"type" : "block",
+			"name" : "Rbs_Website_Menu",
+			"parameters" : {
+				"maxLevel" : 2,
+				"fullyQualifiedTemplateName": "Rbs_Website:menu-scroll.twig",
+				"inverseColors" : true
+			}
+		},
+		"thread" : {
+			"id" : "thread",
+			"type" : "block",
+			"name" : "Rbs_Website_Thread",
+			"parameters" : {
+			}
+		},
+		"search" : {
+			"id" : "search",
+			"type" : "block",
+			"name" : "Rbs_Elasticsearch_ShortSearch",
+			"parameters" : {
+			}
+		},
+		"mainContent" : {
+			"id" : "mainContent",
+			"grid" : 12,
+			"type" : "container",
+			"parameters" : {
+			}
+		},
+
+		"storeSelector" : {
+			"id" : "storeSelector",
+			"type" : "block",
+			"name":"Rbs_Store_WebStoreSelector",
+			"parameters" : {
+				"TTL" : 60,
+				"availableWebStoreIds" : [],
+				"fullyQualifiedTemplateName": "Rbs_Store:webStoreSelector-vertical.twig"
+			}
+		},
+
+		"trackersAskConsent" : {
+			"id" : "trackersAskConsent",
+			"type" : "block",
+			"name" : "Rbs_Website_TrackersAskConsent",
+			"visibility" : "raw"
+		}
+	}
+}

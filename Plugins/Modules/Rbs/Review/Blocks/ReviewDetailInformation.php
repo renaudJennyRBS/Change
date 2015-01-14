@@ -8,6 +8,7 @@
  */
 namespace Rbs\Review\Blocks;
 
+use Change\Documents\Property;
 use Change\Presentation\Blocks\Information;
 
 /**
@@ -23,5 +24,9 @@ class ReviewDetailInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.review.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.review.front.review_detail', $ucf));
 		$this->addInformationMetaForDetailBlock('Rbs_Review_Review', $i18nManager);
+		$this->addInformationMeta('ratingScale', Property::TYPE_INTEGER, false, 5)
+			->setLabel($i18nManager->trans('m.rbs.review.admin.parameter_rating_scale', $ucf));
+		$this->addInformationMeta('handleReviewVotes', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.review.admin.parameter_handle_review_votes', $ucf));
 	}
 }

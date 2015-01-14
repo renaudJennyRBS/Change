@@ -8,14 +8,14 @@
 	"product_detail": {
 		"message": "Détail d'un produit"
 	},
-	"product_set_detail": {
-		"message": "Détail d'un ensemble de produits"
+	"brand_detail": {
+		"message": "Détail d'une marque"
+	},
+	"contextual_product_list": {
+		"message": "Liste contextuelle des produits"
 	},
 	"review_detail": {
 		"message": "Détail d'un avis"
-	},
-	"review_edit": {
-		"message": "Édition d'un avis"
 	},
 	"user_account_topic": {
 		"message": "Mon compte"
@@ -73,5 +73,20 @@
 	},
 	"order_process": {
 		"message": "Single-page checkout"
+	},
+	"search_result_products": {
+		"message": "Résultat de recherche - produits"
+	},
+	"search_result_others": {
+		"message": "Résultat de recherche - autres contenus"
+	},
+	"return_process": {
+		"message": "Effectuer un retour"
+	},
+	"return_list": {
+		"message": "Mes retours"
+	},
+	"return_sheet": {
+		"message": "Bon de retour"
 	}
 }

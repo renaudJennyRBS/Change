@@ -648,7 +648,7 @@ class DocumentManager
 	{
 		if (!$this->getI18nManager()->isSupportedLCID($LCID))
 		{
-			throw new \InvalidArgumentException('Invalid LCID argument', 51012);
+			throw new \InvalidArgumentException('Invalid LCID argument: ' . $LCID, 51012);
 		}
 		array_push($this->LCIDStack, $LCID);
 	}

@@ -34,5 +34,10 @@ class CartCrossSellingInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_product_choice_strategy', $ucf));
 		$this->addInformationMeta('itemsPerSlide', Property::TYPE_INTEGER, true, 3)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_items_per_slide', $ucf));
+		$this->addInformationMeta('interval', \Change\Documents\Property::TYPE_INTEGER, 1000)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_slider_interval', ['ucf']))
+			->setNormalizeCallback(function ($parametersValues) {
+				$value = isset($parametersValues['interval']) ? intval($parametersValues['interval']) : 1000;
+				return ($value <= 500) ? 500 : $value;});
 	}
 }

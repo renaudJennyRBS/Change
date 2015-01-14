@@ -29,33 +29,32 @@
 			"userAccountTopicId": {
 				"description": "use existing user account topic instead of creating a new one",
 				"default":""
+			},
+			"override": {
+				"description": "override existing documents",
+				"default":"false"
 			}
 		},
 		"arguments": {
 			"websiteId": {
 				"required": true,
-				"description": "the website in which you want to initialize structure",
-				"shortcut": "w"
+				"description": "the website in which you want to initialize structure"
 			},
 			"storeId": {
 				"required": true,
-				"description": "the store for which you want to initialize structure",
-				"shortcut": "w"
+				"description": "the store for which you want to initialize structure"
 			},
 			"LCID": {
 				"required": true,
-				"description": "the LCID for labels (ex: en_US)",
-				"shortcut": "l"
+				"description": "the LCID for labels (ex: en_US)"
 			},
 			"sidebarTemplateId": {
 				"required": true,
-				"description": "the template for page using sidebar style",
-				"shortcut": "s"
+				"description": "the template for page using sidebar style"
 			},
 			"noSidebarTemplateId": {
 				"required": true,
-				"description": "the template for page using no sidebar style",
-				"shortcut": "n"
+				"description": "the template for page using no sidebar style"
 			}
 		}
 	},
@@ -65,38 +64,75 @@
 			"userAccountTopicId": {
 				"description": "use existing user account topic instead of creating a new one",
 				"default":""
+			},
+			"override": {
+				"description": "override existing documents",
+				"default":"false"
 			}
 		},
 		"arguments": {
 			"websiteId": {
 				"required": true,
-				"description": "the website in which you want to initialize structure",
-				"shortcut": "w"
+				"description": "the website in which you want to initialize structure"
 			},
 			"storeId": {
 				"required": true,
-				"description": "the store for which you want to initialize structure",
-				"shortcut": "w"
+				"description": "the store for which you want to initialize structure"
 			},
 			"LCID": {
 				"required": true,
-				"description": "the LCID for labels (ex: en_US)",
-				"shortcut": "l"
+				"description": "the LCID for labels (ex: en_US)"
 			},
 			"sidebarTemplateId": {
 				"required": true,
-				"description": "the template for page using sidebar style",
-				"shortcut": "s"
+				"description": "the template for page using sidebar style"
 			},
 			"noSidebarTemplateId": {
 				"required": true,
-				"description": "the template for page using no sidebar style",
-				"shortcut": "n"
+				"description": "the template for page using no sidebar style"
 			},
 			"popinTemplateId": {
 				"required": true,
-				"description": "the template for page used in popin",
-				"shortcut": "p"
+				"description": "the template for page used in popin"
+			}
+		}
+	},
+	"rbs_commerce:initialize-return-process": {
+		"description": "Initialize a return process structure",
+		"options": {
+			"userAccountTopicId": {
+				"description": "use existing user account topic instead of creating a new one",
+				"default":""
+			},
+			"override": {
+				"description": "override existing documents",
+				"default":"false"
+			}
+		},
+		"arguments": {
+			"websiteId": {
+				"required": true,
+				"description": "the website in which you want to initialize structure"
+			},
+			"storeId": {
+				"required": true,
+				"description": "the store for which you want to initialize structure"
+			},
+			"LCID": {
+				"required": true,
+				"description": "the LCID for labels (ex: en_US)"
+			},
+			"sidebarTemplateId": {
+				"required": true,
+				"description": "the template for page using sidebar style"
+			},
+			"noSidebarTemplateId": {
+				"required": true,
+				"description": "the template for page using no sidebar style"
+			},
+			"printTemplateId": {
+				"required": true,
+				"description": "the template for page used for print"
 			}
 		}
 	},

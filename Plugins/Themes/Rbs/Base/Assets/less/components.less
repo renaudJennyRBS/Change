@@ -1,0 +1,122 @@
+/** Exceptions. */
+.exception {
+	white-space: pre-wrap;
+}
+
+/** Small descriptions (when we can't use a <small>, like around a block tag) */
+.small {
+	font-size: @font-size-small;
+}
+
+/** Inline block responsive images */
+.img-responsive-inline {
+	.img-responsive(inline-block);
+}
+
+/** Long string: handle new lines without replacing them with <br /> */
+.long-string {
+	white-space: pre-wrap;
+}
+
+/** For a dropdown-menu not containing a list */
+.dropdown-menu-custom {
+	padding: 10px;
+}
+
+/** Buttons containing only an icon */
+.btn-icon {
+	padding-left: 0;
+	padding-right: 0;
+	text-align: center;
+	width: 36px;
+
+	&.btn-lg {
+		width: 48px;
+	}
+	&.btn-sm {
+		width: 30px;
+	}
+	&.btn-xs {
+		width: 22px;
+	}
+}
+
+/** Avatars */
+.img-avatar {
+	margin: 5px;
+}
+
+/* Videos in thumbnails */
+.thumbnail > video {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 100%;
+	display: block;
+}
+
+/* Richtext */
+.richtext {
+	img,
+	video {
+		max-width: 100%;
+	}
+}
+
+/* Class list-inline on dl + list-divided */
+.list-inline {
+	> dt,
+	> dd {
+		display: inline-block;
+		padding-right: 5px;
+		padding-left: 5px;
+	}
+	> dt:after {
+		content: " : ";
+	}
+
+	/* list-divided */
+	&.list-divided > li:not(:last-child):after,
+	&.list-divided > dd:not(:last-child):after {
+		content: "|";
+		padding-left: 10px;
+		font-weight: normal;
+	}
+}
+
+/* To view the full text of dt elements... */
+.dl-horizontal dt {
+	white-space: normal;
+}
+
+.dl-inline-items > dt {
+	float: left;
+	margin-right: 4px;
+}
+.dl-inline-items > dt:after {
+	content: " : ";
+}
+
+/* Small complementary text in dt */
+.dl-horizontal dt small,
+.dl-horizontal dt .small {
+	font-weight: normal;
+}
+
+/* Inline form fields (i.e. for date picker) */
+.form-control.form-control-inline {
+	width: auto;
+	display: inline-block;
+}
+
+/* Separator remover on table-stripped to group lines */
+table.table-striped tr.no-top-border td {
+	border-top: 0;
+}
+
+/* Tabs */
+.tab-content {
+	border: 1px solid @nav-tabs-border-color;
+	border-top: 0;
+	padding: @line-height-computed @line-height-computed 0 @line-height-computed;
+	margin-bottom: @line-height-computed;
+}

@@ -1,30 +1,54 @@
-<div class="row">
-	{% set visualData = productData.common.visuals[0] ? productData.common.visuals[0] : productData.rootProduct.common.visuals[0] %}
-	{% if visualData %}
-		{% set secondColumnClass = 'col-sm-8' %}
-		<div class="col-sm-4">
-			<img alt="{{ visualData.alt }}" src="{{ visualData.listItem }}" />
-		</div>
-	{% else %}
-		{% set secondColumnClass = 'col-sm-12' %}
-	{% endif %}
-	<div class="{{ secondColumnClass }}">
-		<h3>{{ productData.common.title }}</h3>
-		{% if productData.common.type == 'variant' %}
-			{% set variantConfiguration = productData.rootProduct.variants %}
-			{% if variantConfiguration %}
-				{% for variant in variantConfiguration.products %}
-					{% if variant.id == productData.common.id %}
-						<dl class="dl-inline-items">
-							{% for value in variant.axesValues %}
-								<dt>{{ variantConfiguration.axes[loop.index0].title }}</dt>
-								<dd>{{ value }}</dd>
-							{% endfor %}
-						</dl>
-					{% endif %}
-				{% endfor %}
-			{% endif %}
+{% block main %}
+	<div class="row">
+		{% set visualData = productData.common.visuals[0] ? productData.common.visuals[0] : productData.rootProduct.common.visuals[0] %}
+		{% if visualData %}
+			{% set secondColumnClass = 'col-sm-8' %}
+			<div class="col-sm-4">
+				{% block productVisual %}
+					<img alt="{{ visualData.alt }}" src="{{ visualData.listItem }}" />
+				{% endblock productVisual %}
+			</div>
+		{% else %}
+			{% set secondColumnClass = 'col-sm-12' %}
 		{% endif %}
-		<div class="alert alert-success">{{ i18n('m.rbs.catalog.front.this_product_added_to_cart', ['ucf']) }}</div>
+		<div class="{{ secondColumnClass }}">
+			{% if productData.common.type == 'variant' %}
+				{% block productVariant %}
+					<h3>{{ productData.rootProduct.common.title }}</h3>
+					{% set variantConfiguration = productData.rootProduct.variants %}
+					{% if variantConfiguration %}
+						{% for variant in variantConfiguration.products %}
+							{% if variant.id == productData.common.id %}
+								<dl class="dl-inline-items">
+									{% for value in variant.axesValues %}
+										<dt>{{ variantConfiguration.axes[loop.index0].title }}</dt>
+										<dd>{{ value }}</dd>
+									{% endfor %}
+								</dl>
+							{% endif %}
+						{% endfor %}
+					{% endif %}
+					<div class="alert alert-success">{{ i18n('m.rbs.catalog.front.this_product_added_to_cart', ['ucf']) }}</div>
+				{% endblock productVariant %}
+			{% elseif productData.common.type == 'set' %}
+				{% block productSet %}
+					<h3>{{ productData.common.title }}</h3>
+					{% if parameters.itemCount == 1 %}
+						<div class="alert alert-success">
+							{{ i18n('m.rbs.catalog.front.one_articles_added_to_cart', ['ucf']) }}
+						</div>
+					{% elseif parameters.itemCount > 1 %}
+						<div class="alert alert-success">
+							{{ i18n('m.rbs.catalog.front.n_articles_added_to_cart', ['ucf'], {'count': parameters.itemCount}) }}
+						</div>
+					{% endif %}
+				{% endblock productSet %}
+			{% else %}
+				{% block productSimple %}
+					<h3>{{ productData.common.title }}</h3>
+					<div class="alert alert-success">{{ i18n('m.rbs.catalog.front.this_product_added_to_cart', ['ucf']) }}</div>
+				{% endblock productSimple %}
+			{% endif %}
+		</div>
 	</div>
-</div>
+{% endblock main %}

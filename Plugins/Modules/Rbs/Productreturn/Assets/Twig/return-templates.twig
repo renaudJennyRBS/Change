@@ -117,7 +117,7 @@
 									{{ line.quantity }}
 								</td>
 								<td>
-									<ul class="list-unstyled">
+									<ul class="list-unstyled no-bottom-margin">
 										<li><strong>{{ line.options.reasonTitle }}</strong></li>
 										{% if line.reasonPrecisions %}
 											<li data-rbs-max-height="70">
@@ -137,17 +137,19 @@
 											{% if not line.options.reshippingProductId %}
 												{{ line.options.preferredProcessingModeTitle }}
 											{% else %}
-												<span class="dropdown">
-													<a href="javascript:;" data-toggle="dropdown">
-														{{ line.options.preferredProcessingModeTitle }}  <span class="caret"></span>
-													</a>
-													<span class="dropdown-menu dropdown-menu-no-list">
+												{% set collapseId = 'processing_mode_collapse_' ~ blockId ~ '_' ~ return.common.id ~ '_' ~ loop.index %}
+												<a href="#{{ collapseId }}" data-toggle="collapse" aria-expanded="false"
+													aria-controls="collapseExample">
+													{{ line.options.preferredProcessingModeTitle }} <span class="caret"></span>
+												</a>
+												<div class="collapse panel panel-default no-bottom-margin" id="{{ collapseId }}">
+													<div class="panel-body">
 														{% set designation = line.options.reshippingProductTitle %}
 														{% set product = line.reshippingProduct %}
 														{% set axesInfo = line.options.reshippingProductAxesInfos %}
-														{{ block('rbsProductreturnDetailsProduct') }}
-													</span>
-												</span>
+														{{ block('rbsOrderLineDescription') }}
+													</div>
+												</div>
 											{% endif %}
 										</li>
 									</ul>

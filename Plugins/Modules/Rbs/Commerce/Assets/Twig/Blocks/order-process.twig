@@ -1,4 +1,5 @@
 {% block rbsCommerceProcessUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
 	{% use 'Rbs_Commerce/cart-directives.twig' %}
 	{% use 'Rbs_Commerce/process-directives.twig' %}
 	{% use 'Rbs_Geo/address-editor.twig' %}
@@ -11,12 +12,15 @@
 	{{ block('processIdentificationStep') }}
 	{{ block('processShippingStep') }}
 	{{ block('processPaymentStep') }}
+
+	{% use 'Rbs_User/user-directives.twig' %}
+	{{ block('rbsUserForgotPassword') }}
 {% endblock rbsCommerceProcessUse %}
 
 {% block rbsCommerceCartDataCache %}
-<script type="text/javascript">
-	window.__change['cartData'] = {{ cartData | json_encode | raw}};
-</script>
+	<script type="text/javascript">
+		window.__change['cartData'] = {{ cartData | json_encode | raw}};
+	</script>
 {% endblock rbsCommerceCartDataCache %}
 
 {% block process %}

@@ -1,0 +1,11 @@
+{
+	"label":{
+		"message":"thème vierge"
+	},
+	"noSidebarPage_label":{
+		"message":"page sans sidebar"
+	},
+	"sidebarPage_label":{
+		"message":"page avec sidebar"
+	}
+}

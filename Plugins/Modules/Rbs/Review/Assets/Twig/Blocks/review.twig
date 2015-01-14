@@ -2,6 +2,8 @@
 {% set handleVotes = parameters.handleVotes %}
 
 {% block rbsCatalogProductUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+
 	{% use 'Rbs_Review/review-directives.twig' %}
 	{{ block('rbsReviewCommon') }}
 	{{ block('rbsReviewReview') }}
@@ -16,5 +18,5 @@
 {% block rbsReviewReviewContent %}
 	<h1>{{ i18n('m.rbs.review.front.review_detail_title', ['ucf']) }}</h1>
 	<div data-rbs-review-review-details="" data-ajax-data="{}" data-ajax-params="{}" data-cache-key="{{ blockId }}"
-		data-review-id="{{ parameters.toDisplayDocumentId }}"></div>
+		data-review-id="{{ parameters.toDisplayDocumentId }}" data-handle-votes="{{ handleVotes }}"></div>
 {% endblock rbsReviewReviewContent %}

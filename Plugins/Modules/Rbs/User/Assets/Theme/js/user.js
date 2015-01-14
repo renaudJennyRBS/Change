@@ -60,9 +60,10 @@
 				});
 
 				$rootScope.$on('rbsUserProfileUpdated', function(event, params) {
-					if (params.profile.fullName !== null && params.profile.fullName != '') {
+					var fullName = params.profile['profiles']['Rbs_User']['fullName'];
+					if (fullName) {
 						scope.accessorId = params.userId;
-						scope.accessorName = params.profile.fullName;
+						scope.accessorName = fullName;
 					}
 				});
 
@@ -421,6 +422,7 @@
 					request.success(function(data) {
 						AjaxAPI.closeWaitingModal();
 						scope.readonly = true;
+						scope.success = true;
 						scope.data = data.dataSets;
 						var params = {'profile': scope.data, 'userId': scope.data.common.id};
 						$rootScope.$broadcast('rbsUserProfileUpdated', params);
@@ -439,6 +441,7 @@
 				scope.readonly = true;
 
 				scope.openEdit = function() {
+					scope.success = false;
 					scope.readonly = false;
 					scope.dataBackup = angular.copy(scope.data);
 				};

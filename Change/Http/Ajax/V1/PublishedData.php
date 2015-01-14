@@ -87,7 +87,6 @@ class PublishedData
 				}
 				if (in_array('contextual', $URLFormats))
 				{
-
 					if ($website === $section)
 					{
 						$data['contextual'] = $urlManager->getCanonicalByDocument($document)->normalize()->toString();
@@ -97,6 +96,7 @@ class PublishedData
 						$data['contextual'] = $urlManager->getByDocument($document, $section)->normalize()->toString();
 					}
 				}
+				$data['publishedInWebsite'] = $document->getCanonicalSection($website) != null;
 			}
 		}
 		return $data;

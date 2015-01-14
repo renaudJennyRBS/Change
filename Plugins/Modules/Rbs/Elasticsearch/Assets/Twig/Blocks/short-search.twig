@@ -1,4 +1,8 @@
-<form class="form-inline" action="{{ parameters.formAction }}" method="GET" data-rbs-elasticsearch-short-search="">
+{% block rbsElasticsearchShortSearchUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+{% endblock rbsElasticsearchShortSearchUse %}
+
+<form action="{{ parameters.formAction }}" method="GET" data-rbs-elasticsearch-short-search="">
 	{% if parameters.sectionPageFunction %}
 		<input name="sectionPageFunction" type="hidden" value="{{ parameters.sectionPageFunction }}" />
 	{% endif %}
@@ -15,7 +19,7 @@
 		<span class="input-group-btn">
 			<button type="button" data-ng-click="submitForm()" class="btn btn-primary"
 				title="{{ i18nAttr('m.rbs.elasticsearch.front.search', ['ucf']) }}">
-				<i class="glyphicon glyphicon-search"></i>
+				{{ block('rbsGenericIconSearch') }}
 			</button>
 		</span>
 	</div>

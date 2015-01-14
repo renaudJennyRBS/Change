@@ -7,7 +7,9 @@
 		</span>
 			<span class="star-rating" aria-hidden="true"
 				title="{{ i18n('m.rbs.review.front.review_rating_labeled', ['ucf'], { 'ratingValue': '(= scaledRating =)', 'bestRating': '(= scale =)' }) }}">
-			<span data-ng-repeat="i in stars" data-ng-class="{'text-muted': scaledRating <= i}" class="glyphicon glyphicon-star"></span>
+			<span data-ng-repeat="i in stars" data-ng-class="{'text-muted': scaledRating <= i}">
+				{{ block('rbsGenericIconStar') }}
+			</span>
 		</span>
 		</script>
 	{% endblock rbsReviewStarRating %}
@@ -20,7 +22,9 @@
 						<label class="no-bottom-margin"
 							title="{{ i18n('m.rbs.review.front.review_rating', ['ucf'], { 'ratingValue': '0', 'bestRating': '(= scale =)' }) }}">
 							<input type="radio" name="review" data-ng-model="scaled.rating" value="0" class="sr-only" />
-							<span data-ng-class="{'text-primary': scaled.hover == 0}" class="glyphicon glyphicon-star-empty"></span>
+							<span data-ng-class="{'text-primary': scaled.hover == 0}">
+								{{ block('rbsGenericIconStarEmpty') }}
+							</span>
 						</label>
 					{% endspaceless -%}
 				</li>
@@ -30,8 +34,9 @@
 						<label class="no-bottom-margin"
 							title="{{ i18n('m.rbs.review.front.review_rating', ['ucf'], { 'ratingValue': '(= i =)', 'bestRating': '(= scale =)' }) }}">
 							<input type="radio" name="rating" data-ng-model="scaled.rating" data-ng-value="i" class="sr-only no-top-margin" />
-						<span data-ng-class="{'text-primary': scaled.hover == i, 'text-muted': scaled.rating < i && scaled.hover != i}"
-							class="glyphicon glyphicon-star"></span>
+						<span data-ng-class="{'text-primary': scaled.hover == i, 'text-muted': scaled.rating < i && scaled.hover != i}">
+							{{ block('rbsGenericIconStar') }}
+						</span>
 						</label>
 					{% endspaceless -%}
 				</li>
@@ -42,14 +47,15 @@
 
 	{% block rbsReviewDisplay %}
 		<script type="text/ng-template" id="/rbsReviewDisplay.tpl">
-			<article id="(= idPrefix =)-(= data.id =)" class="panel" data-ng-class="{'panel-warning': !data.common.published}"
-				itemscope="" itemtype="http://schema.org/Review">
+			<article id="(= idPrefix =)-(= data.id =)" itemscope="" itemtype="http://schema.org/Review" class="panel"
+				data-ng-class="{'panel-default': data.common.published, 'panel-warning': !data.common.published}">
 				{% block rbsReviewDisplayHeader %}
 					<img data-ng-if="data.author.avatar['60']" alt="" src="" data-ng-src="(= data.author.avatar['60'] =)"
 						class="img-avatar img-thumbnail pull-right" />
 					<header class="panel-heading">
 						<span data-ng-show="number">
-							<a itemprop="url" rel="nofollow" data-ng-href="(= data.common.url =)">(= number =).</a>
+							<a data-ng-if="url" itemprop="url" rel="nofollow" data-ng-href="(= url =)">(= number =).</a>
+							<span data-ng-if="!url">(= number =).</span>
 							<span class="divider"> - </span>
 						</span>
 						{{ i18n('m.rbs.review.front.written_on', ['ucf']) }}
@@ -83,10 +89,10 @@
 								</div>
 								<div data-ng-if="data.votes.total > 0">
 								<span class="text-success">
-									<span class="glyphicon glyphicon-thumbs-up"></span> (= data.votes.up =)
+									{{ block('rbsGenericIconLike') }} (= data.votes.up =)
 								</span>
 								<span class="text-warning">
-									<span class="glyphicon glyphicon-thumbs-down"></span> (= data.votes.down =)
+									{{ block('rbsGenericIconDislike') }} (= data.votes.down =)
 								</span>
 								</div>
 							</div>
@@ -97,11 +103,11 @@
 								<div data-ng-if="canVote" class="text-right">
 									<span>{{ i18n('m.rbs.review.front.review_vote', ['ucf']) }}</span>
 									<button name="voteUp" class="btn btn-xs btn-success" type="button" data-ng-click="vote('up')">
-										<span class="glyphicon glyphicon-thumbs-up"></span>
+										{{ block('rbsGenericIconLike') }}
 										{{ i18n('m.rbs.review.front.review_upVote', ['ucf']) }}
 									</button>
 									<button name="voteDown" class="btn btn-xs btn-warning" type="button" data-ng-click="vote('down')">
-										<span class="glyphicon glyphicon-thumbs-down"></span>
+										{{ block('rbsGenericIconDislike') }}
 										{{ i18n('m.rbs.review.front.review_downVote', ['ucf']) }}
 									</button>
 								</div>
@@ -198,7 +204,7 @@
 				<div data-ng-if="data.review">
 					{% block rbsReviewReviewDetailsDisplay %}
 						<div data-rbs-review-display="data.review" data-scale="(= scale =)"
-							data-id-prefix="current-review" data-handle-votes="false">
+							data-id-prefix="current-review" data-handle-votes="handleVotes">
 						</div>
 					{% endblock rbsReviewReviewDetailsDisplay %}
 				</div>
@@ -251,8 +257,21 @@
 {% block rbsReviewReviews %}
 	{% block rbsReviewReviewsSummary %}
 		<script type="text/ng-template" id="/rbsReviewReviewsSummary.tpl">
-			<span data-rbs-review-star-rating="data.rating" data-scale="(= scale =)"></span>
-			(<a href="javascript:" data-ng-click="showReviews()">{{ i18n('m.rbs.review.front.review_count', ['ucf'], { 'COUNT': '(= data.count =)' }) }}</a>)
+			<span data-ng-hide="data.count">
+				{% block rbsReviewReviewsSummaryWithoutReview %}
+					<a href="javascript:" data-ng-click="showReviews()">
+						{{ i18n('m.rbs.review.front.no_review_yey', ['ucf']) }}
+					</a>
+				{% endblock rbsReviewReviewsSummaryWithoutReview %}
+			</span>
+			<span data-ng-show="data.count">
+				{% block rbsReviewReviewsSummaryWithReview %}
+					<span data-rbs-review-star-rating="data.rating" data-scale="(= scale =)"></span>
+					(<a href="javascript:" data-ng-click="showReviews()">
+						{{ i18n('m.rbs.review.front.review_count', ['ucf'], { 'COUNT': '(= data.count =)' }) }}
+					</a>)
+				{% endblock rbsReviewReviewsSummaryWithReview %}
+			</span>
 		</script>
 	{% endblock rbsReviewReviewsSummary %}
 
@@ -278,7 +297,8 @@
 											<td>
 												(= row.count =)
 												(= row.count > 1 ? "{{ i18nAttr('m.rbs.review.front.reviews') }}" : "{{ i18nAttr('m.rbs.review.front.review') }}" =)
-												- (= row.percent | number:0 =)%</td>
+												- (= row.percent | number:0 =)%
+											</td>
 											<td>
 												<div class="progress no-bottom-margin">
 													<div class="progress-bar" role="progressbar" data-ng-style="row.ngStyle"
@@ -349,7 +369,7 @@
 						{% endblock rbsReviewReviewsDetailsListItem %}
 					</li>
 				</ul>
-				<div data-rbs-pagination="" data-pagination="listData.pagination"
+				<div data-rbs-pagination="listData.pagination"
 					data-update-offset="updateListDataOffset"></div>
 			</div>
 		</script>

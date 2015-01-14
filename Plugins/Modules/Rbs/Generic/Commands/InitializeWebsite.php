@@ -21,81 +21,117 @@ class InitializeWebsite extends \Rbs\Generic\Commands\AbstractInitialize
 	{
 		$response = $event->getCommandResponse();
 		$applicationServices = $event->getApplicationServices();
+		$documentManager = $applicationServices->getDocumentManager();
 
 		$params = new \Zend\Stdlib\Parameters((array)$event->getParams());
-		$website = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('websiteId'));
+		$website = $documentManager->getDocumentInstance($params->get('websiteId'));
 		$LCID = $params->get('LCID');
-		$sidebarTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('sidebarTemplateId'));
-		$noSidebarTemplate = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('noSidebarTemplateId'));
-		$userAccountTopic = $applicationServices->getDocumentManager()->getDocumentInstance($params->get('userAccountTopicId'));
+		$sidebarTemplate = $documentManager->getDocumentInstance($params->get('sidebarTemplateId'));
+		$noSidebarTemplate = $documentManager->getDocumentInstance($params->get('noSidebarTemplateId'));
+		$userAccountTopic = $documentManager->getDocumentInstance($params->get('userAccountTopicId'));
+		$override = $params->get('override') == 'true';
 
-		if ($sidebarTemplate instanceof \Rbs\Theme\Documents\Template &&
-			$noSidebarTemplate instanceof \Rbs\Theme\Documents\Template &&
-			$website instanceof \Rbs\Website\Documents\Website && $LCID)
+		if (!($website instanceof \Rbs\Website\Documents\Website))
 		{
-			$context = 'Rbs Generic Website Initialize ' . $website->getId();
-			if ($userAccountTopic instanceof \Rbs\Website\Documents\Topic)
+			if ($response)
 			{
-				$applicationServices->getDocumentCodeManager()->addDocumentCode($userAccountTopic, 'rbs_generic_initialize_user_account_topic', $context);
+				$response->addErrorMessage('Invalid arguments: website is not valid');
 			}
-
-			$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'generic.json';
-			$json = json_decode(file_get_contents($filePath), true);
-			$json['contextId'] = $context;
-
-			$import = $this->getImport($applicationServices, $LCID);
-
-			$resolveDocument = function ($id, $contextId) use ($website, $sidebarTemplate, $noSidebarTemplate)
-			{
-				$document = null;
-				switch ($id)
-				{
-					case 'no_side_bar_template':
-						$document = $noSidebarTemplate;
-						break;
-					case 'side_bar_template':
-						$document = $sidebarTemplate;
-						break;
-					case 'website':
-						$document = $website;
-						break;
-				}
-				return $document;
-			};
-			$import->getOptions()->set('resolveDocument', $resolveDocument);
-
-			try
-			{
-				$applicationServices->getTransactionManager()->begin();
-				$documents = $import->fromArray($json);
-				$applicationServices->getTransactionManager()->commit();
-			}
-			catch (\Exception $e)
-			{
-				throw $applicationServices->getTransactionManager()->rollBack($e);
-			}
-
-			$this->publishDocuments($documents, $applicationServices->getDocumentManager(), $applicationServices->getAuthenticationManager()->getCurrentUser());
-
-			//keep generic document code if it's useful
-			if (!$userAccountTopic)
-			{
-				$documents = $applicationServices->getDocumentCodeManager()->getDocumentsByCode('rbs_generic_initialize_user_account_topic', $context);
-				if (isset($documents[0]) && $documents[0] != null)
-				{
-					$applicationServices->getDocumentCodeManager()->addDocumentCode($documents[0], 'user_account_topic', 'Website_' . $website->getId());
-				}
-			}
-
-			$this->addMenuToTemplates($website->getId(), $noSidebarTemplate, $sidebarTemplate, $applicationServices);
-
-			$response->addInfoMessage('Done.');
+			throw new \RuntimeException('Invalid arguments: website is not valid', 999999);
 		}
-		else
+		if (!($sidebarTemplate instanceof \Rbs\Theme\Documents\Template))
 		{
-			$response->addErrorMessage('templates or website are not valid');
-			throw new \RuntimeException('Invalid arguments: templates, store or website are not valid', 999999);
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: sidebarTemplate is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: sidebarTemplate is not valid', 999999);
 		}
+		if (!($noSidebarTemplate instanceof \Rbs\Theme\Documents\Template))
+		{
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: noSidebarTemplate is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: noSidebarTemplate is not valid', 999999);
+		}
+		if (!$LCID)
+		{
+			if ($response)
+			{
+				$response->addErrorMessage('Invalid arguments: LCID is not valid');
+			}
+			throw new \RuntimeException('Invalid arguments: LCID is not valid', 999999);
+		}
+
+		$context = 'Rbs Generic Website Initialize ' . $website->getId();
+		if ($userAccountTopic instanceof \Rbs\Website\Documents\Topic)
+		{
+			$applicationServices->getDocumentCodeManager()
+				->addDocumentCode($userAccountTopic, 'rbs_generic_initialize_user_account_topic', $context);
+		}
+
+		$filePath = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'generic.json';
+		$json = json_decode(file_get_contents($filePath), true);
+		$json['contextId'] = $context;
+
+		$import = $this->getImport($applicationServices, $LCID, !$override);
+
+		$resolveDocument = function ($id, $contextId, $jsonDocument) use (
+			$website, $sidebarTemplate, $noSidebarTemplate, $documentManager, $import
+		)
+		{
+			$document = null;
+			switch ($id)
+			{
+				case 'no_side_bar_template':
+					$document = $noSidebarTemplate;
+					break;
+				case 'side_bar_template':
+					$document = $sidebarTemplate;
+					break;
+				case 'website':
+					$document = $website;
+					break;
+
+				default:
+					if (substr($id, 0, 3) == 'f::')
+					{
+						$document = $this->resolveSectionPageFunction($jsonDocument, $import, $documentManager);
+					}
+			}
+			return $document;
+		};
+		$import->getOptions()->set('resolveDocument', $resolveDocument);
+
+		try
+		{
+			$applicationServices->getTransactionManager()->begin();
+			$documents = $import->fromArray($json);
+			$applicationServices->getTransactionManager()->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $applicationServices->getTransactionManager()->rollBack($e);
+		}
+
+		$this->publishDocuments($documents, $documentManager, $applicationServices->getAuthenticationManager()->getCurrentUser());
+
+		// Keep generic document code if it's useful.
+		if (!$userAccountTopic)
+		{
+			$documents = $applicationServices->getDocumentCodeManager()
+				->getDocumentsByCode('rbs_generic_initialize_user_account_topic', $context);
+			if (isset($documents[0]) && $documents[0] != null)
+			{
+				$applicationServices->getDocumentCodeManager()
+					->addDocumentCode($documents[0], 'user_account_topic', 'Website_' . $website->getId());
+			}
+		}
+
+		$this->addMenuToTemplates($website->getId(), $noSidebarTemplate, $sidebarTemplate, $applicationServices);
+
+		$response->addInfoMessage('Done.');
 	}
 
 	/**

@@ -1,0 +1,59 @@
+{% block rbsMediaPictograms %}
+	<script type="text/ng-template" id="/rbsMediaPictograms.tpl">
+		<div data-ng-show="pictograms" class="media-pictograms" data-ng-class="ngClasses.main">
+			{% spaceless %}
+				<div data-ng-repeat="pictogram in pictograms track by $index" class="media-pictograms-item"
+					data-ng-class="ngClasses.size">
+					<img alt="(= pictogram.alt =)" src="" data-ng-src="(= pictogram[format] =)" data-ng-class="ngClasses.maxSize" />
+				</div>
+			{% endspaceless %}
+		</div>
+	</script>
+{% endblock rbsMediaPictograms %}
+
+{% block rbsMediaVisuals %}
+	<script type="text/ng-template" id="/rbsMediaVisuals.tpl">
+		<div class="media-visuals one-line-bottom-margin" data-ng-class="ngClasses.main">
+			<div data-ng-if="thumbnailPosition == 'top' && visuals.length > 1" class="media-visuals-thumbnails">
+				{% block rbsMediaVisualsThumbnails %}
+					<div data-ng-repeat="visual in visuals track by $index" class="thumbnail"
+						title="{{ i18nAttr('m.rbs.catalog.front.click_to_show_image', ['ucf']) }}">
+						<img src="" data-ng-src="(= visual.detailThumbnail =)" alt="(= visual.alt =)" data-index="(= $index =)"
+							data-ng-click="showVisual($event, $index)" />
+					</div>
+				{% endblock rbsMediaVisualsThumbnails %}
+			</div>
+			<div class="media-visuals-main media-pictograms-container">
+				{% block rbsMediaVisualsMain %}
+					<div data-ng-repeat="visual in visuals track by $index" data-index="(= $index =)"
+						data-ng-class="{'visible': shownIndex == $index }" class="media-visuals-main-item">
+						{% block rbsMediaVisualsMainItem %}
+							<a data-ng-show="zoom.enabled" data-ng-href="(= visual.original =)">
+								<img itemprop="image" src="" data-ng-src="(= visual.detail =)" alt="(= visual.alt =)"
+									data-ng-mouseover="startZoom()" />
+							</a>
+							<img data-ng-hide="zoom.enabled" itemprop="image" src="" data-ng-src="(= visual.detail =)"
+								alt="(= visual.alt =)" />
+						{% endblock rbsMediaVisualsMainItem %}
+					</div>
+					<div data-ng-show="!visuals" class="text-muted media-visuals-main-item">
+						{% block rbsMediaVisualsMainDefault %}
+							<div class="media-visuals-main-item-default">
+								{{ block('rbsGenericIconVisual') }}
+								<br />
+								<span>{{ i18n('m.rbs.catalog.front.no_visual', ['ucf']) }}</span>
+							</div>
+						{% endblock rbsMediaVisualsMainDefault %}
+					</div>
+					<div data-rbs-media-pictograms="pictograms" data-pictogram-format="(= pictogramFormat =)"
+						data-pictogram-position="(= pictogramPosition =)"></div>
+				{% endblock rbsMediaVisualsMain %}
+			</div>
+			<div data-ng-if="thumbnailPosition != 'top' && visuals.length > 1" class="media-visuals-thumbnails">
+				{{ block('rbsMediaVisualsThumbnails') }}
+			</div>
+			<div data-ng-show="zoom.enabled && zoom.shown" class="media-visuals-zoom"></div>
+			<div class="clearfix"></div>
+		</div>
+	</script>
+{% endblock rbsMediaVisuals %}

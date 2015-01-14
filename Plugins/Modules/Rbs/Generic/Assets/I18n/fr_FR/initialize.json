@@ -31,5 +31,8 @@
 	},
 	"site_map": {
 		"message": "Plan du site"
+	},
+	"simpleform_detail": {
+		"message": "Détail d'un formulaire"
 	}
 }

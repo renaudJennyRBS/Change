@@ -9,7 +9,7 @@
 			restrict: 'A',
 			templateUrl: '/rbsCommerceProcess.tpl',
 			scope: {},
-			controller : ['$scope', '$element', function(scope, elem) {
+			controller: ['$scope', '$element', function(scope, elem) {
 				var self = this;
 				var processInfo = null;
 				scope.currentStep = null;
@@ -27,15 +27,22 @@
 					}
 					if (self.showPrices()) {
 						scope.currencyCode = cartData.common.currencyCode;
-					} else {
+					}
+					else {
 						scope.currencyCode = null;
 					}
-					$rootScope.$broadcast('rbsRefreshCart', {'cart': cartData });
+					$rootScope.$broadcast('rbsRefreshCart', { 'cart': cartData });
 				}
 
 				this.loading = function(loading) {
-					if (angular.isDefined(loading)) {
+					if (angular.isDefined(loading) && scope.loading != (loading == true)) {
 						scope.loading = (loading == true);
+						if (scope.loading) {
+							AjaxAPI.openWaitingModal();
+						}
+						else {
+							AjaxAPI.closeWaitingModal();
+						}
 					}
 					return scope.loading;
 				};
@@ -53,20 +60,22 @@
 				 * is no AJAX call to do). So make sure to check if there is a returned promise before calling methods on it.
 				 */
 				this.loadObjectData = function(withProcessData) {
-					scope.loading = true;
+					var controller = this;
+					controller.loading(true);
 					var params = getCartParams();
 					if (withProcessData) {
 						params.dataSets = "process";
 					}
 					var request = AjaxAPI.getData('Rbs/Commerce/Cart', null, params);
-					request.success(function(data, status, headers, config) {
+					request.success(function(data) {
 						var cartData = data.dataSets;
 						if (cartData && !angular.isArray(cartData)) {
 							setObjectData(cartData);
 						}
-						scope.loading = false;
-					}).error(function(data, status, headers, config) {
-						scope.loading = false;
+						controller.loading(false);
+					}).error(function(data, status) {
+						console.log('loadObjectData error', data, status);
+						controller.loading(false);
 					});
 					return request;
 				};
@@ -76,17 +85,18 @@
 				 * is no AJAX call to do). So make sure to check if there is a returned promise before calling methods on it.
 				 */
 				this.updateObjectData = function(actions) {
-					scope.loading = true;
+					var controller = this;
+					controller.loading(true);
 					var request = AjaxAPI.putData('Rbs/Commerce/Cart', actions, getCartParams());
-					request.success(function(data, status, headers, config) {
+					request.success(function(data) {
 						var cartData = data.dataSets;
 						if (cartData && !angular.isArray(cartData)) {
 							setObjectData(cartData);
 						}
-						scope.loading = false;
-					}).error(function(data, status, headers, config) {
+						controller.loading(false);
+					}).error(function(data, status) {
 						console.log('updateObjectData error', data, status);
-						scope.loading = false;
+						controller.loading(false);
 					});
 					return request;
 				};
@@ -96,7 +106,8 @@
 				};
 
 				this.showPrices = function(asObject) {
-					var showPrices = (scope.parameters && (scope.parameters.displayPricesWithTax || scope.parameters.displayPricesWithoutTax));
+					var showPrices = (scope.parameters &&
+					(scope.parameters.displayPricesWithTax || scope.parameters.displayPricesWithoutTax));
 					if (asObject && showPrices) {
 						return {
 							currencyCode: this.getCurrencyCode(),
@@ -115,7 +126,8 @@
 					if (scope.parameters) {
 						if (angular.isUndefined(name)) {
 							return scope.parameters;
-						} else {
+						}
+						else {
 							return scope.parameters[name];
 						}
 					}
@@ -136,7 +148,7 @@
 					});
 					collection.remove();
 					if (html != '') {
-						$compile(html)(scope, function (clone) {
+						$compile(html)(scope, function(clone) {
 							parentNode.append(clone);
 						});
 					}
@@ -151,11 +163,11 @@
 					}
 				);
 
-				this.nextStep = function () {
+				this.nextStep = function() {
 					this.setCurrentStep(this.getNextStep(scope.currentStep));
 				};
 
-				this.getNextStep = function (step) {
+				this.getNextStep = function(step) {
 					if (!step) {
 						return scope.steps[0];
 					}
@@ -171,7 +183,8 @@
 					var offset = jQuery('#' + scope.currentStep).offset();
 					if (offset && offset.hasOwnProperty('top')) {
 						jQuery('html, body').animate({ scrollTop: offset.top - 20 }, 500);
-					} else if (scope.currentStep) {
+					}
+					else if (scope.currentStep) {
 						$timeout(locateCurrentStep, 100);
 					}
 				}
@@ -179,7 +192,7 @@
 				this.setCurrentStep = function(currentStep) {
 					scope.currentStep = currentStep;
 					var enabled = currentStep !== null, checked = enabled;
-					for (var i =0; i < scope.steps.length; i++) {
+					for (var i = 0; i < scope.steps.length; i++) {
 						var step = scope.steps[i];
 						var stepProcessData = this.getStepProcessData(step);
 						if (step == currentStep) {
@@ -188,7 +201,8 @@
 							stepProcessData.isChecked = checked;
 							stepProcessData.isEnabled = enabled;
 							enabled = false;
-						} else {
+						}
+						else {
 							stepProcessData.isCurrent = false;
 							stepProcessData.isChecked = checked;
 							stepProcessData.isEnabled = enabled;
@@ -201,10 +215,10 @@
 
 				this.getStepProcessData = function(step) {
 					if (step === null) {
-						return {name: step, isCurrent: false, isEnabled: false, isChecked: false};
+						return { name: step, isCurrent: false, isEnabled: false, isChecked: false };
 					}
 					if (!angular.isObject(scope.processData[step])) {
-						scope.processData[step] = {name: step, isCurrent: false, isEnabled: false, isChecked: false};
+						scope.processData[step] = { name: step, isCurrent: false, isEnabled: false, isChecked: false };
 					}
 					return scope.processData[step];
 				};
@@ -215,7 +229,8 @@
 				var cartData = AjaxAPI.globalVar(cacheCartDataKey);
 				if (!cartData) {
 					this.loadObjectData(true);
-				} else {
+				}
+				else {
 					setObjectData(cartData);
 				}
 			}],
@@ -241,10 +256,10 @@
 			templateUrl: '/rbsCommerceCartLines.tpl',
 			require: '^rbsCommerceProcess',
 			scope: {
-				cartData:"=",
-				getLineDirectiveName:"="
+				cartData: "=",
+				getLineDirectiveName: "="
 			},
-			link: function (scope, elem, attrs, processController) {
+			link: function(scope, elem, attrs, processController) {
 				scope.showPrices = processController.showPrices();
 
 				function redrawLines() {
@@ -254,8 +269,8 @@
 					};
 					var lines = scope.cartData.lines;
 					var html = [];
-					angular.forEach(lines, function(line, idx){
-						html.push('<tr data-line="cartData.lines['+ idx +']" ' + directiveName(line) + '=""></tr>');
+					angular.forEach(lines, function(line, idx) {
+						html.push('<tr data-line="cartData.lines[' + idx + ']" ' + directiveName(line) + '=""></tr>');
 					});
 					processController.replaceChildren(linesContainer, scope, html.join(''));
 				}
@@ -269,6 +284,7 @@
 			}
 		}
 	}
+
 	app.directive('rbsCommerceCartLines', rbsCommerceCartLines);
 
 })(window.jQuery);

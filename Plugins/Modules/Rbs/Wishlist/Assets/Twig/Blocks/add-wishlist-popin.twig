@@ -1,3 +1,7 @@
+{% block addWishlistPopinUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+{% endblock addWishlistPopinUse %}
+
 <div class="modal fade" id="addWishlistModal-{{ blockId }}" tabindex="-1" role="dialog"
 	aria-labelledby="addWishlistModalLabel-{{ blockId }}" aria-hidden="true">
 	<div class="modal-dialog">
@@ -27,7 +31,7 @@
 					{{ i18n('m.rbs.wishlist.front.wishlist_modal_add_confirm', ['ucf']) }}
 				</button>
 				<a href="{{ functionURL('Rbs_Wishlist_WishlistList') }}" class="btn btn-primary" data-ng-show="addWishlistSuccess">
-					<i class="glyphicon glyphicon-arrow-right"></i>
+					{{ block('rbsGenericIconGoto') }}
 					{{ i18n('m.rbs.wishlist.front.wishlist_view_my_wishlists', ['ucf']) }}
 				</a>
 			</div>

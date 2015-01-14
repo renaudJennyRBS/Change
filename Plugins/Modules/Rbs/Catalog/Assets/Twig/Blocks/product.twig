@@ -4,23 +4,31 @@
 {% set handleReviewVotes = parameters.handleReviewVotes %}
 
 {% block rbsCatalogProductUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+	{% use 'Rbs_Commerce/icon-templates.twig' %}
+
+	{% use 'Rbs_Catalog/product-detail.twig' %}
+
 	{% use 'Rbs_Catalog/product-directives.twig' %}
 	{{ block('rbsCatalogAddToCartPopin') }}
-	{{ block('rbsCatalogProductPictograms') }}
 	{{ block('rbsCatalogAttributeValue') }}
 	{{ block('rbsCatalogProductInformation') }}
 	{{ block('rbsCatalogProductSpecifications') }}
 	{{ block('rbsCatalogProductAvailability') }}
 	{{ block('rbsCatalogProductPrice') }}
 	{{ block('rbsCatalogProductInformationTabs') }}
+	{{ block('rbsCatalogProductSetItem') }}
+
+	{% use 'Rbs_Media/media-directives.twig' %}
+	{{ block('rbsMediaPictograms') }}
+	{{ block('rbsMediaVisuals') }}
+
 	{% if handleReviews %}
 		{% use 'Rbs_Review/review-directives.twig' %}
 		{{ block('rbsReviewCommon') }}
 		{{ block('rbsReviewReview') }}
 		{{ block('rbsReviewReviews') }}
 	{% endif %}
-
-	{% use 'Rbs_Catalog/product-detail.twig' %}
 {% endblock rbsCatalogProductUse %}
 
 {% block rbsCatalogProductDataCache %}
@@ -31,10 +39,10 @@
 
 {% if productData.common.type == 'variant' %}
 	{% block rbsCatalogVariantProduct %}
-		{{ block('rbsCatalogAddToCartVariantProduct') }}
+		{{ block('rbsCatalogAddVariantProductToCart') }}
 		{{ block('rbsCatalogProductVariantSelector') }}
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
-				data-ng-controller="RbsCatalogVariantProductController" data-cache-key="{{ blockId }}">
+			data-ng-controller="RbsCatalogVariantProductController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
 			<div class="row">
 				<div class="col-sm-6 col-md-8">
@@ -54,15 +62,17 @@
 	{% endblock rbsCatalogVariantProduct %}
 {% elseif productData.common.type == 'set' %}
 	{% block rbsCatalogProductSet %}
-		{{ block('rbsCatalogAddToCartSetItemProduct') }}
+		{{ block('rbsCatalogAddSetItemProductToCart') }}
+		{{ block('rbsCatalogAddSetProductToCart') }}
+		{{ block('rbsCatalogProductVariantSelector') }}
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
-				data-ng-controller="RbsCatalogProductSetController" data-cache-key="{{ blockId }}">
+			data-ng-controller="RbsCatalogProductSetController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
 			<div class="row">
-				<div class="col-sm-6 col-md-8">
+				<div class="col-sm-5 col-lg-6">
 					{{ block('rbsCatalogProductVisuals') }}
 				</div>
-				<div class="col-sm-6 col-md-4">
+				<div class="col-sm-7 col-lg-6">
 					<header>{{ block('rbsCatalogProductHeader') }}</header>
 					{{ block('rbsCatalogProductOfferSet') }}
 				</div>
@@ -76,11 +86,10 @@
 	{% endblock rbsCatalogProductSet %}
 {% else %}
 	{% block rbsCatalogSimpleProduct %}
-		{{ block('rbsCatalogAddToCartSimpleProduct') }}
+		{{ block('rbsCatalogAddSimpleProductToCart') }}
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
-				data-ng-controller="RbsCatalogSimpleProductController" data-cache-key="{{ blockId }}">
+			data-ng-controller="RbsCatalogSimpleProductController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
-
 			<div class="row">
 				<div class="col-sm-6 col-md-8">
 					{{ block('rbsCatalogProductVisuals') }}

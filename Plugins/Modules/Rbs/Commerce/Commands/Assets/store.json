@@ -7,33 +7,30 @@
 			"website": {"_id": "website"},
 			"versionOfId": 0,
 			"_LCID": {
-				"fr_FR": {
-					"title": "Boutique"
-				},
-				"en_US": {
-					"title": "Shop"
-				}
+				"fr_FR": {"title": "Boutique"},
+				"en_US": {"title": "Shop"}
 			}
 		},
-
 		{
 			"_id": "rbs_commerce_initialize_terms_and_conditions",
 			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.terms_and_conditions"},
 			"section": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_Richtext", "id": 2, "label": "Rbs_Website_Richtext",
+									"type": "block",
+									"name": "Rbs_Website_Richtext",
+									"id": 2,
+									"label": "Rbs_Website_Richtext",
 									"parameters": {
 										"contentType": "Markdown",
 										"content": "Ici les conditions générales de ventes de votre site",
@@ -47,14 +44,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Website_Richtext", "id": 2, "label": "Rbs_Website_Richtext",
+									"type": "block",
+									"name": "Rbs_Website_Richtext",
+									"id": 2,
+									"label": "Rbs_Website_Richtext",
 									"parameters": {
 										"contentType": "Markdown",
 										"content": "Here terms and conditions for your website",
@@ -69,13 +68,122 @@
 			}
 		},
 		{
-			"_id": "rbs_commerce_initialize_terms_and_conditions_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_commerce_initialize_terms_and_conditions_function",
 			"functionCode": "Rbs_Commerce_TermsAndConditions",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_commerce_initialize_terms_and_conditions"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_commerce_initialize_terms_and_conditions"}
 		},
-
+		{
+			"_id": "rbs_commerce_initialize_contextual_product_list",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.contextual_product_list"},
+			"section": {"_id": "website"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate": {"_id": "side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 4,
+									"parameters": {
+										"TTL": 0,
+										"useCurrentSectionProductList": true,
+										"searchMode": false,
+										"showUnavailable": true
+									},
+									"name": "Rbs_Elasticsearch_StoreFacets",
+									"label": "Rbs_Elasticsearch_StoreFacets",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"useCurrentSectionProductList": true,
+										"contextualUrls": true,
+										"itemsPerLine": 3,
+										"itemsPerPage": 9,
+										"showOrdering": true,
+										"showUnavailable": true
+									},
+									"name": "Rbs_Catalog_ProductList",
+									"label": "Rbs_Catalog_ProductList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.contextual_product_list"}
+				},
+				"en_US": {
+					"editableContent": {
+						"sidebarContent": {
+							"type": "container",
+							"id": "sidebarContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 4,
+									"parameters": {
+										"TTL": 0,
+										"useCurrentSectionProductList": true,
+										"searchMode": false,
+										"showUnavailable": true
+									},
+									"name": "Rbs_Elasticsearch_StoreFacets",
+									"label": "Rbs_Elasticsearch_StoreFacets",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						},
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"useCurrentSectionProductList": true,
+										"contextualUrls": true,
+										"itemsPerLine": 3,
+										"itemsPerPage": 9,
+										"showOrdering": true,
+										"showUnavailable": true
+									},
+									"name": "Rbs_Catalog_ProductList",
+									"label": "Rbs_Catalog_ProductList",
+									"visibility": null
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.contextual_product_list"}
+				}
+			}
+		},
 		{
 			"_id": "rbs_commerce_initialize_product_detail",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -83,39 +191,36 @@
 			"section": {"_id": "website"},
 			"website": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
-							"id":"mainContent",
-							"grid":12,
-							"type":"container",
-							"items":[
+						"mainContent": {
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items": [
 								{
-									"type":"block","name":"Rbs_Wishlist_WishlistButton","id":2,"label":"Rbs_Wishlist_WishlistButton"
+									"type": "block",
+									"name": "Rbs_Wishlist_WishlistButton",
+									"id": 2,
+									"label": "Rbs_Wishlist_WishlistButton"
 								},
 								{
-									"type":"block","name":"Rbs_Catalog_Product","id":4,"label":"Rbs_Catalog_Product"
-								},
-								{
-									"type":"row","items":[
-										{
-											"type":"cell","size":6,"id":7,"items":[{"type":"block","name":"Rbs_Review_ReviewAverageRating","id":6,"label":"Rbs_Review_ReviewAverageRating","size":6,"offset":0}],
-											"offset":0
-										},
-										{
-											"type":"cell","size":6,"id":8,"items":[{"type":"block","name":"Rbs_Review_PromotedReviewList","id":11,"label":"Rbs_Review_PromotedReviewList"}],
-											"offset":0
-										}
-									],"id":10,"grid":12
-								},
-								{
-									"type":"block","name":"Rbs_Review_PostReview","id":13,"label":"Rbs_Review_PostReview"
-								},
-								{
-									"type":"block","name":"Rbs_Review_ReviewList","id":15,"label":"Rbs_Review_ReviewList"
+									"type": "block",
+									"id": 4,
+									"parameters": {
+										"activateZoom": true,
+										"informationDisplayMode": "tabs",
+										"specificationsDisplayMode": "table",
+										"fullyQualifiedTemplateName": "Rbs_Catalog:product-with-reviews.twig",
+										"handleReviews": true,
+										"reviewsPerPage": 10,
+										"ratingScale": 5,
+										"handleReviewVotes": true
+									},
+									"name": "Rbs_Catalog_Product",
+									"label": "Rbs_Catalog_Product"
 								}
 							]
 						}
@@ -124,35 +229,32 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
-							"id":"mainContent",
-							"grid":12,
-							"type":"container",
-							"items":[
+						"mainContent": {
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items": [
 								{
-									"type":"block","name":"Rbs_Wishlist_WishlistButton","id":2,"label":"Rbs_Wishlist_WishlistButton"
+									"type": "block",
+									"name": "Rbs_Wishlist_WishlistButton",
+									"id": 2,
+									"label": "Rbs_Wishlist_WishlistButton"
 								},
 								{
-									"type":"block","name":"Rbs_Catalog_Product","id":4,"label":"Rbs_Catalog_Product"
-								},
-								{
-									"type":"row","items":[
-									{
-										"type":"cell","size":6,"id":7,"items":[{"type":"block","name":"Rbs_Review_ReviewAverageRating","id":6,"label":"Rbs_Review_ReviewAverageRating","size":6,"offset":0}],
-										"offset":0
+									"type": "block",
+									"id": 4,
+									"parameters": {
+										"activateZoom": true,
+										"informationDisplayMode": "tabs",
+										"specificationsDisplayMode": "table",
+										"fullyQualifiedTemplateName": "Rbs_Catalog:product-with-reviews.twig",
+										"handleReviews": true,
+										"reviewsPerPage": 10,
+										"ratingScale": 5,
+										"handleReviewVotes": true
 									},
-									{
-										"type":"cell","size":6,"id":8,"items":[{"type":"block","name":"Rbs_Review_PromotedReviewList","id":11,"label":"Rbs_Review_PromotedReviewList"}],
-										"offset":0
-									}
-								],"id":10,"grid":12
-								},
-								{
-									"type":"block","name":"Rbs_Review_PostReview","id":13,"label":"Rbs_Review_PostReview"
-								},
-								{
-									"type":"block","name":"Rbs_Review_ReviewList","id":15,"label":"Rbs_Review_ReviewList"
+									"name": "Rbs_Catalog_Product",
+									"label": "Rbs_Catalog_Product"
 								}
 							]
 						}
@@ -162,13 +264,64 @@
 			}
 		},
 		{
-			"_id": "rbs_commerce_initialize_product_detail_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_commerce_initialize_product_detail_function",
 			"functionCode": "Rbs_Catalog_Product",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_commerce_initialize_product_detail"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_commerce_initialize_product_detail"}
 		},
-
+		{
+			"_id": "rbs_commerce_initialize_brand_detail",
+			"_model": "Rbs_Website_FunctionalPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.brand_detail"},
+			"section": {"_id": "website"},
+			"website": {"_id": "website"},
+			"versionOfId": 0,
+			"pageTemplate": {"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent": {
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items": [
+								{
+									"type": "block",
+									"name": "Rbs_Brand_Brand",
+									"id": 2,
+									"label": "Rbs_Brand_Bran"
+								}
+							]
+						}
+					},
+					"title": "Détail d'une marque"
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent": {
+							"id": "mainContent",
+							"grid": 12,
+							"type": "container",
+							"items": [
+								{
+									"type": "block",
+									"name": "Rbs_Brand_Brand",
+									"id": 2,
+									"label": "Rbs_Brand_Brand"
+								}
+							]
+						}
+					},
+					"title": "Brand detail"
+				}
+			}
+		},
+		{
+			"_id": "f::rbs_commerce_initialize_brand_detail_function",
+			"functionCode": "Rbs_Brand_Brand",
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_commerce_initialize_brand_detail"}
+		},
 		{
 			"_id": "rbs_commerce_initialize_review_detail",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -176,18 +329,20 @@
 			"section": {"_id": "website"},
 			"website": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
+			"pageTemplate": {"_id": "no_side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Review_ReviewDetail", "id": 2, "label": "Rbs_Review_ReviewDetail"
+									"type": "block",
+									"name": "Rbs_Review_ReviewDetail",
+									"id": 2,
+									"label": "Rbs_Review_ReviewDetail"
 								}
 							]
 						}
@@ -196,14 +351,16 @@
 				},
 				"en_US": {
 					"editableContent": {
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Review_ReviewDetail", "id": 2, "label": "Rbs_Review_ReviewDetail"
+									"type": "block",
+									"name": "Rbs_Review_ReviewDetail",
+									"id": 2,
+									"label": "Rbs_Review_ReviewDetail"
 								}
 							]
 						}
@@ -213,64 +370,11 @@
 			}
 		},
 		{
-			"_id": "rbs_commerce_initialize_review_detail_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_commerce_initialize_review_detail_function",
 			"functionCode": "Rbs_Review_Review",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_commerce_initialize_review_detail"}
-		},
-
-		{
-			"_id": "rbs_commerce_initialize_review_edit",
-			"_model": "Rbs_Website_FunctionalPage",
-			"label": {"_i18n": "m.rbs.commerce.initialize.review_edit"},
 			"section": {"_id": "website"},
-			"website": {"_id": "website"},
-			"versionOfId": 0,
-			"pageTemplate":{"_id": "no_side_bar_template"},
-			"_LCID": {
-				"fr_FR": {
-					"editableContent": {
-						"mainContent":
-						{
-							"id": "mainContent",
-							"grid": 12,
-							"type": "container",
-							"items":[
-								{
-									"type": "block", "name": "Rbs_Review_EditReview", "id": 2, "label": "Rbs_Review_EditReview"
-								}
-							]
-						}
-					},
-					"title": "Édition d'un avis"
-				},
-				"en_US": {
-					"editableContent": {
-						"mainContent":
-						{
-							"id": "mainContent",
-							"grid": 12,
-							"type": "container",
-							"items":[
-								{
-									"type": "block", "name": "Rbs_Review_EditReview", "id": 2, "label": "Rbs_Review_EditReview"
-								}
-							]
-						}
-					},
-					"title": "Edit review"
-				}
-			}
+			"page": {"_id": "rbs_commerce_initialize_review_detail"}
 		},
-		{
-			"_id": "rbs_commerce_initialize_review_edit_function",
-			"_model": "Rbs_Website_SectionPageFunction",
-			"functionCode": "Rbs_Review_EditReview",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_commerce_initialize_review_edit"}
-		},
-
 		{
 			"_id": "rbs_commerce_initialize_user_account_topic",
 			"_model": "Rbs_Website_Topic",
@@ -286,14 +390,13 @@
 				}
 			}
 		},
-
 		{
 			"_id": "rbs_commerce_initialize_wishlist_list",
 			"_model": "Rbs_Website_StaticPage",
 			"label": {"_i18n": "m.rbs.commerce.initialize.wishlist_list"},
 			"section": {"_id": "rbs_commerce_initialize_user_account_topic"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "side_bar_template"},
+			"pageTemplate": {"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
@@ -303,14 +406,16 @@
 							"parameters": [],
 							"grid": 12
 						},
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Wishlist_WishlistList", "id": 2, "label": "Rbs_Wishlist_WishlistList"
+									"type": "block",
+									"name": "Rbs_Wishlist_WishlistList",
+									"id": 2,
+									"label": "Rbs_Wishlist_WishlistList"
 								}
 							]
 						}
@@ -325,14 +430,16 @@
 							"parameters": [],
 							"grid": 12
 						},
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Wishlist_WishlistList", "id": 2, "label": "Rbs_Wishlist_WishlistList"
+									"type": "block",
+									"name": "Rbs_Wishlist_WishlistList",
+									"id": 2,
+									"label": "Rbs_Wishlist_WishlistList"
 								}
 							]
 						}
@@ -342,13 +449,11 @@
 			}
 		},
 		{
-			"_id": "rbs_commerce_initialize_wishlist_list_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_commerce_initialize_wishlist_list_function",
 			"functionCode": "Rbs_Wishlist_WishlistList",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_commerce_initialize_wishlist_list"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_commerce_initialize_wishlist_list"}
 		},
-
 		{
 			"_id": "rbs_commerce_initialize_wishlist_detail",
 			"_model": "Rbs_Website_FunctionalPage",
@@ -356,7 +461,7 @@
 			"section": {"_id": "website"},
 			"website": {"_id": "website"},
 			"versionOfId": 0,
-			"pageTemplate":{"_id": "side_bar_template"},
+			"pageTemplate": {"_id": "side_bar_template"},
 			"_LCID": {
 				"fr_FR": {
 					"editableContent": {
@@ -366,14 +471,16 @@
 							"parameters": [],
 							"grid": 12
 						},
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Wishlist_WishlistDetail", "id": 2, "label": "Rbs_Wishlist_WishlistDetail"
+									"type": "block",
+									"name": "Rbs_Wishlist_WishlistDetail",
+									"id": 2,
+									"label": "Rbs_Wishlist_WishlistDetail"
 								}
 							]
 						}
@@ -388,14 +495,16 @@
 							"parameters": [],
 							"grid": 12
 						},
-						"mainContent":
-						{
+						"mainContent": {
 							"id": "mainContent",
 							"grid": 12,
 							"type": "container",
-							"items":[
+							"items": [
 								{
-									"type": "block", "name": "Rbs_Wishlist_WishlistDetail", "id": 2, "label": "Rbs_Wishlist_WishlistDetail"
+									"type": "block",
+									"name": "Rbs_Wishlist_WishlistDetail",
+									"id": 2,
+									"label": "Rbs_Wishlist_WishlistDetail"
 								}
 							]
 						}
@@ -405,11 +514,362 @@
 			}
 		},
 		{
-			"_id": "rbs_commerce_initialize_wishlist_detail_function",
-			"_model": "Rbs_Website_SectionPageFunction",
+			"_id": "f::rbs_commerce_initialize_wishlist_detail_function",
 			"functionCode": "Rbs_Wishlist_Wishlist",
-			"section":{"_id":"website"},
-			"page":{"_id":"rbs_commerce_initialize_wishlist_detail"}
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_commerce_initialize_wishlist_detail"}
+		},
+		{
+			"_id": "rbs_commerce_initialize_search_result_products",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.search_result_products"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"hideLinks": true,
+			"pageTemplate": {"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.search_result_products"}
+				}
+			}
+		},
+		{
+			"_id": "f::rbs_commerce_initialize_search_result_function",
+			"functionCode": "Rbs_Elasticsearch_Result",
+			"section": {"_id": "website"},
+			"page": {"_id": "rbs_commerce_initialize_search_result_products"}
+		},
+		{
+			"_id": "rbs_commerce_initialize_search_result_others",
+			"_model": "Rbs_Website_StaticPage",
+			"label": {"_i18n": "m.rbs.commerce.initialize.search_result_others"},
+			"section": {"_id": "website"},
+			"versionOfId": 0,
+			"hideLinks": true,
+			"pageTemplate": {"_id": "no_side_bar_template"},
+			"_LCID": {
+				"fr_FR": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.search_result_others"}
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_search_result_products",
+			"_model": "Rbs_Website_StaticPage",
+			"_LCID": {
+				"fr_FR": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.search_result_products"},
+					"editableContent": {
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"productResultsPage": {"_id": "rbs_commerce_initialize_search_result_products"},
+										"otherResultsPage": {"_id": "rbs_commerce_initialize_search_result_others"}
+									},
+									"name": "Rbs_Elasticsearch_ResultHeader",
+									"label": "Rbs_Elasticsearch_ResultHeader",
+									"visibility": null
+								},
+								{
+									"type": "row",
+									"id": 14,
+									"parameters": [],
+									"items": [
+										{
+											"type": "cell",
+											"id": 11,
+											"parameters": [],
+											"items": [
+												{
+													"type": "block",
+													"id": 15,
+													"parameters": {
+														"TTL": 0,
+														"toDisplayDocumentId": 0,
+														"requiredSearchText": true,
+														"useCurrentSectionProductList": false,
+														"showUnavailable": true
+													},
+													"name": "Rbs_Elasticsearch_StoreFacets",
+													"label": "Rbs_Elasticsearch_StoreFacets",
+													"visibility": null
+												}
+											],
+											"size": 3
+										},
+										{
+											"type": "cell",
+											"id": 12,
+											"parameters": [],
+											"items": [
+												{
+													"type": "block",
+													"id": 6,
+													"parameters": {
+														"TTL": 60,
+														"requiredSearchText": true,
+														"useCurrentSectionProductList": false,
+														"showUnavailable": true,
+														"contextualUrls": false,
+														"itemsPerLine": 3,
+														"itemsPerPage": 9,
+														"showOrdering": true
+													},
+													"name": "Rbs_Elasticsearch_StoreResult",
+													"label": "Rbs_Elasticsearch_StoreResult",
+													"visibility": null
+												}
+											],
+											"size": 9
+										}
+									],
+									"grid": 12
+								}
+							],
+							"grid": 12
+						}
+					}
+				},
+				"en_US": {
+					"title": {"_i18n": "m.rbs.commerce.initialize.search_result_products"},
+					"editableContent": {
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"productResultsPage": {"_id": "rbs_commerce_initialize_search_result_products"},
+										"otherResultsPage": {"_id": "rbs_commerce_initialize_search_result_others"}
+									},
+									"name": "Rbs_Elasticsearch_ResultHeader",
+									"label": "Rbs_Elasticsearch_ResultHeader",
+									"visibility": null
+								},
+								{
+									"type": "row",
+									"id": 14,
+									"parameters": [],
+									"items": [
+										{
+											"type": "cell",
+											"id": 11,
+											"parameters": [],
+											"items": [
+												{
+													"type": "block",
+													"id": 15,
+													"parameters": {
+														"TTL": 0,
+														"toDisplayDocumentId": 0,
+														"requiredSearchText": true,
+														"useCurrentSectionProductList": false,
+														"showUnavailable": true
+													},
+													"name": "Rbs_Elasticsearch_StoreFacets",
+													"label": "Rbs_Elasticsearch_StoreFacets",
+													"visibility": null
+												}
+											],
+											"size": 3
+										},
+										{
+											"type": "cell",
+											"id": 12,
+											"parameters": [],
+											"items": [
+												{
+													"type": "block",
+													"id": 6,
+													"parameters": {
+														"TTL": 60,
+														"requiredSearchText": true,
+														"useCurrentSectionProductList": false,
+														"showUnavailable": true,
+														"contextualUrls": false,
+														"itemsPerLine": 3,
+														"itemsPerPage": 9,
+														"showOrdering": true
+													},
+													"name": "Rbs_Elasticsearch_StoreResult",
+													"label": "Rbs_Elasticsearch_StoreResult",
+													"visibility": null
+												}
+											],
+											"size": 9
+										}
+									],
+									"grid": 12
+								}
+							],
+							"grid": 12
+						}
+					}
+				}
+			}
+		},
+		{
+			"_id": "rbs_commerce_initialize_search_result_others",
+			"_model": "Rbs_Website_StaticPage",
+			"_LCID": {
+				"fr_FR": {
+					"editableContent": {
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"productResultsPage": {"_id": "rbs_commerce_initialize_search_result_products"},
+										"otherResultsPage": {"_id": "rbs_commerce_initialize_search_result_others"}
+									},
+									"name": "Rbs_Elasticsearch_ResultHeader",
+									"label": "Rbs_Elasticsearch_ResultHeader",
+									"visibility": null
+								},
+								{
+									"type": "row",
+									"id": 21,
+									"parameters": [],
+									"items": [
+										{
+											"type": "cell",
+											"id": 18,
+											"parameters": [],
+											"items": [
+												{
+													"type": "block",
+													"id": 22,
+													"parameters": {
+														"TTL": 0,
+														"excludeProducts": true
+													},
+													"name": "Rbs_Elasticsearch_Facets",
+													"label": "Rbs_Elasticsearch_Facets",
+													"visibility": null
+												}
+											],
+											"size": 3
+										},
+										{
+											"type": "cell",
+											"id": 19,
+											"parameters": [],
+											"items": [
+												{
+													"type": "block",
+													"id": 6,
+													"parameters": {
+														"TTL": 0,
+														"itemsPerPage": 20,
+														"showModelFacet": true,
+														"excludeProducts": true
+													},
+													"name": "Rbs_Elasticsearch_Result",
+													"label": "Rbs_Elasticsearch_Result",
+													"visibility": null
+												}
+											],
+											"size": 9
+										}
+									],
+									"grid": 12
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.search_result_others"}
+				},
+				"en_US": {
+					"editableContent": {
+						"mainContent": {
+							"type": "container",
+							"id": "mainContent",
+							"parameters": [],
+							"items": [
+								{
+									"type": "block",
+									"id": 3,
+									"parameters": {
+										"TTL": 60,
+										"productResultsPage": {"_id": "rbs_commerce_initialize_search_result_products"},
+										"otherResultsPage": {"_id": "rbs_commerce_initialize_search_result_others"}
+									},
+									"name": "Rbs_Elasticsearch_ResultHeader",
+									"label": "Rbs_Elasticsearch_ResultHeader",
+									"visibility": null
+								},
+								{
+									"type": "row",
+									"id": 21,
+									"parameters": [],
+									"items": [
+										{
+											"type": "cell",
+											"id": 18,
+											"parameters": [],
+											"items": [
+												{
+													"type": "block",
+													"id": 22,
+													"parameters": {
+														"TTL": 0,
+														"excludeProducts": true
+													},
+													"name": "Rbs_Elasticsearch_Facets",
+													"label": "Rbs_Elasticsearch_Facets",
+													"visibility": null
+												}
+											],
+											"size": 3
+										},
+										{
+											"type": "cell",
+											"id": 19,
+											"parameters": [],
+											"items": [
+												{
+													"type": "block",
+													"id": 6,
+													"parameters": {
+														"TTL": 0,
+														"itemsPerPage": 20,
+														"showModelFacet": true,
+														"excludeProducts": true
+													},
+													"name": "Rbs_Elasticsearch_Result",
+													"label": "Rbs_Elasticsearch_Result",
+													"visibility": null
+												}
+											],
+											"size": 9
+										}
+									],
+									"grid": 12
+								}
+							],
+							"grid": 12
+						}
+					},
+					"title": {"_i18n": "m.rbs.commerce.initialize.search_result_others"}
+				}
+			}
 		}
 	],
 	"contextId": "Autogenerated"

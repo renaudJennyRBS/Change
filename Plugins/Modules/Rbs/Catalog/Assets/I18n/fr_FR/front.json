@@ -104,5 +104,14 @@
 	},
 	"specifications": {
 		"message":"caractéristiques"
+	},
+	"no_selected_item": {
+		"message":"Vous n'avez sélectionné aucun produit à ajouter au panier."
+	},
+	"one_articles_added_to_cart": {
+		"message":"l'article sélectionné a été ajouté à votre panier."
+	},
+	"n_articles_added_to_cart": {
+		"message":"les $count$ articles sélectionnés on été ajoutés à votre panier."
 	}
 }

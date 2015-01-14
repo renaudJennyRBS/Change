@@ -34,6 +34,7 @@ class CartCrossSelling extends Block
 		$parameters->addParameterMeta('productChoiceStrategy');
 		$parameters->addParameterMeta('crossSellingType');
 		$parameters->addParameterMeta('itemsPerSlide', 3);
+		$parameters->addParameterMeta('interval', 1000);
 		$parameters->addParameterMeta('slideCount');
 
 		$this->initCommerceContextParameters($parameters);
@@ -96,7 +97,7 @@ class CartCrossSelling extends Block
 				$rows = $productManager->getCrossSellingForCart($cart, $csParameters);
 			}
 
-			$attributes['rows'] = $rows;
+			$attributes['productsData'] = $rows;
 			$attributes['itemsPerSlide'] = $parameters->getParameter('itemsPerSlide');
 			if (count($rows) && isset($attributes['itemsPerSlide']))
 			{

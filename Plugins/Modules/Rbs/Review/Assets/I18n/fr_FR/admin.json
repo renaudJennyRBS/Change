@@ -55,5 +55,14 @@
 	},
 	"guest_pseudonym_help":{
 		"message":"Le pseudonyme n'est modifiable que si l'avis n'a pas été soumis par un utilisateur identifié ou si celui-ci n'a pas renseigné de pseudonyme dans son profil."
+	},
+	"parameter_reviews_per_page":{
+		"message":"nombre d'avis par page"
+	},
+	"parameter_rating_scale":{
+		"message":"échelle de notation"
+	},
+	"parameter_handle_review_votes":{
+		"message":"gérer le votes sur les avis clients"
 	}
 }

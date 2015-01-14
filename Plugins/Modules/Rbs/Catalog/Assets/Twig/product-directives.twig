@@ -1,6 +1,6 @@
 {% block rbsCatalogAddToCartPopin %}
 	<div class="modal fade" id="addToCartConfirmationModal-{{ blockId }}" tabindex="-1" role="dialog"
-			aria-labelledby="addToCartConfirmationModalLabel-{{ blockId }}" aria-hidden="true">
+		aria-labelledby="addToCartConfirmationModalLabel-{{ blockId }}" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -16,7 +16,7 @@
 					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">
 						{{ i18n('m.rbs.catalog.front.continue_shopping', ['ucf']) }}</button>
 					<a href="{{ functionURL('Rbs_Commerce_Cart') }}" class="btn btn-primary">
-						<i class="glyphicon glyphicon-arrow-right"></i>
+						{{ block('rbsGenericIconGoto') }}
 						{{ i18n('m.rbs.catalog.front.view_my_cart', ['ucf']) }}
 					</a>
 				</div>
@@ -25,16 +25,16 @@
 	</div>
 {% endblock rbsCatalogAddToCartPopin %}
 
-{% block rbsCatalogAddToCartListItem %}
+{% block rbsCatalogAddListItemProductToCart %}
 	<script type="text/ng-template" id="/rbsCatalogAddListItemProductToCart.tpl">
 		<button type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()">
-			<span class="glyphicon glyphicon-shopping-cart"></span>
+			{{ block('rbsCommerceIconCart') }}
 			{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
 		</button>
 	</script>
-{% endblock rbsCatalogAddToCartListItem %}
+{% endblock rbsCatalogAddListItemProductToCart %}
 
-{% block rbsCatalogAddToCartSimpleProduct %}
+{% block rbsCatalogAddSimpleProductToCart %}
 	<script type="text/ng-template" id="/rbsCatalogAddSimpleProductToCart.tpl">
 		<div data-ng-show="productData.stock.sku">
 			<div class="row no-bottom-margin">
@@ -53,9 +53,13 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<button type="button" class="btn btn-primary btn-lg btn-block" data-ng-click="addLine()">
-					<span class="glyphicon glyphicon-shopping-cart"></span>
-					{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+				<button type="button" class="btn btn-primary btn-lg btn-block" data-ng-click="addLine()"
+					data-ng-disabled="!productData.cart.key">
+					<span data-ng-show="productData.cart.key">
+						{{ block('rbsCommerceIconCart') }}
+						{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+					</span>
+					<span data-ng-hide="productData.cart.key">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
 				</button>
 			</div>
 		</div>
@@ -65,9 +69,9 @@
 			</button>
 		</div>
 	</script>
-{% endblock rbsCatalogAddToCartSimpleProduct %}
+{% endblock rbsCatalogAddSimpleProductToCart %}
 
-{% block rbsCatalogAddToCartVariantProduct %}
+{% block rbsCatalogAddVariantProductToCart %}
 	<script type="text/ng-template" id="/rbsCatalogAddVariantProductToCart.tpl">
 		<div data-ng-show="productData.stock.sku">
 			<div class="row no-bottom-margin">
@@ -89,7 +93,7 @@
 				<button type="button" class="btn btn-primary btn-lg btn-block" data-ng-click="addLine()"
 					data-ng-disabled="!productData.cart.key">
 					<span data-ng-show="productData.cart.key">
-						<span class="glyphicon glyphicon-shopping-cart"></span>
+						{{ block('rbsCommerceIconCart') }}
 						{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
 					</span>
 					<span data-ng-hide="productData.cart.key">{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}</span>
@@ -97,45 +101,76 @@
 			</div>
 		</div>
 	</script>
-{% endblock rbsCatalogAddToCartVariantProduct %}
+{% endblock rbsCatalogAddVariantProductToCart %}
 
-{% block rbsCatalogAddToCartSetItemProduct %}
+{% block rbsCatalogAddSetItemProductToCart %}
 	<script type="text/ng-template" id="/rbsCatalogAddSetItemProductToCart.tpl">
-		<div data-ng-show="productData.stock.sku">
-			<button type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()">
-				<span class="glyphicon glyphicon-shopping-cart"></span>
-				{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+		<div class="row form-horizontal">
+			<div class="col-sm-5">
+				<div class="form-group" data-ng-show="productData.cart.key">
+					<label for="product-quantity-{{ blockId }}-(= productData.common.id =)"
+						class="col-sm-6 control-label">
+						{{ i18n('m.rbs.commerce.front.quantity', ['ucf']) }}
+					</label>
+					<div class="col-sm-6">
+						<input id="product-quantity-{{ blockId }}-(= productData.common.id =)"
+							class="form-control" type="number" data-ng-model="productData.cart.quantity"
+							max="(= productData.cart.maxQuantity =)" min="0" step="(= productData.cart.quantityIncrement =)" />
+					</div>
+				</div>
+				<div data-ng-show="productData.stock.sku" data-rbs-catalog-product-availability=""></div>
+			</div>
+			<div class="col-sm-7">
+				<div class="form-group">
+					<div class="col-sm-12">
+						<button type="button" class="btn btn-primary btn-block" data-ng-click="addLine()"
+							data-ng-disabled="!productData.cart.key || !productData.cart.quantity">
+							<span data-ng-show="productData.cart.key">
+								{{ block('rbsCommerceIconCart') }}
+								{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+							</span>
+							<span data-ng-hide="productData.cart.key">
+								{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
+							</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>
+{% endblock rbsCatalogAddSetItemProductToCart %}
+
+{% block rbsCatalogAddSetProductToCart %}
+	<script type="text/ng-template" id="/rbsCatalogAddSetProductToCart.tpl">
+		<div data-ng-show="addToCartData.hasItemsToAdd">
+			<div data-rbs-catalog-product-price=""
+				data-display-without-tax="(= parameters.displayPricesWithoutTax =)"
+				data-display-with-tax="(= parameters.displayPricesWithTax =)">
+			</div>
+		</div>
+		<p data-ng-hide="addToCartData.hasItemsToAdd" class="text-warning">
+			{{ i18n('m.rbs.catalog.front.no_selected_item', ['ucf']) }}
+		</p>
+
+		<div class="form-group">
+			<button type="button" class="btn btn-primary btn-lg btn-block" data-ng-click="addSetItems()"
+				data-ng-disabled="!addToCartData.hasItemsToAdd">
+				{{ block('rbsCommerceIconCart') }}
+				{{ i18n('m.rbs.commerce.front.add_selected_to_cart', ['ucf']) }}
 			</button>
 		</div>
-		<button data-ng-hide="productData.stock.sku" type="button" class="btn btn-primary btn-sm" disabled="disabled">
-			{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-		</button>
 	</script>
-{% endblock rbsCatalogAddToCartSetItemProduct %}
-
-{% block rbsCatalogProductPictograms %}
-	<script type="text/ng-template" id="/rbsCatalogProductPictograms.tpl">
-		<div data-ng-show="pictograms"  class="pictograms-container">
-			{% spaceless %}
-				<ul class="list-inline">
-					<li data-ng-repeat="pictogramData in pictograms track by $index">
-						<img alt="(= pictogramData.alt =)" data-ng-src="(= pictogramData[pictogramFormat] =)" />
-					</li>
-				</ul>
-			{% endspaceless %}
-		</div>
-	</script>
-{% endblock rbsCatalogProductPictograms %}
+{% endblock rbsCatalogAddSetProductToCart %}
 
 {% block rbsCatalogAttributeValue %}
 	<script type="text/ng-template" id="/rbsCatalogAttributeValue.tpl">
 		<span data-ng-if="isArrayValue()">
 			<span data-ng-repeat="item in attribute.value track by $index">
-				<img data-ng-if="isImageValue(item)" data-ng-src="(= item.attribute =)" alt="(= item.alt =)" />
+				<img data-ng-if="isImageValue(item)" src="" data-ng-src="(= item.attribute =)" alt="(= item.alt =)" />
 				<a data-ng-if="isLinkValue(item)" data-ng-href="(= item.URL.canonical =)" data-ng-bind="item.title"></a>
 			</span>
 		</span>
-		<img data-ng-if="isImage()" data-ng-src="(= attribute.value.attribute =)" alt="(= attribute.value.alt =)" />
+		<img data-ng-if="isImage()" src="" data-ng-src="(= attribute.value.attribute =)" alt="(= attribute.value.alt =)" />
 		<a data-ng-if="isLink()" data-ng-href="(= attribute.value.URL.canonical =)" data-ng-bind="attribute.value.title"></a>
 		<div data-ng-if="isHtml()" data-ng-bind-html="trustHtml(attribute.value)"></div>
 		<span data-ng-if="isDate()" data-ng-bind="attribute.value | rbsDate"></span>
@@ -149,20 +184,20 @@
 		<script type="text/ng-template" id="/rbsCatalogProductSpecificationsTable.tpl">
 			<table class="table table-striped table-bordered">
 				<tbody>
-				<tr data-ng-repeat="rowAttr in tableRows track by $index">
-					<th colspan="2" data-ng-if="rowAttr.isSectionTitle">
-						<span data-ng-show="rowAttr.section" data-ng-bind="rowAttr.section"></span>
-						<span data-ng-hide="rowAttr.section">{{ i18n('m.rbs.catalog.front.main_attributes', ['ucf']) }}</span>
-					</th>
-					<td data-ng-if="!rowAttr.isSectionTitle" class="col-xs-6 col-sm-5 col-md-4 col-lg-3">
-						<span data-ng-bind="rowAttr.title"></span>
-						<div class="small" data-ng-if="rowAttr.description" data-ng-bind-html="trustHtml(rowAttr.description)">
-						</div>
-					</td>
-					<td data-ng-if="!rowAttr.isSectionTitle" class="col-xs-6 col-sm-7 col-md-8 col-lg-9"
+					<tr data-ng-repeat="rowAttr in tableRows track by $index">
+						<th colspan="2" data-ng-if="rowAttr.isSectionTitle">
+							<span data-ng-show="rowAttr.section" data-ng-bind="rowAttr.section"></span>
+							<span data-ng-hide="rowAttr.section">{{ i18n('m.rbs.catalog.front.main_attributes', ['ucf']) }}</span>
+						</th>
+						<td data-ng-if="!rowAttr.isSectionTitle" class="col-xs-6 col-sm-5 col-md-4 col-lg-3">
+							<span data-ng-bind="rowAttr.title"></span>
+							<div class="small" data-ng-if="rowAttr.description" data-ng-bind-html="trustHtml(rowAttr.description)">
+							</div>
+						</td>
+						<td data-ng-if="!rowAttr.isSectionTitle" class="col-xs-6 col-sm-7 col-md-8 col-lg-9"
 							data-rbs-catalog-attribute-value="" data-attribute="rowAttr">
-					</td>
-				</tr>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</script>
@@ -171,7 +206,7 @@
 	{% block rbsCatalogProductSpecificationsAccordion %}
 		<script type="text/ng-template" id="/rbsCatalogProductSpecificationsAccordion.tpl">
 			<div class="panel-group" id="block-(= blockId =)-attribute-group-accordion">
-				<div class="panel" data-ng-repeat="section in sections track by $index">
+				<div class="panel panel-default" data-ng-repeat="section in sections track by $index">
 					<div class="panel-heading">
 						<a class="accordion-toggle" data-toggle="collapse"
 							data-parent="#block-(= blockId =)-attribute-group-accordion"
@@ -222,7 +257,7 @@
 			</ul>
 			<div class="tab-content">
 				<div data-ng-repeat="section in sections track by $index" id="block-(= blockId =)-attribute-group-tab-(= $index =)"
-						class="tab-pane fade" data-ng-class="{active: $first, in: $first}">
+					class="tab-pane fade" data-ng-class="{active: $first, in: $first}">
 					<dl class="dl-horizontal" data-ng-repeat="attribute in sectionsAttributes[section] track by $index">
 						<dt>
 							<span data-ng-bind="attribute.title"></span>
@@ -295,16 +330,18 @@
 					(= axis.title =)
 				</label>
 				<div class="col-sm-8 col-md-9">
-					<select id="selectedVariant_{{ blockId }}_(= $index =)" data-ng-show="axesItems[$index].length != 1"
-						data-ng-cloak="" class="form-control" data-ng-model="selectedAxesValues[$index]"
-						data-ng-options="axisItem.value as axisItem.title for axisItem in axesItems[$index]"
-						data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
-						data-ng-change="variantChanged($index)" data-ng-disabled="$index > 0 && !selectedAxesValues[$index - 1]">
-						<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf']) }}</option>
-					</select>
-					<div data-ng-show="axesItems[$index].length == 1" data-ng-cloak="" class="form-control-static">
-						(= axesItems[$index][0].title =)
-					</div>
+					{% block rbsCatalogProductVariantSelectorInput %}
+						<select id="selectedVariant_{{ blockId }}_(= $index =)" data-ng-show="axesItems[$index].length != 1"
+							data-ng-cloak="" class="form-control" data-ng-model="selectedAxesValues[$index]"
+							data-ng-options="axisItem.value as axisItem.title for axisItem in axesItems[$index]"
+							data-rbs-catalog-axis-option-class="{'text-muted': lastAxis && !hasStock && !allowBackorders}"
+							data-ng-change="variantChanged($index)" data-ng-disabled="$index > 0 && !selectedAxesValues[$index - 1]">
+							<option value="">{{ i18n('m.rbs.generic.front.select', ['ucf']) }}</option>
+						</select>
+						<div data-ng-show="axesItems[$index].length == 1" data-ng-cloak="" class="form-control-static">
+							(= axesItems[$index][0].title =)
+						</div>
+					{% endblock rbsCatalogProductVariantSelectorInput %}
 				</div>
 			</div>
 		</div>
@@ -340,7 +377,8 @@
 						data-ng-class="{active: !specificInformation.length && !specifications.length}">
 						<a role="tab" data-ng-href="#(= baseId =)-reviews" data-toggle="tab">
 							{% block rbsCatalogProductInformationTabsPanelReviewsTitle %}
-								{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }} ((= productData.reviews.count =))
+								{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }}
+								<span data-ng-show="productData.reviews.count">((= productData.reviews.count =))</span>
 							{% endblock rbsCatalogProductInformationTabsPanelReviewsTitle %}
 						</a>
 					</li>
@@ -394,7 +432,7 @@
 	{% block rbsCatalogProductInformationAccordion %}
 		<script type="text/ng-template" id="/rbsCatalogProductInformationAccordion.tpl">
 			<div class="panel-group" id="(= baseId =)">
-				<div class="panel" data-ng-repeat="information in specificInformation track by $index">
+				<div class="panel panel-default" data-ng-repeat="information in specificInformation track by $index">
 					<div class="panel-heading">
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#(= baseId =)"
 							data-ng-href="#(= baseId =)-(= $index =)">
@@ -412,7 +450,7 @@
 					</div>
 				</div>
 
-				<div class="panel" data-ng-if="specifications.length">
+				<div class="panel panel-default" data-ng-if="specifications.length">
 					<div class="panel-heading">
 						<a class="accordion-toggle" data-toggle="collapse"
 							data-parent="#(= baseId =)" data-ng-href="#(= baseId =)-specifications">
@@ -430,12 +468,13 @@
 					</div>
 				</div>
 
-				<div class="panel" data-ng-if="handleReviews">
+				<div class="panel panel-default" data-ng-if="handleReviews">
 					<div class="panel-heading">
 						<a class="accordion-toggle" data-toggle="collapse"
 							data-parent="#(= baseId =)" data-ng-href="#(= baseId =)-reviews">
 							{% block rbsCatalogProductInformationAccordionPanelReviewsTitle %}
-								{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }} ((= productData.reviews.count =))
+								{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }}
+								<span data-ng-show="productData.reviews.count">((= productData.reviews.count =))</span>
 							{% endblock rbsCatalogProductInformationAccordionPanelReviewsTitle %}
 						</a>
 					</div>
@@ -452,7 +491,7 @@
 				</div>
 
 				{% for information in commonInformation %}
-					<div class="panel">
+					<div class="panel panel-default">
 						<div class="panel-heading">
 							<a class="accordion-toggle" data-toggle="collapse"
 								data-parent="#(= baseId =)" data-ng-href="#(= baseId =)-common-{{ loop.index }}">
@@ -494,7 +533,8 @@
 			<div data-ng-if="handleReviews">
 				{% block rbsCatalogProductInformationFlatPanelReviews %}
 					<h2 id="(= baseId =)-reviews">
-						{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }} ((= productData.reviews.count =))
+						{{ i18n('m.rbs.catalog.front.customer_reviews', ['ucf']) }}
+						<span data-ng-show="productData.reviews.count">((= productData.reviews.count =))</span>
 					</h2>
 					<div data-rbs-review-reviews-details="" data-target-id="productData.common.id"
 						data-ajax-data="reviewsAjaxData" data-ajax-params="reviewsAjaxParams"
@@ -514,3 +554,91 @@
 		</script>
 	{% endblock rbsCatalogProductInformationFlat %}
 {% endblock rbsCatalogProductInformation %}
+
+{% block rbsCatalogProductSetItem %}
+	{% block rbsCatalogProductSetItemVisual %}
+		<script type="text/ng-template" id="/rbsCatalogProductSetItemVisual.tpl">
+			<div class="text-center">
+				<img data-ng-if="visuals.length" src="" data-ng-src="(= visuals[0].detail =)" alt="(= visuals[0].alt =)"
+					class="img-responsive" />
+				<div data-ng-if="!visuals.length" class="text-muted">
+					<span class="glyphicon glyphicon-camera" aria-hidden="true" style="font-size: 75px"></span>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsCatalogProductSetItemVisual %}
+
+	{% block rbsCatalogProductSetItemHeader %}
+		<script type="text/ng-template" id="/rbsCatalogProductSetItemHeader.tpl">
+			<h2>
+				<a data-ng-if="url" href="javascript:" data-ng-href="(= url =)">(= rootProductData.common.title =)</a>
+				<span data-ng-if="!url">(= rootProductData.common.title =)</span>
+			</h2>
+			{% spaceless %}
+				<dl class="list-inline list-divided">
+					<dt data-ng-if="productData.common.reference" class="sr-only">
+						{{ i18n('m.rbs.catalog.front.reference', ['ucf']) }}
+					</dt>
+					<dd data-ng-if="productData.common.reference">(= productData.common.reference =)</dd>
+					<dt data-ng-if="brand" class="sr-only">{{ i18n('m.rbs.catalog.front.brand', ['ucf']) }}</dt>
+					<dd data-ng-if="brand">
+						<a data-ng-if="brand.URL.canonical && brand.URL.publishedInWebsite" href="javascript:"
+							data-ng-href="(= brand.URL.canonical =)">
+							(= brand.title =)
+						</a>
+						<span data-ng-if="!brand.URL.canonical || !brand.URL.publishedInWebsite">(= brand.title =)</span>
+					</dd>
+				</dl>
+			{% endspaceless %}
+			<div data-rbs-catalog-product-price=""
+				data-display-without-tax="(= parameters.displayPricesWithoutTax =)"
+				data-display-with-tax="(= parameters.displayPricesWithTax =)">
+			</div>
+		</script>
+	{% endblock rbsCatalogProductSetItemHeader %}
+
+	{% block rbsCatalogProductSetItemSimple %}
+		<script type="text/ng-template" id="/rbsCatalogProductSetItemSimple.tpl">
+			<div class="row">
+				<div class="col-sm-5">
+					<div data-rbs-catalog-product-set-item-visual=""></div>
+				</div>
+				<div class="col-sm-7">
+					<div data-rbs-catalog-product-set-item-header=""></div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div data-rbs-catalog-add-set-item-product-to-cart="" data-product-data="productData"
+						data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsCatalogProductSetItemSimple %}
+
+	{% block rbsCatalogProductSetItemVariant %}
+		<script type="text/ng-template" id="/rbsCatalogProductSetItemVariant.tpl">
+			<div class="row">
+				<div class="col-sm-5">
+					<div data-rbs-catalog-product-set-item-visual=""></div>
+				</div>
+				<div class="col-sm-7">
+					<div data-rbs-catalog-product-set-item-header=""></div>
+
+					<div data-rbs-catalog-variant-selector="" data-product-data="productData" data-ajax-data="productAjaxData"
+						data-ajax-params="productAjaxParams">
+					</div>
+					<div data-ng-hide="productData.stock.sku" data-ng-cloak="" class="alert warning">
+						{{ i18n('m.rbs.catalog.front.please_configure_axes', ['ucf']) }}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div data-rbs-catalog-add-set-item-product-to-cart="" data-product-data="productData"
+						data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsCatalogProductSetItemVariant %}
+{% endblock rbsCatalogProductSetItem %}

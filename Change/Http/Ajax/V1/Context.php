@@ -554,7 +554,8 @@ class Context
 		{
 			$context['detailed'] = 1;
 		}
-		if (count($this->dataSetNames)){
+		if (count($this->dataSetNames))
+		{
 			$context['dataSets'] = implode(',', array_keys($this->dataSetNames));
 		}
 		if (count($this->URLFormats))
@@ -592,5 +593,4 @@ class Context
 		}
 		return $context;
 	}
-
 }

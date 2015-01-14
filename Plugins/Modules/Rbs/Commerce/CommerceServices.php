@@ -182,6 +182,14 @@ class CommerceServices extends Di
 			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+		//BrandManager: Application, DocumentManager
+		$brandManagerClassName = $this->getInjectedClassName('BrandManager', '\Rbs\Brand\BrandManager');
+		$classDefinition = $this->getClassDefinition($brandManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
+		$classDefinition->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
 		parent::__construct($definitionList);
 
 		$im = $this->instanceManager();
@@ -231,6 +239,9 @@ class CommerceServices extends Di
 			array('application' => $application, 'documentManager' => $documentManager));
 
 		$im->addAlias('ReturnManager', $returnManagerClassName,
+			array('application' => $application, 'documentManager' => $documentManager));
+
+		$im->addAlias('BrandManager', $brandManagerClassName,
 			array('application' => $application, 'documentManager' => $documentManager));
 	}
 
@@ -345,5 +356,13 @@ class CommerceServices extends Di
 	public function getReturnManager()
 	{
 		return $this->get('ReturnManager');
+	}
+
+	/**
+	 * @return \Rbs\Brand\BrandManager
+	 */
+	public function getBrandManager()
+	{
+		return $this->get('BrandManager');
 	}
 }

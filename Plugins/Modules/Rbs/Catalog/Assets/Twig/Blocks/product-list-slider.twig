@@ -1,46 +1,36 @@
-{% if rows %}
+{% if productsData %}
 	{% block rbsCatalogProductListUse %}
+		{% use 'Rbs_Generic/icon-templates.twig' %}
+		{% use 'Rbs_Commerce/icon-templates.twig' %}
+
 		{% use 'Rbs_Catalog/product-directives.twig' %}
 		{{ block('rbsCatalogAddToCartPopin') }}
-		{{ block('rbsCatalogAddToCartListItem') }}
-		{{ block('rbsCatalogProductPictograms') }}
+		{{ block('rbsCatalogAddListItemProductToCart') }}
+		{{ block('rbsCatalogProductPrice') }}
+
+		{% use 'Rbs_Catalog/product-list-directives.twig' %}
+		{{ block('rbsCatalogProductsListSlider') }}
+		{{ block('rbsCatalogProductsItem') }}
+
+		{% use 'Rbs_Media/media-directives.twig' %}
+		{{ block('rbsMediaPictograms') }}
 	{% endblock rbsCatalogProductListUse %}
 
+	{% block rbsCatalogProductListDataCache %}
+		<script type="application/javascript">
+			window.__change['{{ blockId }}'] = {context : {{ context | json_encode | raw }}, productsData : {{ productsData | json_encode | raw }} };
+		</script>
+	{% endblock rbsCatalogProductListDataCache %}
+
 	{% block rbsCatalogProductListHeader %}
-	<h1 id="product-list-title">{{ parameters.title }}</h1>
+		{% if parameters.title %}
+			<h1 id="product-list-title">{{ parameters.title }}</h1>
+		{% endif %}
 	{% endblock rbsCatalogProductListHeader %}
 
 	{% block rbsCatalogProductList %}
-	<div id="myCarousel{{ blockId }}" class="carousel slide" data-ride="carousel">
-		<div class="carousel-inner">
-			{% for i in range(0,slideCount-1) %}
-				{% set slideNumber = loop.index0 %}
-				<div class="item{% if loop.first %} active{% endif %}">
-					{% spaceless %}
-						<ul class="grid-list grid-list-{{ itemsPerSlide }} grid-list-bordered product-list">
-							{% for row in rows|slice(slideNumber * itemsPerSlide, itemsPerSlide) %}
-								<li>
-									<div class="grid-list-cell">
-										{% block rbsCatalogProductItem %}
-											{% include 'Rbs_Catalog/product-list-item.twig' with {'productData': row} %}
-										{% endblock rbsCatalogProductItem %}
-									</div>
-								</li>
-							{% endfor %}
-						</ul>
-					{% endspaceless %}
-				</div>
-			{% endfor %}
-		</div>
-		{% block rbsCatalogProductListControls %}
-		<!-- Controls -->
-		<a class="left carousel-control" href="#myCarousel{{ blockId }}" data-slide="prev">
-			<span class="icon-prev"></span>
-		</a>
-		<a class="right carousel-control" href="#myCarousel{{ blockId }}" data-slide="next">
-			<span class="icon-next"></span>
-		</a>
-		{% endblock rbsCatalogProductListControls %}
-	</div>
+		<div data-rbs-catalog-products-list-slider="" data-cache-key="{{ blockId }}" data-product-count="{{ productsData|length }}"
+			data-view-detail-title-mask="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: 'PRODUCT_TITLE'}) }}"
+			data-items-per-slide="{{ parameters.itemsPerSlide }}" data-interval="{{ parameters.interval }}"></div>
 	{% endblock rbsCatalogProductList %}
 {% endif %}

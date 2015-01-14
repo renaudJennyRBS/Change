@@ -1,21 +1,22 @@
 {% block rbsCommerceCartUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+	{% use 'Rbs_Commerce/icon-templates.twig' %}
 	{% use 'Rbs_Commerce/cart-directives.twig' %}
 {% endblock rbsCommerceCartUse %}
 
 {% if cartData %}
 	{% block rbsCommerceCartDataCache %}
-	<script type="text/javascript">
-		window.__change['cartData'] = {{ cartData | json_encode | raw}};
-	</script>
+		<script type="text/javascript">
+			window.__change['cartData'] = {{ cartData | json_encode | raw}};
+		</script>
 	{% endblock rbsCommerceCartDataCache %}
 
-	{{ block('cartStructure') }}
-	{{ block('cartLine') }}
+	{{ block('rbsCommerceCartStructure') }}
+	{{ block('rbsCommerceCartLine') }}
 
 	{% block cart %}
-		<div data-rbs-commerce-cart="" data-cache-key="{{ blockId }}">
-		</div>
+		<div data-rbs-commerce-cart="" data-cache-key="{{ blockId }}"></div>
 	{% endblock cart %}
 {% else %}
-	{{ block('emptyCart') }}
+	{{ block('rbsCommerceEmptyCart') }}
 {% endif %}

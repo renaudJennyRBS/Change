@@ -1,9 +1,13 @@
+{% block rbsMediaFileUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+{% endblock rbsMediaFileUse %}
+
 {% if parameters.blockTitle %}<h1>{{ parameters.blockTitle }}</h1>{% endif %}
 
 <ul class="list-unstyled">
 	{% for file in files %}
 		<li>
-			<span class="glyphicon glyphicon-save"></span>
+			{{ block('rbsGenericIconDownload') }}
 			<a href="{{ ajaxURL('Rbs_Media', 'Download', {'documentId': file.document.id}) }}">
 				{{ file.document.currentLocalization.title }}
 			</a>

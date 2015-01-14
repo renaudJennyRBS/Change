@@ -32,6 +32,7 @@ class AccountShort extends \Change\Presentation\Blocks\Standard\Block
 		$parameters->addParameterMeta('websiteId');
 		$parameters->addParameterMeta('realm', 'web');
 		$parameters->addParameterMeta('userAccountPage', null);
+		$parameters->addParameterMeta('dropdownPosition', 'right');
 
 		$parameters->setLayoutParameters($event->getBlockLayout());
 		$currentUser = $event->getAuthenticationManager()->getCurrentUser();

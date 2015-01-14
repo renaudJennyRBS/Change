@@ -1,3 +1,7 @@
+{% block addWishlistPopinUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+{% endblock addWishlistPopinUse %}
+
 <h1>{{ i18n('m.rbs.wishlist.front.wishlist_my_wishlists', ['ucf']) }}</h1>
 
 {% if wishlists | length > 0 %}
@@ -19,34 +23,34 @@
 							{% if isUserWishlists %}
 								{% if wishlist.default %}
 									<div>
-										<span class="glyphicon glyphicon-heart"></span>
+										{{ block('rbsGenericIconFavorite') }}
 										{{ i18nAttr('m.rbs.wishlist.front.wishlist_default', ['ucf']) }}
 									</div>
 								{% else %}
 									<div>
-										<span class="glyphicon glyphicon-heart-empty"></span>
-										<a href="javascript:;" data-ng-click="setDefaultWishlist({{ wishlist.id }})">
+										{{ block('rbsGenericIconNotFavorite') }}
+										<a href="javascript:" data-ng-click="setDefaultWishlist({{ wishlist.id }})">
 											{{ i18nAttr('m.rbs.wishlist.front.wishlist_make_default', ['ucf']) }}
 										</a>
 									</div>
 								{% endif %}
 								{% if wishlist.public %}
 									<div>
-										<span class="glyphicon glyphicon-eye-open"></span>
+										{{ block('rbsGenericIconVisible') }}
 										{{ i18n('m.rbs.wishlist.front.wishlist_public', ['ucf']) }}
 									</div>
 									<div class="small">
-										<a href="javascript:;" data-ng-click="changeIsPublic({{ wishlist.id }},false)">
+										<a href="javascript:" data-ng-click="changeIsPublic({{ wishlist.id }},false)">
 											{{ i18n('m.rbs.wishlist.front.wishlist_make_private', ['ucf']) }}
 										</a>
 									</div>
 								{% else %}
 									<div>
-										<span class="glyphicon glyphicon-eye-close"></span>
+										{{ block('rbsGenericIconHidden') }}
 										{{ i18n('m.rbs.wishlist.front.wishlist_private', ['ucf']) }}
 									</div>
 									<div class="small">
-										<a href="javascript:;" data-ng-click="changeIsPublic({{ wishlist.id }}, true">
+										<a href="javascript:" data-ng-click="changeIsPublic({{ wishlist.id }}, true">
 											{{ i18n('m.rbs.wishlist.front.wishlist_make_public', ['ucf']) }}
 										</a>
 									</div>
@@ -55,8 +59,8 @@
 						</ul>
 					</div>
 				</div>
-				{% if loop.index % 3 == 0 %}<div class="clearfix visible-lg-block standard-margin"></div>{% endif %}
-				{% if loop.index % 2 == 0 %}<div class="clearfix visible-sm-block visible-md-block standard-margin"></div>{% endif %}
+				{% if loop.index % 3 == 0 %}<div class="clearfix visible-lg-block one-line-bottom-margin"></div>{% endif %}
+				{% if loop.index % 2 == 0 %}<div class="clearfix visible-sm-block visible-md-block one-line-bottom-margin"></div>{% endif %}
 			{% endfor %}
 		</div>
 	</div>

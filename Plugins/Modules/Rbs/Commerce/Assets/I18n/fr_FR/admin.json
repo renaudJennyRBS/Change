@@ -120,31 +120,46 @@
 		"message":"pour une boutique"
 	},
 	"initialize_for_web_store_description":{
-		"message":"Vous spécifiez un site et une boutique et l'action générera une structure par défaut pour la boutique dans le site donné. Cette structure comprend une section \"Boutique\", une section \"Compte client\", les pages nécessaires à l'affichage des produits, des avis et des wishlists."
+		"message":"Vous spécifiez un site et une boutique et l'action générera une structure par défaut pour la boutique dans le site donné. Cette structure comprend une section \"Boutique\", une section \"Compte client\", les pages nécessaires à l'affichage des produits, des marques, des avis et des listes d'envies."
 	},
 	"already_initialized_web_store":{
-		"message":"une structure a déjà été initialisée pour ce website et cette boutique"
+		"message":"une structure a déjà été initialisée pour ce site et cette boutique"
 	},
 	"initialize_web_store_error":{
 		"message":"erreur lors de l'initialisation de la boutique"
+	},
+	"initialize_web_store_success":{
+		"message":"l'initialisation de la structure de la boutique s'est déroulée avec succès"
 	},
 	"initialize_for_order_process":{
 		"message":"pour un processus de commande"
 	},
 	"initialize_for_order_process_description":{
-		"message":"Vous spécifier un site et une boutique et l'action générera une structure par défaut pour le processus de commande dans le site donné. Cette structure comprend toutes les pages pour que le processus de commande soit prêt à être utilisé. Le mode de paiement par défaut est le chèque."
+		"message":"Vous spécifier un site et une boutique et l'action générera une structure par défaut pour le processus de commande dans le site donné. Cette structure comprend toutes les pages pour que le processus de commande soit prêt à être utilisé."
 	},
 	"initialize_order_process_error":{
 		"message":"erreur lors de l'intitialisation du processus de commande"
 	},
 	"already_initialized_order_process":{
-		"message":"une structure a déjà été initialisée pour ce website et cette boutique"
-	},
-	"initialize_web_store_success":{
-		"message":"l'initialisation de la structure de la boutique s'est déroulée avec succès"
+		"message":"une structure a déjà été initialisée pour ce site et cette boutique"
 	},
 	"initialize_order_process_success":{
 		"message":"l'initialisation de la structure du processus de commande s'est déroulée avec succès"
+	},
+	"initialize_for_return_process":{
+		"message":"pour un processus de retour"
+	},
+	"initialize_for_return_process_description":{
+		"message":"Vous spécifier un site et une boutique et l'action générera une structure par défaut pour le processus de retour dans le site donné. Cette structure comprend toutes les pages pour que le processus de retour soit prêt à être utilisé."
+	},
+	"initialize_return_process_error":{
+		"message":"erreur lors de l'intitialisation du processus de retour"
+	},
+	"already_initialized_return_process":{
+		"message":"une structure a déjà été initialisée pour ce site et cette boutique"
+	},
+	"initialize_return_process_success":{
+		"message":"l'initialisation de la structure du processus de retour s'est déroulée avec succès"
 	},
 	"has_credit_note_filter":{
 	"message":"utilise des avoirs"

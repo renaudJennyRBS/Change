@@ -216,7 +216,8 @@ class Import
 	 */
 	public function getValueConverter()
 	{
-		if ($this->valueConverter === null) {
+		if ($this->valueConverter === null)
+		{
 			$this->valueConverter = new \Rbs\Generic\Json\JsonConverter();
 		}
 		return $this->valueConverter;
@@ -230,7 +231,8 @@ class Import
 	{
 		$this->imported = [];
 		$this->codes = [];
-		if (isset($json['contextId'])) {
+		if (isset($json['contextId']))
+		{
 			$this->setContextId($json['contextId']);
 		}
 		if (isset($json['documents']) && is_array($json['documents']))
@@ -245,6 +247,15 @@ class Import
 			}
 		}
 		return $this->imported;
+	}
+
+	/**
+	 * @param string $id
+	 * @return AbstractDocument|null
+	 */
+	public function getImportedDocumentById($id)
+	{
+		return $this->resolveDocument(['_id' => $id]);
 	}
 
 	/**
@@ -268,7 +279,7 @@ class Import
 			$callback = $this->getOptions()->get('resolveDocument');
 			if (is_callable($callback))
 			{
-				return call_user_func($callback, $id, $this->getContextId());
+				return call_user_func($callback, $id, $this->getContextId(), $jsonDocument);
 			}
 		}
 		elseif ($this->getContextId() !== null)
@@ -321,7 +332,7 @@ class Import
 	 * @param AbstractDocument $document
 	 * @param array $jsonDocument
 	 */
-	protected function import(AbstractDocument $document, array $jsonDocument)
+	public function import(AbstractDocument $document, array $jsonDocument)
 	{
 		if (!isset($jsonDocument['_model']))
 		{
@@ -331,7 +342,10 @@ class Import
 		{
 			return;
 		}
+		$document->useCorrection(false);
 		$model = $document->getDocumentModel();
+		$documentManager = $this->getDocumentManager();
+
 		foreach ($model->getProperties() as $property)
 		{
 			$propertyName = $property->getName();
@@ -347,7 +361,7 @@ class Import
 					$subDoc = $property->getValue($document);
 					if (!$subDoc)
 					{
-						$subDoc = $this->getDocumentManager()->getNewInlineInstanceByModelName($value['_model']);
+						$subDoc = $documentManager->getNewInlineInstanceByModelName($value['_model']);
 					}
 					if ($subDoc)
 					{
@@ -355,7 +369,6 @@ class Import
 					}
 					$property->setValue($document, $subDoc);
 				}
-
 			}
 			elseif ($property->getType() === \Change\Documents\Property::TYPE_INLINEARRAY)
 			{
@@ -377,7 +390,7 @@ class Import
 							}
 							if (!$subDoc)
 							{
-								$subDoc = $this->getDocumentManager()->getNewInlineInstanceByModelName($jsonSubDocument['_model']);
+								$subDoc = $documentManager->getNewInlineInstanceByModelName($jsonSubDocument['_model']);
 							}
 
 							if ($subDoc)
@@ -414,7 +427,7 @@ class Import
 						if (is_array($jsonSubDocument))
 						{
 							$subDoc = $this->resolveDocument($jsonSubDocument);
-							if ($subDoc)
+							if ($subDoc instanceof \Change\Documents\AbstractDocument)
 							{
 								$this->import($subDoc, $jsonSubDocument);
 								$docs[] = $subDoc;
@@ -428,7 +441,9 @@ class Import
 			{
 				$property->setValue($document, $this->recursivelyReplaceIds($value));
 			}
-			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value)
+				&& isset($value['_i18n'])
+			)
 			{
 				if ($this->getI18nManager())
 				{
@@ -460,7 +475,7 @@ class Import
 				{
 					try
 					{
-						$this->getDocumentManager()->pushLCID($LCID);
+						$documentManager->pushLCID($LCID);
 						if ($document->getRefLCID() === null)
 						{
 							$document->setRefLCID($LCID);
@@ -469,11 +484,12 @@ class Import
 						$this->importLCID($model, $document->getCurrentLocalization(), $jsonLCID);
 						$document->save();
 						$this->setContextCode($document, $jsonDocument['_id']);
-						$this->getDocumentManager()->popLCID();
+
+						$documentManager->popLCID();
 					}
 					catch (\Exception $e)
 					{
-						$this->getDocumentManager()->popLCID($e);
+						$documentManager->popLCID($e);
 					}
 				}
 			}
@@ -506,20 +522,17 @@ class Import
 					}
 					else
 					{
-						throw new \RuntimeException('Invalid document: ' . var_export($value));
+						throw new \RuntimeException('Invalid document: ' . var_export($value, true));
 					}
 				}
 				elseif (isset($value['_i18n']))
 				{
-					$value = ($this->getI18nManager()) ? $this->getI18nManager()->trans($value['_i18n']) : $value['_i18n'];
+					return ($this->getI18nManager()) ? $this->getI18nManager()->trans($value['_i18n']) : $value['_i18n'];
 				}
 			}
-			else
+			foreach ($value as $key => $subValue)
 			{
-				foreach ($value as $key => $subValue)
-				{
-					$value[$key] = $this->recursivelyReplaceIds($subValue);
-				}
+				$value[$key] = $this->recursivelyReplaceIds($subValue);
 			}
 		}
 		return $value;
@@ -544,7 +557,9 @@ class Import
 			{
 				$value = $this->recursivelyReplaceIds($value);
 			}
-			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value)
+				&& isset($value['_i18n'])
+			)
 			{
 				$value = ($this->getI18nManager()) ? $this->getI18nManager()->trans($value['_i18n']) : $value['_i18n'];
 			}
@@ -609,7 +624,9 @@ class Import
 				}
 				$property->setValue($document, $docs);
 			}
-			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value) && isset($value['_i18n']))
+			elseif ($property->getType() === \Change\Documents\Property::TYPE_STRING && is_array($value)
+				&& isset($value['_i18n'])
+			)
 			{
 				if ($this->getI18nManager())
 				{
@@ -699,11 +716,14 @@ class Import
 		if ($subDocs instanceof \Change\Documents\InlineArrayProperty && is_array($jsonSubDocument))
 		{
 			if (isset($jsonSubDocument['_model']) && $jsonSubDocument['_model'] === 'Rbs_Collection_CollectionItem'
-				&& isset($jsonSubDocument['value']))
+				&& isset($jsonSubDocument['value'])
+			)
 			{
 				foreach ($subDocs as $subDoc)
 				{
-					if ($subDoc instanceof \Rbs\Collection\Documents\CollectionItem && $subDoc->getValue() === $jsonSubDocument['value'])
+					if ($subDoc instanceof \Rbs\Collection\Documents\CollectionItem
+						&& $subDoc->getValue() === $jsonSubDocument['value']
+					)
 					{
 						return $subDoc;
 					}

@@ -2,48 +2,49 @@
 	"templates" : {
 		"*": {
 			"cssAssets": [
-				"Theme/Rbs/Base/css/bootstrap.min.css",
-				"Theme/Rbs/Base/css/bootstrap-complements.css"
+				"Theme/Rbs/Base/lib/bootstrap/css/bootstrap.min.css",
+				"Theme/Rbs/Base/lib/bootstrap/css/bootstrap-theme.min.css"
 			],
 			"jsAssets": [
-				"Theme/Rbs/Base/js/jquery-2.1.1.min.js",
-				"Theme/Rbs/Base/js/bootstrap.min.js",
-				"Theme/Rbs/Base/js/angular-1.2.23/angular.min.js",
-				"Theme/Rbs/Base/js/angular-1.2.23/angular-cookies.min.js",
-				"Theme/Rbs/Base/js/angular-1.2.23/angular-animate.min.js",
-				"Theme/Rbs/Base/js/ui-bootstrap-custom-typeahead-tpls-0.10.0.min.js",
-				"Theme/Rbs/Base/js/rbschangeapp.js",
-				"Theme/Rbs/Base/js/commerce.js",
-				"Theme/Rbs/Base/js/ngInfiniteScroll-1.2.0/build/ng-infinite-scroll.min.js"
+				"Theme/Rbs/Base/lib/jquery/jquery-2.1.3.min.js",
+				"Theme/Rbs/Base/lib/bootstrap/js/bootstrap.min.js",
+				"Theme/Rbs/Base/lib/angular-1.2.28/angular.min.js",
+				"Theme/Rbs/Base/lib/angular-1.2.28/angular-cookies.min.js",
+				"Theme/Rbs/Base/lib/angular-1.2.28/angular-animate.min.js",
+				"Theme/Rbs/Base/lib/ui-bootstrap/ui-bootstrap-tpls-0.12.0.min.js",
+				"Theme/Rbs/Base/lib/ngInfiniteScroll-1.2.0/build/ng-infinite-scroll.min.js",
+				"Theme/Rbs/Base/js/rbs-change-app.js",
+				"Theme/Rbs/Base/js/commerce.js"
 			]
 		},
 		"Rbs_Common_Print": {
 			"cssAssets": [
-				"Theme/Rbs/Base/css/bootstrap.min.css",
+				"Theme/Rbs/Base/lib/bootstrap/css/bootstrap.min.css",
+				"Theme/Rbs/Base/lib/bootstrap/css/bootstrap-theme.min.css",
 				"Theme/Rbs/Base/css/bootstrap-complements.css"
 			],
 			"jsAssets": [
-				"Theme/Rbs/Base/js/jquery-2.1.1.min.js",
-				"Theme/Rbs/Base/js/bootstrap.min.js",
-				"Theme/Rbs/Base/js/angular-1.2.23/angular.min.js",
-				"Theme/Rbs/Base/js/angular-1.2.23/angular-cookies.min.js",
-				"Theme/Rbs/Base/js/angular-1.2.23/angular-animate.min.js",
-				"Theme/Rbs/Base/js/ui-bootstrap-custom-typeahead-tpls-0.10.0.min.js",
-				"Theme/Rbs/Base/js/rbschangeapp.js",
+				"Theme/Rbs/Base/lib/jquery/jquery-2.1.3.min.js",
+				"Theme/Rbs/Base/lib/bootstrap/js/bootstrap.min.js",
+				"Theme/Rbs/Base/lib/angular-1.2.28/angular.min.js",
+				"Theme/Rbs/Base/lib/angular-1.2.28/angular-cookies.min.js",
+				"Theme/Rbs/Base/lib/angular-1.2.28/angular-animate.min.js",
+				"Theme/Rbs/Base/lib/ui-bootstrap/ui-bootstrap-tpls-0.12.0.min.js",
+				"Theme/Rbs/Base/js/rbs-change-app.js",
 				"Theme/Rbs/Base/js/commerce.js"
 			]
 		},
 
 		"i18n_fr_FR": {
 			"jsAssets": [
-				"Theme/Rbs/Base/js/angular-1.2.23/i18n/angular-locale_fr-fr.js",
+				"Theme/Rbs/Base/lib/angular-1.2.28/i18n/angular-locale_fr-fr.js",
 				"Theme/Rbs/Base/js/i18n/fr_FR.js"
 			]
 		},
 
 		"i18n_en_US": {
 			"jsAssets": [
-				"Theme/Rbs/Base/js/angular-1.2.23/i18n/angular-locale_en-us.js"
+				"Theme/Rbs/Base/lib/angular-1.2.28/i18n/angular-locale_en-us.js"
 			]
 		}
 	}

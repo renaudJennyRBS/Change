@@ -23,9 +23,6 @@
 	"storeresult":{
 		"message":"Résultat d'une recherche magasin"
 	},
-	"storeresult_function":{
-		"message":"Résultat de recherche magasin"
-	},
 	"search_mode":{
 		"message":"utilisé en mode recherche"
 	},

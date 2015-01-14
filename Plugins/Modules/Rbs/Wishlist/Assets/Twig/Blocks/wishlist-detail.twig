@@ -1,8 +1,13 @@
 {% block rbsCatalogProductListUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+	{% use 'Rbs_Commerce/icon-templates.twig' %}
+
 	{% use 'Rbs_Catalog/product-directives.twig' %}
 	{{ block('rbsCatalogAddToCartPopin') }}
-	{{ block('rbsCatalogAddToCartListItem') }}
-	{{ block('rbsCatalogProductPictograms') }}
+	{{ block('rbsCatalogAddListItemProductToCart') }}
+
+	{% use 'Rbs_Media/media-directives.twig' %}
+	{{ block('rbsMediaPictograms') }}
 {% endblock rbsCatalogProductListUse %}
 
 {% if unauthorized %}
@@ -20,7 +25,7 @@
 					(= data.title =)
 					{% if isUserWishlist %}
 						<button type="button" class="btn btn-link" data-ng-click="openChangeTitle()">
-							<span class="glyphicon glyphicon-edit"></span>
+							{{ block('rbsGenericIconEdit') }}
 							{{ i18n('m.rbs.wishlist.front.wishlist_change_title', ['ucf']) }}
 						</button>
 						<div class="pull-right">
@@ -29,7 +34,7 @@
 								{% else %}{{ i18n('m.rbs.wishlist.front.wishlist_set_wishlist_public', ['ucf']) }}{% endif %}
 							</button>
 							<button type="button" class="btn btn-danger" data-ng-click="deleteWishlist('wishlistDeleteModal')">
-								<span class="glyphicon glyphicon-trash"></span>
+								{{ block('rbsGenericIconDelete') }}
 								{{ i18n('m.rbs.wishlist.front.wishlist_delete_wishlist', ['ucf']) }}
 							</button>
 						</div>
@@ -43,7 +48,7 @@
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" data-ng-click="cancelTitleEdition()"
 								title="{{ i18n('m.rbs.wishlist.front.cancel_edition', ['ucf']) }}">
-								<span class="glyphicon glyphicon-remove"></span>
+								{{ block('rbsGenericIconRemove') }}
 							</button>
 							<button type="button" class="btn btn-success" data-ng-click="changeTitle()">
 								{{ i18n('m.rbs.wishlist.front.wishlist_change_title_ok', ['ucf']) }}
@@ -80,8 +85,12 @@
 							</label>
 						</div>
 					</div>
-					{% if loop.index % 3 == 0 %}<div class="clearfix visible-lg-block standard-margin"></div>{% endif %}
-					{% if loop.index % 2 == 0 %}<div class="clearfix visible-sm-block visible-md-block standard-margin"></div>{% endif %}
+					{% if loop.index % 3 == 0 %}
+						<div class="clearfix visible-lg-block one-line-bottom-margin"></div>
+					{% endif %}
+					{% if loop.index % 2 == 0 %}
+						<div class="clearfix visible-sm-block visible-md-block one-line-bottom-margin"></div>
+					{% endif %}
 				{% endfor %}
 			</div>
 			{% endblock %}
@@ -125,6 +134,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="hidden" data-ng-init="wishlistListUrl = '{{ functionURL('Rbs_Wishlist_WishlistList') }}'"
+		<div class="hidden" data-ng-init="wishlistListUrl = '{{ functionURL('Rbs_Wishlist_WishlistList') }}'"></div>
 	</div>
 {% endif %}

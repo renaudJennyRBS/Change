@@ -29,14 +29,15 @@ abstract class AbstractInitialize
 	/**
 	 * @param \Change\Services\ApplicationServices $applicationServices
 	 * @param string $LCID
+	 * @param boolean $addOnly
 	 * @return \Rbs\Generic\Json\Import
 	 */
-	protected function getImport($applicationServices, $LCID)
+	protected function getImport($applicationServices, $LCID, $addOnly = true)
 	{
 		$i18nManager = $applicationServices->getI18nManager();
 		$i18nManager->setLCID($LCID);
 		$import = new \Rbs\Generic\Json\Import($applicationServices->getDocumentManager(), $i18nManager);
-		$import->addOnly(true);
+		$import->addOnly($addOnly);
 		$import->setDocumentCodeManager($applicationServices->getDocumentCodeManager());
 		return $import;
 	}
@@ -147,5 +148,41 @@ abstract class AbstractInitialize
 			$websiteContents[$websiteId] = $websiteContent->toArray();
 			$noSidebarTemplate->setContentByWebsite($websiteContents);
 		}
+	}
+
+	/**
+	 * @param array $jsonDocument
+	 * @param \Rbs\Generic\Json\Import $import
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return \Rbs\Website\Documents\SectionPageFunction
+	 */
+	protected function resolveSectionPageFunction($jsonDocument, $import, $documentManager)
+	{
+		/** @var \Rbs\Website\Documents\Section $section */
+		$section = $import->getImportedDocumentById($jsonDocument['section']['_id']);
+
+		/** @var \Rbs\Website\Documents\Page $page */
+		$page = $import->getImportedDocumentById($jsonDocument['page']['_id']);
+
+		if ($section && $page)
+		{
+			$query = $documentManager->getNewQuery('Rbs_Website_SectionPageFunction');
+			$query->andPredicates(
+				$query->eq('section', $section),
+				$query->eq('functionCode', $jsonDocument['functionCode'])
+			);
+
+			/** @var \Rbs\Website\Documents\SectionPageFunction $document */
+			$document = $query->getFirstDocument();
+			if (!$document)
+			{
+				$document = $documentManager->getNewDocumentInstanceByModelName('Rbs_Website_SectionPageFunction');
+			}
+
+			$jsonDocument['_model'] = 'Rbs_Website_SectionPageFunction';
+			$import->import($document, $jsonDocument);
+			return $document;
+		}
+		return null;
 	}
 } 

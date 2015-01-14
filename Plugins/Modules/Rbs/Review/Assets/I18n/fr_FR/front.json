@@ -169,5 +169,8 @@
 	},
 	"by":{
 		"message":"par"
+	},
+	"no_review_yey":{
+		"message":"aucun avis client"
 	}
 }

@@ -19,7 +19,7 @@
 
 			replace : true,
 
-			// Create isolated scope
+			// Create isolated scope.
 			scope : {
 				document : '='
 			},
