@@ -1,6 +1,6 @@
 <div class="form-inline">
 	<input data-role="input-date" class="form-control" size="16" type="date" data-date-format="{{ i18nAttr('m.rbs.admin.admin.date_selector_format') }}"
-		data-date-language="{{ i18nAttr('m.rbs.admin.admin.date_selector_lang') }}"/>
+		data-date-language="{{ i18nAttr('m.rbs.admin.admin.date_selector_lang') }}" />
 
 	<span data-ng-hide="hideTime">
 		<span class="input-unit">{{ i18n('m.rbs.admin.admin.date_selector_at') }}</span>
@@ -21,10 +21,10 @@
 	</button>
 
 	<span data-ng-hide="hideTime">
-	<button class="btn btn-info timezone-selector" type="button" data-ng-click="openTimeZoneSelector($event)"
-		title="{{ i18nAttr('m.rbs.admin.admin.date_selector_change_timezone', ['ucf']) }}">
-		<i class="icon-globe"></i> (=timeZone=)
-	</button>
+		<button class="btn btn-info timezone-selector" type="button" data-ng-click="openTimeZoneSelector($event)"
+			title="{{ i18nAttr('m.rbs.admin.admin.date_selector_change_timezone', ['ucf']) }}">
+			<i class="icon-globe"></i> (=timeZone=)
+		</button>
 	</span>
 	<div class="timeZoneSelectorContainer"></div>
 </div>

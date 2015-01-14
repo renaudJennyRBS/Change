@@ -175,7 +175,7 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet
 		}
 	}
 
-	protected function saveWrappedProperties()
+	public function saveWrappedProperties()
 	{
 		if ($this->parameters)
 		{
@@ -219,30 +219,32 @@ class Facet extends \Compilation\Rbs\Elasticsearch\Documents\Facet
 		/** @var $facet \Rbs\Elasticsearch\Documents\Facet */
 		$facet = $event->getDocument();
 
-		$facetDefinition = null;
+		$facetDefinition = $event->getParam('facetDefinition');
 		$applicationServices = $event->getApplicationServices();
 
 		/* @var $commerceServices \Rbs\Commerce\CommerceServices */
 		$commerceServices = $event->getServices('commerceServices');
-
-		switch ($facet->getConfigurationType())
+		if (!$facetDefinition)
 		{
-			case 'Attribute':
-				$facetDefinition = new ProductAttributeFacetDefinition($facet);
-				$facetDefinition->setCatalogManager($commerceServices->getCatalogManager());
-				$event->setParam('facetDefinition', $facetDefinition);
-				break;
-			case 'Price':
-				$facetDefinition = new ProductPriceFacetDefinition($facet);
-				$facetDefinition->setI18nManager($applicationServices->getI18nManager());
-				$event->setParam('facetDefinition', $facetDefinition);
-				break;
-			case 'SkuThreshold':
-				$facetDefinition = new ProductSkuThresholdFacetDefinition($facet);
-				break;
+			switch ($facet->getConfigurationType())
+			{
+				case 'Attribute':
+					$facetDefinition = new ProductAttributeFacetDefinition($facet);
+					$facetDefinition->setCatalogManager($commerceServices->getCatalogManager());
+					$event->setParam('facetDefinition', $facetDefinition);
+					break;
+				case 'Price':
+					$facetDefinition = new ProductPriceFacetDefinition($facet);
+					$facetDefinition->setI18nManager($applicationServices->getI18nManager());
+					$event->setParam('facetDefinition', $facetDefinition);
+					break;
+				case 'SkuThreshold':
+					$facetDefinition = new ProductSkuThresholdFacetDefinition($facet);
+					break;
+			}
 		}
 
-		if ($facetDefinition)
+		if ($facetDefinition instanceof \Rbs\Elasticsearch\Facet\DocumentFacetDefinition)
 		{
 			$facetDefinition->setDocumentManager($applicationServices->getDocumentManager());
 			$facetDefinition->setParent($facet->getParent());

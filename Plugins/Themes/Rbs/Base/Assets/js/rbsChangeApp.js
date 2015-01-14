@@ -232,60 +232,32 @@
 				};
 			}
 
-			function getData(actionPath, data, params) {
-				var config = getHttpConfig('GET', actionPath);
-
-				var defaultParams = getDefaultParams();
+			function buildConfigData(data, params) {
+				var configData = getDefaultParams();
 				if (angular.isObject(params)) {
-					angular.extend(defaultParams, params);
+					angular.extend(configData, params);
 				}
 				if (angular.isObject(data)) {
-					defaultParams.data = data;
+					angular.extend(configData.data, data);
 				}
-				config.data = defaultParams;
-				return $http(config);
+				return configData;
 			}
 
 			function postData(actionPath, data, params) {
 				var config = getHttpConfig('POST', actionPath);
-
-				var defaultParams = getDefaultParams();
-				if (angular.isObject(params)) {
-					angular.extend(defaultParams, params);
-				}
-				if (angular.isObject(data)) {
-					defaultParams.data = data;
-				}
-				config.data = defaultParams;
+				config.data = buildConfigData(data, params);
 				return $http(config);
 			}
 
 			function putData(actionPath, data, params) {
 				var config = getHttpConfig('PUT', actionPath);
-
-				var defaultParams = getDefaultParams();
-				if (angular.isObject(params)) {
-					angular.extend(defaultParams, params);
-				}
-				if (angular.isObject(data)) {
-					defaultParams.data = data;
-				}
-				config.data = defaultParams;
+				config.data = buildConfigData(data, params);
 				return $http(config);
 			}
 
 			function deleteData(actionPath, data, params) {
-
 				var config = getHttpConfig('DELETE', actionPath);
-
-				var defaultParams = getDefaultParams();
-				if (angular.isObject(params)) {
-					angular.extend(defaultParams, params);
-				}
-				if (angular.isObject(data)) {
-					defaultParams.data = data;
-				}
-				config.data = defaultParams;
+				config.data = buildConfigData(data, params);
 				return $http(config);
 			}
 
