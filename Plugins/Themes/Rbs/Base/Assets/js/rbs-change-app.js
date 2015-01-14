@@ -243,6 +243,12 @@
 				return configData;
 			}
 
+			function getData(actionPath, data, params) {
+				var config = getHttpConfig('GET', actionPath);
+				config.data = buildConfigData(data, params);
+				return $http(config);
+			}
+
 			function postData(actionPath, data, params) {
 				var config = getHttpConfig('POST', actionPath);
 				config.data = buildConfigData(data, params);

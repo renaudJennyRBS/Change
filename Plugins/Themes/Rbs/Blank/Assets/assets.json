@@ -14,7 +14,7 @@
 				"Theme/Rbs/Base/lib/angular-1.2.28/angular-animate.min.js",
 				"Theme/Rbs/Base/lib/ui-bootstrap/ui-bootstrap-tpls-0.12.0.min.js",
 				"Theme/Rbs/Base/lib/ngInfiniteScroll-1.2.0/build/ng-infinite-scroll.min.js",
-				"Theme/Rbs/Base/js/rbsChangeApp.js",
+				"Theme/Rbs/Base/js/rbs-change-app.js",
 				"Theme/Rbs/Base/js/commerce.js"
 			]
 		}
