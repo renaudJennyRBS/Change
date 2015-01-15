@@ -74,7 +74,7 @@
 				scope.ngClasses = {
 					main: {}
 				};
-				if (angular.isArray(scope.visuals) && scope.visuals.length >= 1) {
+				if (angular.isArray(scope.visuals) && scope.visuals.length > 1) {
 					scope.ngClasses.main['media-visuals-multiple'] = true;
 					scope.ngClasses.main['media-visuals-multiple-' + scope.thumbnailPosition] = true;
 				}
