@@ -40,13 +40,23 @@ class ShortCart extends Block
 		if ($cartIdentifier)
 		{
 			$cart = $commerceServices->getCartManager()->getCartByIdentifier($cartIdentifier);
-			if ($cart)
-			{
-				/** @var \Rbs\Store\Documents\WebStore $webStore */
-				$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
-				$this->setDetailedCommerceContextParameters($webStore, $cart->getBillingArea(), $cart->getZone(),
-					$cart->getPriceTargetIds(), $parameters);
-			}
+		}
+
+		if (isset($cart))
+		{
+			/** @var \Rbs\Store\Documents\WebStore $webStore */
+			$webStore = $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($cart->getWebStoreId());
+			$billingArea = $cart->getBillingArea();
+			$zone = $cart->getZone();
+			$this->setDetailedCommerceContextParameters($webStore, $billingArea, $zone, $cart->getPriceTargetIds(), $parameters);
+		}
+		// Even if there is no cart yet, a cart may be created asynchronously, so we need to load this parameters.
+		else
+		{
+			$webStore = $commerceServices->getContext()->getWebStore();
+			$billingArea = $commerceServices->getContext()->getBillingArea();
+			$zone = $commerceServices->getContext()->getZone();
+			$this->setDetailedCommerceContextParameters($webStore, $billingArea, $zone, null, $parameters);
 		}
 
 		return $parameters;

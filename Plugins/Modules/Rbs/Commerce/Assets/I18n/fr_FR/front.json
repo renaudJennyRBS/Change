@@ -370,6 +370,9 @@
 	"and":{
 		"message": "et"
 	},
+	"one_other_article":{
+		"message":"un autre article"
+	},
 	"n_other_articles":{
 		"message":"$count$ autres articles"
 	},
