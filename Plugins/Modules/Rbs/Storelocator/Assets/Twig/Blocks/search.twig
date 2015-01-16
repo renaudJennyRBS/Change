@@ -11,21 +11,22 @@
 	{{ block('rbsStorelocatorStorePopup') }}
 {% endblock rbsStorelocatorUse %}
 
-
-{% use 'Rbs_Storelocator/map-resources.twig' %}
 {% if controllerInit.googleAPIKey %}
-	{{ block('rbsStorelocatorGoogleMap') }}
+	<script type="text/javascript">
+		window.__change.__resources.push(function() {window.__change.RBS_Geo.initGoogleMap('{{ controllerInit.googleAPIKey }}')});
+	</script>
 	<div data-rbs-storelocator-google-search="" data-cache-key="{{ blockId }}" data-facet-value-title="{{ facetValueTitle }}">
 	</div>
 {% else %}
-	{{ block('rbsStorelocatorLeafletMap') }}
+	<script type="text/javascript">
+		window.__change.__resources.push(function() {window.__change.RBS_Geo.initLeafletMap();});
+	</script>
 	<div data-rbs-storelocator-search="" data-cache-key="{{ blockId }}" data-facet-value-title="{{ facetValueTitle }}">
 	</div>
 {% endif %}
 
 <div data-rbs-storelocator-search-home="" data-ng-hide="hideStorelocatorSearchHome">
 	<img src="{{ imageURL(parameters.backgroundEmptyImage) }}" />
-
 	{% if facetsData | length %}
 	<div class="row">
 			{% set facetData = facetsData[0] %}

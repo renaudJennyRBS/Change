@@ -55,6 +55,7 @@ class StoreDataComposer
 		$this->dataSets = [
 			'common' => [
 				'id' => $this->store->getId(),
+				'code' => $this->store->getCode(),
 				'LCID' => $this->store->getCurrentLCID(),
 				'title' => $this->store->getCurrentLocalization()->getTitle(),
 			]
@@ -65,7 +66,6 @@ class StoreDataComposer
 			$address = $this->store->getAddress();
 			$this->dataSets['address'] = $address ? $address->toArray() : null;
 		}
-
 		if ($this->detailed || $this->hasDataSet('coordinates')) {
 			$this->dataSets['coordinates'] = $this->store->getCoordinates();
 			$commercialSign = $this->store->getCommercialSign();
@@ -122,7 +122,6 @@ class StoreDataComposer
 				$this->dataSets['services'][] = $data;
 			}
 		}
-		
 
 		if ($this->detailed || $this->hasDataSet('hours'))
 		{
@@ -156,7 +155,7 @@ class StoreDataComposer
 			}
 		}
 
-		if ($this->detailed)
+		if ($this->detailed || $this->hasDataSet('description'))
 		{
 			$desc = $this->store->getCurrentLocalization()->getDescription();
 			if ($desc && !$desc->isEmpty())

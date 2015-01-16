@@ -8,13 +8,16 @@
 	{{ block('rbsStorelocatorStore') }}
 {% endblock rbsStorelocatorUse %}
 
-{% use 'Rbs_Storelocator/map-resources.twig' %}
 {% if controllerInit.googleAPIKey %}
-	{{ block('rbsStorelocatorGoogleMap') }}
+	<script type="text/javascript">
+		window.__change.__resources.push(function() {window.__change.RBS_Geo.initGoogleMap('{{ controllerInit.googleAPIKey }}')});
+	</script>
 	<div data-rbs-storelocator-google-store="" data-cache-key="{{ blockId }}">
 	</div>
 {% else %}
-	{{ block('rbsStorelocatorLeafletMap') }}
+	<script type="text/javascript">
+		window.__change.__resources.push(function() {window.__change.RBS_Geo.initLeafletMap();});
+	</script>
 	<div data-rbs-storelocator-store="" data-cache-key="{{ blockId }}">
 	</div>
 {% endif %}

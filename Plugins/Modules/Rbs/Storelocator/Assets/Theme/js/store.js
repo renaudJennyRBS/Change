@@ -1,16 +1,5 @@
 (function(jQuery) {
 	"use strict";
-
-	function initMapResources() {
-		document.write('<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>');
-		var head  = document.getElementsByTagName('head')[0];
-		var link  = document.createElement('link');
-		link.rel  = 'stylesheet';
-		link.type = 'text/css';
-		link.href = 'http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css';
-		link.media = 'all';
-		head.appendChild(link);
-	}
 	var app = angular.module('RbsChangeApp');
 
 	function rbsStorelocatorStore($rootScope, $compile, AjaxAPI) {
@@ -378,8 +367,6 @@
 	}
 	rbsStorelocatorSearch.$inject = ['$rootScope', '$compile', 'RbsChange.AjaxAPI', '$timeout', '$templateCache'];
 	app.directive('rbsStorelocatorSearch', rbsStorelocatorSearch);
-
-
 
 	function rbsStorelocatorSearchHome($rootScope) {
 		return {
