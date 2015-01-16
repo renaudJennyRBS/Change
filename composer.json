@@ -34,10 +34,12 @@
 		"rbs/catalog": "self.version",
 		"rbs/collection": "self.version",
 		"rbs/commerce": "self.version",
+		"rbs/dev": "self.version",
 		"rbs/discount": "self.version",
 		"rbs/elasticsearch": "self.version",
 		"rbs/generic": "self.version",
 		"rbs/geo": "self.version",
+		"rbs/highlight": "self.version",
 		"rbs/mail": "self.version",
 		"rbs/media": "self.version",
 		"rbs/notification": "self.version",
@@ -52,13 +54,17 @@
 		"rbs/simpleform": "self.version",
 		"rbs/stock": "self.version",
 		"rbs/store": "self.version",
+		"rbs/storelocator": "self.version",
+		"rbs/storeshipping": "self.version",
 		"rbs/tag": "self.version",
 		"rbs/theme": "self.version",
 		"rbs/timeline": "self.version",
 		"rbs/user": "self.version",
 		"rbs/website": "self.version",
+		"rbs/wishlist": "self.version",
 		"rbs/workflow": "self.version",
 		"rbs/base":"self.version",
-		"rbs/demo":"self.version"
+		"rbs/blank":"self.version",
+		"rbs/common":"self.version"
 	}
 }
