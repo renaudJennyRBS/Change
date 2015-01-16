@@ -17,6 +17,11 @@
 				"Theme/Rbs/Base/js/commerce.js"
 			]
 		},
+		"Rbs_Base": {
+			"jsAssets": [
+				"Theme/Rbs/Base/js/finalizeChangeApp.js"
+			]
+		},
 		"Rbs_Common_Print": {
 			"cssAssets": [
 				"Theme/Rbs/Base/lib/bootstrap/css/bootstrap.min.css",

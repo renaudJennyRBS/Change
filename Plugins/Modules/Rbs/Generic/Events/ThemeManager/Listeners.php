@@ -39,6 +39,13 @@ class Listeners implements ListenerAggregateInterface
 			return $resolver->resolve($event);
 		};
 		$events->attach(ThemeManager::EVENT_MAIL_TEMPLATE_LOADING, $callback, 1);
+
+		$callback = function (\Change\Events\Event $event)
+		{
+			$themeManagerEvents = new \Rbs\Geo\Presentation\ThemeManagerEvents();
+			$themeManagerEvents->onAddPageResources($event);
+		};
+		$events->attach(ThemeManager::EVENT_ADD_PAGE_RESOURCES, $callback);
 	}
 
 	/**
