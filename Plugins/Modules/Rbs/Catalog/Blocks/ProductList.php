@@ -37,6 +37,7 @@ class ProductList extends Block
 		$parameters->addParameterMeta('showOrdering', true);
 		$parameters->addParameterMeta('showUnavailable', true);
 		$parameters->addParameterMeta('imageFormats', 'listItem,pictogram');
+		$parameters->addParameterMeta('dataSetNames', '');
 		$parameters->setLayoutParameters($event->getBlockLayout());
 
 		$parameters->addParameterMeta('redirectUrl');
@@ -226,6 +227,7 @@ class ProductList extends Block
 			$URLFormats[] = 'contextual';
 		}
 		$context->setURLFormats($URLFormats);
+		$context->setDataSetNames($parameters->getParameter('dataSetNames'));
 
 		$pageNumber = intval($parameters->getParameter('pageNumber'));
 		$limit = $parameters->getParameter('itemsPerPage');

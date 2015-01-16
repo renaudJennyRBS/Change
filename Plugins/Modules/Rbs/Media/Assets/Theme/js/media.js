@@ -71,17 +71,19 @@
 					shown: false
 				};
 
-				scope.ngClasses = {
-					main: {}
-				};
-				if (angular.isArray(scope.visuals) && scope.visuals.length >= 1) {
-					scope.ngClasses.main['media-visuals-multiple'] = true;
-					scope.ngClasses.main['media-visuals-multiple-' + scope.thumbnailPosition] = true;
-				}
-				else {
-					scope.ngClasses.main['media-visuals-single'] = true;
-				}
-				scope.ngClasses.main['media-visuals-format-' + scope.visualFormat + '-' + scope.thumbnailFormat] = true;
+				scope.$watch('visuals', function () {
+					scope.ngClasses = {
+						main: {}
+					};
+					if (angular.isArray(scope.visuals) && scope.visuals.length > 1) {
+						scope.ngClasses.main['media-visuals-multiple'] = true;
+						scope.ngClasses.main['media-visuals-multiple-' + scope.thumbnailPosition] = true;
+					}
+					else {
+						scope.ngClasses.main['media-visuals-single'] = true;
+					}
+					scope.ngClasses.main['media-visuals-format-' + scope.visualFormat + '-' + scope.thumbnailFormat] = true;
+				});
 
 				scope.showVisual = function(event, index) {
 					scope.shownIndex = index;

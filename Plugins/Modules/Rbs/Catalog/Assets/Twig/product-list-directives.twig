@@ -10,7 +10,7 @@
 				'visible-xs-block': true
 			}">
 			<div class="carousel-inner">
-				<div data-ng-repeat="slide in slides.size1" class="item" data-ng-class="{'active': $index == 1}">
+				<div data-ng-repeat="slide in slides.size1" class="item" data-ng-class="{'active': $index == 0}">
 					<div class="row product-list">
 						<div class="col-xs-12" data-ng-repeat="productData in slide.productsData">
 							{{ block('rbsCatalogProductsListItem') }}
@@ -36,7 +36,7 @@
 				'visible-sm-block': itemsPerSlide >= 3
 			}">
 			<div class="carousel-inner">
-				<div data-ng-repeat="slide in slides.size2" class="item" data-ng-class="{'active': $index == 1}">
+				<div data-ng-repeat="slide in slides.size2" class="item" data-ng-class="{'active': $index == 0}">
 					<div class="row product-list">
 						<div class="col-xs-6" data-ng-repeat="productData in slide.productsData">
 							{{ block('rbsCatalogProductsListItem') }}
@@ -51,7 +51,7 @@
 		<div data-ng-if="itemsPerSlide > 2" id="{{ sliderId }}" class="carousel slide" data-ride="carousel"
 			data-ng-class="{'visible-lg-block': itemsPerSlide == 3, 'visible-md-block': itemsPerSlide >= 3}">
 			<div class="carousel-inner">
-				<div data-ng-repeat="slide in slides.size3" class="item" data-ng-class="{'active': $index == 1}">
+				<div data-ng-repeat="slide in slides.size3" class="item" data-ng-class="{'active': $index == 0}">
 					<div class="row product-list">
 						<div class="col-xs-4" data-ng-repeat="productData in slide.productsData">
 							{{ block('rbsCatalogProductsListItem') }}
@@ -66,7 +66,7 @@
 		<div data-ng-if="itemsPerSlide > 3" id="{{ sliderId }}" class="carousel slide" data-ride="carousel"
 			data-ng-class="{'visible-lg-block': itemsPerSlide == 4}">
 			<div class="carousel-inner">
-				<div data-ng-repeat="slide in slides.size4" class="item" data-ng-class="{'active': $index == 1}">
+				<div data-ng-repeat="slide in slides.size4" class="item" data-ng-class="{'active': $index == 0}">
 					<div class="row product-list">
 						<div class="col-xs-3" data-ng-repeat="productData in slide.productsData">
 							{{ block('rbsCatalogProductsListItem') }}

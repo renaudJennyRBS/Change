@@ -1213,6 +1213,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 					}
 				}
 			}
+			return $this->getProductVisuals($product->getVariantGroup()->getRootProduct());
 		}
 		return $visuals;
 	}
