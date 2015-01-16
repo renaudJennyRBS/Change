@@ -11,13 +11,7 @@
 		}
 
 		this.setPictograms = function(productData) {
-			scope.pictograms = null;
-			if (productData && productData.common && productData.common.attributes && productData.common.attributes.pictograms) {
-				var attr = productData.attributes[productData.common.attributes.pictograms];
-				if (attr && attr.value && attr.value.length) {
-					scope.pictograms = attr.value;
-				}
-			}
+			scope.pictograms = extractPictogram(productData, productData.rootProduct);
 		};
 
 		this.setPictograms(scope.productData);
@@ -154,11 +148,12 @@
 
 				scope.viewDetailTitle = scope.viewDetailTitleMask.replace('PRODUCT_TITLE', productData.common.title);
 
-				scope.pictograms = extractPictogram(productData);
-				scope.url = extractURL(productData);
+				scope.pictograms = extractPictogram(productData, productData.rootProduct);
+				scope.url = extractURL(productData, productData.rootProduct);
 
-				if (productData.common.visuals && productData.common.visuals.length) {
-					scope.visual = productData.common.visuals[0];
+				scope.visuals = extractVisuals(productData, productData.rootProduct);
+				if (scope.visuals && scope.visuals.length) {
+					scope.visual = scope.visuals[0];
 				}
 
 				scope.addLine = function() {
@@ -965,6 +960,9 @@
 				return function(scope, elm, attrs) {
 					function getNonEmptyAttributes(visibility) {
 						var attributes = [];
+						if (!angular.isArray(scope.productData['attributesVisibility'])) {
+							return attributes;
+						}
 						var attributeIds = scope.productData['attributesVisibility'][visibility];
 						if (angular.isArray(attributeIds)) {
 							for (var i = 0; i < attributeIds.length; i++) {
