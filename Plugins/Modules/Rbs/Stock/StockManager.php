@@ -357,13 +357,14 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string|null $orderSort
 	 * @return array
 	 */
-	public function getInventoryMovementsBySku($sku, $warehouse = null, $limit= null, $offset = null, $orderCol = null, $orderSort = null)
+	public function getInventoryMovementsBySku($sku, $warehouse = null, $limit = null, $offset = null, $orderCol = null,
+		$orderSort = null)
 	{
 		if (!$this->getDisableMovement())
 		{
 			$em = $this->getEventManager();
 			$args = $em->prepareArgs(['sku' => $sku, 'warehouse' => $warehouse,
-				'limit'=> $limit, 'offset'=> $offset, 'orderCol'=> $orderCol, 'orderSort'=> $orderSort,
+				'limit' => $limit, 'offset' => $offset, 'orderCol' => $orderCol, 'orderSort' => $orderSort,
 				'inventoryMovements' => null]);
 			$em->trigger('getInventoryMovementsBySku', $this, $args);
 			if (is_array($args['inventoryMovements']))
@@ -388,7 +389,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 
 		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
-		$qb->select($fb->column('id'), $fb->column('target'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'));
+		$qb->select($fb->column('id'), $fb->column('target'), $fb->column('movement'), $fb->column('warehouse_id'),
+			$fb->column('date'));
 		$qb->from($fb->table('rbs_stock_dat_mvt'));
 		$logicAnd = $fb->logicAnd(
 			$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId'))
@@ -418,7 +420,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 
 		if ($warehouse !== null)
 		{
-			$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
+			$warehouseId =
+				$warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
 			$query->bindParameter('warehouseId', $warehouseId);
 		}
 
@@ -428,7 +431,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 			$query->setStartIndex($offset);
 		}
 
-		$event->setParam('inventoryMovements',  $query->getResults(
+		$event->setParam('inventoryMovements', $query->getResults(
 			$query->getRowsConverter()->addStrCol('target')->addIntCol('id', 'movement', 'warehouse_id')->addDtCol('date')
 		));
 	}
@@ -488,7 +491,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 
 		if ($warehouse !== null)
 		{
-			$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
+			$warehouseId =
+				$warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
 			$query->bindParameter('warehouseId', $warehouseId);
 		}
 
@@ -519,7 +523,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultGetInventoryMovementsInfosBySkuGroupByWarehouse(\Change\Events\Event $event)
 	{
 		$sku = $event->getParam('sku');
-		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder('stock::getInventoryMovementsInfosBySkuGroupByWarehouse');
+		$qb = $event->getApplicationServices()->getDbProvider()
+			->getNewQueryBuilder('stock::getInventoryMovementsInfosBySkuGroupByWarehouse');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
@@ -537,7 +542,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
 		$query->bindParameter('skuId', $skuId);
 
-		$event->setParam('inventoryMovements', $query->getResults($query->getRowsConverter()->addIntCol('count', 'movement', 'warehouse')));
+		$event->setParam('inventoryMovements',
+			$query->getResults($query->getRowsConverter()->addIntCol('count', 'movement', 'warehouse')));
 	}
 
 	/**
@@ -583,7 +589,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
 		$query->bindParameter('warehouseId', $warehouseId);
 
-		$event->setParam('value', $query->getFirstResult($query->getRowsConverter()->addIntCol('movement')->singleColumn('movement')));
+		$event->setParam('value',
+			$query->getFirstResult($query->getRowsConverter()->addIntCol('movement')->singleColumn('movement')));
 	}
 
 	/**
@@ -615,7 +622,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 			$valueOfMovementsBySku = $this->getValueOfMovementsBySku($skuId, $warehouseId);
 			if ($valueOfMovementsBySku !== 0)
 			{
-				$qb = $event->getApplicationServices()->getDbProvider()->getNewStatementBuilder('stock::consolidateInventoryEntry');
+				$qb = $event->getApplicationServices()->getDbProvider()
+					->getNewStatementBuilder('stock::consolidateInventoryEntry');
 				if (!$qb->isCached())
 				{
 					$fb = $qb->getFragmentBuilder();
@@ -687,7 +695,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$fb = $qb->getFragmentBuilder();
 			$qb->insert($fb->table('rbs_stock_dat_mvt'),
-				$fb->column('sku_id'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'), $fb->column('target'));
+				$fb->column('sku_id'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'),
+				$fb->column('target'));
 			$qb->addValues(
 				$fb->integerParameter('skuId'), $fb->integerParameter('amount'), $fb->integerParameter('warehouseId'),
 				$fb->dateTimeParameter('dateValue'), $fb->parameter('target'));
@@ -874,7 +883,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getInventoryLevelForManySku($skuArray, $store = null)
 	{
-		$skuIds = array();
+		$skuIds = [];
 		foreach ($skuArray as $sku)
 		{
 			if ($sku->getUnlimitedInventory())
@@ -890,47 +899,42 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		return $args['level'];
 	}
 
+	/**
+	 * @param \Change\Events\Event $event
+	 */
 	public function onDefaultGetInventoryLevelForManySku(\Change\Events\Event $event)
 	{
 		$skuIds = $event->getParam('skuIds');
 		$store = $event->getParam('store');
 		$warehouseId = 0;
+
+		$documentQuery = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
+		$documentQuery->andPredicates($documentQuery->in('sku', $skuIds), $documentQuery->eq('warehouse', $warehouseId));
+		$dbQueryBuilder = $documentQuery->dbQueryBuilder();
+		$fb = $dbQueryBuilder->getFragmentBuilder();
+		$docTable = $documentQuery->getTableAliasName();
+		$level = $fb->alias($fb->sum($fb->getDocumentColumn('level', $docTable)), 'level');
+		$dbQueryBuilder->addColumn($level);
+		$query = $dbQueryBuilder->query();
+		$level = intval($query->getFirstResult($query->getRowsConverter()->addIntCol('level')->singleColumn('level')));
+
 		if ($this->getDisableMovement())
 		{
-			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
-			$query->andPredicates($query->in('sku', $skuIds), $query->eq('warehouse', $warehouseId));
-			$dbQueryBuilder = $query->dbQueryBuilder();
-			$fb = $dbQueryBuilder->getFragmentBuilder();
-			$docTable = $query->getTableAliasName();
-			$level = $fb->alias($fb->getDocumentColumn('level', $docTable), 'level');
-			$dbQueryBuilder->addColumn($level);
-			$result = $dbQueryBuilder->query()->getFirstResult();
-			$level = intval($result['level']);
 			$movement = 0;
 		}
 		else
 		{
-			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
-			$query->andPredicates($query->in('sku', $skuIds), $query->eq('warehouse', $warehouseId));
-			$dbQueryBuilder = $query->dbQueryBuilder();
-			$fb = $dbQueryBuilder->getFragmentBuilder();
-
-			$docTable = $query->getTableAliasName();
-			$mvtTable = $fb->table('rbs_stock_dat_mvt');
-
-			$dbQueryBuilder->leftJoin($mvtTable, $fb->logicAnd(
-				$fb->eq($fb->getDocumentColumn('sku', $docTable), $fb->column('sku_id', $mvtTable)),
-				$fb->eq($fb->getDocumentColumn('warehouse', $docTable), $fb->column('warehouse_id', $mvtTable))
-			));
-			$sum = $fb->alias($fb->sum($fb->column('movement', $mvtTable)), 'movement');
-			$level = $fb->alias($fb->getDocumentColumn('level', $docTable), 'level');
-			$dbQueryBuilder->addColumn($level);
-			$dbQueryBuilder->addColumn($sum);
-			$result = $dbQueryBuilder->query()->getFirstResult();
-			$level = intval($result['level']);
-			$movement = intval($result['movement']);
+			$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder('onDefaultGetInventoryLevelForManySku');
+			if (!$qb->isCached())
+			{
+				$fb = $qb->getFragmentBuilder();
+				$qb->select($fb->alias($fb->sum($fb->column('movement')), 'mvt'));
+				$qb->from($fb->table('rbs_stock_dat_mvt'));
+				$qb->where($fb->logicAnd($fb->in('sku_id', $skuIds), $fb->eq('warehouse_id', $warehouseId)));
+			}
+			$query = $qb->query();
+			$movement = intval($query->getFirstResult($query->getRowsConverter()->addIntCol('mvt')->singleColumn('mvt')));
 		}
-
 
 		if (!$this->getDisableReservation())
 		{
@@ -942,12 +946,12 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 			if ($store)
 			{
 				$storeId = ($store instanceof \Change\Documents\AbstractDocument) ? $store->getId() : intval($store);
-				$event->setParam('level',  $level + $movement
+				$event->setParam('level', $level + $movement
 					- $this->getReservedQuantity($skuIds, $storeId, $event->getApplicationServices()->getDbProvider()));
 				return;
 			}
 		}
-		$event->setParam('level',$level + $movement);
+		$event->setParam('level', $level + $movement);
 	}
 
 	/**
@@ -995,7 +999,6 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		return $level > 0 ? static::THRESHOLD_AVAILABLE : static::THRESHOLD_UNAVAILABLE;
 	}
 
-
 	/**
 	 * @api
 	 * @param string $threshold
@@ -1026,7 +1029,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 			$item = $collection->getItemByValue($threshold);
 			if ($item)
 			{
-				$event->setParam('title', $item->getTitle()) ;
+				$event->setParam('title', $item->getTitle());
 			}
 		}
 	}
@@ -1044,9 +1047,10 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		if (!$this->getDisableReservation())
 		{
 			$em = $this->getEventManager();
-			$args = $em->prepareArgs(['targetIdentifier' => $targetIdentifier, 'reservations' => $reservations, 'unReservable' => []]);
+			$args = $em->prepareArgs(['targetIdentifier' => $targetIdentifier, 'reservations' => $reservations,
+				'unReservable' => []]);
 			$em->trigger('setReservations', $this, $args);
-			if (is_array( $args['unReservable']))
+			if (is_array($args['unReservable']))
 			{
 				return $args['unReservable'];
 			}
@@ -1234,11 +1238,13 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	public function onDefaultGetReservationsInfosBySkuGroupByStoreAndStatus(\Change\Events\Event $event)
 	{
 		$sku = $event->getParam('sku');
-		$qb = $event->getApplicationServices()->getDbProvider()->getNewQueryBuilder('stock::getReservationsInfosBySkuGroupByStore');
+		$qb =
+			$event->getApplicationServices()->getDbProvider()->getNewQueryBuilder('stock::getReservationsInfosBySkuGroupByStore');
 		if (!$qb->isCached())
 		{
 			$fb = $qb->getFragmentBuilder();
-			$qb->select($fb->column('store_id'), $fb->column('confirmed'), $fb->alias($fb->func('count', '*'), 'count'), $fb->alias($fb->sum($fb->column('reservation')), 'reservation'));
+			$qb->select($fb->column('store_id'), $fb->column('confirmed'), $fb->alias($fb->func('count', '*'), 'count'),
+				$fb->alias($fb->sum($fb->column('reservation')), 'reservation'));
 			$qb->from($fb->table('rbs_stock_dat_res'));
 
 			$qb->where(
@@ -1255,7 +1261,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
 		$query->bindParameter('skuId', $skuId);
 
-		$reservations = $query->getResults($query->getRowsConverter()->addIntCol('store_id', 'count', 'reservation')->addBoolCol('confirmed'));
+		$reservations = $query->getResults($query->getRowsConverter()->addIntCol('store_id', 'count', 'reservation')
+			->addBoolCol('confirmed'));
 		$event->setParam('reservations', $reservations);
 	}
 
@@ -1526,7 +1533,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 			}
 			$statement = $qb->updateQuery();
 			$statement->bindParameter('confirmed', true);
-			$statement->bindParameter('confirmedTargetIdentifier', $confirmedTargetIdentifier ? $confirmedTargetIdentifier : $targetIdentifier);
+			$statement->bindParameter('confirmedTargetIdentifier',
+				$confirmedTargetIdentifier ? $confirmedTargetIdentifier : $targetIdentifier);
 			$statement->bindParameter('targetIdentifier', $targetIdentifier);
 			$statement->execute();
 			$transactionManager->commit();
@@ -1629,14 +1637,13 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 				$qb->select($fb->column('id'), $fb->column('sku_id'), $fb->column('reservation'));
 				$qb->from($fb->table('rbs_stock_dat_res'));
 				$qb->where($fb->logicAnd(
-						$fb->eq($fb->column('target'), $fb->parameter('targetIdentifier')),
-						$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId')))
+					$fb->eq($fb->column('target'), $fb->parameter('targetIdentifier')),
+					$fb->eq($fb->column('sku_id'), $fb->integerParameter('skuId')))
 				);
 			}
 			$query = $qb->query();
 			$query->bindParameter('targetIdentifier', $targetIdentifier);
 			$query->bindParameter('skuId', $skuId);
-
 
 			$row = $query->getFirstResult($query->getRowsConverter()->addIntCol('id', 'sku_id')
 				->addNumCol('reservation'));
@@ -1685,7 +1692,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	 * @param string|null $orderSort
 	 * @return array
 	 */
-	public function getReservationsBySku($sku, $store = null, $limit= null, $offset = null, $orderCol = null, $orderSort = null)
+	public function getReservationsBySku($sku, $store = null, $limit = null, $offset = null, $orderCol = null, $orderSort = null)
 	{
 		if (!$this->getDisableReservation())
 		{
@@ -1870,7 +1877,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		$sku = $query->getFirstDocument();
 		if ($sku)
 		{
-			$this->skuIds[$code] =  $sku->getId();
+			$this->skuIds[$code] = $sku->getId();
 			$event->setParam('sku', $sku);
 		}
 	}
@@ -1904,7 +1911,6 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 			'availability' => false]);
 		$em->trigger('getProductAvailability', $this, $args);
 		return ($args['availability'] == true);
-
 	}
 
 	/**
@@ -1924,8 +1930,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 				->where(
 					$fb->logicAnd(
 						$fb->gt($fb->column('availability', $tableIdt), $fb->number(0)),
-						$fb->eq($fb->column('product_id', $tableIdt),  $fb->integerParameter('productId')),
-						$fb->eq($fb->column('warehouse_id', $tableIdt) , $fb->integerParameter('warehouseId'))
+						$fb->eq($fb->column('product_id', $tableIdt), $fb->integerParameter('productId')),
+						$fb->eq($fb->column('warehouse_id', $tableIdt), $fb->integerParameter('warehouseId'))
 					)
 				);
 		}
@@ -1957,7 +1963,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 			->where(
 				$fb->logicAnd(
 					$fb->gt($fb->column('availability', $tableIdt), $fb->number(0)),
-					$fb->eq($fb->column('warehouse_id', $tableIdt) , $warehouseSQLFragment ? $warehouseSQLFragment : $fb->number(0)),
+					$fb->eq($fb->column('warehouse_id', $tableIdt),
+						$warehouseSQLFragment ? $warehouseSQLFragment : $fb->number(0)),
 					$fb->eq($fb->column('product_id', $tableIdt), $productSQLFragment)
 				)
 			);
