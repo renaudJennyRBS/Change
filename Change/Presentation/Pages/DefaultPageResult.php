@@ -116,10 +116,10 @@ class DefaultPageResult
 		
 		$application = $event->getApplication();
 		$workspace = $application->getWorkspace();
-		$logging = $application->getLogging();
 		$developmentMode = $application->inDevelopmentMode();
 
-		$this->addResourceParts($result, $blocks, $pageTemplate->getCode(), $themeManager, $logging, $developmentMode);
+
+		$themeManager->addPageResources($result, $pageTemplate, $blocks);
 
 		$cachePath = $workspace->cachePath('twig', 'page', $result->getIdentifier() . '.twig');
 		if ($developmentMode)
@@ -159,70 +159,5 @@ class DefaultPageResult
 
 		$templateManager = $event->getApplicationServices()->getTemplateManager();
 		$result->setHtml($templateManager->renderTemplateFile($cachePath, array('pageResult' => $result)));
-	}
-
-	/**
-	 * @param \Change\Http\Web\Result\Page $result
-	 * @param \Change\Presentation\Layout\Block[] $blocks
-	 * @param string $pageTemplateCode
-	 * @param \Change\Presentation\Themes\ThemeManager $themeManager
-	 * @param \Change\Logging\Logging $logging
-	 * @param boolean $developmentMode
-	 */
-	public function addResourceParts(\Change\Http\Web\Result\Page $result, array $blocks, $pageTemplateCode,
-		\Change\Presentation\Themes\ThemeManager $themeManager,
-		\Change\Logging\Logging $logging = null, $developmentMode = false)
-	{
-		$blockNames = array();
-		foreach($blocks as $block)
-		{
-			$blockName = $block->getName();
-			$blockNames[$blockName] = $blockName;
-		}
-
-		$configuration = $themeManager->getAssetConfiguration($themeManager->getCurrent());
-
-		$asseticManager = $themeManager->getAsseticManager($configuration);
-
-		if ($developmentMode)
-		{
-			(new \Assetic\AssetWriter($themeManager->getAssetRootPath()))->writeManagerAssets($asseticManager);
-		}
-
-		$cssNames = $themeManager->getCssAssetNames($configuration, $blockNames, $pageTemplateCode);
-		foreach($cssNames as $cssName)
-		{
-			try
-			{
-				$a = $asseticManager->get($cssName);
-				$result->addCssAsset($a->getTargetPath());
-			}
-			catch (\Exception $e)
-			{
-				if ($logging)
-				{
-					$logging->warn('asset resource name not found: ' . $cssName);
-					$logging->exception($e);
-				}
-			}
-		}
-
-		$jsNames = $themeManager->getJsAssetNames($configuration, $blockNames, $pageTemplateCode);
-		foreach ($jsNames as $jsName)
-		{
-			try
-			{
-				$a = $asseticManager->get($jsName);
-				$result->addJsAsset($a->getTargetPath());
-			}
-			catch (\Exception $e)
-			{
-				if ($logging)
-				{
-					$logging->warn('asset resource name not found: ' . $jsName);
-					$logging->exception($e);
-				}
-			}
-		}
 	}
 }

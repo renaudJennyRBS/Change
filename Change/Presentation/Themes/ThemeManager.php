@@ -25,6 +25,8 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	const EVENT_MANAGER_IDENTIFIER = 'Presentation.Themes';
 	const EVENT_GET_ASSET_CONFIGURATION = 'getAssetConfiguration';
 
+	const EVENT_ADD_PAGE_RESOURCES = 'addPageResources';
+
 	/**
 	 * @var Theme
 	 */
@@ -80,6 +82,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach(static::EVENT_LOADING, array($this, 'onLoading'), 5);
 		$eventManager->attach(static::EVENT_GET_ASSET_CONFIGURATION, [$this, 'onDefaultGetAssetConfiguration'], 10);
 		$eventManager->attach(static::EVENT_GET_ASSET_CONFIGURATION, [$this, 'onDefaultCompileGetAssetConfiguration'], 5);
+		$eventManager->attach(static::EVENT_ADD_PAGE_RESOURCES, [$this, 'onDefaultAddPageResources'], 5);
 	}
 
 	/**
@@ -657,5 +660,80 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			throw new \RuntimeException('Change/Install/webBaseURLPath not defined', 999999);
 		}
 		return $webBaseURLPath . '/Assets/';
+	}
+
+	/**
+	 * @api
+	 * @param \Change\Http\Web\Result\Page $pageResult
+	 * @param \Change\Presentation\Interfaces\Template $template
+	 * @param \Change\Presentation\Layout\Block[] $blocks
+	 */
+	public function addPageResources(\Change\Http\Web\Result\Page $pageResult,
+		\Change\Presentation\Interfaces\Template $template, array $blocks)
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['pageResult' => $pageResult, 'template' => $template, 'blocks' => $blocks]);
+		$eventManager->trigger(static::EVENT_ADD_PAGE_RESOURCES, $this, $args);
+	}
+
+	public function onDefaultAddPageResources(\Change\Events\Event $event) {
+
+		/** @var \Change\Http\Web\Result\Page $result */
+		$result = $event->getParam('pageResult');
+
+		/** @var \Change\Presentation\Layout\Block[] $blocks */
+		$blocks = $event->getParam('blocks');
+
+		/** @var \Change\Presentation\Interfaces\Template $template */
+		$template = $event->getParam('template');
+
+		$blockNames = array();
+		foreach($blocks as $block)
+		{
+			$blockName = $block->getName();
+			$blockNames[$blockName] = $blockName;
+		}
+
+		$configuration = $this->getAssetConfiguration($this->getCurrent());
+		$asseticManager = $this->getAsseticManager($configuration);
+
+		$event->setParam('configuration', $configuration);
+
+		if ($this->getApplication()->inDevelopmentMode())
+		{
+			(new \Assetic\AssetWriter($this->getAssetRootPath()))->writeManagerAssets($asseticManager);
+		}
+
+		$cssNames = $this->getCssAssetNames($configuration, $blockNames, $template->getCode());
+		foreach($cssNames as $cssName)
+		{
+			try
+			{
+				$a = $asseticManager->get($cssName);
+				$result->addCssAsset($a->getTargetPath());
+			}
+			catch (\Exception $e)
+			{
+				$logging = $this->getApplication()->getLogging();
+				$logging->warn('asset resource name not found: ' . $cssName);
+				$logging->exception($e);
+			}
+		}
+
+		$jsNames = $this->getJsAssetNames($configuration, $blockNames, $template->getCode());
+		foreach ($jsNames as $jsName)
+		{
+			try
+			{
+				$a = $asseticManager->get($jsName);
+				$result->addJsAsset($a->getTargetPath());
+			}
+			catch (\Exception $e)
+			{
+				$logging = $this->getApplication()->getLogging();
+				$logging->warn('asset resource name not found: ' . $jsName);
+				$logging->exception($e);
+			}
+		}
 	}
 }
