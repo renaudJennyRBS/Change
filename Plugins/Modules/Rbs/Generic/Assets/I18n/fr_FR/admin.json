@@ -86,6 +86,9 @@
 	"initialize_template_popin":{
 		"message":"modèle de page pour fenêtre popin"
 	},
+	"initialize_template_print":{
+		"message":"modèle de page pour impression"
+	},
 	"initialize_website_error":{
 		"message":"erreur lors de l'initialisation du site"
 	},
