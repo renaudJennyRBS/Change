@@ -43,5 +43,11 @@
 	},
 	"loading":{
 		"message":"chargement en cours"
+	},
+	"collapse":{
+		"message":"replier"
+	},
+	"expand":{
+		"message":"déplier"
 	}
 }

@@ -123,14 +123,15 @@
 
 		var formats = getFormats(AjaxAPI.getLCID());
 
-		function filter(amount, currencyCode) {
+		function filter(amount, currencyCode, decimals) {
 			var symbol;
 			switch (currencyCode) {
 				case 'USD' : symbol = '$'; break;
 				case 'GBP' : symbol = '£'; break;
 				default : symbol = '€'; break;
 			}
-			return formatNumber(amount, formats.PATTERN, formats.GROUP_SEP, formats.DECIMAL_SEP, 2).replace(/\u00a4/g, symbol);
+			decimals = decimals !== undefined ? decimals : 2;
+			return formatNumber(amount, formats.PATTERN, formats.GROUP_SEP, formats.DECIMAL_SEP, decimals).replace(/\u00a4/g, symbol);
 		}
 		return filter;
 	}]);
