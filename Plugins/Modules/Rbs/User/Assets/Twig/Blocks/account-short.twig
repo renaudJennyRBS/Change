@@ -27,8 +27,16 @@
 			<li><a href="javascript:" data-ng-click="logout()">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></li>
 		</ul>
 		<ul class="dropdown-menu dropdown-menu-{{ parameters.dropdownPosition }}" data-ng-show="!accessorId">
-			<li><a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}</a></li>
-			<li><a href="{{ functionURL('Rbs_User_CreateAccount') }}">{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}</a></li>
+			<li>
+				<a href="{{ functionURL('Rbs_User_Login') }}">
+					{{ i18n('m.rbs.user.front.please_log_in', ['ucf']) }}
+				</a>
+			</li>
+			<li>
+				<a href="{{ functionURL('Rbs_User_CreateAccount') }}">
+					{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}
+				</a>
+			</li>
 		</ul>
 	</div>
 </script>
