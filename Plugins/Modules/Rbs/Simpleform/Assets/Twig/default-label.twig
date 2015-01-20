@@ -1,6 +1,8 @@
+{% use 'Rbs_Simpleform/form-templates.twig' %}
+
 <label for="{{ fieldId }}" class="{{ leftColumnElementClass }} control-label">
 	{%- if fieldInfos.field.getRequired() -%}
-		<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+		{{ block('rbsSimpleformRequiredSymbol') }}
 	{%- endif -%}
 	{{- fieldInfos.field.currentLocalization.getTitle() -}}
 </label>

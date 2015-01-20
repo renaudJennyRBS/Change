@@ -1,3 +1,5 @@
+{% use 'Rbs_Simpleform/form-templates.twig' %}
+
 {% block rbsProductreturnProcess %}
 	<script type="text/ng-template" id="/rbsProductreturnProcess.tpl">
 		<div data-ng-repeat="(shipmentIndex, shipment) in returnData.shipments">
@@ -218,7 +220,6 @@
 
 	{% block rbsProductreturnReturnLineEdition %}
 		<script type="text/ng-template" id="/rbsProductreturnReturnLineEdition.tpl">
-			{% set requiredStarTitle = i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) %}
 			{% set labelColClasses = 'col-sm-4 col-md-3 control-label' %}
 			{% set fieldOffsetClasses = 'col-sm-offset-4 col-md-offset-3' %}
 			{% set fieldColClasses = 'col-sm-8 col-md-9' %}
@@ -229,7 +230,7 @@
 						'has-success': {{ lineFormName }}.quantity.$dirty && !{{ lineFormName }}.quantity.$invalid
 					}">
 					<label for="{{ fieldIdPrefix }}_quantity" class="{{ labelColClasses }}">
-						<em class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						{{ block('rbsSimpleformRequiredSymbol') }}
 						{{ i18n('m.rbs.productreturn.front.quantity_to_return', ['ucf']) }}
 					</label>
 					<div class="{{ fieldColClasses }}">
@@ -249,7 +250,7 @@
 						'has-success': {{ lineFormName }}.reason.$dirty && !{{ lineFormName }}.reason.$invalid
 					}">
 					<label for="{{ fieldIdPrefix }}_reason" class="{{ labelColClasses }}">
-						<em class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						{{ block('rbsSimpleformRequiredSymbol') }}
 						{{ i18n('m.rbs.productreturn.front.return_reason', ['ucf']) }}
 					</label>
 					<div class="{{ fieldColClasses }}">
@@ -271,8 +272,9 @@
 						'has-success': {{ lineFormName }}.precisions.$dirty && !{{ lineFormName }}.precisions.$invalid
 					}">
 					<label for="{{ fieldIdPrefix }}_precisions" class="{{ labelColClasses }}">
-						<em data-ng-if="getReasonById(returnLine.reason).precisionsField == 'required'"
-							class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						<span data-ng-if="getReasonById(returnLine.reason).precisionsField == 'required'">
+							{{ block('rbsSimpleformRequiredSymbol') }}
+						</span>
 						{{ i18n('m.rbs.productreturn.front.precisions', ['ucf']) }}
 					</label>
 					<div class="{{ fieldColClasses }}">
@@ -287,8 +289,9 @@
 						'has-success': {{ lineFormName }}.attachedFile.$dirty && !{{ lineFormName }}.attachedFile.$invalid
 					}">
 					<label for="{{ fieldIdPrefix }}_attachedFile" class="{{ labelColClasses }}">
-						<em data-ng-if="getReasonById(returnLine.reason).attachedFileField == 'required'"
-							class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						<span data-ng-if="getReasonById(returnLine.reason).attachedFileField == 'required'">
+							{{ block('rbsSimpleformRequiredSymbol') }}
+						</span>
 						{{ i18n('m.rbs.productreturn.front.attach_file', ['ucf']) }}
 					</label>
 					<div class="{{ fieldColClasses }}">
@@ -302,7 +305,7 @@
 						'has-success': {{ lineFormName }}.preferredProcessingMode.$dirty && !{{ lineFormName }}.preferredProcessingMode.$invalid
 					}" data-ng-show="returnLine.reason">
 					<label class="{{ labelColClasses }}">
-						<em class="required-symbol" title="{{ requiredStarTitle }}">*</em>
+						{{ block('rbsSimpleformRequiredSymbol') }}
 						{{ i18n('m.rbs.productreturn.front.preferred_processing_mode', ['ucf']) }}
 					</label>
 					<div class="{{ fieldColClasses }}">

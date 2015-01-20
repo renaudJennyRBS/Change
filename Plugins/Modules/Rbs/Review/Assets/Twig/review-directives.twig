@@ -1,3 +1,5 @@
+{% use 'Rbs_Simpleform/form-templates.twig' %}
+
 {% block rbsReviewCommon %}
 	{% block rbsReviewStarRating %}
 		<script type="text/ng-template" id="/rbsReviewStarRating.tpl">
@@ -139,8 +141,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-4 col-md-3 control-label" for="rbs-review-rating-{{ blockId }}">
-							<em class="required-symbol"
-								title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+							{{ block('rbsSimpleformRequiredSymbol') }}
 							{{ i18n('m.rbs.review.front.review_post_rating', ['ucf']) }}
 						</label>
 						<div class="col-sm-8 col-md-9">
@@ -151,8 +152,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-4 col-md-3 control-label" for="rbs-review-content-{{ blockId }}">
-							<em class="required-symbol"
-								title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+							{{ block('rbsSimpleformRequiredSymbol') }}
 							{{ i18n('m.rbs.review.front.review_post_content', ['ucf']) }}
 						</label>
 						<div class="col-sm-8 col-md-9">
