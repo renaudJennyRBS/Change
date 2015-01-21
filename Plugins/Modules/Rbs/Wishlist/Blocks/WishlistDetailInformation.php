@@ -22,6 +22,6 @@ class WishlistDetailInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.wishlist.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.wishlist.admin.wishlistdetail_label', $ucf));
-		$this->addInformationMetaForDetailBlock('Rbs_Wishlist_Wishlist', $i18nManager);
+		$this->addParameterInformationForDetailBlock('Rbs_Wishlist_Wishlist', $i18nManager);
 	}
 }

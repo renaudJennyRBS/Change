@@ -23,7 +23,7 @@ class ErrorInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.error', $ucf));
-		$this->addInformationMeta('codeHttp', Property::TYPE_INTEGER, true, 404)
+		$this->addParameterInformation('codeHttp', Property::TYPE_INTEGER, true, 404)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.error_codehttp', $ucf));
 	}
 }

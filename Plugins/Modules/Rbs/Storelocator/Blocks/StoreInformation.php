@@ -25,9 +25,9 @@ class StoreInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.storelocator.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.storelocator.admin.store_label', $ucf));
-		$this->addInformationMetaForDetailBlock('Rbs_Storelocator_Store', $i18nManager);
+		$this->addParameterInformationForDetailBlock('Rbs_Storelocator_Store', $i18nManager);
 
-		$this->addInformationMeta('showChooseStore', Property::TYPE_BOOLEAN, false, false)
+		$this->addParameterInformation('showChooseStore', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.storelocator.admin.show_choose_store', $ucf));
 	}
 }

@@ -20,13 +20,13 @@ class CreditNoteSummaryInformation extends \Change\Presentation\Blocks\Informati
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.order.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.order.admin.credit_note_summary_label', $ucf));
 
-		$this->addInformationMeta('showIfEmpty', \Change\Documents\Property::TYPE_BOOLEAN, false, false)
+		$this->addParameterInformation('showIfEmpty', \Change\Documents\Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.order.admin.credit_note_summary_show_if_empty', $ucf));
-		$this->addInformationMeta('usage', \Change\Documents\Property::TYPE_DOCUMENT, true)
+		$this->addParameterInformation('usage', \Change\Documents\Property::TYPE_DOCUMENT, true)
 			->setAllowedModelsNames('Rbs_Website_Text')
 			->setLabel($i18nManager->trans('m.rbs.website.admin.credit_note_usage', $ucf));
 	}

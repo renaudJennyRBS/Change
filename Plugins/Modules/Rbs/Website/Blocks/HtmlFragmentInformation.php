@@ -23,7 +23,7 @@ class HtmlFragmentInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.generic.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.html_fragment_label', $ucf));
-		$this->addInformationMetaForDetailBlock('Rbs_Website_HtmlFragment', $i18nManager);
-		$this->addTTL(600);
+		$this->addParameterInformationForDetailBlock('Rbs_Website_HtmlFragment', $i18nManager);
+		$this->addDefaultTTL(600);
 	}
 }

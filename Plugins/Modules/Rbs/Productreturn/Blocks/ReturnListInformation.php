@@ -23,7 +23,7 @@ class ReturnListInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.productreturn.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_list_label', $ucf));
-		$this->addInformationMeta('itemsPerPage', \Change\Documents\Property::TYPE_INTEGER, true, 5)
+		$this->addParameterInformation('itemsPerPage', \Change\Documents\Property::TYPE_INTEGER, true, 5)
 			->setLabel($i18nManager->trans('m.rbs.productreturn.admin.return_list_items_per_page', $ucf));
 	}
 }

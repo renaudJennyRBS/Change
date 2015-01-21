@@ -23,12 +23,12 @@ class MenuInformation extends Information
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.menu', $ucf));
-		$this->addInformationMeta('contextual', Property::TYPE_BOOLEAN, false, false)
+		$this->addParameterInformation('contextual', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_contextual', $ucf));
-		$this->addInformationMetaForDetailBlock(array('Rbs_Website_Topic', 'Rbs_Website_Website', 'Rbs_Website_Menu'), $i18nManager)
+		$this->addParameterInformationForDetailBlock(['Rbs_Website_Topic', 'Rbs_Website_Website', 'Rbs_Website_Menu'], $i18nManager)
 			->setNormalizeCallback(function ($parametersValues) {
 				$contextual = isset($parametersValues['contextual']) ? $parametersValues['contextual'] : false;
 				if ($contextual)
@@ -38,7 +38,7 @@ class MenuInformation extends Information
 				$propertyName = \Change\Presentation\Blocks\Standard\Block::DOCUMENT_TO_DISPLAY_PROPERTY_NAME;
 				return isset($parametersValues[$propertyName]) ? intval($parametersValues[$propertyName]) : 0;
 			});
-		$this->addInformationMeta('offset', Property::TYPE_INTEGER, false, 0)
+		$this->addParameterInformation('offset', Property::TYPE_INTEGER, false, 0)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_offset', $ucf))
 			->setNormalizeCallback(function ($parametersValues) {
 				$contextual = isset($parametersValues['contextual']) ? $parametersValues['contextual'] : false;
@@ -48,9 +48,9 @@ class MenuInformation extends Information
 				}
 				return isset($parametersValues['offset']) ? intval($parametersValues['offset']) : 0;
 			});
-		$this->addInformationMeta('maxLevel', Property::TYPE_INTEGER, true, 1)
+		$this->addParameterInformation('maxLevel', Property::TYPE_INTEGER, true, 1)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_maxlevel', $ucf));
-		$this->addInformationMeta('showTitle', Property::TYPE_BOOLEAN, true, false)
+		$this->addParameterInformation('showTitle', Property::TYPE_BOOLEAN, true, false)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.menu_showtitle', $ucf));
 
 		$templateInformation = $this->addTemplateInformation('Rbs_Website', 'menu-contextual.twig');

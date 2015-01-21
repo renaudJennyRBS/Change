@@ -20,8 +20,8 @@ class TextInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.generic.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.text', $ucf));
-		$this->addInformationMetaForDetailBlock('Rbs_Website_Text', $i18nManager);
-		$this->addTTL(600);
+		$this->addParameterInformationForDetailBlock('Rbs_Website_Text', $i18nManager);
+		$this->addDefaultTTL(600);
 
 		$templateInformation = $this->addTemplateInformation('Rbs_Website', 'text.twig');
 		$templateInformation->setLabel($i18nManager->trans('m.rbs.website.admin.text_only', $ucf));

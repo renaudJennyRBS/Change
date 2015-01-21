@@ -38,12 +38,17 @@ class Information
 	/**
 	 * @var ParameterInformation[]
 	 */
-	protected $parametersInformation = array();
+	protected $parametersInformation = [];
+
+	/**
+	 * @var TemplateInformation
+	 */
+	protected $defaultTemplateInformation = [];
 
 	/**
 	 * @var TemplateInformation[]
 	 */
-	protected $templatesInformation = array();
+	protected $templatesInformation = [];
 
 	/**
 	 * @param string $name
@@ -125,6 +130,23 @@ class Information
 	}
 
 	/**
+	 * @return \Change\Presentation\Blocks\TemplateInformation
+	 */
+	public function addDefaultTemplateInformation()
+	{
+		$this->defaultTemplateInformation = new TemplateInformation('default:default');
+		return $this->defaultTemplateInformation;
+	}
+
+	/**
+	 * @return \Change\Presentation\Blocks\TemplateInformation
+	 */
+	public function getDefaultTemplateInformation()
+	{
+		return $this->defaultTemplateInformation;
+	}
+
+	/**
 	 * @param string $moduleName
 	 * @param string $templateName
 	 * @return \Change\Presentation\Blocks\TemplateInformation
@@ -134,6 +156,23 @@ class Information
 		$templateInformation = new TemplateInformation($moduleName, $templateName);
 		$this->templatesInformation[$templateInformation->getFullyQualifiedTemplateName()] = $templateInformation;
 		return $templateInformation;
+	}
+
+	/**
+	 * @param string $fullyQualifiedTemplateName
+	 * @return TemplateInformation|null
+	 */
+	public function getTemplateInformation($fullyQualifiedTemplateName)
+	{
+		if (!$fullyQualifiedTemplateName || $fullyQualifiedTemplateName =='default:default')
+		{
+			return $this->getDefaultTemplateInformation();
+		}
+		elseif (isset($this->templatesInformation[$fullyQualifiedTemplateName]))
+		{
+			return $this->templatesInformation[$fullyQualifiedTemplateName];
+		}
+		return null;
 	}
 
 	/**
@@ -151,7 +190,7 @@ class Information
 	 * @param mixed $defaultValue
 	 * @return \Change\Presentation\Blocks\ParameterInformation
 	 */
-	public function addInformationMeta($name, $type = Property::TYPE_STRING, $required = false, $defaultValue = null)
+	public function addParameterInformation($name, $type = Property::TYPE_STRING, $required = false, $defaultValue = null)
 	{
 		$parameterInformation = new ParameterInformation($name, $type, $required, $defaultValue);
 		$key = $this->ucLower($name);
@@ -159,15 +198,17 @@ class Information
 		return $parameterInformation;
 	}
 
+
 	/**
 	 * @param string|string[] $allowedModelsNames
 	 * @param \Change\I18n\I18nManager $i18nManager
 	 * @return ParameterInformation
 	 */
-	public function addInformationMetaForDetailBlock($allowedModelsNames, $i18nManager)
+	public function addParameterInformationForDetailBlock($allowedModelsNames, $i18nManager)
 	{
-		return $this->addInformationMeta(\Change\Presentation\Blocks\Standard\Block::DOCUMENT_TO_DISPLAY_PROPERTY_NAME, Property::TYPE_DOCUMENTID, false, null)
-			->setLabel($i18nManager->trans('m.rbs.website.admin.block_property_document_to_display', array('ucf')))
+		return $this->addParameterInformation(\Change\Presentation\Blocks\Standard\Block::DOCUMENT_TO_DISPLAY_PROPERTY_NAME,
+			Property::TYPE_DOCUMENTID, false, null)
+			->setLabel($i18nManager->trans('m.rbs.website.admin.block_property_document_to_display', ['ucf']))
 			->setAllowedModelsNames($allowedModelsNames);
 	}
 
@@ -175,10 +216,18 @@ class Information
 	 * @param integer $defaultValue
 	 * @return ParameterInformation
 	 */
-	protected function addTTL($defaultValue)
+	protected function addDefaultTTL($defaultValue)
 	{
-		$parameterInformation = $this->addInformationMeta('TTL', Property::TYPE_INTEGER, true, $defaultValue);
-		return $parameterInformation;
+		return $this->addParameterInformation('TTL', Property::TYPE_INTEGER, true, $defaultValue);
+	}
+
+	/**
+	 * @param integer $defaultValue
+	 * @return ParameterInformation
+	 */
+	protected function addDefaultTemplateName($defaultValue)
+	{
+		return $this->addParameterInformation('fullyQualifiedTemplateName', Property::TYPE_STRING, false, $defaultValue);
 	}
 
 	/**

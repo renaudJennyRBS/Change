@@ -22,6 +22,6 @@ class EventInformation extends \Rbs\Event\Blocks\Base\BaseEventInformation
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
 		$ucf = array('ucf');
 		$this->setLabel($i18nManager->trans('m.rbs.event.admin.event_label', $ucf));
-		$this->addInformationMetaForDetailBlock('Rbs_Event_Event', $i18nManager);
+		$this->addParameterInformationForDetailBlock('Rbs_Event_Event', $i18nManager);
 	}
 }

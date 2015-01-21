@@ -20,21 +20,21 @@ class InterstitialInformation extends \Change\Presentation\Blocks\Information
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.interstitial_label', $ucf));
-		$this->addInformationMeta('popinTitle', \Change\Documents\Property::TYPE_STRING)
+		$this->addParameterInformation('popinTitle', \Change\Documents\Property::TYPE_STRING)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.interstitial_popin_title', $ucf));
-		$this->addInformationMeta('displayedPage', \Change\Documents\Property::TYPE_DOCUMENT)
+		$this->addParameterInformation('displayedPage', \Change\Documents\Property::TYPE_DOCUMENT)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.interstitial_displayed_page', $ucf))
 			->setAllowedModelsNames('Rbs_Website_StaticPage');
-		$this->addInformationMeta('popinSize', \Change\Documents\Property::TYPE_STRING, false, 'medium')
+		$this->addParameterInformation('popinSize', \Change\Documents\Property::TYPE_STRING, false, 'medium')
 			->setLabel($i18nManager->trans('m.rbs.website.admin.interstitial_popin_size', $ucf))
 			->setCollectionCode('Rbs_Website_InterstitialPopinSizes');
-		$this->addInformationMeta('displayFrequency', \Change\Documents\Property::TYPE_STRING, true, 'reprieve')
+		$this->addParameterInformation('displayFrequency', \Change\Documents\Property::TYPE_STRING, true, 'reprieve')
 			->setLabel($i18nManager->trans('m.rbs.website.admin.interstitial_display_frequency', $ucf))
 			->setCollectionCode('Rbs_Website_InterstitialDisplayFrequencies');
-		$this->addInformationMeta('displayReprieve', \Change\Documents\Property::TYPE_INTEGER, false, 30)
+		$this->addParameterInformation('displayReprieve', \Change\Documents\Property::TYPE_INTEGER, false, 30)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.interstitial_display_reprieve', $ucf))
 			->setNormalizeCallback(function ($parametersValues) {
 				$displayFrequency = isset($parametersValues['displayFrequency']) ? $parametersValues['displayFrequency'] : 'reprieve';
@@ -44,12 +44,12 @@ class InterstitialInformation extends \Change\Presentation\Blocks\Information
 				}
 				return isset($parametersValues['displayReprieve']) ? intval($parametersValues['displayReprieve']) : 30;
 			});
-		$this->addInformationMeta('audience', \Change\Documents\Property::TYPE_STRING, true, 'all')
+		$this->addParameterInformation('audience', \Change\Documents\Property::TYPE_STRING, true, 'all')
 			->setLabel($i18nManager->trans('m.rbs.website.admin.interstitial_audience', $ucf))
 			->setCollectionCode('Rbs_Website_InterstitialAudiences');
-		$this->addInformationMeta('allowClosing', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('allowClosing', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.interstitial_allow_closing', $ucf));
-		$this->addInformationMeta('autoCloseDelay', \Change\Documents\Property::TYPE_INTEGER)
+		$this->addParameterInformation('autoCloseDelay', \Change\Documents\Property::TYPE_INTEGER)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.interstitial_auto_close_delay', $ucf))
 			->setNormalizeCallback(function ($parametersValues) {
 				$allowClosing = isset($parametersValues['allowClosing']) ? $parametersValues['allowClosing'] : true;

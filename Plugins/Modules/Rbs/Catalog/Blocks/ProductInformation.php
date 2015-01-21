@@ -23,22 +23,22 @@ class ProductInformation extends Information
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_label', $ucf));
-		$this->addInformationMetaForDetailBlock('Rbs_Catalog_Product', $i18nManager);
-		$this->addInformationMeta('activateZoom', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformationForDetailBlock('Rbs_Catalog_Product', $i18nManager);
+		$this->addParameterInformation('activateZoom', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_activate_zoom', $ucf));
-		$this->addInformationMeta('reinsurance', Property::TYPE_DOCUMENT)
+		$this->addParameterInformation('reinsurance', Property::TYPE_DOCUMENT)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_reinsurance', $ucf))
 			->setAllowedModelsNames('Rbs_Website_Text');
-		$this->addInformationMeta('informationDisplayMode', Property::TYPE_STRING, false, 'tabs')
+		$this->addParameterInformation('informationDisplayMode', Property::TYPE_STRING, false, 'tabs')
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_information_display_mode', $ucf))
 			->setCollectionCode('Rbs_Catalog_InformationDisplayMode');
-		$this->addInformationMeta('specificationsDisplayMode', Property::TYPE_STRING, false, 'table')
+		$this->addParameterInformation('specificationsDisplayMode', Property::TYPE_STRING, false, 'table')
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_specifications_display_mode', $ucf))
 			->setCollectionCode('Rbs_Catalog_SpecificationDisplayMode');
-		$this->addInformationMeta('commonInformation', Property::TYPE_DOCUMENTARRAY)
+		$this->addParameterInformation('commonInformation', Property::TYPE_DOCUMENTARRAY)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_common_information', $ucf))
 			->setAllowedModelsNames('Rbs_Website_Text');
 
@@ -54,6 +54,6 @@ class ProductInformation extends Information
 		$templateInformation->addParameterInformation('handleReviewVotes', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.review.admin.parameter_handle_review_votes', $ucf));
 
-		$this->addTTL(60);
+		$this->addDefaultTTL(60);
 	}
 }

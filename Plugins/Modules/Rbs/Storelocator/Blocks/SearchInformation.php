@@ -22,22 +22,22 @@ class SearchInformation extends \Change\Presentation\Blocks\Information
 		parent::onInformation($event);
 
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.storelocator.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.storelocator.admin.search_label', $ucf));
 
-		$this->addInformationMeta('commercialSignId', Property::TYPE_DOCUMENTID, false, null)
+		$this->addParameterInformation('commercialSignId', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Storelocator_CommercialSign')
 			->setLabel($i18nManager->trans('m.rbs.storelocator.admin.commercial_sign', $ucf));
 
-		$this->addInformationMeta('showChooseStore', Property::TYPE_BOOLEAN, false, false)
+		$this->addParameterInformation('showChooseStore', Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.storelocator.admin.show_choose_store', $ucf));
 
-		$this->addInformationMeta('backgroundEmptyImage', Property::TYPE_DOCUMENTID, false, null)
+		$this->addParameterInformation('backgroundEmptyImage', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Media_Image')
 			->setLabel($i18nManager->trans('m.rbs.storelocator.admin.background_empty_image', $ucf));
 
-		$this->addInformationMeta('facet', Property::TYPE_DOCUMENTID, false, null)
+		$this->addParameterInformation('facet', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Elasticsearch_Facet')
 			->setLabel($i18nManager->trans('m.rbs.storelocator.admin.search_facet', $ucf));
 	}

@@ -20,12 +20,12 @@ class FileInformation extends \Change\Presentation\Blocks\Information
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.media.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.media.admin.file_label', $ucf));
-		$this->addInformationMeta('blockTitle', \Change\Documents\Property::TYPE_STRING, false)
+		$this->addParameterInformation('blockTitle', \Change\Documents\Property::TYPE_STRING, false)
 			->setLabel($i18nManager->trans('m.rbs.media.admin.block_title', $ucf));
-		$this->addInformationMeta('toDisplayDocumentIds', \Change\Documents\Property::TYPE_DOCUMENTARRAY, true)
+		$this->addParameterInformation('toDisplayDocumentIds', \Change\Documents\Property::TYPE_DOCUMENTARRAY, true)
 			->setAllowedModelsNames('Rbs_Media_File')
 			->setLabel($i18nManager->trans('m.rbs.media.admin.block_to_display_document_ids', $ucf));
 

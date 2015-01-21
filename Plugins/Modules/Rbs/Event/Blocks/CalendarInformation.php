@@ -22,12 +22,12 @@ class CalendarInformation extends \Rbs\Event\Blocks\Base\BaseEventListInformatio
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setLabel($i18nManager->trans('m.rbs.event.admin.calendar_label', $ucf));
-		$this->addInformationMeta('sectionId', Property::TYPE_DOCUMENTID, false, null)
+		$this->addParameterInformation('sectionId', Property::TYPE_DOCUMENTID, false, null)
 			->setAllowedModelsNames('Rbs_Website_Section')
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_section_id', $ucf));
-		$this->addInformationMeta('includeSubSections', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('includeSubSections', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_list_include_sub_sections', $ucf));
 	}
 }

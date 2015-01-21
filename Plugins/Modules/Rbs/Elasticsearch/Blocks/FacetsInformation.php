@@ -24,9 +24,9 @@ class FacetsInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets_label', $ucf));
 
-		$this->addInformationMeta('excludeProducts', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('excludeProducts', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_exclude_products', $ucf));
 
-		$this->addTTL(0);
+		$this->addDefaultTTL(0);
 	}
 }

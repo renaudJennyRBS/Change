@@ -20,19 +20,19 @@ class ResultInformation extends Information
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result', $ucf));
 
-		$this->addInformationMeta('itemsPerPage', Property::TYPE_INTEGER, false, 20)
+		$this->addParameterInformation('itemsPerPage', Property::TYPE_INTEGER, false, 20)
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_items_per_page', $ucf));
 
-		$this->addInformationMeta('showModelFacet', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('showModelFacet', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_show_model_facet', $ucf));
 
-		$this->addInformationMeta('excludeProducts', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('excludeProducts', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.result_exclude_products', $ucf));
 
-		$this->addTTL(0);
+		$this->addDefaultTTL(0);
 	}
 }

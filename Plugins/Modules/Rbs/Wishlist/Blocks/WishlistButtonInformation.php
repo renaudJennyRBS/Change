@@ -21,7 +21,7 @@ class WishlistButtonInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.wishlist.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.wishlist.admin.wishlistbutton_label', $ucf));
-		$this->addInformationMeta('productIds', \Change\Documents\Property::TYPE_DOCUMENTARRAY, false, null)
+		$this->addParameterInformation('productIds', \Change\Documents\Property::TYPE_DOCUMENTARRAY, false, null)
 			->setLabel($i18nManager->trans('m.rbs.wishlist.admin.wishlist_products', $ucf))
 			->setAllowedModelsNames('Rbs_Catalog_Product');
 	}

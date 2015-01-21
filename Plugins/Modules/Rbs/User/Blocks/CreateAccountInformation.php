@@ -26,9 +26,9 @@ class CreateAccountInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.user.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.user.admin.create_account', $ucf));
-		$this->addInformationMeta('confirmationPage', Property::TYPE_DOCUMENTID, false, 0)
+		$this->addParameterInformation('confirmationPage', Property::TYPE_DOCUMENTID, false, 0)
 			->setAllowedModelsNames('Rbs_Website_StaticPage')
 			->setLabel($i18nManager->trans('m.rbs.user.admin.confirmation_page', $ucf));
-		$this->addTTL(0);
+		$this->addDefaultTTL(0);
 	}
 }

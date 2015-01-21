@@ -23,9 +23,9 @@ class VideoInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.media.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.media.admin.video_label', $ucf));
-		$this->addInformationMetaForDetailBlock('Rbs_Media_Video', $i18nManager);
+		$this->addParameterInformationForDetailBlock('Rbs_Media_Video', $i18nManager);
 
-		$this->addInformationMeta('alignment', \Change\Documents\Property::TYPE_STRING, false, 'left')
+		$this->addParameterInformation('alignment', \Change\Documents\Property::TYPE_STRING, false, 'left')
 			->setCollectionCode('Rbs_Media_BlockAlignments')
 			->setLabel($i18nManager->trans('m.rbs.media.admin.block_video_alignment', $ucf));
 
