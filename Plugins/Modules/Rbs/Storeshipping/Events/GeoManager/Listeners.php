@@ -1,19 +1,19 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Proximis
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Generic\Events\ThemeManager;
+namespace Rbs\Storeshipping\Events\GeoManager;
 
-use Change\Presentation\Themes\ThemeManager;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
 /**
- * @name \Rbs\Generic\Events\ThemeManager\Listeners
+ * @name \Rbs\Storeshipping\Events\GeoManager\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
@@ -26,26 +26,11 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$callback = function (\Change\Events\Event $event)
+		$callback = function (Event $event)
 		{
-			$resolver = new \Rbs\Theme\Events\ThemeResolver();
-			return $resolver->resolve($event);
+			(new \Rbs\Storeshipping\Events\GeoManager\GeoManagerEvents())->onGetPoints($event);
 		};
-		$events->attach(ThemeManager::EVENT_LOADING, $callback, 1);
-
-		$callback = function (\Change\Events\Event $event)
-		{
-			$resolver = new \Rbs\Theme\Events\MailTemplateResolver();
-			return $resolver->resolve($event);
-		};
-		$events->attach(ThemeManager::EVENT_MAIL_TEMPLATE_LOADING, $callback, 1);
-
-		$callback = function (\Change\Events\Event $event)
-		{
-			$themeManagerEvents = new \Rbs\Geo\Presentation\ThemeManagerEvents();
-			$themeManagerEvents->onAddPageResources($event);
-		};
-		$events->attach(ThemeManager::EVENT_ADD_PAGE_RESOURCES, $callback);
+		$events->attach('getPoints', $callback, 5);
 	}
 
 	/**

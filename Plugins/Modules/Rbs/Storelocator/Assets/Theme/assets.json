@@ -2,12 +2,14 @@
 	"blocks" : {
 		"Store": {
 			"jsAssets": [
-				"Theme/Rbs/Base/Rbs_Storelocator/js/store.js"
+				"Theme/Rbs/Base/Rbs_Storelocator/js/store.js",
+				"Theme/Rbs/Base/Rbs_Geo/js/map-api.js"
 			]
 		},
 		"Search": {
 			"jsAssets": [
-				"Theme/Rbs/Base/Rbs_Storelocator/js/store.js"
+				"Theme/Rbs/Base/Rbs_Storelocator/js/store.js",
+				"Theme/Rbs/Base/Rbs_Geo/js/map-api.js"
 			]
 		}
 	}

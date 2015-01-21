@@ -1,0 +1,51 @@
+{
+	"/Rbs/Commerce/StoreRelayMode/": {
+		"model": "Rbs_Storeshipping_RelayMode",
+		"name": "list",
+		"rule": {
+			"redirectTo": "/Rbs/Commerce/Mode/",
+			"labelKey": "m.rbs.shipping.admin.mode_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/StoreRelayMode/:id": {
+		"model": "Rbs_Storeshipping_RelayMode",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storeshipping/RelayMode/edit.twig",
+			"labelKey": "m.rbs.storeshipping.documents.relaymode | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/StoreRelayMode/:id/translate/:LCID": {
+		"model": "Rbs_Storeshipping_RelayMode",
+		"name": "translate",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storeshipping/RelayMode/translate.twig",
+			"controller": "RbsChangeTranslateEditorController",
+			"labelKey": "m.rbs.admin.admin.translation | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/StoreRelayMode/new": {
+		"model": "Rbs_Storeshipping_RelayMode",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Storeshipping/RelayMode/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Storeshipping/": {
+		"module": "Rbs_Storeshipping",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/404"
+		},
+		"auto": true
+	},
+	"/Rbs/Storeshipping/RelayMode/:id": false,
+	"/Rbs/Storeshipping/RelayMode/:id/translate/:LCID": false,
+	"/Rbs/Storeshipping/RelayMode/new": false
+}

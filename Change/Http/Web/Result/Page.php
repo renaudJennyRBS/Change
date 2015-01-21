@@ -53,7 +53,7 @@ class Page extends Result
 	/**
 	 * @var array
 	 */
-	protected $jsonObjects = [];
+	protected $jsonObjects = ['__resources' => []];
 
 	/**
 	 * @var \Change\Http\Web\Result\BlockResult[]

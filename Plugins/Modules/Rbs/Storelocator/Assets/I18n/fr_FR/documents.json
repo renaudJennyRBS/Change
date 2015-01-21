@@ -17,6 +17,9 @@
 	"store_services": {
 		"message": "services"
 	},
+	"store_allowrelaymode": {
+		"message": "Utilisable comme point relais"
+	},
 	"storelocatorindex": {
 		"message": "Index de recherche magasin"
 	},

@@ -1178,7 +1178,7 @@ class Cart implements \Serializable
 			'linesTaxes' => [],
 			'linesAmountWithTaxes' => $this->linesAmountWithTaxes,
 
-			'address' => ($this->address instanceof \Rbs\Geo\Address\AddressInterface) ? $this->address->getFields() : null,
+			'address' => ($this->address instanceof \Rbs\Geo\Address\AddressInterface) ? $this->address->toArray() : null,
 			'shippingModes' => [],
 
 			'coupons' => [],

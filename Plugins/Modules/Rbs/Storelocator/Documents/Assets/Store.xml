@@ -20,5 +20,7 @@
 		<property name="commercialSign" type="Document" document-type="Rbs_Storelocator_CommercialSign" />
 
 		<property name="services" type="DocumentArray" document-type="Rbs_Storelocator_Service" />
+
+		<property name="allowRelayMode" type="Boolean" default-value="false" />
 	</properties>
 </document>

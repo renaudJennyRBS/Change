@@ -1,0 +1,38 @@
+{
+	"country": {
+		"message": "pays"
+	},
+	"location_placeholder": {
+		"message": "Veuillez saisir une ville, votre code postal ou une adresse"
+	},
+	"search": {
+		"message": "Chercher"
+	},
+	"locate_me": {
+		"message": "Autour de ma position"
+	},
+	"no_data":{
+		"message":"Il n'y a pas de magasin dans la zone de recherche"
+	},
+	"schedule":{
+		"message":"horaires"
+	},
+	"picture":{
+		"message":"photo"
+	},
+	"closed":{
+		"message":"fermé"
+	},
+	"info":{
+		"message":"Infos"
+	},
+	"distance":{
+		"message":"distance"
+	},
+	"distance_m":{
+		"message":"m"
+	},
+	"distance_km":{
+		"message":"km"
+	}
+}

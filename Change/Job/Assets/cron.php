@@ -12,7 +12,8 @@ $application = new \Change\Application();
 $application->start();
 
 
-class cron {
+class cron
+{
 
 	/**
 	 * @var \Change\Events\EventManager
@@ -53,5 +54,6 @@ class cron {
 	}
 }
 
+echo 'Check jobs at ', (new \DateTime())->format(\DateTime::ISO8601), PHP_EOL;
 $cron = new cron($application);
 $cron->execute();
