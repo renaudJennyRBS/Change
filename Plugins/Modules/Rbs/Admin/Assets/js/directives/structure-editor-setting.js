@@ -104,17 +104,23 @@
 						}, true);
 
 						function onRenderTemplateParams() {
-							if (!scope.block || !scope.block.name || !scope.blockParameters || !scope.blockType) {
+							if (!scope.block || !scope.block.name || !scope.blockParameters || !scope['blockType']) {
 								return;
 							}
 
 							element.find('[data-role="templateBlockParametersContainer"]').html('');
 
-							if (angular.isString(scope.blockParameters.fullyQualifiedTemplateName) &&
-								scope.blockParameters.fullyQualifiedTemplateName.length) {
+							var blockType = scope['blockType'];
+							var templateURL;
+							var fullyQualifiedTemplateName = scope.blockParameters['fullyQualifiedTemplateName'];
+							if (!fullyQualifiedTemplateName || !angular.isString(fullyQualifiedTemplateName)) {
+								templateURL = blockType.template + '?fullyQualifiedTemplateName=default:default';
+							}
+							else if (angular.isString(fullyQualifiedTemplateName) && fullyQualifiedTemplateName.length) {
+								templateURL = blockType.template + '?fullyQualifiedTemplateName=' + fullyQualifiedTemplateName;
+							}
 
-								var templateURL = scope.blockType.template + '?fullyQualifiedTemplateName=' + scope.blockParameters.fullyQualifiedTemplateName;
-
+							if (templateURL) {
 								$http.get(templateURL, {cache: $templateCache}).success(function (html) {
 									html = $(html);
 									html.find('rbs-document-picker-single')
@@ -132,7 +138,7 @@
 							}
 						}
 
-						scope.$watch('blockParameters.fullyQualifiedTemplateName', function (templateName) {
+						scope.$watch('blockParameters.fullyQualifiedTemplateName', function () {
 							onRenderTemplateParams();
 						});
 

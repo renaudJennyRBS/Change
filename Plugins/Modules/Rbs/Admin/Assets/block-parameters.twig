@@ -1,6 +1,18 @@
 {% macro param(param, inputId) %}
 	<div class="form-group">
-		<label class="control-label (= labelClass =)" for="{{ inputId }}">{{ param.label }}</label>
+		<label class="control-label (= labelClass =)" for="{{ inputId }}">
+			{{ param.label }}
+			{% if (not (param.defaultValue is null)) and not param.collectionCode %}
+				{# TODO: handle collection case. #}
+				<small class="text-muted" title="{{ i18nAttr('m.rbs.admin.admin.default_value') }}">[
+					{% if param.type == 'Boolean' %}
+						(= "{{ param.defaultValue }}" | rbsBoolean =)
+					{% else %}
+						{{ param.defaultValue }}
+					{% endif %}
+				]</small>
+			{% endif %}
+		</label>
 		<div class="controls (= controlsClass =)">
 			{% if param.collectionCode %}
 				<select id="{{ inputId }}" name="{{ param.name }}" data-ng-model="blockParameters.{{ param.name }}" class="form-control" data-rbs-items-from-collection="{{ param.collectionCode }}"></select>
