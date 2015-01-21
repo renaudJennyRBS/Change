@@ -5,6 +5,9 @@
 	"highlight_description":{
 		"message":"description"
 	},
+	"highlight_detailedDisplay":{
+		"message":"document de détail"
+	},
 	"highlight_items":{
 		"message":"éléments"
 	},

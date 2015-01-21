@@ -35,11 +35,6 @@
 				scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
 				var data = AjaxAPI.globalVar(cacheKey);
 				scope.productsData = data.productsData;
-				scope.contextData = data.context.data;
-				scope.context = { URLFormats: data.context.URLFormats, pagination: data.context.pagination, visualFormats: [] };
-				angular.forEach(data.context.visualFormats, function(size, name) {
-					scope.context.visualFormats.push(name);
-				})
 			}],
 			link: function(scope, elem, attrs) {
 				scope.viewDetailTitleMask = attrs.viewDetailTitleMask || 'PRODUCT_TITLE';

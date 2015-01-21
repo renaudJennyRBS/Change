@@ -23,16 +23,9 @@ class Highlight extends \Change\Presentation\Blocks\Standard\Block
 	protected function parameterize($event)
 	{
 		$parameters = parent::parameterize($event);
-
-		// Declare your parameters here.
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->setLayoutParameters($event->getBlockLayout());
-		// Uncomment following line to disable caches on this block.
 		$parameters->setNoCache();
-
-		// Fill your parameters here.
-		// $parameters->setParameterValue('myParameter', $value);
-
 		return $parameters;
 	}
 
@@ -52,8 +45,12 @@ class Highlight extends \Change\Presentation\Blocks\Standard\Block
 
 			/* @var $highlight \Rbs\Highlight\Documents\Highlight */
 			$highlight = $documentManager->getDocumentInstance($highlightId);
-			$attributes['highlight'] = $highlight;
+			if ($highlight && $highlight->activated())
+			{
+				$attributes['highlight'] = $highlight;
+				return 'highlight-slider.twig';
+			}
 		}
-		return 'highlight-empty.twig';
+		return null;
 	}
 }

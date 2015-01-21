@@ -6,6 +6,13 @@
 	label="{{ i18nAttr(propertyKey('Rbs_Highlight_Highlight', 'description'), ['ucf']) }}">
 </rbs-field-rich-text>
 
+<rbs-field-picker property="detailedDisplay"
+	label="{{ i18nAttr(propertyKey('Rbs_Highlight_Highlight', 'detailedDisplay'), ['ucf']) }}"
+	selector-title="{{ i18nAttr('m.rbs.highlight.admin.highlight_detailedDisplay_picker_title', ['ucf']) }}"
+	select-model="{publishable:true, abstract:false}">
+	<span class="help-block">{{ i18n('m.rbs.highlight.admin.highlight_detailedDisplay_help') }}</span>
+</rbs-field-picker>
+
 <hr />
 
 <h3>{{ i18n(propertyKey('Rbs_Highlight_Highlight', 'items'), ['ucf']) }}</h3>
