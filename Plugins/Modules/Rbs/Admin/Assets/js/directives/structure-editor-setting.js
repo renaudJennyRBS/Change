@@ -1,4 +1,4 @@
-(function ($) {
+(function($) {
 	"use strict";
 
 	var app = angular.module('RbsChange'),
@@ -15,14 +15,14 @@
 	app.directive('rbsBlockSettingsEditor',
 		['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST',
 			'$rootScope', 'RbsChange.Dialog', '$timeout', '$http', '$compile', 'RbsChange.i18n', '$templateCache',
-			function (structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope, Dialog, $timeout, $http, $compile, i18n, $templateCache) {
+			function(structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope, Dialog, $timeout, $http, $compile, i18n, $templateCache) {
 				return {
 					"restrict": 'A',
 					"transclude": true,
 					"scope": true,
 					"templateUrl": 'Rbs/Admin/js/directives/structure-editor-block-settings.twig',
 
-					"link": function (scope, element, attrs) {
+					"link": function(scope, element, attrs) {
 						var ctrl = scope.editorCtrl;
 						scope.isMailSuitable = attrs.mailSuitable || false;
 
@@ -38,8 +38,8 @@
 							// If there is a block, load default parameters and open parameterize panel.
 							if (scope.block.name) {
 								scope.blockParametersLoading = true;
-								REST.blockInfo(scope.block.name).then(function (blockInfo) {
-									angular.forEach(blockInfo.parameters, function (parameter) {
+								REST.blockInfo(scope.block.name).then(function(blockInfo) {
+									angular.forEach(blockInfo.parameters, function(parameter) {
 										if (parameter.hasOwnProperty('defaultValue')) {
 											scope.block.parameters[parameter.name] = parameter.defaultValue;
 										}
@@ -72,28 +72,29 @@
 									'name': blockType.name
 								});
 								ctrl.notifyChange("create", blockType.label, block);
-								$timeout(function () {
+								$timeout(function() {
 									ctrl.selectBlock(block);
 								});
 							}
 						}
 
-						scope.$watch('blockType', function (blockType, old) {
+						scope.$watch('blockType', function(blockType, old) {
 							if (blockType && blockType !== old) {
 								if (RICH_TEXT_BLOCK_NAMES.indexOf(blockType.name) > -1) {
 									onBlockTypeChanged(blockType);
-								} else {
-									$http.get(blockType.template, {cache: $templateCache}).success(function (html) {
+								}
+								else {
+									$http.get(blockType.template, { cache: $templateCache }).success(function(html) {
 										html = $(html);
 										html.find('rbs-document-picker-single')
 											.attr('data-navigation-block-id', scope.block.id)
-											.each(function () {
+											.each(function() {
 												var el = $(this);
 												el.attr('property-label',
 													el.attr('property-label') + ' (' + scope.block.label + ')');
 											});
 
-										$compile(html)(scope, function (clone) {
+										$compile(html)(scope, function(clone) {
 											element.find('[data-role="blockParametersContainer"]').append(clone);
 											onBlockTypeChanged(blockType);
 											onRenderTemplateParams();
@@ -104,7 +105,7 @@
 						}, true);
 
 						function onRenderTemplateParams() {
-							if (!scope.block || !scope.block.name || !scope.blockParameters || !scope['blockType']) {
+							if (!scope.block || !scope.block.name || !scope['blockType']) {
 								return;
 							}
 
@@ -121,46 +122,47 @@
 							}
 
 							if (templateURL) {
-								$http.get(templateURL, {cache: $templateCache}).success(function (html) {
+								$http.get(templateURL, { cache: $templateCache }).success(function(html) {
 									html = $(html);
 									html.find('rbs-document-picker-single')
 										.attr('data-navigation-block-id', scope.block.id)
-										.each(function () {
+										.each(function() {
 											var el = $(this);
 											el.attr('property-label',
 												el.attr('property-label') + ' (' + scope.block.label + ')');
 										});
 
-									$compile(html)(scope, function (clone) {
+									$compile(html)(scope, function(clone) {
 										element.find('[data-role="templateBlockParametersContainer"]').append(clone);
 									});
 								});
 							}
 						}
 
-						scope.$watch('blockParameters.fullyQualifiedTemplateName', function () {
+						scope.$watch('blockParameters.fullyQualifiedTemplateName', function() {
 							onRenderTemplateParams();
 						});
 
 						// Block TTL options ------------------------------------------
 
-						scope.hasTTL = function (seconds) {
+						scope.hasTTL = function(seconds) {
 							return scope.blockParameters.TTL == seconds;
 						};
 
-						scope.setTTL = function (seconds) {
+						scope.setTTL = function(seconds) {
 							scope.blockParameters.TTL = seconds;
 						};
 
 						// Block visibility options -----------------------------------
 
-						scope.isVisibleFor = function (device) {
+						scope.isVisibleFor = function(device) {
 							if (!scope.block) {
 								return false;
 							}
 							if (device == 'raw') {
 								return (scope.block.visibility == 'raw');
-							} else {
+							}
+							else {
 								if (scope.block.visibility == 'raw') {
 									return false;
 								}
@@ -168,7 +170,7 @@
 							return (!scope.block.visibility || scope.block.visibility.indexOf(device) !== -1);
 						};
 
-						scope.toggleVisibility = function (device) {
+						scope.toggleVisibility = function(device) {
 							var value = !scope.isVisibleFor(device),
 								splat,
 								block,
@@ -177,28 +179,34 @@
 							if (device == 'raw') {
 								if (value) {
 									scope.block.visibility = device;
-								} else {
+								}
+								else {
 									delete scope.block.visibility;
 								}
-							} else {
+							}
+							else {
 								if (scope.block.visibility == 'raw') {
 									delete scope.block.visibility;
-								} else {
+								}
+								else {
 									if (scope.block.visibility) {
 										splat = scope.block.visibility.split('');
 										if (ArrayUtils.inArray(device, splat) !== -1 && !value) {
 											ArrayUtils.removeValue(splat, device);
-										} else {
+										}
+										else {
 											if (ArrayUtils.inArray(device, splat) === -1 && value) {
 												splat.push(device);
 											}
 										}
 										splat.sort();
 										scope.block.visibility = splat.join('');
-									} else {
+									}
+									else {
 										if (value) {
 											scope.block.visibility = device;
-										} else {
+										}
+										else {
 											switch (device) {
 												case 'X' :
 													scope.block.visibility = 'SML';
@@ -221,54 +229,54 @@
 							block = ctrl.getSelectedBlock();
 							block.attr('data-visibility', scope.block.visibility);
 							ctrl.notifyChange("visibility", "block", block,
-								{'from': originalValue, 'to': scope.block.visibility});
+								{ 'from': originalValue, 'to': scope.block.visibility });
 						};
 
-						scope.canInsertSideways = function () {
+						scope.canInsertSideways = function() {
 							var block = ctrl.getSelectedBlock();
 							return !block.is('[rbs-row]') && !ctrl.isInColumnLayout(block);
 						};
 
-						scope.isInColumnLayout = function () {
+						scope.isInColumnLayout = function() {
 							var block = ctrl.getSelectedBlock();
 							return ctrl.isInColumnLayout(block);
 						};
 
-						scope.isRichText = function () {
+						scope.isRichText = function() {
 							var block = ctrl.getSelectedBlock();
 							return ctrl.isRichText(block);
 						};
 
-						scope.selectParentRow = function () {
+						scope.selectParentRow = function() {
 							var block = ctrl.getSelectedBlock();
 							ctrl.selectParentRow(block);
 						};
 
-						scope.newBlockBefore = function () {
+						scope.newBlockBefore = function() {
 							ctrl.newBlockBefore();
 						};
 
-						scope.newBlockAfter = function () {
+						scope.newBlockAfter = function() {
 							ctrl.newBlockAfter();
 						};
 
-						scope.newBlockTop = function () {
+						scope.newBlockTop = function() {
 							ctrl.newBlockTop();
 						};
 
-						scope.newBlockBottom = function () {
+						scope.newBlockBottom = function() {
 							ctrl.newBlockBottom();
 						};
 
-						scope.newBlockLeft = function () {
+						scope.newBlockLeft = function() {
 							ctrl.newBlockSideways('left');
 						};
 
-						scope.newBlockRight = function () {
+						scope.newBlockRight = function() {
 							ctrl.newBlockSideways('right');
 						};
 
-						scope.removeBlock = function () {
+						scope.removeBlock = function() {
 							var block = ctrl.getSelectedBlock();
 							if (block.attr('rbs-block-chooser')) {
 								ctrl.removeBlock(block);
@@ -279,9 +287,9 @@
 									block,
 									i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block | ucf'),
 									"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_confirm | ucf') +
-										"</strong>",
-									{"placement": "top"}
-								).then(function () {
+									"</strong>",
+									{ "placement": "top" }
+								).then(function() {
 										ctrl.removeBlock(block);
 										ctrl.notifyChange("remove", "block", block);
 									});
@@ -297,7 +305,7 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('rbsBlockSelector', ['RbsChange.REST', function (REST) {
+	app.directive('rbsBlockSelector', ['RbsChange.REST', function(REST) {
 		var blockList = [], loading = false, blockListType;
 
 		function loadBlockList(isMailSuitable) {
@@ -308,9 +316,9 @@
 			if (!loading && !alreadyLoaded) {
 				blockList = [];
 				loading = true;
-				REST.call(REST.getBaseUrl('admin/blockList/'), {isMailSuitable: isMailSuitable}).then(function (blockData) {
-					angular.forEach(blockData, function (pluginBlocks, pluginLabel) {
-						angular.forEach(pluginBlocks, function (block) {
+				REST.call(REST.getBaseUrl('admin/blockList/'), { isMailSuitable: isMailSuitable }).then(function(blockData) {
+					angular.forEach(blockData, function(pluginBlocks, pluginLabel) {
+						angular.forEach(pluginBlocks, function(block) {
 							block.plugin = pluginLabel;
 							blockList.push(block);
 						});
@@ -334,11 +342,11 @@
 		return {
 			restrict: 'E',
 			template: '<select class="form-control" data-ng-model="block" data-ng-required="required"' +
-				'data-ng-options="block.label group by block.plugin for block in blocks"></select>',
+			'data-ng-options="block.label group by block.plugin for block in blocks"></select>',
 			scope: { block: '=', selected: '@', required: '@' },
 
-			link: function (scope, element, attrs) {
-				attrs.$observe('mailSuitable', function (value) {
+			link: function(scope, element, attrs) {
+				attrs.$observe('mailSuitable', function(value) {
 					if (value) {
 						var isMailSuitable = value === 'true';
 						scope.blocks = loadBlockList(isMailSuitable);
@@ -352,7 +360,7 @@
 				}
 
 				function onSelectBlock() {
-					scope.$emit('blockSelected', {name: (scope.block ? scope.block.name : '')});
+					scope.$emit('blockSelected', { name: (scope.block ? scope.block.name : '') });
 				}
 
 				scope.$watchCollection('blocks', updateSelection);
@@ -369,7 +377,7 @@
 	//-------------------------------------------------------------------------
 
 	app.directive('rbsRowSettings', ['structureEditorService', '$timeout', 'RbsChange.Dialog', 'RbsChange.i18n',
-		function (structureEditorService, $timeout, Dialog, i18n) {
+		function(structureEditorService, $timeout, Dialog, i18n) {
 			return {
 				"restrict": 'A',
 				"scope": true,
@@ -382,18 +390,19 @@
 						previouslyHighlightedColIndex = -1;
 
 					if (rowEl.children().length === 0) {
-						ctrl.selectBlock(ctrl.createBlock(rowEl, {'type': 'cell', 'size': DEFAULT_GRID_SIZE}));
+						ctrl.selectBlock(ctrl.createBlock(rowEl, { 'type': 'cell', 'size': DEFAULT_GRID_SIZE }));
 					}
 
 					scope.gridSize = gridSize;
 					scope.totalColumns = 0;
 					scope.highlightedColIndex = attrs.highlightColumn || -1;
 
-					scope.highlightColumn = function (index) {
+					scope.highlightColumn = function(index) {
 						if (angular.isDefined(index)) {
 							if (index === scope.highlightedColIndex) {
 								scope.highlightedColIndex = -1;
-							} else {
+							}
+							else {
 								scope.highlightedColIndex = Math.min(index, rowEl.children().length - 1);
 							}
 						}
@@ -402,18 +411,20 @@
 								structureEditorService.highlightBlock(
 									rowEl.children()[scope.highlightedColIndex],
 									"Col. " + (scope.highlightedColIndex + 1) + ' (<i class="icon-resize-horizontal"></i> ' +
-										scope.columns[scope.highlightedColIndex].span + ")",
+									scope.columns[scope.highlightedColIndex].span + ")",
 									true
 								);
-							} catch (e) {
+							}
+							catch (e) {
 								// FIXME
 							}
-						} else {
+						}
+						else {
 							structureEditorService.highlightBlock(null);
 						}
 					};
 
-					scope.highlightNewColumn = function (index) {
+					scope.highlightNewColumn = function(index) {
 						previouslyHighlightedColIndex = scope.highlightedColIndex;
 						scope.highlightedColIndex = -1;
 
@@ -429,29 +440,30 @@
 
 						if (scope.totalColumns < gridSize) {
 							newColSpan = gridSize - scope.totalColumns;
-						} else {
+						}
+						else {
 							newColSpan = nextCol.length ? parseInt(nextCol.attr('data-offset') || 1, 10) : 1;
 						}
 
 						structureEditorService.highlightZone(x, y, w, h,
 							'<i class="icon-arrow-down"></i> <i class="icon-plus"></i> Col. (<i class="icon-resize-horizontal"></i> ' +
-								newColSpan + ')');
+							newColSpan + ')');
 					};
 
-					scope.unhighlightNewColumn = function () {
+					scope.unhighlightNewColumn = function() {
 						scope.highlightColumn(previouslyHighlightedColIndex);
 						previouslyHighlightedColIndex = -1;
 					};
 
-					scope.setEqualColumns = function () {
-						angular.forEach(scope.columns, function (column) {
+					scope.setEqualColumns = function() {
+						angular.forEach(scope.columns, function(column) {
 							column.offset = 0;
 							column.span = scope.equalSize;
 						});
-						ctrl.notifyChange("resize", "allColumns", rowEl, {'size': scope.equalSize});
+						ctrl.notifyChange("resize", "allColumns", rowEl, { 'size': scope.equalSize });
 					};
 
-					scope.addBlockInColumn = function (index, $event) {
+					scope.addBlockInColumn = function(index, $event) {
 						if (index === scope.highlightedColIndex) {
 							$event.stopPropagation();
 						}
@@ -462,17 +474,17 @@
 						index = scope.highlightedColIndex;
 						scope.highlightedColIndex = -1;
 						scope.highlightColumn(index);
-						ctrl.notifyChange("create", "block", newBlock, {'column': colIndex});
+						ctrl.notifyChange("create", "block", newBlock, { 'column': colIndex });
 					};
 
 					// Move column to right
 
-					scope.canMoveColumnRight = function (index) {
+					scope.canMoveColumnRight = function(index) {
 						return scope.totalColumns < gridSize
 							|| (scope.columns[index + 1] && scope.columns[index + 1].offset >= 1);
 					};
 
-					scope.moveColumnRight = function (index, $event) {
+					scope.moveColumnRight = function(index, $event) {
 						if (index === scope.highlightedColIndex) {
 							$event.stopPropagation();
 						}
@@ -482,11 +494,13 @@
 
 						if (isLastCol && scope.totalColumns < gridSize) {
 							offset = $event.altKey ? gridSize - scope.totalColumns : 1;
-						} else {
+						}
+						else {
 							if (scope.columns[index + 1] && scope.columns[index + 1].offset >= 1) {
 								offset = $event.altKey ? scope.columns[index + 1].offset : 1;
 								scope.columns[index + 1].offset -= offset;
-							} else {
+							}
+							else {
 								if (scope.totalColumns < gridSize) {
 									offset = $event.altKey ? gridSize - scope.totalColumns : 1;
 								}
@@ -494,12 +508,12 @@
 						}
 
 						scope.columns[index].offset += offset;
-						ctrl.notifyChange("move", "column", rowEl, {'location': 'right'});
+						ctrl.notifyChange("move", "column", rowEl, { 'location': 'right' });
 					};
 
 					// Move column to left
 
-					scope.moveColumnLeft = function (index, $event) {
+					scope.moveColumnLeft = function(index, $event) {
 						if (index === scope.highlightedColIndex) {
 							$event.stopPropagation();
 						}
@@ -509,18 +523,18 @@
 						if (scope.columns[index + 1]) {
 							scope.columns[index + 1].offset += offset;
 						}
-						ctrl.notifyChange("move", "column", rowEl, {'location': 'left'});
+						ctrl.notifyChange("move", "column", rowEl, { 'location': 'left' });
 					};
 
 					// Expand column
 
-					scope.canExpandColumn = function (index) {
+					scope.canExpandColumn = function(index) {
 						return scope.totalColumns < gridSize
 							|| (scope.columns[index + 1] && scope.columns[index + 1].offset >= 1)
 							|| (scope.columns[index].offset >= 1);
 					};
 
-					scope.expandColumn = function (index, $event) {
+					scope.expandColumn = function(index, $event) {
 						if (index === scope.highlightedColIndex) {
 							$event.stopPropagation();
 						}
@@ -542,15 +556,18 @@
 							if (scope.totalColumns < gridSize) {
 								expandSize = gridSize - scope.totalColumns;
 							}
-						} else {
+						}
+						else {
 							// Use empty space if any.
 							if (scope.totalColumns < gridSize) {
 								expandSize = 1;
-							} else {
+							}
+							else {
 								if (column.offset >= 1) {
 									// Can we reduce the offset of the column?
 									offsetToRemove = 1;
-								} else {
+								}
+								else {
 									if (nextColumn.offset >= 1) {
 										// Can we reduce the offset of the next column?
 										nextOffsetToRemove = 1;
@@ -570,12 +587,12 @@
 
 						scope.columns[index].span += expandSize;
 
-						ctrl.notifyChange("resize", "column", rowEl, {'from': prevSpan, 'to': scope.columns[index].span});
+						ctrl.notifyChange("resize", "column", rowEl, { 'from': prevSpan, 'to': scope.columns[index].span });
 					};
 
 					// Reduce column
 
-					scope.reduceColumn = function (index, $event) {
+					scope.reduceColumn = function(index, $event) {
 						if (index === scope.highlightedColIndex) {
 							$event.stopPropagation();
 						}
@@ -586,16 +603,16 @@
 						}
 
 						ctrl.notifyChange("resize", "column", rowEl,
-							{'from': scope.columns[index].span + 1, 'to': scope.columns[index].span});
+							{ 'from': scope.columns[index].span + 1, 'to': scope.columns[index].span });
 					};
 
 					// Insert column
 
-					scope.canInsertColumn = function (index) {
+					scope.canInsertColumn = function(index) {
 						return scope.canMoveColumnRight(index);
 					};
 
-					scope.insertColumn = function (index, $event) {
+					scope.insertColumn = function(index, $event) {
 						if (index === scope.highlightedColIndex) {
 							$event.stopPropagation();
 						}
@@ -606,8 +623,9 @@
 						if (scope.columns[index] && scope.columns[index].offset >= 1) {
 							size = scope.columns[index].offset;
 							$(rowEl.children().get(index)).removeClass("col-md-offset-" +
-								scope.columns[index].offset).removeAttr('data-offset');
-						} else {
+							scope.columns[index].offset).removeAttr('data-offset');
+						}
+						else {
 							if (scope.totalColumns < gridSize) {
 								size = gridSize - scope.totalColumns;
 							}
@@ -624,35 +642,36 @@
 								index
 							);
 
-							$timeout(function () {
+							$timeout(function() {
 								scope.highlightColumn(index);
 								scope.columns = structureEditorService.getColumnsInfo(rowEl, gridSize);
-								ctrl.notifyChange("create", "column", rowEl, {'location': index});
+								ctrl.notifyChange("create", "column", rowEl, { 'location': index });
 							});
-						} else {
+						}
+						else {
 							throw new Error("Could not insert column because its size would be 0.");
 						}
 					};
 
 					// Delete column
 
-					scope.deleteColumn = function (index, $event) {
+					scope.deleteColumn = function(index, $event) {
 						$event.stopPropagation();
 
 						Dialog.confirmLocal(
 							rowEl.children().get(index),
 							i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_column | ucf'),
 							i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_column_confirm | ucf',
-								{CHILDCOUNT: scope.columns[index].childCount}),
-							{"placement": "top"}
-						).then(function () {
+								{ CHILDCOUNT: scope.columns[index].childCount }),
+							{ "placement": "top" }
+						).then(function() {
 								if (index === scope.highlightedColIndex) {
 									scope.highlightedColIndex = -1;
 								}
 								ctrl.removeItem(scope.columns[index]);
-								scope.$apply(function () {
+								scope.$apply(function() {
 									scope.columns.splice(index, 1);
-									ctrl.notifyChange("remove", "column", rowEl, {'location': index});
+									ctrl.notifyChange("remove", "column", rowEl, { 'location': index });
 								});
 								if (scope.columns.length === 0) {
 									scope.insertColumn(0);
@@ -664,15 +683,16 @@
 
 					scope.$watch(
 						'columns',
-						function (columns) {
+						function(columns) {
 							scope.totalColumns = 0;
 							if (columns) {
 								if (gridSize % columns.length === 0) {
 									scope.equalSize = gridSize / columns.length;
-								} else {
+								}
+								else {
 									scope.equalSize = 0;
 								}
-								angular.forEach(columns, function (col) {
+								angular.forEach(columns, function(col) {
 									scope.totalColumns += col.span + col.offset;
 								});
 								structureEditorService.applyColumnsWidth(rowEl, columns);
@@ -683,29 +703,29 @@
 					);
 
 					// New blocks.
-					scope.newBlockBefore = function () {
+					scope.newBlockBefore = function() {
 						ctrl.newBlockBefore();
 					};
 
-					scope.newBlockAfter = function () {
+					scope.newBlockAfter = function() {
 						ctrl.newBlockAfter();
 					};
 
-					scope.removeBlock = function () {
+					scope.removeBlock = function() {
 						var block = ctrl.getSelectedBlock();
 						Dialog.confirmLocal(
 							block,
 							i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_group | ucf'),
 							"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_group_confirm | ucf') +
-								"</strong>",
-							{"placement": "top"}
-						).then(function () {
+							"</strong>",
+							{ "placement": "top" }
+						).then(function() {
 								ctrl.removeBlock(block);
 								ctrl.notifyChange("remove", "block", block);
 							});
 					};
 
-					$timeout(function () {
+					$timeout(function() {
 						scope.columns = structureEditorService.getColumnsInfo(rowEl);
 					});
 				}

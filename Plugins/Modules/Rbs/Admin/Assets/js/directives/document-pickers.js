@@ -275,12 +275,7 @@
 
 		// Check if nothing is selected.
 		scope.isEmpty = function() {
-			for (var i = 0; i < scope.doc.list.length; i++) {
-				if (scope.doc.list[i].model) {
-					return false;
-				}
-			}
-			return true;
+			return (scope.doc.list.length < 1);
 		};
 
 		var currentContext = Navigation.getCurrentContext();
