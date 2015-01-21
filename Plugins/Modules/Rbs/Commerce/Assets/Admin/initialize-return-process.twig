@@ -1,0 +1,59 @@
+<div class="row">
+	<div class="col-lg-12">
+		<form name="form" data-ng-submit="submit()" novalidate class="form-horizontal" data-ng-controller="RbsCommerceInitializeReturnProcessCtrl">
+
+			<h3>{{ i18n('m.rbs.generic.admin.initialize_parameters', ['ucf']) }}</h3>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_website', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.websiteId" accepted-model="Rbs_Website_Website" value-ids="true"></rbs-document-select>
+			</rbs-field>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.commerce.admin.initialize_store', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.storeId" accepted-model="Rbs_Store_WebStore" value-ids="true"></rbs-document-select>
+			</rbs-field>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_template_sidebar', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.sidebarTemplateId" accepted-model="Rbs_Theme_Template"
+						filter-property="mailSuitable" filter-value="0" value-ids="true">
+				</rbs-document-select>
+			</rbs-field>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_template_no_sidebar', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.noSidebarTemplateId" accepted-model="Rbs_Theme_Template"
+						filter-property="mailSuitable" filter-value="0" value-ids="true">
+				</rbs-document-select>
+			</rbs-field>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_template_print', ['ucf']) }}" required="true">
+				<rbs-document-select ng-model="data.printTemplateId" accepted-model="Rbs_Theme_Template"
+						filter-property="mailSuitable" filter-value="0" value-ids="true">
+				</rbs-document-select>
+			</rbs-field>
+
+			<rbs-field required="true"
+					label="{{ i18nAttr('m.rbs.generic.admin.initialize_label_lang', ['ucf']) }}">
+				<select class="form-control" data-ng-model="data.LCID">
+					<option value="fr_FR">{{ transLCID('fr_FR') | capitalize }}</option>
+					<option value="en_US">{{ transLCID('en_US') | capitalize }}</option>
+				</select>
+			</rbs-field>
+
+			<hr />
+
+			<h3>{{ i18n('m.rbs.generic.admin.initialize_optional_parameters', ['ucf']) }}</h3>
+			<p>{{ i18n('m.rbs.generic.admin.initialize_optional_parameters_helper', ['ucf']) }}</p>
+
+			<rbs-field label="{{ i18nAttr('m.rbs.generic.admin.initialize_user_account_topic', ['ucf']) }}">
+				<rbs-document-select ng-model="data.userAccountTopicId" accepted-model="Rbs_Website_Topic"
+						filter-property="website" filter-value="(= data.websiteId =)" value-ids="true">
+				</rbs-document-select>
+			</rbs-field>
+
+			<button data-ng-if="!alreadyInitialized" type="button" class="btn btn-default pull-right" data-ng-click="initializeOrderProcessStructure()"
+					data-ng-disabled="!data.LCID || !data.websiteId || !data.storeId || !data.sidebarTemplateId || !data.noSidebarTemplateId || !data.popinTemplateId || onInitialization">
+				<i data-ng-if="onInitialization" class="icon-white icon-spinner"></i>
+				{{ i18n('m.rbs.generic.admin.initialize_button', ['ucf']) }}
+			</button>
+		</form>
+	</div>
+</div>

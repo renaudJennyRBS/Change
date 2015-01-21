@@ -124,45 +124,59 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 		if (isset($facetFilters[$filterName]) && is_array($facetFilters[$filterName]))
 		{
 			$facetFilter = $facetFilters[$filterName];
-			$interval = $this->getParameters()->get('interval');
 			$field = $this->getParameters()->get('withTax') ? 'prices.valueWithTax' : 'prices.value';
-			foreach ($facetFilter as $key => $subFacetFilter)
+			if (isset($facetFilter['min']) && isset($facetFilter['max']))
 			{
-				if (is_numeric($key))
-				{
-					$andFilters = [];
-					$key = intval($key);
-					$range = new \Elastica\Query\Range($field, ['gte' => $key, 'lt' => $key + $interval]);
-					$ranges[] = $range;
+				$min = intval($facetFilter['min']);
+				$max = intval($facetFilter['max']);
+				$range = new \Elastica\Query\Range($field, ['gte' => $min, 'lte' => $max]);
+				$ranges[] = $range;
+				$this->getParameters()->set('minFilter', $min);
+				$this->getParameters()->set('maxFilter', $max);
 
-					if ($this->hasChildren())
+				// In this mode, children filters has not handled.
+			}
+			else
+			{
+				$interval = $this->getParameters()->get('interval');
+				foreach ($facetFilter as $key => $subFacetFilter)
+				{
+					if (is_numeric($key))
 					{
-						$andFilters[] = $this->buildRangesFilter([$range], $context);
-						if (is_array($subFacetFilter))
+						$andFilters = [];
+						$key = intval($key);
+						$range = new \Elastica\Query\Range($field, ['gte' => $key, 'lt' => $key + $interval]);
+						$ranges[] = $range;
+
+						if ($this->hasChildren())
 						{
-							foreach ($this->getChildren() as $childFacet)
+							$andFilters[] = $this->buildRangesFilter([$range], $context);
+							if (is_array($subFacetFilter))
 							{
-								$subFilter = $childFacet->getFiltersQuery($subFacetFilter, $context);
-								if ($subFilter)
+								foreach ($this->getChildren() as $childFacet)
 								{
-									$andFilters[] = $subFilter;
+									$subFilter = $childFacet->getFiltersQuery($subFacetFilter, $context);
+									if ($subFilter)
+									{
+										$andFilters[] = $subFilter;
+									}
 								}
 							}
 						}
-					}
 
-					if (count($andFilters) == 1)
-					{
-						$orFilters[] = $andFilters[0];
-					}
-					elseif (count($andFilters) > 1)
-					{
-						$and =  new \Elastica\Filter\Bool();
-						foreach ($andFilters as $f)
+						if (count($andFilters) == 1)
 						{
-							$and->addMust($f);
+							$orFilters[] = $andFilters[0];
 						}
-						$orFilters[] =$and;
+						elseif (count($andFilters) > 1)
+						{
+							$and =  new \Elastica\Filter\Bool();
+							foreach ($andFilters as $f)
+							{
+								$and->addMust($f);
+							}
+							$orFilters[] =$and;
+						}
 					}
 				}
 			}

@@ -78,6 +78,15 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Generic/InitializeReturnProcess": {
+		"module": "Rbs_Generic",
+		"name": "InitializeReturnProcess",
+		"rule": {
+			"templateUrl": "Rbs/Commerce/initialize-return-process.twig",
+			"labelKey": "m.rbs.commerce.admin.initialize_for_return_process | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Generic/InitializeWebStore": {
 		"module": "Rbs_Generic",
 		"name": "InitializeWebStore",
