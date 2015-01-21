@@ -23,7 +23,7 @@
 
 		scope.selectorTitle = attrs.selectorTitle;
 
-		scope.doc = {list: []};
+		scope.doc = { list: [] };
 
 		scope.showButtonsLabel = attrs.hideButtonsLabel !== 'true';
 
@@ -43,13 +43,13 @@
 
 				var filter = scope.$eval(filterJSON);
 				if (angular.isArray(filter)) {
-					scope.models.filters = {name: filter};
+					scope.models.filters = { name: filter };
 				}
 				else if (angular.isObject(filter)) {
 					scope.models.filters = filter;
 				}
 				else {
-					scope.models.filters = {abstract: false, editable: true};
+					scope.models.filters = { abstract: false, editable: true };
 				}
 				scope.models.filtered = Models.getByFilter(scope.models.filters);
 			}
@@ -166,8 +166,8 @@
 				}
 				else {
 					if (Utils.isDocument(modelValue)) {
-						docList.push(modelValue);
 						viewValue = modelValue;
+						docList.push(viewValue);
 					}
 				}
 			}
@@ -268,16 +268,20 @@
 			});
 		}
 
-		// Clear the list of selected elements
+		// Clear the list of selected elements.
 		scope.clear = function() {
 			scope.doc.list = [];
 		};
 
-		// Check if nothing is selected
+		// Check if nothing is selected.
 		scope.isEmpty = function() {
-			return (scope.doc.list.length < 1);
+			for (var i = 0; i < scope.doc.list.length; i++) {
+				if (scope.doc.list[i].model) {
+					return false;
+				}
+			}
+			return true;
 		};
-
 
 		var currentContext = Navigation.getCurrentContext();
 		if (currentContext) {
@@ -287,7 +291,8 @@
 				var contextValue = currentContext.value();
 				if (contextValue !== undefined) {
 					applyContextValue(contextValue);
-				} else {
+				}
+				else {
 					Navigation.popContext(currentContext);
 				}
 			}
@@ -337,7 +342,7 @@
 			if (!multiple) {
 				closeAutoCompleteList();
 			}
-			REST.resource(document.model, document.id).then(function (doc) {
+			REST.resource(document.model, document.id).then(function(doc) {
 				scope.doc.list.push(doc);
 			});
 		}
@@ -613,5 +618,4 @@
 				}
 			};
 		}]);
-
 })();
