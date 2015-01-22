@@ -214,20 +214,26 @@ class Information
 
 	/**
 	 * @param integer $defaultValue
-	 * @return ParameterInformation
+	 * @return $this
 	 */
-	protected function addDefaultTTL($defaultValue)
+	public function setDefaultTTL($defaultValue)
 	{
-		return $this->addParameterInformation('TTL', Property::TYPE_INTEGER, true, $defaultValue);
+		$this->addParameterInformation('TTL', Property::TYPE_INTEGER, true, max(0, intval($defaultValue)));
+		return $this;
 	}
 
 	/**
-	 * @param integer $defaultValue
-	 * @return ParameterInformation
+	 * @param TemplateInformation|string $template
+	 * @return $this
 	 */
-	protected function addDefaultTemplateName($defaultValue)
+	public function setDefaultTemplateName($template)
 	{
-		return $this->addParameterInformation('fullyQualifiedTemplateName', Property::TYPE_STRING, false, $defaultValue);
+		if ($template instanceof TemplateInformation)
+		{
+			$template = $template->getFullyQualifiedTemplateName();
+		}
+		$this->addParameterInformation('fullyQualifiedTemplateName', Property::TYPE_STRING, false, $template);
+		return $this;
 	}
 
 	/**

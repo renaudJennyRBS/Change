@@ -26,6 +26,6 @@ class FormInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.simpleform.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.simpleform.admin.block_form_label', $ucf));
 		$this->addParameterInformationForDetailBlock('Rbs_Simpleform_Form', $i18nManager);
-		$this->addDefaultTTL(0);
+		$this->setDefaultTTL(0);
 	}
 }

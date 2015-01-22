@@ -29,6 +29,6 @@ class CreateAccountInformation extends Information
 		$this->addParameterInformation('confirmationPage', Property::TYPE_DOCUMENTID, false, 0)
 			->setAllowedModelsNames('Rbs_Website_StaticPage')
 			->setLabel($i18nManager->trans('m.rbs.user.admin.confirmation_page', $ucf));
-		$this->addDefaultTTL(0);
+		$this->setDefaultTTL(0);
 	}
 }

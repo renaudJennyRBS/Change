@@ -54,6 +54,6 @@ class ProductInformation extends Information
 		$templateInformation->addParameterInformation('handleReviewVotes', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.review.admin.parameter_handle_review_votes', $ucf));
 
-		$this->addDefaultTTL(60);
+		$this->setDefaultTTL(60);
 	}
 }

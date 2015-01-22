@@ -22,6 +22,6 @@ class ShortSearchInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.elasticsearch.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.shortsearch', $ucf));
-		$this->addDefaultTTL(3600);
+		$this->setDefaultTTL(3600);
 	}
 }

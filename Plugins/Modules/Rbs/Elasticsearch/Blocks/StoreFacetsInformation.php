@@ -40,6 +40,6 @@ class StoreFacetsInformation extends Information
 			->setAllowedModelsNames('Rbs_Elasticsearch_Facet')
 			->setLabel($i18nManager->trans('m.rbs.elasticsearch.admin.facets', $ucf));
 
-		$this->addDefaultTTL(0);
+		$this->setDefaultTTL(0);
 	}
 }

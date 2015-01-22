@@ -23,6 +23,6 @@ class ThemeSelectorInformation extends \Change\Presentation\Blocks\Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.theme.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.theme.admin.theme_selector_label', $ucf));
-		$this->addDefaultTTL(3600);
+		$this->setDefaultTTL(3600);
 	}
 }

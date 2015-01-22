@@ -25,6 +25,6 @@ class ProductAddedToCartInformation extends \Change\Presentation\Blocks\Informat
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_added_to_cart_label', $ucf));
 		$this->addParameterInformationForDetailBlock('Rbs_Catalog_Product', $i18nManager);
 
-		$this->addDefaultTTL(60);
+		$this->setDefaultTTL(60);
 	}
 } 
