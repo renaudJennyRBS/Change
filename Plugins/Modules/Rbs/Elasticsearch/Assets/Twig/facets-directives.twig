@@ -1,0 +1,105 @@
+{% block rbsElasticsearchUse %}
+	{% use 'Rbs_Generic/icon-templates.twig' %}
+{% endblock rbsElasticsearchUse %}
+
+{% block rbsElasticsearchFacetItemChildren %}
+	<div data-ng-if="value.aggregationValues">
+		<div data-ng-repeat="aggregationValues in value.aggregationValues">
+			<div data-ng-show="aggregationValues.values" data-rbs-elasticsearch-facet=""
+				data-facet="aggregationValues"></div>
+		</div>
+	</div>
+{% endblock rbsElasticsearchFacetItemChildren %}
+
+{% block rbsElasticsearchFacets %}
+	{% block rbsElasticsearchFacet %}
+		<script type="text/ng-template" id="/rbsElasticsearchFacet.tpl">
+			<div class="facet-value-selector">
+				{% block rbsElasticsearchFacetHeader %}
+					<h4 data-ng-hide="facet.parent">
+						(= facet.title =)
+						{% block rbsElasticsearchFacetHeaderCollapseButton %}
+							<button type="button" class="btn btn-default btn-icon btn-xs" data-ng-click="isCollapsed = !isCollapsed"
+								title="(= isCollapsed ? '{{ i18n('m.rbs.generic.front.expand', ['ucf']) }}' : '{{ i18n('m.rbs.generic.front.collapse', ['ucf']) }}' =)">
+								<span data-ng-show="isCollapsed">
+									<span class="sr-only">{{ i18n('m.rbs.generic.front.expand', ['ucf']) }}</span>
+									{{ block('rbsGenericIconExpand') }}
+								</span>
+								<span data-ng-hide="isCollapsed">
+									<span class="sr-only">{{ i18n('m.rbs.generic.front.collapse', ['ucf']) }}</span>
+									{{ block('rbsGenericIconCollapse') }}
+								</span>
+							</button>
+						{% endblock rbsElasticsearchFacetHeaderCollapseButton %}
+					</h4>
+					<h5 data-ng-show="facet.parent">
+						(= facet.title =)
+						{{ block('rbsElasticsearchFacetCollapseButton') }}
+					</h5>
+				{% endblock rbsElasticsearchFacetHeader %}
+				{% block rbsElasticsearchFacetValues %}
+					<div data-collapse="isCollapsed" class="facet-values-container"></div>
+				{% endblock rbsElasticsearchFacetValues %}
+			</div>
+		</script>
+	{% endblock rbsElasticsearchFacet %}
+
+	{% block rbsElasticsearchFacetRadio %}
+		<script type="text/ng-template" id="/rbsElasticsearchFacetRadio.tpl">
+			<ol class="list-unstyled">
+				<li data-ng-repeat="value in facet.values">
+					{% block rbsElasticsearchFacetRadioItemValue %}
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" data-ng-model="value.selected" data-ng-change="facet.selectionChange(value)" />
+								(= value.title =) <span class="badge" data-ng-show="value.value">(= value.value =)</span>
+							</label>
+						</div>
+					{% endblock rbsElasticsearchFacetRadioItemValue %}
+					{% block rbsElasticsearchFacetRadioItemChildren %}
+						{{ block('rbsElasticsearchFacetItemChildren') }}
+					{% endblock rbsElasticsearchFacetRadioItemChildren %}
+				</li>
+			</ol>
+		</script>
+	{% endblock rbsElasticsearchFacetRadio %}
+
+	{% block rbsElasticsearchFacetCheckbox %}
+		<script type="text/ng-template" id="/rbsElasticsearchFacetCheckbox.tpl">
+			<ol class="list-unstyled">
+				<li data-ng-repeat="value in facet.values">
+					{% block rbsElasticsearchFacetCheckboxItemValue %}
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" data-ng-model="value.selected" data-ng-change="facet.selectionChange(value)" />
+								(= value.title =) <span class="badge" data-ng-show="value.value">(= value.value =)</span>
+							</label>
+						</div>
+					{% endblock rbsElasticsearchFacetCheckboxItemValue %}
+					{% block rbsElasticsearchFacetCheckboxItemChildren %}
+						{{ block('rbsElasticsearchFacetItemChildren') }}
+					{% endblock rbsElasticsearchFacetCheckboxItemChildren %}
+				</li>
+			</ol>
+		</script>
+	{% endblock rbsElasticsearchFacetCheckbox %}
+
+	{% block rbsElasticsearchFacetInterval %}
+		<script type="text/ng-template" id="/rbsElasticsearchFacetInterval.tpl">
+			<div class="row" data-ng-show="showLabels">
+				<div class="col-xs-6 text-left">
+					<span class="label label-default">(= range.min | rbsFormatPrice =)</span>
+				</div>
+				<div class="col-xs-6 text-right">
+					<span class="label label-default">(= range.max | rbsFormatPrice =)</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="range-slider"
+						data-ng-class="{'range-slider-tooltips': showTooltips, 'range-slider-pips': showPips}"></div>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsElasticsearchFacetInterval %}
+{% endblock rbsElasticsearchFacets %}

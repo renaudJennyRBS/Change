@@ -21,7 +21,7 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 	function __construct(\Rbs\Elasticsearch\Documents\Facet $facet)
 	{
 		parent::__construct($facet);
-		$this->mappingName  = 'prices';
+		$this->mappingName = 'prices';
 	}
 
 	/**
@@ -47,8 +47,8 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 	 */
 	protected function getDefaultParameters()
 	{
-		return  ['withTax' => false, 'interval' => 50, 'minAmount' => null, 'maxAmount' => null,
-			'multipleChoice' => true, 'showEmptyItem' => false];
+		return ['withTax' => false, 'interval' => 50, 'minAmount' => null, 'maxAmount' => null, 'renderingMode' => 'checkbox',
+			'showEmptyItem' => false];
 	}
 
 	/**
@@ -61,7 +61,8 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 		$currentParameters = $facet->getParameters();
 		foreach ($currentParameters as $name => $value)
 		{
-			switch ($name) {
+			switch ($name)
+			{
 				case 'withTax':
 					$validParameters[$name] = $value === 'false' ? false : boolval($value);
 					break;
@@ -87,8 +88,23 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 					}
 					break;
 				case 'showEmptyItem':
-				case 'multipleChoice':
 					$validParameters[$name] = $value === 'false' ? false : boolval($value);
+					break;
+				case 'renderingMode':
+					// TODO validate...
+					$validParameters[$name] = $value;
+					break;
+				case 'sliderShowLabels':
+				case 'sliderShowTooltips':
+				case 'sliderShowPips':
+					if ($currentParameters['renderingMode'] == 'interval')
+					{
+						$validParameters[$name] = $value === 'false' ? false : boolval($value);
+					}
+					else
+					{
+						$validParameters[$name] = false;
+					}
 					break;
 			}
 		}
@@ -133,7 +149,6 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 				$ranges[] = $range;
 				$this->getParameters()->set('minFilter', $min);
 				$this->getParameters()->set('maxFilter', $max);
-
 				// In this mode, children filters has not handled.
 			}
 			else
@@ -170,12 +185,12 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 						}
 						elseif (count($andFilters) > 1)
 						{
-							$and =  new \Elastica\Filter\Bool();
+							$and = new \Elastica\Filter\Bool();
 							foreach ($andFilters as $f)
 							{
 								$and->addMust($f);
 							}
-							$orFilters[] =$and;
+							$orFilters[] = $and;
 						}
 					}
 				}
@@ -249,7 +264,10 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 
 		$contextFilter = new \Elastica\Aggregation\Filter('context');
 		$now = $context['now'];
-		if ($now instanceof \DateTime) {$now = $now->format(\DateTime::ISO8601);}
+		if ($now instanceof \DateTime)
+		{
+			$now = $now->format(\DateTime::ISO8601);
+		}
 		$zone = strval($context['zone']);
 		$billingAreaId = intval($context['billingAreaId']);
 		$webStoreId = intval($context['webStoreId']);
@@ -262,8 +280,8 @@ class ProductPriceFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacet
 		$bool->addMust(new \Elastica\Filter\Term(['prices.billingAreaId' => $billingAreaId]));
 		$bool->addMust(new \Elastica\Filter\Term(['prices.zone' => $zone]));
 		$bool->addMust(new \Elastica\Filter\Term(['prices.storeId' => $webStoreId]));
-		$bool->addMust(new \Elastica\Filter\Range('prices.startActivation', array('lte' => $now)));
-		$bool->addMust(new \Elastica\Filter\Range('prices.endActivation', array('gt' => $now)));
+		$bool->addMust(new \Elastica\Filter\Range('prices.startActivation', ['lte' => $now]));
+		$bool->addMust(new \Elastica\Filter\Range('prices.endActivation', ['gt' => $now]));
 		if ($min !== null)
 		{
 			$bool->addMust(new \Elastica\Filter\Range($field, ['gte' => $min]));

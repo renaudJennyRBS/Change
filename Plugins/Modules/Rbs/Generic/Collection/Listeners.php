@@ -63,6 +63,9 @@ class Listeners implements ListenerAggregateInterface
 					case 'Rbs_Elasticsearch_FacetConfigurationType':
 						(new \Rbs\Elasticsearch\Collection\Collections())->addFacetConfigurationType($event);
 						break;
+					case 'Rbs_Elasticsearch_FacetRenderingModes':
+						(new \Rbs\Elasticsearch\Collection\Collections())->addFacetRenderingModes($event);
+						break;
 
 					case 'Rbs_Generic_Collection_SortDirections':
 						(new \Rbs\Generic\Collection\Collections())->addSortDirections($event);
@@ -141,6 +144,7 @@ class Listeners implements ListenerAggregateInterface
 				'Rbs_Elasticsearch_CollectionIds',
 				'Rbs_Elasticsearch_Collection_AttributeIds',
 				'Rbs_Elasticsearch_FacetConfigurationType',
+				'Rbs_Elasticsearch_FacetRenderingModes',
 
 				'Rbs_Generic_Collection_SortDirections',
 				'Rbs_Generic_Collection_PermissionRoles',

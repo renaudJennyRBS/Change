@@ -18,6 +18,24 @@
 	<rbs-switch data-ng-model="facet.parameters.showEmptyItem"></rbs-switch>
 </rbs-field>
 
-<rbs-field property="multipleChoice" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_multiple_choice', ['ucf']) }}">
-	<rbs-switch data-ng-model="facet.parameters.multipleChoice"></rbs-switch>
+<rbs-field property="renderingMode" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_rendering_mode', ['ucf']) }}">
+	<select data-ng-model="facet.parameters.renderingMode" class="form-control"
+		data-rbs-items-from-collection="Rbs_Elasticsearch_FacetRenderingModes"
+		data-rbs-items-collection-params="forType:price">
+		<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
+	</select>
 </rbs-field>
+
+<div data-ng-show="facet.parameters.renderingMode == 'interval'">
+	<rbs-field property="sliderShowLabels" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_slider_how_labels', ['ucf']) }}">
+		<rbs-switch data-ng-model="facet.parameters.sliderShowLabels"></rbs-switch>
+	</rbs-field>
+
+	<rbs-field property="sliderShowTooltips" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_slider_how_tooltips', ['ucf']) }}">
+		<rbs-switch data-ng-model="facet.parameters.sliderShowTooltips"></rbs-switch>
+	</rbs-field>
+
+	<rbs-field property="sliderShowPips" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_slider_how_pips', ['ucf']) }}">
+		<rbs-switch data-ng-model="facet.parameters.sliderShowPips"></rbs-switch>
+	</rbs-field>
+</div>

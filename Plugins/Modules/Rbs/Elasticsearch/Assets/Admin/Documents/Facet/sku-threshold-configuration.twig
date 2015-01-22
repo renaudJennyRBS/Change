@@ -9,6 +9,10 @@
 	<rbs-switch data-ng-model="facet.parameters.showEmptyItem"></rbs-switch>
 </rbs-field>
 
-<rbs-field property="multipleChoice" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_multiple_choice', ['ucf']) }}">
-	<rbs-switch data-ng-model="facet.parameters.multipleChoice"></rbs-switch>
+<rbs-field property="renderingMode" label="{{ i18nAttr('m.rbs.elasticsearch.admin.facet_configuration_field_rendering_mode', ['ucf']) }}">
+	<select data-ng-model="facet.parameters.renderingMode" class="form-control"
+		data-rbs-items-from-collection="Rbs_Elasticsearch_FacetRenderingModes"
+		data-rbs-items-collection-params="forType:skuThreshold">
+		<option value="">{{ i18n('m.rbs.admin.admin.select', ['ucf', 'etc']) }}</option>
+	</select>
 </rbs-field>

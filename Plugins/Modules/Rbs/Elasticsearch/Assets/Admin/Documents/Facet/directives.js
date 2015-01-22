@@ -1,19 +1,18 @@
-(function (jQuery)
-{
+(function() {
 	"use strict";
 
 	function rbsElasticsearchFacetAttribute() {
 		return {
-			restrict : 'A',
-			templateUrl : 'Rbs/Elasticsearch/Documents/Facet/attribute-configuration.twig',
-			scope: {facet:'='},
-			link : function (scope, element, attrs) {
+			restrict: 'A',
+			templateUrl: 'Rbs/Elasticsearch/Documents/Facet/attribute-configuration.twig',
+			scope: { facet: '=' },
+			link: function(scope) {
 				if (!angular.isObject(scope.facet.parameters) || angular.isArray(scope.facet.parameters)) {
 					scope.facet.parameters = {};
 				}
 				var parameters = scope.facet.parameters;
-				if (!angular.isDefined(parameters.multipleChoice)) {
-					parameters.multipleChoice = true;
+				if (!angular.isDefined(parameters.renderingMode)) {
+					parameters.renderingMode = 'checkbox';
 				}
 				if (!angular.isDefined(parameters.showEmptyItem)) {
 					parameters.showEmptyItem = false;
@@ -22,14 +21,15 @@
 			}
 		}
 	}
+
 	angular.module('RbsChange').directive('rbsElasticsearchFacetAttribute', rbsElasticsearchFacetAttribute);
 
-	function rbsElasticsearchFacetPrice () {
+	function rbsElasticsearchFacetPrice() {
 		return {
-			restrict : 'A',
-			templateUrl : 'Rbs/Elasticsearch/Documents/Facet/price-configuration.twig',
-			scope: {facet:'='},
-			link : function (scope, element, attrs) {
+			restrict: 'A',
+			templateUrl: 'Rbs/Elasticsearch/Documents/Facet/price-configuration.twig',
+			scope: { facet: '=' },
+			link: function(scope) {
 				if (!angular.isObject(scope.facet.parameters) || angular.isArray(scope.facet.parameters)) {
 					scope.facet.parameters = {};
 				}
@@ -40,8 +40,8 @@
 				if (!angular.isDefined(parameters.interval)) {
 					parameters.interval = 50;
 				}
-				if (!angular.isDefined(parameters.multipleChoice)) {
-					parameters.multipleChoice = true;
+				if (!angular.isDefined(parameters.renderingMode)) {
+					parameters.renderingMode = 'checkbox';
 				}
 				if (!angular.isDefined(parameters.showEmptyItem)) {
 					parameters.showEmptyItem = false;
@@ -50,20 +50,21 @@
 			}
 		}
 	}
+
 	angular.module('RbsChange').directive('rbsElasticsearchFacetPrice', rbsElasticsearchFacetPrice);
 
-	function rbsElasticsearchFacetSkuthreshold () {
+	function rbsElasticsearchFacetSkuthreshold() {
 		return {
-			restrict : 'A',
-			templateUrl : 'Rbs/Elasticsearch/Documents/Facet/sku-threshold-configuration.twig',
-			scope: {facet:'='},
-			link : function (scope, element, attrs) {
+			restrict: 'A',
+			templateUrl: 'Rbs/Elasticsearch/Documents/Facet/sku-threshold-configuration.twig',
+			scope: { facet: '=' },
+			link: function(scope) {
 				if (!angular.isObject(scope.facet.parameters) || angular.isArray(scope.facet.parameters)) {
 					scope.facet.parameters = {};
 				}
 				var parameters = scope.facet.parameters;
-				if (!angular.isDefined(parameters.multipleChoice)) {
-					parameters.multipleChoice = true;
+				if (!angular.isDefined(parameters.renderingMode)) {
+					parameters.renderingMode = 'checkbox';
 				}
 				if (!angular.isDefined(parameters.showEmptyItem)) {
 					parameters.showEmptyItem = false;
@@ -72,8 +73,8 @@
 			}
 		}
 	}
-	angular.module('RbsChange').directive('rbsElasticsearchFacetSkuthreshold', rbsElasticsearchFacetSkuthreshold);
 
-})(window.jQuery);
+	angular.module('RbsChange').directive('rbsElasticsearchFacetSkuthreshold', rbsElasticsearchFacetSkuthreshold);
+})();
 
 

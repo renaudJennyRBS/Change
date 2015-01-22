@@ -1,5 +1,6 @@
 {% block rbsElasticsearchUse %}
-	{% use 'Rbs_Generic/icon-templates.twig' %}
+	{% use 'Rbs_Elasticsearch/facets-directives.twig' %}
+	{{ block('rbsElasticsearchFacets') }}
 {% endblock rbsElasticsearchUse %}
 
 {% block rbsElasticsearchDataCache %}
@@ -7,55 +8,6 @@
 		window.__change['{{ blockId }}'] = {facetValues: [{% for facetValue in facetValues %}{{ facetValue.toArray | json_encode | raw }}{% if loop.last == false %},{% endif %}{% endfor %}]};
 	</script>
 {% endblock rbsElasticsearchDataCache %}
-
-{% block rbsElasticsearchFacet %}
-	<script type="text/ng-template" id="/rbsElasticsearchFacet.tpl">
-		<div class="facet-value-selector">
-			<h4 data-ng-hide="facet.parent">
-				(= facet.title =)
-				{% block rbsElasticsearchFacetCollapseButton %}
-					<button type="button" class="btn btn-default btn-icon btn-xs" data-ng-click="isCollapsed = !isCollapsed"
-						title="(= isCollapsed ? '{{ i18n('m.rbs.generic.front.expand', ['ucf']) }}' : '{{ i18n('m.rbs.generic.front.collapse', ['ucf']) }}' =)">
-						<span data-ng-show="isCollapsed">
-							<span class="sr-only">{{ i18n('m.rbs.generic.front.expand', ['ucf']) }}</span>
-							{{ block('rbsGenericIconExpand') }}
-						</span>
-						<span data-ng-hide="isCollapsed">
-							<span class="sr-only">{{ i18n('m.rbs.generic.front.collapse', ['ucf']) }}</span>
-							{{ block('rbsGenericIconCollapse') }}
-						</span>
-					</button>
-				{% endblock rbsElasticsearchFacetCollapseButton %}
-			</h4>
-			<h5 data-ng-show="facet.parent">
-				(= facet.title =)
-				{{ block('rbsElasticsearchFacetCollapseButton') }}
-			</h5>
-			{% block rbsElasticsearchFacetValues %}
-				<ol data-collapse="isCollapsed" class="list-unstyled">
-					<li data-ng-repeat="value in facet.values">
-						{% block rbsElasticsearchFacetValuesItemValue %}
-							<div class="checkbox">
-								<label>
-									<input type="checkbox" data-ng-model="value.selected" data-ng-change="selectionChange(value)" />
-									(= value.title =) <span class="badge" data-ng-show="value.value">(= value.value =)</span>
-								</label>
-							</div>
-						{% endblock rbsElasticsearchFacetValuesItemValue %}
-						{% block rbsElasticsearchFacetValuesItemChildren %}
-							<div data-ng-if="value.aggregationValues">
-								<div data-ng-repeat="aggregationValues in value.aggregationValues">
-									<div data-ng-show="aggregationValues.values" data-rbs-elasticsearch-facet=""
-										data-facet="aggregationValues"></div>
-								</div>
-							</div>
-						{% endblock rbsElasticsearchFacetValuesItemChildren %}
-					</li>
-				</ol>
-			{% endblock %}
-		</div>
-	</script>
-{% endblock rbsElasticsearchFacet %}
 
 {% block rbsElasticsearchFacetMain %}
 	<form class="form-inline" data-ng-submit="submit()" data-rbs-elasticsearch-facet-container="" data-cache-key="{{ blockId }}">

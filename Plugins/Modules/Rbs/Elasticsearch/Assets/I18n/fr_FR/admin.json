@@ -69,24 +69,6 @@
 		"message":"index produits de $WEBSITELABEL$"
 	},
 
-	"facet_multiplechoice":{
-		"message":"choix multiple"
-	},
-	"facet_collectioncode":{
-		"message":"liste de valeurs"
-	},
-	"facet_showemptyitem":{
-		"message":"voir les facettes vides"
-	},
-	"facet_attributeid":{
-		"message":"attribut"
-	},
-	"facet_type_term":{
-		"message":"Ensemble de valeurs"
-	},
-	"facet_type_range":{
-		"message":"Plage de valeurs"
-	},
 	"facet_configuration_type_price":{
 		"message":"prix public"
 	},
@@ -125,6 +107,27 @@
 	},
 	"facet_configuration_field_threshold_collection_id":{
 		"message":"Titres des seuils de la liste"
+	},
+	"facet_configuration_field_rendering_mode":{
+		"message":"mode de rendu"
+	},
+	"facet_rendering_modes_radio":{
+		"message":"choix unique (boutons radio)"
+	},
+	"facet_rendering_modes_checkbox":{
+		"message":"choix multiple (cases à cocher)"
+	},
+	"facet_rendering_modes_interval":{
+		"message":"intervalle (curseurs)"
+	},
+	"facet_configuration_field_slider_how_labels":{
+		"message":"afficher les libellés"
+	},
+	"facet_configuration_field_slider_how_tooltips":{
+		"message":"afficher les infobulles"
+	},
+	"facet_configuration_field_slider_how_pips":{
+		"message":"afficher les graduations"
 	},
 	"result_show_model_facet":{
 		"message":"voir la facette model"

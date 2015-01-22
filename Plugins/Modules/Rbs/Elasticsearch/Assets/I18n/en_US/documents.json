@@ -47,26 +47,8 @@
   "facet_indexid":{
     "message":"index"
   },
-  "facet_multiplechoice":{
-    "message":"multi choice"
-  },
-  "facet_collectioncode":{
-    "message":"value list"
-  },
-  "facet_showemptyitem":{
-    "message":"see empty facets"
-  },
-  "facet_attributeid":{
-    "message":"attribute"
-  },
   "facet_valuesextractorname":{
     "message":"retrieving index value"
-  },
-  "facet_type_term":{
-    "message":"Set of values"
-  },
-  "facet_type_range":{
-    "message":"Range of values"
   },
   "facet_value_extractor_price":{
     "message":"public price"
