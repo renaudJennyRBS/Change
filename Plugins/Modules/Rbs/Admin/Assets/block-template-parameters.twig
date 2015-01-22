@@ -1,6 +1,7 @@
 {% import 'block-parameters.twig' as render %}
 
 <div>
+	<div data-rbs-block-default-values="" data-definitions="{{ defaultValues | json_encode }}"></div>
 	{% for param in templateInformation.parametersInformation %}
 		{% if not param.hidden %}
 			{{ render.param(param, information.name ~ "_" ~ param.name) }}

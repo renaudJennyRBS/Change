@@ -22,7 +22,7 @@ class BlockList
 	public function execute($event)
 	{
 		$result = new ArrayResult(HttpResponse::STATUS_CODE_200);
-		$array = array();
+		$array = [];
 		$isMailSuitable = $event->getRequest()->getQuery('isMailSuitable') === 'true' ? true : false;
 		$blockManager = $event->getApplicationServices()->getBlockManager();
 		$names = $blockManager->getBlockNames();
@@ -37,8 +37,22 @@ class BlockList
 					continue;
 				}
 				list($v, $m, $b) = explode('_', $name);
-				$data = array('name' => $information->getName(), 'label' => $information->getLabel());
-				$data['template'] = 'Block/'.$v.'/'.$m.'/'.$b.'/parameters.twig';
+				$data = [
+					'name' => $information->getName(),
+					'label' => $information->getLabel(),
+					'template' => 'Block/' . $v . '/' . $m . '/' . $b . '/parameters.twig'
+				];
+
+				// Default template information.
+				$templateInformation = $information->getDefaultTemplateInformation();
+				if ($templateInformation)
+				{
+					if (count($templateInformation->getParametersInformation()) > 0)
+					{
+						$data['defaultTemplate']['hasParameter'] = true;
+					}
+				}
+
 				$array[$information->getSection()][] = $data;
 			}
 		}

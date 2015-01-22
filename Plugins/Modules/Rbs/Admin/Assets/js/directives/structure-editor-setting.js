@@ -2,7 +2,7 @@
 	"use strict";
 
 	var app = angular.module('RbsChange'),
-		highlightMargin = 2, highlightBorder = 5,
+		highlightMargin = 2,
 		RICH_TEXT_BLOCK_NAMES = ['Rbs_Website_Richtext', 'Rbs_Mail_Richtext'],
 		DEFAULT_GRID_SIZE = 12;
 
@@ -12,292 +12,273 @@
 	//
 	//-------------------------------------------------------------------------
 
-	app.directive('rbsBlockSettingsEditor',
-		['structureEditorService', 'RbsChange.Workspace', 'RbsChange.ArrayUtils', 'RbsChange.Utils', 'RbsChange.REST',
-			'$rootScope', 'RbsChange.Dialog', '$timeout', '$http', '$compile', 'RbsChange.i18n', '$templateCache',
-			function(structureEditorService, Workspace, ArrayUtils, Utils, REST, $rootScope, Dialog, $timeout, $http, $compile, i18n, $templateCache) {
-				return {
-					"restrict": 'A',
-					"transclude": true,
-					"scope": true,
-					"templateUrl": 'Rbs/Admin/js/directives/structure-editor-block-settings.twig',
+	rbsBlockSettingsEditor.$inject = ['structureEditorService', 'RbsChange.ArrayUtils', 'RbsChange.Dialog', '$timeout', '$http',
+		'$compile', 'RbsChange.i18n', '$templateCache'];
+	app.directive('rbsBlockSettingsEditor', rbsBlockSettingsEditor);
 
-					"link": function(scope, element, attrs) {
-						var ctrl = scope.editorCtrl;
-						scope.isMailSuitable = attrs.mailSuitable || false;
+	function rbsBlockSettingsEditor(structureEditorService, ArrayUtils, Dialog, $timeout, $http, $compile, i18n, $templateCache) {
+		return {
+			"restrict": 'A',
+			"transclude": true,
+			"scope": true,
+			"templateUrl": 'Rbs/Admin/js/directives/structure-editor-block-settings.twig',
 
-						structureEditorService.highlightBlock(null);
+			"link": function(scope, element, attrs) {
+				var ctrl = scope.editorCtrl;
+				scope.isMailSuitable = attrs.mailSuitable || false;
 
-						scope.formValues = {};
-						scope.formDirection = 'vertical';
-						scope.blockParametersLoading = false;
+				structureEditorService.highlightBlock(null);
 
-						scope.block = ctrl.getItemById(element.data('id'));
-						if (!scope.block.parameters) {
-							scope.block.parameters = {};
-							// If there is a block, load default parameters and open parameterize panel.
-							if (scope.block.name) {
-								scope.blockParametersLoading = true;
-								REST.blockInfo(scope.block.name).then(function(blockInfo) {
-									angular.forEach(blockInfo.parameters, function(parameter) {
-										if (parameter.hasOwnProperty('defaultValue')) {
-											scope.block.parameters[parameter.name] = parameter.defaultValue;
-										}
+				scope.formValues = {};
+				scope.formDirection = 'vertical';
+				scope.blockParametersLoading = false;
+
+				scope.block = ctrl.getItemById(element.data('id'));
+				if (!scope.block.parameters) {
+					scope.block.parameters = {};
+				}
+				scope.blockParameters = scope.block.parameters;
+
+				function replaceItem(item) {
+					var block = ctrl.getSelectedBlock(),
+						createdEl = ctrl.createBlock(block.parent(), item, block.index());
+					ctrl.removeBlock(block);
+					return createdEl;
+				}
+
+				function onBlockTypeChanged(blockType) {
+					if (!scope.block.name) {
+						var block = replaceItem({
+							'type': 'block',
+							'name': blockType.name
+						});
+						ctrl.notifyChange("create", blockType.label, block);
+						$timeout(function() {
+							ctrl.selectBlock(block);
+						});
+					}
+				}
+
+				scope.$watch('blockType', function(blockType, old) {
+					if (blockType && blockType !== old) {
+						if (RICH_TEXT_BLOCK_NAMES.indexOf(blockType.name) > -1) {
+							onBlockTypeChanged(blockType);
+						}
+						else {
+							$http.get(blockType.template, { cache: $templateCache }).success(function(html) {
+								html = $(html);
+								html.find('rbs-document-picker-single')
+									.attr('data-navigation-block-id', scope.block.id)
+									.each(function() {
+										var el = $(this);
+										el.attr('property-label',
+											el.attr('property-label') + ' (' + scope.block.label + ')');
 									});
-									scope.blockParametersLoading = false;
-									finalizeParameters();
-								});
-							}
-						}
-						finalizeParameters();
 
-						function finalizeParameters() {
-							scope.blockParameters = scope.block.parameters;
-							if (!scope.blockParameters.hasOwnProperty('TTL')) {
-								scope.blockParameters.TTL = 60;
-							}
-						}
-
-						function replaceItem(item) {
-							var block = ctrl.getSelectedBlock(),
-								createdEl = ctrl.createBlock(block.parent(), item, block.index());
-							ctrl.removeBlock(block);
-							return createdEl;
-						}
-
-						function onBlockTypeChanged(blockType) {
-							if (!scope.block.name) {
-								var block = replaceItem({
-									'type': 'block',
-									'name': blockType.name
-								});
-								ctrl.notifyChange("create", blockType.label, block);
-								$timeout(function() {
-									ctrl.selectBlock(block);
-								});
-							}
-						}
-
-						scope.$watch('blockType', function(blockType, old) {
-							if (blockType && blockType !== old) {
-								if (RICH_TEXT_BLOCK_NAMES.indexOf(blockType.name) > -1) {
+								$compile(html)(scope, function(clone) {
+									element.find('[data-role="blockParametersContainer"]').append(clone);
 									onBlockTypeChanged(blockType);
+									onRenderTemplateParams();
+								});
+							});
+						}
+					}
+				}, true);
+
+				function onRenderTemplateParams() {
+					if (!scope.block || !scope.block.name || !scope['blockType']) {
+						return;
+					}
+
+					element.find('[data-role="templateBlockParametersContainer"]').html('');
+
+					var blockType = scope['blockType'];
+					var templateURL;
+					var fullyQualifiedTemplateName = scope.blockParameters['fullyQualifiedTemplateName'];
+					if (angular.isString(fullyQualifiedTemplateName) && fullyQualifiedTemplateName.length) {
+						templateURL = blockType.template + '?fullyQualifiedTemplateName=' + fullyQualifiedTemplateName;
+					}
+					else if (angular.isObject(blockType['defaultTemplate']) && blockType['defaultTemplate']['hasParameter']) {
+						templateURL = blockType.template + '?fullyQualifiedTemplateName=default:default';
+					}
+
+					if (templateURL) {
+						$http.get(templateURL, { cache: $templateCache }).success(function(html) {
+							html = $(html);
+							html.find('rbs-document-picker-single')
+								.attr('data-navigation-block-id', scope.block.id)
+								.each(function() {
+									var el = $(this);
+									el.attr('property-label',
+										el.attr('property-label') + ' (' + scope.block.label + ')');
+								});
+
+							$compile(html)(scope, function(clone) {
+								element.find('[data-role="templateBlockParametersContainer"]').append(clone);
+							});
+						});
+					}
+				}
+
+				scope.$watch('blockParameters.fullyQualifiedTemplateName', function() {
+					onRenderTemplateParams();
+				});
+
+				// Block TTL options ------------------------------------------
+
+				scope.hasTTL = function(seconds) {
+					return scope.blockParameters.TTL == seconds;
+				};
+
+				scope.setTTL = function(seconds) {
+					scope.blockParameters.TTL = seconds;
+				};
+
+				// Block visibility options -----------------------------------
+
+				scope.isVisibleFor = function(device) {
+					if (!scope.block) {
+						return false;
+					}
+					if (device == 'raw') {
+						return (scope.block.visibility == 'raw');
+					}
+					else {
+						if (scope.block.visibility == 'raw') {
+							return false;
+						}
+					}
+					return (!scope.block.visibility || scope.block.visibility.indexOf(device) !== -1);
+				};
+
+				scope.toggleVisibility = function(device) {
+					var value = !scope.isVisibleFor(device),
+						splat,
+						block,
+						originalValue = '' + scope.block.visibility;
+
+					if (device == 'raw') {
+						if (value) {
+							scope.block.visibility = device;
+						}
+						else {
+							delete scope.block.visibility;
+						}
+					}
+					else {
+						if (scope.block.visibility == 'raw') {
+							delete scope.block.visibility;
+						}
+						else {
+							if (scope.block.visibility) {
+								splat = scope.block.visibility.split('');
+								if (ArrayUtils.inArray(device, splat) !== -1 && !value) {
+									ArrayUtils.removeValue(splat, device);
 								}
 								else {
-									$http.get(blockType.template, { cache: $templateCache }).success(function(html) {
-										html = $(html);
-										html.find('rbs-document-picker-single')
-											.attr('data-navigation-block-id', scope.block.id)
-											.each(function() {
-												var el = $(this);
-												el.attr('property-label',
-													el.attr('property-label') + ' (' + scope.block.label + ')');
-											});
-
-										$compile(html)(scope, function(clone) {
-											element.find('[data-role="blockParametersContainer"]').append(clone);
-											onBlockTypeChanged(blockType);
-											onRenderTemplateParams();
-										});
-									});
+									if (ArrayUtils.inArray(device, splat) === -1 && value) {
+										splat.push(device);
+									}
 								}
-							}
-						}, true);
-
-						function onRenderTemplateParams() {
-							if (!scope.block || !scope.block.name || !scope['blockType']) {
-								return;
-							}
-
-							element.find('[data-role="templateBlockParametersContainer"]').html('');
-
-							var blockType = scope['blockType'];
-							var templateURL;
-							var fullyQualifiedTemplateName = scope.blockParameters['fullyQualifiedTemplateName'];
-							if (!fullyQualifiedTemplateName || !angular.isString(fullyQualifiedTemplateName)) {
-								templateURL = blockType.template + '?fullyQualifiedTemplateName=default:default';
-							}
-							else if (angular.isString(fullyQualifiedTemplateName) && fullyQualifiedTemplateName.length) {
-								templateURL = blockType.template + '?fullyQualifiedTemplateName=' + fullyQualifiedTemplateName;
-							}
-
-							if (templateURL) {
-								$http.get(templateURL, { cache: $templateCache }).success(function(html) {
-									html = $(html);
-									html.find('rbs-document-picker-single')
-										.attr('data-navigation-block-id', scope.block.id)
-										.each(function() {
-											var el = $(this);
-											el.attr('property-label',
-												el.attr('property-label') + ' (' + scope.block.label + ')');
-										});
-
-									$compile(html)(scope, function(clone) {
-										element.find('[data-role="templateBlockParametersContainer"]').append(clone);
-									});
-								});
-							}
-						}
-
-						scope.$watch('blockParameters.fullyQualifiedTemplateName', function() {
-							onRenderTemplateParams();
-						});
-
-						// Block TTL options ------------------------------------------
-
-						scope.hasTTL = function(seconds) {
-							return scope.blockParameters.TTL == seconds;
-						};
-
-						scope.setTTL = function(seconds) {
-							scope.blockParameters.TTL = seconds;
-						};
-
-						// Block visibility options -----------------------------------
-
-						scope.isVisibleFor = function(device) {
-							if (!scope.block) {
-								return false;
-							}
-							if (device == 'raw') {
-								return (scope.block.visibility == 'raw');
+								splat.sort();
+								scope.block.visibility = splat.join('');
 							}
 							else {
-								if (scope.block.visibility == 'raw') {
-									return false;
-								}
-							}
-							return (!scope.block.visibility || scope.block.visibility.indexOf(device) !== -1);
-						};
-
-						scope.toggleVisibility = function(device) {
-							var value = !scope.isVisibleFor(device),
-								splat,
-								block,
-								originalValue = '' + scope.block.visibility;
-
-							if (device == 'raw') {
 								if (value) {
 									scope.block.visibility = device;
 								}
 								else {
-									delete scope.block.visibility;
-								}
-							}
-							else {
-								if (scope.block.visibility == 'raw') {
-									delete scope.block.visibility;
-								}
-								else {
-									if (scope.block.visibility) {
-										splat = scope.block.visibility.split('');
-										if (ArrayUtils.inArray(device, splat) !== -1 && !value) {
-											ArrayUtils.removeValue(splat, device);
-										}
-										else {
-											if (ArrayUtils.inArray(device, splat) === -1 && value) {
-												splat.push(device);
-											}
-										}
-										splat.sort();
-										scope.block.visibility = splat.join('');
-									}
-									else {
-										if (value) {
-											scope.block.visibility = device;
-										}
-										else {
-											switch (device) {
-												case 'X' :
-													scope.block.visibility = 'SML';
-													break;
-												case 'S' :
-													scope.block.visibility = 'XML';
-													break;
-												case 'M' :
-													scope.block.visibility = 'XSL';
-													break;
-												case 'L' :
-													scope.block.visibility = 'XSM';
-													break;
-											}
-										}
+									switch (device) {
+										case 'X' :
+											scope.block.visibility = 'SML';
+											break;
+										case 'S' :
+											scope.block.visibility = 'XML';
+											break;
+										case 'M' :
+											scope.block.visibility = 'XSL';
+											break;
+										case 'L' :
+											scope.block.visibility = 'XSM';
+											break;
 									}
 								}
 							}
+						}
+					}
 
-							block = ctrl.getSelectedBlock();
-							block.attr('data-visibility', scope.block.visibility);
-							ctrl.notifyChange("visibility", "block", block,
-								{ 'from': originalValue, 'to': scope.block.visibility });
-						};
+					block = ctrl.getSelectedBlock();
+					block.attr('data-visibility', scope.block.visibility);
+					ctrl.notifyChange("visibility", "block", block,
+						{ 'from': originalValue, 'to': scope.block.visibility });
+				};
 
-						scope.canInsertSideways = function() {
-							var block = ctrl.getSelectedBlock();
-							return !block.is('[rbs-row]') && !ctrl.isInColumnLayout(block);
-						};
+				scope.canInsertSideways = function() {
+					var block = ctrl.getSelectedBlock();
+					return !block.is('[rbs-row]') && !ctrl.isInColumnLayout(block);
+				};
 
-						scope.isInColumnLayout = function() {
-							var block = ctrl.getSelectedBlock();
-							return ctrl.isInColumnLayout(block);
-						};
+				scope.isInColumnLayout = function() {
+					var block = ctrl.getSelectedBlock();
+					return ctrl.isInColumnLayout(block);
+				};
 
-						scope.isRichText = function() {
-							var block = ctrl.getSelectedBlock();
-							return ctrl.isRichText(block);
-						};
+				scope.isRichText = function() {
+					var block = ctrl.getSelectedBlock();
+					return ctrl.isRichText(block);
+				};
 
-						scope.selectParentRow = function() {
-							var block = ctrl.getSelectedBlock();
-							ctrl.selectParentRow(block);
-						};
+				scope.selectParentRow = function() {
+					var block = ctrl.getSelectedBlock();
+					ctrl.selectParentRow(block);
+				};
 
-						scope.newBlockBefore = function() {
-							ctrl.newBlockBefore();
-						};
+				scope.newBlockBefore = function() {
+					ctrl.newBlockBefore();
+				};
 
-						scope.newBlockAfter = function() {
-							ctrl.newBlockAfter();
-						};
+				scope.newBlockAfter = function() {
+					ctrl.newBlockAfter();
+				};
 
-						scope.newBlockTop = function() {
-							ctrl.newBlockTop();
-						};
+				scope.newBlockTop = function() {
+					ctrl.newBlockTop();
+				};
 
-						scope.newBlockBottom = function() {
-							ctrl.newBlockBottom();
-						};
+				scope.newBlockBottom = function() {
+					ctrl.newBlockBottom();
+				};
 
-						scope.newBlockLeft = function() {
-							ctrl.newBlockSideways('left');
-						};
+				scope.newBlockLeft = function() {
+					ctrl.newBlockSideways('left');
+				};
 
-						scope.newBlockRight = function() {
-							ctrl.newBlockSideways('right');
-						};
+				scope.newBlockRight = function() {
+					ctrl.newBlockSideways('right');
+				};
 
-						scope.removeBlock = function() {
-							var block = ctrl.getSelectedBlock();
-							if (block.attr('rbs-block-chooser')) {
+				scope.removeBlock = function() {
+					var block = ctrl.getSelectedBlock();
+					if (block.attr('rbs-block-chooser')) {
+						ctrl.removeBlock(block);
+						ctrl.notifyChange("remove", "block", block);
+					}
+					else {
+						Dialog.confirmLocal(
+							block,
+							i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block | ucf'),
+							"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_confirm | ucf') +
+							"</strong>",
+							{ "placement": "top" }
+						).then(function() {
 								ctrl.removeBlock(block);
 								ctrl.notifyChange("remove", "block", block);
-							}
-							else {
-								Dialog.confirmLocal(
-									block,
-									i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block | ucf'),
-									"<strong>" + i18n.trans('m.rbs.admin.adminjs.structure_editor_remove_block_confirm | ucf') +
-									"</strong>",
-									{ "placement": "top" }
-								).then(function() {
-										ctrl.removeBlock(block);
-										ctrl.notifyChange("remove", "block", block);
-									});
-							}
-						};
+							});
 					}
 				};
-			}]);
+			}
+		};
+	}
 
 	//-------------------------------------------------------------------------
 	// rbs-block-selector

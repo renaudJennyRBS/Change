@@ -50,6 +50,7 @@
 {% import _self as render %}
 
 <div>
+	<div data-rbs-block-default-values="" data-definitions="{{ defaultValues | json_encode }}"></div>
 	{% set hasParameter = false %}
 	{% set templates = information.templatesInformation %}
 	{% block blockParameters %}
@@ -72,7 +73,13 @@
 			<label class="control-label (= labelClass =)" for="{{ inputId }}">{{ i18n('m.rbs.admin.admin.block_render_template', ['ucf']) }}</label>
 			<div class="controls (= controlsClass =)">
 				<select id="{{ inputId }}" name="fullyQualifiedTemplateName" data-ng-model="blockParameters.fullyQualifiedTemplateName" class="form-control">
-					<option value="">{{ i18n('m.rbs.admin.admin.default_template', ['ucf']) }}</option>
+					<option value="">
+						{% if defaultTemplateInformation.label %}
+							{{ defaultTemplateInformation.label }}
+						{% else %}
+							{{ i18n('m.rbs.admin.admin.default_template', ['ucf']) }}
+						{% endif %}
+					</option>
 					{% for template in templates %}
 						<option value="{{ template.fullyQualifiedTemplateName }}">{{ template.label }}</option>
 					{% endfor %}
@@ -81,6 +88,5 @@
 		</div>
 	{% endif %}
 
-	<div data-role="templateBlockParametersContainer">
-	</div>
+	<div data-role="templateBlockParametersContainer"></div>
 </div>

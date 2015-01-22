@@ -79,10 +79,12 @@
 					if (!scope.block || !scope.blockParameters) {
 						return;
 					}
+					var blockType = {};
 					var blocName = scope.block.name;
 					var template = null;
 					angular.forEach(scope.blockList, function(value) {
 						if (value.block && value.block.name === blocName) {
+							blockType = value.block;
 							template = value.block.template;
 						}
 					});
@@ -95,11 +97,11 @@
 
 					var templateURL;
 					var fullyQualifiedTemplateName = scope.blockParameters['fullyQualifiedTemplateName'];
-					if (!fullyQualifiedTemplateName || !angular.isString(fullyQualifiedTemplateName)) {
-						templateURL = template + '?fullyQualifiedTemplateName=default:default';
-					}
-					else if (angular.isString(fullyQualifiedTemplateName) && fullyQualifiedTemplateName.length) {
+					if (angular.isString(fullyQualifiedTemplateName) && fullyQualifiedTemplateName.length) {
 						templateURL = template + '?fullyQualifiedTemplateName=' + fullyQualifiedTemplateName;
+					}
+					else if (angular.isObject(blockType['defaultTemplate']) && blockType['defaultTemplate']['hasParameter']) {
+						templateURL = template + '?fullyQualifiedTemplateName=default:default';
 					}
 
 					if (templateURL) {
