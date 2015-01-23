@@ -20,6 +20,12 @@
 	"store_allowrelaymode": {
 		"message": "Utilisable comme point relais"
 	},
+	"store_allowreservation": {
+		"message": "Authorise la réservation en magasin"
+	},
+	"store_allowpurchase": {
+		"message": "Authorise l'achat en magasin"
+	},
 	"storelocatorindex": {
 		"message": "Index de recherche magasin"
 	},

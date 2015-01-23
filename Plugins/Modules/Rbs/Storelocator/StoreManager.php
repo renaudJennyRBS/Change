@@ -41,8 +41,9 @@ class StoreManager implements \Zend\EventManager\EventsCapableInterface
 
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
+		$eventManager->attach('getStoreByCode', [$this, 'onDefaultGetStoreByCode'], 5);
 		$eventManager->attach('getStoreData', [$this, 'onDefaultGetStoreData'], 5);
-
+		
 		$eventManager->attach('getStoresData', [$this, 'onDefaultGetElasticaStoresData'], 10);
 		$eventManager->attach('getStoresData', [$this, 'onDefaultGetStoresData'], 10);
 		$eventManager->attach('getStoresData', [$this, 'onDefaultGetStoresArrayData'], 5);
@@ -66,6 +67,40 @@ class StoreManager implements \Zend\EventManager\EventsCapableInterface
 	protected function getDocumentManager()
 	{
 		return $this->documentManager;
+	}
+
+	/**
+	 * @api
+	 * @param string $storeCode
+	 * @return \Rbs\Storelocator\Documents\Store|null
+	 */
+	public function getStoreByCode($storeCode)
+	{
+		$em = $this->getEventManager();
+		$eventArgs = $em->prepareArgs(['storeCode' => $storeCode]);
+		$em->trigger('getStoreByCode', $this, $eventArgs);
+		$store = (isset($eventArgs['store'])) ? $eventArgs['store'] : null;
+		return ($store instanceof \Rbs\Storelocator\Documents\Store) ? $store : null;
+	}
+
+	/**
+	 * Input params: storeCode
+	 * Output param: store
+	 * @api
+	 * @param \Change\Events\Event $event
+	 */
+	public function  onDefaultGetStoreByCode(\Change\Events\Event $event)
+	{
+		if (!$event->getParam('store'))
+		{
+			$storeCode = $event->getParam('storeCode');
+			$query = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Storelocator_Store');
+			$store = $query->andPredicates($query->published(), $query->eq('code', $storeCode))->getFirstDocument();
+			if ($store)
+			{
+				$event->setParam('store', $store);
+			}
+		}
 	}
 
 

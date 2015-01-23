@@ -6,7 +6,7 @@
 		</div>
 		<div class="col-md-8">
 			<button type="button" class="btn btn-default" data-ng-show="parameters.showChooseStore"
-					data-ng-click="chooseStore(storeData)">
+					data-ng-click="chooseStore(storeData)" data-ng-disabled="!storeData.allow.allowReservation && !storeData.allow.allowPurchase">
 				<span class="glyphicon glyphicon-heart"></span> {{ i18n('m.rbs.storelocator.front.choose_this_store', ['ucf']) }}
 			</button>
 
@@ -260,7 +260,8 @@
 	</div>
 	<p>
 		<button data-ng-show="parameters.showChooseStore" type="button" class="btn btn-sm btn-default"
-				data-ng-click="chooseStore(storeData)">
+				data-ng-click="chooseStore(storeData)"
+				data-ng-disabled="!storeData.allow.allowReservation && !storeData.allow.allowPurchase">
 			<span class="glyphicon glyphicon-heart"></span> {{ i18n('m.rbs.storelocator.front.choose_this_store', ['ucf']) }}
 		</button>
 

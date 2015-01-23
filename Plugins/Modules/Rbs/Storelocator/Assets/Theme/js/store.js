@@ -11,6 +11,7 @@
 			},
 			controller: ['$scope', '$element', function(scope, elem) {
 				var init = AjaxAPI.globalVar(scope.cacheKey);
+				scope.parameters = AjaxAPI.getBlockParameters(scope.cacheKey);
 
 				this.getStoreData = function() {
 					return init.storeData;

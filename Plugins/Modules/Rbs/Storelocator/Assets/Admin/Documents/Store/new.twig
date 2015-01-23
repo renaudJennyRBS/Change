@@ -31,9 +31,7 @@
 					label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'code'), ['ucf']) }}">
 				</rbs-field-text>
 
-				<rbs-field-boolean property="allowRelayMode"
-						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'allowRelayMode'), ['ucf']) }}">
-				</rbs-field-boolean>
+
 
 				<rbs-field-rich-text property="description" 
 					label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'description'), ['ucf']) }}">
@@ -54,7 +52,21 @@
 						accepted-model="Rbs_Storelocator_Service">
 				</rbs-field-picker-multiple>
 
+				<hr />
+
+				<rbs-field-boolean property="allowRelayMode"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'allowRelayMode'), ['ucf']) }}">
+				</rbs-field-boolean>
+
+				<rbs-field-boolean property="allowReservation"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'allowReservation'), ['ucf']) }}">
+				</rbs-field-boolean>
+
+				<rbs-field-boolean property="allowPurchase"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'allowPurchase'), ['ucf']) }}">
+				</rbs-field-boolean>
 			</fieldset>
+
 			<fieldset data-rbs-editor-section="geo" data-editor-section-icon="icon-map-marker"
 					data-editor-section-label="{{ i18nAttr('m.rbs.storelocator.admin.geo_section', ['ucf']) }}">
 

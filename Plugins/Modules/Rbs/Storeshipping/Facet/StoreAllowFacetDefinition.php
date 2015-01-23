@@ -9,9 +9,9 @@
 namespace Rbs\Storeshipping\Facet;
 
 /**
-* @name \Rbs\Storeshipping\Facet\RelayFacetDefinition
+* @name \Rbs\Storeshipping\Facet\StoreAllowFacetDefinition
 */
-class RelayFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionInterface
+class StoreAllowFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionInterface
 {
 	/**
 	 * @var \Zend\Stdlib\Parameters
@@ -36,13 +36,15 @@ class RelayFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionIn
 	 */
 	public function getTitle()
 	{
-		return $this->i18nManager->trans('m.Storeshipping.front.relay_facet_title', ['ucf']);
+		return $this->i18nManager->trans('m.Storeshipping.front.store_allow_facet_title', ['ucf']);
 	}
 
-
-	public function getMappingName()
+	/**
+	 * @return string[]
+	 */
+	public function getMappingNames()
 	{
-		return 'allowRelayMode';
+		return ['allowRelayMode', 'allowReservation', 'allowPurchase'];
 	}
 
 	/**
@@ -51,7 +53,7 @@ class RelayFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionIn
 	 */
 	public function getFieldName()
 	{
-		return $this->getMappingName();
+		return 'storeAllow';
 	}
 
 	/**
@@ -73,7 +75,9 @@ class RelayFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionIn
 	public function getMapping()
 	{
 		return ['document' => [
-			$this->getMappingName() => ['type' => 'boolean']
+			'allowRelayMode' => ['type' => 'boolean'],
+			'allowReservation' => ['type' => 'boolean'],
+			'allowPurchase' => ['type' => 'boolean']
 		]];
 	}
 
@@ -94,7 +98,7 @@ class RelayFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionIn
 	}
 
 	/**
-	 * @return \Rbs\Storeshipping\Facet\RelayFacetDefinition[]
+	 * @return \Rbs\Storeshipping\Facet\StoreAllowFacetDefinition[]
 	 */
 	public function getChildren()
 	{
@@ -111,6 +115,8 @@ class RelayFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionIn
 		if ($document instanceof \Rbs\Storelocator\Documents\Store)
 		{
 			$documentData['allowRelayMode'] = $document->getAllowRelayMode();
+			$documentData['allowReservation'] = $document->getAllowReservation();
+			$documentData['allowPurchase'] = $document->getAllowPurchase();
 		}
 		return $documentData;
 	}
@@ -129,20 +135,32 @@ class RelayFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionIn
 			$terms = [];
 			foreach ($facetFilter as $key => $ignored)
 			{
-
-				if ($key == 'false')
-				{
-					$terms[] = false;
-				}
-				elseif ($key == 'true')
-				{
-					$terms[] = true;
+				$term = ($ignored == "1");
+				switch ($key) {
+					case 'allowRelayMode':
+						$terms[] =  new \Elastica\Filter\Terms('allowRelayMode', [$term]);
+						break;
+					case 'allowReservation':
+						$terms[] =  new \Elastica\Filter\Terms('allowReservation', [$term]);
+						break;
+					case 'allowPurchase':
+						$terms[] =  new \Elastica\Filter\Terms('allowPurchase', [$term]);
+						break;
 				}
 			}
 
 			if (count($terms))
 			{
-				return new \Elastica\Filter\Terms($this->getMappingName(), $terms);
+				$and = (isset($facetFilter['and']) == true);
+				$filter = new \Elastica\Filter\Bool();
+				foreach($terms as $termFilter) {
+					if ($and) {
+						$filter->addMust($termFilter);
+					} else {
+						$filter->addShould($termFilter);
+					}
+				}
+				return $filter;
 			}
 		}
 		return null;
@@ -150,15 +168,19 @@ class RelayFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionIn
 
 	/**
 	 * @param array $context
-	 * @return \Elastica\Aggregation\AbstractAggregation
+	 * @return \Elastica\Aggregation\AbstractAggregation[]
 	 */
 	public function getAggregation(array $context = [])
 	{
-		$mappingName = $this->getMappingName();
-		$aggregation = new \Elastica\Aggregation\Terms($mappingName);
-		$aggregation->setSize(0);
-		$aggregation->setField($mappingName);
-		return $aggregation;
+		$aggregations = [];
+		foreach ($this->getMappingNames() as $mappingName)
+		{
+			$aggregation = new \Elastica\Aggregation\Terms($mappingName);
+			$aggregation->setSize(0);
+			$aggregation->setField($mappingName);
+			$aggregations[] = $aggregation;
+		}
+		return $aggregations;
 	}
 
 	/**
@@ -168,24 +190,22 @@ class RelayFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinitionIn
 	public function formatAggregation(array $aggregations)
 	{
 		$av = new \Rbs\Elasticsearch\Facet\AggregationValues($this);
-		$mappingName = $this->getMappingName();
-		if (isset($aggregations[$mappingName]['buckets']))
+		foreach ($this->getMappingNames() as $mappingName)
 		{
-			$buckets = $aggregations[$mappingName]['buckets'];
-			foreach ($buckets as $bucket)
+			if (isset($aggregations[$mappingName]['buckets']))
 			{
-				$count = isset($bucket['doc_count']) && $bucket['doc_count'] ? $bucket['doc_count'] : 0;
-				if ($bucket['key'])
+				$buckets = $aggregations[$mappingName]['buckets'];
+				foreach ($buckets as $bucket)
 				{
-					$v = new \Rbs\Elasticsearch\Facet\AggregationValue('true', $count,
-						$this->i18nManager->trans('m.generic.front.yes', ['ucf']));
+					$count = isset($bucket['doc_count']) && $bucket['doc_count'] ? $bucket['doc_count'] : 0;
+					if ($bucket['key'] && $count)
+					{
+						$i18nKey = 'm.storeshipping.front.facet_value_' . \Change\Stdlib\String::snakeCase($mappingName);
+						$v = new \Rbs\Elasticsearch\Facet\AggregationValue($mappingName, $count,
+							$this->i18nManager->trans($i18nKey, ['ucf']));
+						$av->addValue($v);
+					}
 				}
-				else
-				{
-					$v = new \Rbs\Elasticsearch\Facet\AggregationValue('false', $count,
-						$this->i18nManager->trans('m.generic.front.no', ['ucf']));
-				}
-				$av->addValue($v);
 			}
 		}
 		return $av;

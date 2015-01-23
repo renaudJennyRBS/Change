@@ -7,7 +7,12 @@
 			"visibility" : "raw",
 			"parameters" : {}
 		},
-
+		"shortStore" : {
+			"id" : "shortStore",
+			"type" : "block",
+			"name" : "Rbs_Storeshipping_ShortStore",
+			"parameters" : {"TTL": 60, "autoSelect":true}
+		},
 		"switchLang" : {
 			"id" : "switchLang",
 			"type" : "block",

@@ -2,6 +2,9 @@
 	"country": {
 		"message": "pays"
 	},
+	"store_allow_facet_title": {
+		"message": "Service"
+	},
 	"location_placeholder": {
 		"message": "Veuillez saisir une ville, votre code postal ou une adresse"
 	},
@@ -34,5 +37,26 @@
 	},
 	"distance_km":{
 		"message":"km"
+	},
+	"facet_value_allow_relay_mode":{
+		"message":"retrait colis"
+	},
+	"facet_value_allow_reservation":{
+		"message":"réservation"
+	},
+	"facet_value_allow_purchase":{
+		"message":"achat"
+	},
+	"my_store":{
+		"message":"Mon magasin"
+	},
+	"choose_my_store":{
+		"message":"Choisir mon magasin de retrait"
+	},
+	"show_store_detail":{
+		"message":"Voir la fiche"
+	},
+	"change_store":{
+		"message":"Changer"
 	}
 }

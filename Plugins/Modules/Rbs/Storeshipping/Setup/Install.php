@@ -20,5 +20,21 @@ class Install extends \Change\Plugins\InstallBase
 
 		$configuration->addPersistentEntry('Rbs/Geo/Events/GeoManager/Rbs_Storeshipping',
 			'\Rbs\Storeshipping\Events\GeoManager\Listeners');
+
+		$configuration->addPersistentEntry('Change/Events/ProfileManager/Rbs_Storeshipping',
+			'\Rbs\Storeshipping\User\Listeners');
+
+		$configuration->addPersistentEntry('Change/Events/BlockManager/Rbs_Storeshipping',
+			'\Rbs\Storeshipping\Blocks\Listeners');
+
+		$configuration->addPersistentEntry('Change/Events/Http/Ajax/Rbs_Storeshipping',
+			'\Rbs\Storeshipping\Events\Http\Ajax\Listeners');
+	}
+
+	public function executeDbSchema($plugin, $schemaManager)
+	{
+		parent::executeDbSchema($plugin, $schemaManager);
+		$schema = new Schema($schemaManager);
+		$schema->generate();
 	}
 }
