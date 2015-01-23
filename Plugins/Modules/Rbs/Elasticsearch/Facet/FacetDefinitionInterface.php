@@ -66,7 +66,7 @@ interface FacetDefinitionInterface
 
 	/**
 	 * @param array $context
-	 * @return \Elastica\Aggregation\AbstractAggregation
+	 * @return \Elastica\Aggregation\AbstractAggregation|\Elastica\Aggregation\AbstractAggregation[]
 	 */
 	public function getAggregation(array $context = []);
 

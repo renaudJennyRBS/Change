@@ -149,7 +149,18 @@ class QueryHelper
 	{
 		foreach ($facets as $facet)
 		{
-			$query->addAggregation($facet->getAggregation($context));
+			$aggArray = $facet->getAggregation($context);
+			if (!is_array($aggArray))
+			{
+				$aggArray = [$aggArray];
+			}
+			foreach ($aggArray as $agg)
+			{
+				if ($agg instanceof \Elastica\Aggregation\AbstractAggregation)
+				{
+					$query->addAggregation($agg);
+				}
+			}
 		}
 		$query->setSize(0);
 		return $this;
@@ -168,20 +179,36 @@ class QueryHelper
 		{
 			$customFilter = $facetFilters;
 			unset($customFilter[$facet->getFieldName()]);
-			$aggregation = $facet->getAggregation($context);
-			if (count($customFilter))
+
+			$aggArray = $facet->getAggregation($context);
+			if (!is_array($aggArray))
 			{
-				$filter = $this->getFacetsFilter($facets, $customFilter, $context);
-				if ($filter)
+				$aggArray = [$aggArray];
+			}
+			foreach ($aggArray as $aggregation)
+			{
+				if ($aggregation instanceof \Elastica\Aggregation\AbstractAggregation)
 				{
-					$aggFilter = new \Elastica\Aggregation\Filter('filtered__' . $aggregation->getName());
-					$aggFilter->setFilter($filter);
-					$aggFilter->addAggregation($aggregation);
-					$query->addAggregation($aggFilter);
-					continue;
+					$addAgg = true;
+					if (count($customFilter))
+					{
+						$filter = $this->getFacetsFilter($facets, $customFilter, $context);
+						if ($filter)
+						{
+							$aggFilter = new \Elastica\Aggregation\Filter('filtered__' . $aggregation->getName());
+							$aggFilter->setFilter($filter);
+							$aggFilter->addAggregation($aggregation);
+							$query->addAggregation($aggFilter);
+							$addAgg = false;
+						}
+					}
+
+					if ($addAgg)
+					{
+						$query->addAggregation($aggregation);
+					}
 				}
 			}
-			$query->addAggregation($aggregation);
 		}
 		$query->setSize(0);
 		return $this;
