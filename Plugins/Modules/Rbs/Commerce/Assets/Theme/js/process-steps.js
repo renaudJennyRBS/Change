@@ -454,10 +454,18 @@
 					scope.validateAddress(address).success(function(data) {
 						if (scope.userId && address.common && address.common.useName && address.common.name) {
 							delete address.common.id;
-							delete address.default;
-							if (!scope.userAddresses || !scope.userAddresses.length) {
-								address.default = {'default': true};
-							}
+							address.default = {'default': true, 'shipping': true};
+							angular.forEach(scope.userAddresses, function(userAddress) {
+								if (userAddress.default) {
+									if (userAddress.default.default) {
+										delete address.default.default;
+									}
+									if (userAddress.default.shipping) {
+										delete address.default.shipping;
+									}
+								}
+							});
+
 							processController.loading(true);
 							AjaxAPI.postData('Rbs/Geo/Address/', address)
 								.success(function(data, status, headers, config) {
@@ -731,9 +739,21 @@
 				scope.useAddress = function() {
 					var address = angular.copy(scope.processData.address);
 					processController.loading(true);
-					if (scope.userId && address.common && address.common.useName && address.common.name) {
+
+					if (scope.processData.userId && address.common && address.common.useName && address.common.name) {
 						delete address.common.id;
-						delete address.default;
+						address.default = {'default': true, 'billing': true};
+						angular.forEach(scope.userAddresses, function(userAddress) {
+							if (userAddress.default) {
+								if (userAddress.default.default) {
+									delete address.default.default;
+								}
+								if (userAddress.default.billing) {
+									delete address.default.billing;
+								}
+							}
+						});
+
 						AjaxAPI.postData('Rbs/Geo/Address/', address)
 							.success(function(data, status, headers, config) {
 								var addedAddress = data.dataSets;
