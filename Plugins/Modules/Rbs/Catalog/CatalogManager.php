@@ -813,7 +813,7 @@ class CatalogManager implements \Zend\EventManager\EventsCapableInterface
 			$product = $this->getDocumentManager()->getDocumentInstance($product, 'Rbs_Catalog_Product');
 		}
 
-		if ($product instanceof \Rbs\Catalog\Documents\Product)
+		if ($product instanceof \Rbs\Catalog\Documents\Product && $product->published())
 		{
 			$eventArgs = $em->prepareArgs(['product' => $product, 'context' => $context]);
 			$this->getEventManager()->trigger('getProductData', $this, $eventArgs);
