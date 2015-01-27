@@ -36,6 +36,14 @@ class Container extends Item
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	/**
 	 * @param array $data
 	 * @return void
 	 */
@@ -45,10 +53,17 @@ class Container extends Item
 		$this->grid = $data['grid'];
 	}
 
+	/**
+	 * @return array
+	 */
 	public function toArray()
 	{
 		$result = parent::toArray();
 		$result['grid'] = $this->grid;
+		if ($this->idPrefix)
+		{
+			$result['idPrefix'] = $this->idPrefix;
+		}
 		return $result;
 	}
 }

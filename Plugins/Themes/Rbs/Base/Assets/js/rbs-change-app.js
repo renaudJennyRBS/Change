@@ -163,13 +163,12 @@
 
 	app.provider('RbsChange.AjaxAPI', function AjaxAPIProvider() {
 		var apiURL = '/ajax.V1.php/', LCID = 'fr_FR',
-			defaultParams = { websiteId: null, sectionId: null, pageId: null, data: {} },
-			blockParameters = {};
+			defaultParams = { websiteId: null, sectionId: null, pageId: null, data: {} };
 
 		this.$get = ['$http', '$location', '$rootScope', '$window', function($http, $location, $rootScope, $window) {
-			if (angular.isObject($window.__change)) {
-				if (angular.isObject($window.__change.navigationContext)) {
-					var data = $window.__change.navigationContext;
+			if (angular.isObject(window.__change)) {
+				if (angular.isObject(window.__change.navigationContext)) {
+					var data = window.__change.navigationContext;
 					if (data.websiteId) {
 						defaultParams.websiteId = data.websiteId;
 					}
@@ -184,22 +183,18 @@
 						}
 					}
 				}
-
-				if (angular.isObject($window.__change.blockParameters)) {
-					blockParameters = $window.__change.blockParameters;
-				}
 			}
 
 			function globalVar(name, value) {
-				if (angular.isObject($window.__change)) {
+				if (angular.isObject(window.__change)) {
 					if (angular.isUndefined(value)) {
-						return $window.__change.hasOwnProperty(name) ? $window.__change[name] : value;
+						return window.__change.hasOwnProperty(name) ? window.__change[name] : value;
 					}
 					else {
-						return $window.__change[name] = value;
+						return window.__change[name] = value;
 					}
 				}
-				return $window.__change;
+				return window.__change;
 			}
 
 			function getVersion() {
@@ -211,8 +206,8 @@
 			}
 
 			function getBlockParameters(blockId) {
-				if (angular.isObject(blockParameters[blockId])) {
-					return blockParameters[blockId];
+				if (angular.isObject(window.__change.blockParameters[blockId])) {
+					return window.__change.blockParameters[blockId];
 				}
 				console.log('Parameters not found for block', blockId);
 				return {};

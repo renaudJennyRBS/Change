@@ -1,7 +1,7 @@
 {
 	"editableContent": {
-		"themeSelector": {
-			"id": "themeSelector",
+		"popin_themeSelector": {
+			"id": "popin_themeSelector",
 			"type": "block",
 			"name": "Rbs_Theme_ThemeSelector",
 			"visibility": "raw",
@@ -10,6 +10,7 @@
 		"mainContent": {
 			"id": "mainContent",
 			"grid": 12,
+			"idPrefix": "popin_",
 			"type": "container",
 			"parameters": {}
 		}
