@@ -24,7 +24,7 @@ class Search extends \Change\Presentation\Blocks\Standard\Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta('imageFormats', 'x,listItem');
-		$parameters->addParameterMeta('dataSetNames', 'coordinates,address,card');
+		$parameters->addParameterMeta('dataSetNames', 'coordinates,address,card,allow');
 		$parameters->addParameterMeta('URLFormats', 'canonical');
 		$parameters->addParameterMeta('pagination', '0,50');
 		$parameters->addParameterMeta('facet');

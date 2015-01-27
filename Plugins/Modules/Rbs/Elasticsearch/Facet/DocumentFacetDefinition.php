@@ -287,7 +287,18 @@ class DocumentFacetDefinition implements FacetDefinitionInterface
 		{
 			foreach ($this->getChildren() as $children)
 			{
-				$aggregation->addAggregation($children->getAggregation($context));
+				$aggArray = $children->getAggregation($context);
+				if (!is_array($aggArray))
+				{
+					$aggArray = [$aggArray];
+				}
+				foreach ($aggArray as $agg)
+				{
+					if ($agg instanceof \Elastica\Aggregation\AbstractAggregation)
+					{
+						$aggregation->addAggregation($agg);
+					}
+				}
 			}
 		}
 	}

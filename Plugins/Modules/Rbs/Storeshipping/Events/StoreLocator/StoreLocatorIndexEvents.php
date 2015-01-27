@@ -22,7 +22,7 @@ class StoreLocatorIndexEvents
 		if (is_array($facetsDefinition))
 		{
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
-			$facetsDefinition[] = (new \Rbs\Storeshipping\Facet\RelayFacetDefinition($i18nManager));
+			$facetsDefinition[] = (new \Rbs\Storeshipping\Facet\StoreAllowFacetDefinition($i18nManager));
 			$event->setParam('facetsDefinition', $facetsDefinition);
 		}
 	}

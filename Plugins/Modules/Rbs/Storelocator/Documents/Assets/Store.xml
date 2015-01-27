@@ -22,5 +22,9 @@
 		<property name="services" type="DocumentArray" document-type="Rbs_Storelocator_Service" />
 
 		<property name="allowRelayMode" type="Boolean" default-value="false" />
+
+		<property name="allowReservation" type="Boolean" default-value="false" />
+
+		<property name="allowPurchase" type="Boolean" default-value="false" />
 	</properties>
 </document>

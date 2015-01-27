@@ -1,0 +1,24 @@
+<script type="text/javascript">
+	window.__change['{{ blockId }}'] = {{ storeData | json_encode | raw}};
+</script>
+
+<script type="text/ng-template" id="/rbsStoreshippingShortStore.tpl">
+	<div data-ng-show="storeData"><span>{{ i18n('m.rbs.storeshipping.front.my_store', ['ucf', 'lab']) }}</span>
+		<div class="dropdown inline-block">
+			<a href="#" data-toggle="dropdown" class="dropdown-toggle">(= storeData.common.title =) <b class="caret"></b></a>
+			<ul class="dropdown-menu dropdown-menu-{{ parameters.dropdownPosition }}">
+				<li><a href="javascript:;" data-ng-href="(= storeData.common.URL.canonical =)">{{ i18n('m.rbs.storeshipping.front.show_store_detail', ['ucf']) }}</a></li>
+				<li data-ng-show="chooseStoreUrl" class="divider"></li>
+				<li data-ng-show="chooseStoreUrl"><a href="javascript:;" data-ng-href="(= chooseStoreUrl =)">{{ i18n('m.rbs.storeshipping.front.change_store', ['ucf']) }}</a></li>
+			</ul>
+		</div>
+	</div>
+	<div data-ng-hide="storeData">
+		<a data-ng-show="chooseStoreUrl" href="javascript:;" data-ng-href="(= chooseStoreUrl =)">
+			{{ i18n('m.rbs.storeshipping.front.my_store', ['ucf']) }}</a>
+	</div>
+</script>
+
+<div data-rbs-storeshipping-short-store="" data-cache-key="{{ blockId }}"
+		data-choose-store-url="{{ chooseStoreURL }}" data-auto-select="{{ parameters.autoSelect }}">
+</div>

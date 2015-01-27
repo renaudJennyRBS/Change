@@ -1,5 +1,14 @@
 {
+	"module_name":{
+		"message":"Retrait en magasin"
+	},
 	"relaymode_create":{
 		"message":"ajouter un mode retrait en magasin"
+	},
+	"short_store_label":{
+		"message":"résumé du magasin"
+	},
+	"short_store_auto_select":{
+		"message":"detection automatique du magasin"
 	}
 }

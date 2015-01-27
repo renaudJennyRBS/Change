@@ -42,7 +42,7 @@ class Listeners implements ListenerAggregateInterface
 		{
 			(new \Rbs\Commerce\Events\PaymentManager\Transaction())->handleFailed($event);
 		};
-		$events->attach('handleProcessingForTransaction', $callback, 10);
+		$events->attach('handleFailedForTransaction', $callback, 10);
 
 		$callback = function (Event $event)
 		{

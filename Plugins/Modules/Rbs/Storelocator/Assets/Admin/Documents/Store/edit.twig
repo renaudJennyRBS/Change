@@ -22,10 +22,6 @@
 					label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'code'), ['ucf']) }}">
 				</rbs-field-text>
 
-				<rbs-field-boolean property="allowRelayMode"
-						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'allowRelayMode'), ['ucf']) }}">
-				</rbs-field-boolean>
-
 				<rbs-field-rich-text property="description" 
 					label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'description'), ['ucf']) }}">
 				</rbs-field-rich-text>
@@ -44,6 +40,20 @@
 						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'services'), ['ucf']) }}"
 						accepted-model="Rbs_Storelocator_Service">
 				</rbs-field-picker-multiple>
+
+				<hr />
+
+				<rbs-field-boolean property="allowRelayMode"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'allowRelayMode'), ['ucf']) }}">
+				</rbs-field-boolean>
+
+				<rbs-field-boolean property="allowReservation"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'allowReservation'), ['ucf']) }}">
+				</rbs-field-boolean>
+
+				<rbs-field-boolean property="allowPurchase"
+						label="{{ i18nAttr(propertyKey('Rbs_Storelocator_Store', 'allowPurchase'), ['ucf']) }}">
+				</rbs-field-boolean>
 
 			</fieldset>
 

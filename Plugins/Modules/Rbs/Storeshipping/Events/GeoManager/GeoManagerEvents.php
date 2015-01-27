@@ -43,10 +43,8 @@ class GeoManagerEvents
 		$context = $event->getParam('context') + ['data' => ['position' => [], 'options' => [], 'matchingZone' => null]];
 		$data = $context['data'];
 
-
 		if (isset($data['options']['modeId']) && is_numeric($data['options']['modeId']) && $data['position'])
 		{
-
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			$mode = $documentManager->getDocumentInstance($data['options']['modeId']);
 			if ($mode instanceof \Rbs\Storeshipping\Documents\RelayMode)
@@ -62,7 +60,7 @@ class GeoManagerEvents
 				$storesDataContext->setURLFormats('canonical');
 				$storesDataContext->setVisualFormats('listItem');
 				$storesDataContext->setDataSetNames('description,address,coordinates,hours');
-				$storesDataContext->addData('facetFilters', ['allowRelayMode' => ['true' => 1]]);
+				$storesDataContext->addData('facetFilters', ['storeAllow' => ['allowRelayMode' => 1]]);
 				$commercialSignId = $mode->getCommercialSignId();
 				if ($commercialSignId)
 				{

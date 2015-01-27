@@ -4,5 +4,12 @@
 			"Theme/Rbs/Base/Rbs_Storeshipping/js/shipping-relay.js",
 			"Theme/Rbs/Base/Rbs_Geo/js/map-api.js"
 		]
+	},
+	"blocks" : {
+		"ShortStore": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Storeshipping/js/short-store.js"
+			]
+		}
 	}
 }

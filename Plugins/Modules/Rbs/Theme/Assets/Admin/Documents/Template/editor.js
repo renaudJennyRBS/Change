@@ -53,8 +53,8 @@
 				});
 
 				function onRenderParams() {
-					if (scope.block && scope.block.template) {
-						var template = scope.block.template;
+					if (scope.block && scope.blockTemplate) {
+						var template = scope.blockTemplate;
 
 						scope.labelClass = 'col-lg-3';
 						scope.controlsClass = 'col-lg-9';
@@ -126,7 +126,7 @@
 					onRenderTemplateParams();
 				});
 
-				scope.$watch('block.template', function (templateName) {
+				scope.$watch('blockTemplate', function (templateName) {
 					onRenderParams();
 				});
 
@@ -147,6 +147,7 @@
 
 				scope.onReload = function() {
 					scope.block = null;
+					scope.blockTemplate = null;
 					scope.blockParameters = null;
 					scope.select = {websiteId: null};
 					scope.buildBlockList();
@@ -195,6 +196,7 @@
 				};
 
 				scope.closeBlock = function(index) {
+					scope.blockTemplate = null;
 					scope.block = null;
 					scope.blockParameters = null;
 					scope.blockList.splice(index, 1);
@@ -224,7 +226,7 @@
 					var row = scope.blockList[index];
 
 					scope.block = scope.getBlockById(row.id);
-					scope.block.template = row.block.template;
+					scope.blockTemplate = row.block.template;
 
 					if (row.block && row.block.hasOwnProperty('name')) {
 						if (row.name != row.block.name) {

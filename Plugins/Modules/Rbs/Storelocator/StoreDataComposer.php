@@ -80,6 +80,14 @@ class StoreDataComposer
 			}
 		}
 
+		if ($this->detailed || $this->hasDataSet('allow')) {
+			$this->dataSets['allow'] = [
+				'allowRelayMode' => $this->store->getAllowRelayMode(),
+				'allowReservation' => $this->store->getAllowReservation(),
+				'allowPurchase' => $this->store->getAllowPurchase(),
+			];
+		}
+
 		if ($this->detailed || $this->hasDataSet('commercialSign')) {
 			$this->dataSets['commercialSign'] = null;
 			$commercialSign = $this->store->getCommercialSign();

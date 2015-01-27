@@ -231,7 +231,12 @@ class ProductDataComposer
 				$context = $this->getProductSetContext();
 				foreach ($product->getProductSet()->getProducts() as $productSet)
 				{
-					$this->dataSets['productSet']['products'][] = $this->catalogManager->getProductData($productSet, $context);
+					$data = $this->catalogManager->getProductData($productSet, $context);
+					if (is_array($data) && count($data))
+					{
+						$this->dataSets['productSet']['products'][] = $data;
+					}
+
 				}
 			}
 			elseif ($product->getVariantGroup())
