@@ -106,21 +106,15 @@
 
 				function selectAncestors(facet) {
 					var parent = getFacetByFieldName(facet.parent);
-					var multipleChoice = parent.parameters.multipleChoice;
 					for (var z = 0; z < parent.values.length; z++) {
 						var value = parent.values[z];
-						for (var i = 0; i < value.aggregationValues.length; i++) {
-							if (value.aggregationValues[i] === facet) {
+						for (var i = 0; i < value['aggregationValues'].length; i++) {
+							if (value['aggregationValues'][i] === facet) {
 								value.selected = true;
-								if (parent.parent) {
-									selectAncestors(parent);
+								if (angular.isFunction(parent.selectionChange)) {
+									parent.selectionChange(value);
 								}
-							}
-							else if (!multipleChoice) {
-								value.selected = false;
-								if (value.aggregationValues) {
-									unSelectDescendant(value.aggregationValues);
-								}
+								return;
 							}
 						}
 					}
@@ -135,8 +129,8 @@
 							for (var z = 0; z < facet.values.length; z++) {
 								var value = facet.values[z];
 								value.selected = false;
-								if (value.aggregationValues) {
-									unSelectDescendant(value.aggregationValues);
+								if (value['aggregationValues']) {
+									unSelectDescendant(value['aggregationValues']);
 								}
 							}
 						}
@@ -212,21 +206,59 @@
 		}
 	});
 
-	app.directive('rbsElasticsearchFacet', ['RecursionHelper', function(RecursionHelper) {
-		function link(scope, element, attrs, rbsElasticsearchFacetController) {
-			scope.isCollapsed = attrs['isCollapsed'] == 'true';
-			scope.multipleChoice = scope.facet.parameters.multipleChoice;
+	app.directive('rbsElasticsearchFacet', ['RecursionHelper', '$compile', function(RecursionHelper, $compile) {
+		return {
+			restrict: 'A',
+			require: '^rbsElasticsearchFacetContainer',
+			templateUrl: '/rbsElasticsearchFacet.tpl',
+			scope: { facet: '=' },
+			compile: function(element) {
+				// Use the compile function from the RecursionHelper,
+				// And return the linking function(s) which it returns
+				return RecursionHelper.compile(element, link);
+			}
+		};
 
-			scope.selectionChange = function(value) {
-				if (!scope.multipleChoice) {
-					for (var z = 0; z < scope.facet.values.length; z++) {
-						if (value !== scope.facet.values[z]) {
-							scope.facet.values[z].selected = false;
-						}
+		function link(scope, element, attrs) {
+			scope.isCollapsed = attrs['isCollapsed'] == 'true';
+
+			var directiveName = scope.facet.parameters.renderingMode;
+			if (!directiveName) {
+				console.error('No rendering mode for facet!', scope.facet);
+			}
+			else if (directiveName.indexOf('-') < 0) {
+				directiveName = 'rbs-elasticsearch-facet-' + directiveName;
+			}
+			console.log(directiveName);
+
+			var container = element.find('.facet-values-container');
+			container.html('<div data-' + directiveName + '></div>');
+			$compile(container.contents())(scope);
+		}
+	}]);
+
+	app.directive('rbsElasticsearchFacetRadio', ['RecursionHelper', function(RecursionHelper) {
+		return {
+			restrict: 'A',
+			require: '^rbsElasticsearchFacetContainer',
+			templateUrl: '/rbsElasticsearchFacetRadio.tpl',
+			scope: false,
+			compile: function(element) {
+				// Use the compile function from the RecursionHelper,
+				// And return the linking function(s) which it returns
+				return RecursionHelper.compile(element, link);
+			}
+		};
+
+		function link(scope, element, attrs, rbsElasticsearchFacetController) {
+			scope.facet.selectionChange = function(value) {
+				for (var z = 0; z < scope.facet.values.length; z++) {
+					if (value !== scope.facet.values[z]) {
+						scope.facet.values[z].selected = false;
 					}
 				}
-				if (!value.selected && value.aggregationValues) {
-					rbsElasticsearchFacetController.unSelectDescendant(value.aggregationValues);
+				if (!value.selected && value['aggregationValues']) {
+					rbsElasticsearchFacetController.unSelectDescendant(value['aggregationValues']);
 				}
 				else if (value.selected && scope.facet.parent) {
 					rbsElasticsearchFacetController.selectAncestors(scope.facet);
@@ -239,17 +271,193 @@
 				return scope.facet.values && scope.facet.values.length;
 			}
 		}
+	}]);
 
+	app.directive('rbsElasticsearchFacetCheckbox', ['RecursionHelper', function(RecursionHelper) {
 		return {
 			restrict: 'A',
 			require: '^rbsElasticsearchFacetContainer',
-			templateUrl: '/rbsElasticsearchFacet.tpl',
-			scope: { facet: '=' },
+			templateUrl: '/rbsElasticsearchFacetCheckbox.tpl',
+			scope: false,
 			compile: function(element) {
 				// Use the compile function from the RecursionHelper,
 				// And return the linking function(s) which it returns
 				return RecursionHelper.compile(element, link);
 			}
 		};
+
+		function link(scope, element, attrs, rbsElasticsearchFacetController) {
+			scope.facet.selectionChange = function (value) {
+				if (!value.selected && value['aggregationValues']) {
+					rbsElasticsearchFacetController.unSelectDescendant(value['aggregationValues']);
+				}
+				else if (value.selected && scope.facet.parent) {
+					rbsElasticsearchFacetController.selectAncestors(scope.facet);
+				}
+
+				rbsElasticsearchFacetController.refresh();
+			};
+
+			scope.hasValue = function() {
+				return scope.facet.values && scope.facet.values.length;
+			}
+		}
+	}]);
+
+	app.directive('rbsElasticsearchFacetInterval', ['$filter', function ($filter) {
+		return {
+			restrict: 'A',
+			require: '^rbsElasticsearchFacetContainer',
+			templateUrl: '/rbsElasticsearchFacetInterval.tpl',
+			scope: false,
+			link: function(scope, element, attrs, rbsElasticsearchFacetController) {
+				scope.facet.selectionChange = function (value) {
+					if (value.selected && scope.facet.parent) {
+						rbsElasticsearchFacetController.selectAncestors(scope.facet);
+					}
+
+					rbsElasticsearchFacetController.refresh();
+				};
+
+				scope.hasValue = function() {
+					return scope.facet.values && scope.facet.values.length;
+				};
+
+				scope.range = {
+					interval: scope.facet.parameters.interval,
+					absMin: null,
+					absMax: null,
+					min: null,
+					max: null
+				};
+				var lastMin, lastMax;
+
+				scope.facet.buildFilter = function() {
+					return { min: scope.range.min, max: scope.range.max };
+				};
+
+				for (var i = 0; i < scope.facet.values.length; i++) {
+					var value = scope.facet.values[i].key;
+					var upValue = value + scope.range.interval;
+					if (scope.range.absMin == null || value < scope.range.absMin) {
+						scope.range.absMin = value;
+					}
+					if (scope.range.absMax == null || upValue > scope.range.absMax) {
+						scope.range.absMax = upValue;
+					}
+					if (scope.facet.values[i].selected) {
+						if (scope.range.min == null || value < scope.range.min) {
+							scope.range.min = value;
+						}
+						if (scope.range.max == null || upValue > scope.range.max) {
+							scope.range.max = upValue;
+						}
+					}
+				}
+
+				if (scope.facet.parameters['minFilter'] !== undefined && scope.facet.parameters['minFilter'] !== null) {
+					scope.range.min = parseInt(scope.facet.parameters['minFilter']);
+				}
+				else if (scope.range.min === null) {
+					scope.range.min = scope.range.absMin;
+				}
+
+				if (scope.facet.parameters['maxFilter'] !== undefined && scope.facet.parameters['maxFilter'] !== null) {
+					scope.range.max = parseInt(scope.facet.parameters['maxFilter']);
+				}
+				else if (scope.range.max === null) {
+					scope.range.max = scope.range.absMax;
+				}
+
+				lastMin = scope.range.min;
+				lastMax = scope.range.max;
+
+				var sliderJqElement = element.find('.range-slider');
+				sliderJqElement.noUiSlider({
+					start: [scope.range.min, scope.range.max],
+					behaviour: 'drag-tap',
+					connect: true,
+					margin: scope.range.interval,
+					step: scope.range.interval,
+					range: { 'min': [scope.range.absMin], 'max': [scope.range.absMax] }
+				});
+
+				function synchronizeValues() {
+					var values = sliderJqElement.val();
+					var newMin = parseInt(values[0]);
+					var newMax = parseInt(values[1]);
+					if (scope.range.min != parseInt(values[0]) || scope.range.max != newMax) {
+						scope.range.min = newMin;
+						scope.range.max = newMax;
+						scope.$digest();
+					}
+				}
+
+				function synchronizeValuesAndRefresh() {
+					var values = sliderJqElement.val();
+					var newMin = parseInt(values[0]);
+					var newMax = parseInt(values[1]);
+					if (lastMin != parseInt(values[0]) || lastMax != newMax) {
+						scope.range.min = lastMin = newMin;
+						scope.range.max = lastMax = newMax;
+						scope.$digest();
+						for (var i = 0; i < scope.facet.values.length; i++) {
+							var key = scope.facet.values[i].key;
+							scope.facet.values[i].selected = (key >= scope.range.min && key < scope.range.max);
+						}
+						scope.facet.customValues = [
+							{
+								key: 'min',
+								selected: true,
+								value: scope.range.min
+							},
+							{
+								key: 'max',
+								selected: true,
+								value: scope.range.max
+							}
+						];
+						rbsElasticsearchFacetController.refresh();
+					}
+				}
+
+				sliderJqElement.on({
+					slide: synchronizeValues,
+					set: synchronizeValuesAndRefresh,
+					change: synchronizeValuesAndRefresh
+				});
+
+				if (scope.facet.parameters['sliderShowPips'] == true) {
+					scope.showPips = true;
+
+					sliderJqElement.noUiSlider_pips({
+						mode: 'steps',
+						values: scope.facet.values.length,
+						density: scope.range.interval
+					});
+				}
+
+				if (scope.facet.parameters['sliderShowTooltips'] !== false) {
+					scope.showTooltips = true;
+
+					sliderJqElement.Link('lower').to('-inline-<div class="tooltip top" role="tooltip"></div>', updateTooltip);
+					sliderJqElement.Link('upper').to('-inline-<div class="tooltip top" role="tooltip"></div>', updateTooltip);
+				}
+
+				if (scope.facet.parameters['sliderShowLabels'] == true) {
+					scope.showLabels = true;
+				}
+
+				function updateTooltip(value) {
+					var formattedValue = $filter('rbsFormatPrice')(value, null, 0);
+					jQuery(this).html(
+						'<div class="tooltip-arrow"></div>' +
+						'<div class="tooltip-inner">' +
+						'<span>' + formattedValue + '</span>' +
+						'</div>'
+					);
+				}
+			}
+		}
 	}]);
 })(window.jQuery);

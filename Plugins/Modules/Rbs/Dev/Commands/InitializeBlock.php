@@ -64,8 +64,8 @@ class InitializeBlock
 
 		// Block information class.
 		$content = file_get_contents(__DIR__ . '/Assets/initialize-block/BlockInformationTemplate.tpl');
-		$replacementNames = array('#namespace#', '#className#', '#lowerVendor#', '#lowerModule#', '#localeName#');
-		$replacementValues = array($namespace, $className, strtolower($vendor), strtolower($module), $localeName);
+		$replacementNames = array('#namespace#', '#className#', '#vendor#', '#lowerVendor#', '#module#', '#lowerModule#', '#localeName#');
+		$replacementValues = array($namespace, $className, $vendor, strtolower($vendor), $module, strtolower($module), $localeName);
 		$content = str_replace($replacementNames, $replacementValues, $content);
 		$filePath = $blockDir . DIRECTORY_SEPARATOR . $className . 'Information.php';
 		if (file_exists($filePath))
@@ -79,7 +79,7 @@ class InitializeBlock
 		// Template file.
 		$content = file_get_contents(__DIR__ . '/Assets/initialize-block/BlockTemplateTemplate.tpl');
 		$replacementNames = array('#lowerVendor#', '#lowerModule#', '#localeName#');
-		$replacementValues = array(strtolower($vendor), strtolower($module), $localeName);
+		$replacementValues = array(strtolower($vendor),  strtolower($module), $localeName);
 		$content = str_replace($replacementNames, $replacementValues, $content);
 		if ($vendor == 'Project')
 		{

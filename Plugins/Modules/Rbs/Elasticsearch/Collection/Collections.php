@@ -32,7 +32,7 @@ class Collections
 		if ($applicationServices)
 		{
 			$indexManager = $this->getGenericServices($event)->getIndexManager();
-			$items = array();
+			$items = [];
 			foreach ($indexManager->getClientsName() as $clientName)
 			{
 				$items[$clientName] = $clientName;
@@ -127,7 +127,7 @@ class Collections
 		{
 			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Elasticsearch_Index');
 			$query->andPredicates($query->activated());
-			$items = array();
+			$items = [];
 			/* @var $indexDefinition \Rbs\Elasticsearch\Documents\Index */
 			foreach ($query->getDocuments() as $indexDefinition)
 			{
@@ -147,11 +147,32 @@ class Collections
 		if ($applicationServices)
 		{
 			$i18nManager = $applicationServices->getI18nManager();
-			$items = array();
-			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_configuration_type_attribute', array('ucf'));
-			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_configuration_type_price', array('ucf'));
-			$items['SkuThreshold'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_configuration_type_sku_threshold', array('ucf'));
+			$items = [];
+			$items['Attribute'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_configuration_type_attribute', ['ucf']);
+			$items['Price'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_configuration_type_price', ['ucf']);
+			$items['SkuThreshold'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_configuration_type_sku_threshold', ['ucf']);
 			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_FacetConfigurationType', $items);
+			$event->setParam('collection', $collection);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function addFacetRenderingModes(\Change\Events\Event $event)
+	{
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
+		{
+			$i18nManager = $applicationServices->getI18nManager();
+			$items = [];
+			$items['radio'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_rendering_modes_radio', ['ucf']);
+			$items['checkbox'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_rendering_modes_checkbox', ['ucf']);
+			if ($event->getParam('forType') == 'price')
+			{
+				$items['interval'] = $i18nManager->trans('m.rbs.elasticsearch.admin.facet_rendering_modes_interval', ['ucf']);
+			}
+			$collection = new \Change\Collection\CollectionArray('Rbs_Elasticsearch_Collection_FacetRenderingModes', $items);
 			$event->setParam('collection', $collection);
 		}
 	}

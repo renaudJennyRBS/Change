@@ -9,7 +9,8 @@
 	</select>
 </rbs-field>
 
-<div id="RbsElasticsearchFacetConfigurationOptions" ng-show="document.configurationType" class="col-lg-offset-3 col-lg-9"></div>
+<div id="RbsElasticsearchFacetConfigurationOptions" data-ng-show="document.configurationType" class="col-lg-offset-3 col-lg-9">
+</div>
 
 <rbs-field-picker-multiple property="facets" accepted-model="Rbs_Elasticsearch_Facet"
 		label="{{ i18nAttr(propertyKey('Rbs_Elasticsearch_Facet', 'facets'), ['ucf']) }}"

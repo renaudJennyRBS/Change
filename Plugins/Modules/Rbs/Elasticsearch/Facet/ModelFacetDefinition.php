@@ -34,7 +34,7 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 
 	function __construct()
 	{
-		$this->getParameters()->set('multipleChoice', true);
+		$this->getParameters()->set('renderingMode', 'checkbox');
 	}
 
 	/**
@@ -220,6 +220,4 @@ class ModelFacetDefinition implements FacetDefinitionInterface
 		}
 		return $av;
 	}
-
-
 }

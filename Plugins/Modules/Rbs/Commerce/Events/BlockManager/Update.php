@@ -9,12 +9,12 @@
 namespace Rbs\Commerce\Events\BlockManager;
 
 use Change\Presentation\Blocks\Event;
+
 /**
 * @name \Rbs\Commerce\Events\BlockManager\Update
 */
 class Update
 {
-
 	/**
 	 * @param Event $event
 	 */
@@ -26,6 +26,7 @@ class Update
 			$i18nManager = $event->getApplicationServices()->getI18nManager();
 			$templateInformation = $information->addTemplateInformation('Rbs_Commerce', 'manage-addresses-list.twig');
 			$templateInformation->setLabel($i18nManager->trans('m.rbs.commerce.admin.template_manage_addresses_label', ['ucf']));
+			$information->setDefaultTemplateName($templateInformation);
 		}
 	}
 } 

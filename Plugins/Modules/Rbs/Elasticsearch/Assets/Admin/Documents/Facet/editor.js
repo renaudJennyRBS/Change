@@ -20,8 +20,8 @@
 			collection.remove();
 
 			if (configurationType) {
-				var directiveName = 'rbs-elasticsearch-facet-' + configurationType.toLowerCase();
-				var html = '<div ' + directiveName + '="" facet="document"></div>'
+				var directiveName = 'data-rbs-elasticsearch-facet-' + configurationType.toLowerCase();
+				var html = '<div ' + directiveName + '="" data-facet="document"></div>';
 				container.html(html);
 				$compile(container.children())(scope);
 			}
@@ -30,8 +30,7 @@
 		return {
 			restrict: 'A',
 			require: '^rbsDocumentEditorBase',
-
-			link : function (scope, elm, attrs) {
+			link : function (scope) {
 				scope.$watch('document.configurationType', function(configurationType) {
 					redrawConfigurationOptions($compile, scope, configurationType);
 				});

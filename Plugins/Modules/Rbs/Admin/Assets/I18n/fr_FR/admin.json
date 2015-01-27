@@ -1567,6 +1567,10 @@
 	},
 	"default_template":{
 		"message":"rendu par défaut",
-		"description":"used in template selection in block properties"
+		"description":"used for template selection in block properties"
+	},
+	"default_value":{
+		"message":"valeur par défaut",
+		"description":"used block properties"
 	}
 }

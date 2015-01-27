@@ -2,46 +2,64 @@
 	<rbs-kb-switch>
 		<div class="btn-group">
 			<button class="btn btn-default btn-sm btn-icon" disabled="disabled"><i class="icon-plus"></i></button>
-			<button class="btn btn-default btn-sm btn-icon" ng-show="canInsertSideways()" ng-click="newBlockLeft()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_left', ['ucf']) }}"><i class="icon-arrow-left"></i></button>
-			<button class="btn btn-default btn-sm btn-icon" ng-show="canInsertSideways()" ng-click="newBlockRight()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_right', ['ucf']) }}"><i class="icon-arrow-right"></i></button>
-			<button rbs-kb-when="alt" class="btn btn-default btn-sm btn-icon" ng-click="newBlockTop()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_top', ['ucf']) }}">
+			<button class="btn btn-default btn-sm btn-icon" data-ng-show="canInsertSideways()" data-ng-click="newBlockLeft()"
+				title="{{ i18nAttr('m.rbs.admin.admin.insert_block_left', ['ucf']) }}">
+				<i class="icon-arrow-left"></i>
+			</button>
+			<button class="btn btn-default btn-sm btn-icon" data-ng-show="canInsertSideways()" data-ng-click="newBlockRight()"
+				title="{{ i18nAttr('m.rbs.admin.admin.insert_block_right', ['ucf']) }}">
+				<i class="icon-arrow-right"></i>
+			</button>
+			<button data-rbs-kb-when="alt" class="btn btn-default btn-sm btn-icon" data-ng-click="newBlockTop()"
+				title="{{ i18nAttr('m.rbs.admin.admin.insert_block_top', ['ucf']) }}">
 				<i class="icon-double-angle-up"></i>
 			</button>
-			<button rbs-kb-default="" class="btn btn-default btn-sm btn-icon" ng-click="newBlockBefore()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_before', ['ucf']) }}">
+			<button data-rbs-kb-default="" class="btn btn-default btn-sm btn-icon" data-ng-click="newBlockBefore()"
+				title="{{ i18nAttr('m.rbs.admin.admin.insert_block_before', ['ucf']) }}">
 				<i class="icon-arrow-up"></i>
 			</button>
-			<button rbs-kb-when="alt" class="btn btn-default btn-sm btn-icon" ng-click="newBlockBottom()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_bottom', ['ucf']) }}">
+			<button data-rbs-kb-when="alt" class="btn btn-default btn-sm btn-icon" data-ng-click="newBlockBottom()"
+				title="{{ i18nAttr('m.rbs.admin.admin.insert_block_bottom', ['ucf']) }}">
 				<i class="icon-double-angle-down"></i>
 			</button>
-			<button rbs-kb-default="" class="btn btn-default btn-sm btn-icon" ng-click="newBlockAfter()" title="{{ i18nAttr('m.rbs.admin.admin.insert_block_after', ['ucf']) }}">
+			<button data-rbs-kb-default="" class="btn btn-default btn-sm btn-icon" data-ng-click="newBlockAfter()"
+				title="{{ i18nAttr('m.rbs.admin.admin.insert_block_after', ['ucf']) }}">
 				<i class="icon-arrow-down"></i>
 			</button>
 		</div>
 	</rbs-kb-switch>
 	<div class="btn-group">
-		<button ng-if="isInColumnLayout()" class="btn btn-default btn-sm btn-icon" ng-click="selectParentRow()" title="{{ i18nAttr('m.rbs.admin.admin.parameterize_columns', ['ucf']) }}"><i class="icon-columns"></i></button>
+		<button data-ng-if="isInColumnLayout()" class="btn btn-default btn-sm btn-icon" data-ng-click="selectParentRow()"
+			title="{{ i18nAttr('m.rbs.admin.admin.parameterize_columns', ['ucf']) }}">
+			<i class="icon-columns"></i>
+		</button>
 	</div>
-	<button class="btn btn-danger btn-sm btn-icon pull-right" type="button" ng-click="removeBlock()" title="{{ i18nAttr('m.rbs.admin.admin.delete_block', ['ucf']) }}"><i class="icon-trash"></i></button>
+	<button class="btn btn-danger btn-sm btn-icon pull-right" type="button" data-ng-click="removeBlock()"
+		title="{{ i18nAttr('m.rbs.admin.admin.delete_block', ['ucf']) }}">
+		<i class="icon-trash"></i>
+	</button>
 </div>
 
 <hr />
 
-<div ng-show="blockParametersLoading">
+<div data-ng-show="blockParametersLoading">
 	{{ i18n('m.rbs.admin.admin.loading', ['ucf']) }}
 </div>
-<div ng-hide="blockParametersLoading">
-	<div ng-hide="block.name" class="form-group">
+<div data-ng-hide="blockParametersLoading">
+	<div data-ng-hide="block.name" class="form-group">
 		<label class="control-label">{{ i18n('m.rbs.admin.admin.block_type', ['ucf']) }}</label>
 		<div class="controls">
-			<rbs-block-selector block="blockType" selected="(= block.name =)" mail-suitable="(= isMailSuitable =)"></rbs-block-selector>
+			<rbs-block-selector block="blockType" selected="(= block.name =)" mail-suitable="(= isMailSuitable =)">
+			</rbs-block-selector>
 		</div>
 	</div>
 
-	<div ng-show="block.name">
-		<div class="form-group" ng-hide="isRichText()">
+	<div data-ng-show="block.name">
+		<div class="form-group" data-ng-hide="isRichText()">
 			<label class="control-label" for="block_(=block.id=)_label">{{ i18n('m.rbs.admin.admin.block_label', ['ucf']) }}</label>
 			<div class="controls">
-				<input class="form-control input-sm" id="block_(=block.id=)_label" type="text" ng-model="block.label" placeholder="{{ i18n('m.rbs.admin.admin.block_name') }}"/>
+				<input class="form-control input-sm" id="block_(=block.id=)_label" type="text" data-ng-model="block.label"
+					placeholder="{{ i18n('m.rbs.admin.admin.block_name') }}" />
 			</div>
 		</div>
 
@@ -50,10 +68,22 @@
 			<div class="controls">
 				<div class="btn-toolbar" role="toolbar">
 					<div class="btn-group">
-						<button type="button" class="btn btn-xs" ng-click="toggleVisibility('X')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('X')]">{{ i18n('m.rbs.admin.admin.block_visibility_x', ['ucf']) }}</button>
-						<button type="button" class="btn btn-xs" ng-click="toggleVisibility('S')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('S')]">{{ i18n('m.rbs.admin.admin.block_visibility_s', ['ucf']) }}</button>
-						<button type="button" class="btn btn-xs" ng-click="toggleVisibility('M')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('M')]">{{ i18n('m.rbs.admin.admin.block_visibility_m', ['ucf']) }}</button>
-						<button type="button" class="btn btn-xs" ng-click="toggleVisibility('L')" ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('L')]">{{ i18n('m.rbs.admin.admin.block_visibility_l', ['ucf']) }}</button>
+						<button type="button" class="btn btn-xs" data-ng-click="toggleVisibility('X')"
+							data-ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('X')]">
+							{{ i18n('m.rbs.admin.admin.block_visibility_x', ['ucf']) }}
+						</button>
+						<button type="button" class="btn btn-xs" data-ng-click="toggleVisibility('S')"
+							data-ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('S')]">
+							{{ i18n('m.rbs.admin.admin.block_visibility_s', ['ucf']) }}
+						</button>
+						<button type="button" class="btn btn-xs" data-ng-click="toggleVisibility('M')"
+							data-ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('M')]">
+							{{ i18n('m.rbs.admin.admin.block_visibility_m', ['ucf']) }}
+						</button>
+						<button type="button" class="btn btn-xs" data-ng-click="toggleVisibility('L')"
+							data-ng-class="{true: 'btn-success active', false: 'btn-default'}[isVisibleFor('L')]">
+							{{ i18n('m.rbs.admin.admin.block_visibility_l', ['ucf']) }}
+						</button>
 					</div>
 				</div>
 			</div>
@@ -64,12 +94,28 @@
 			<div class="controls">
 				<div class="form-inline">
 					<div class="btn-group">
-						<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(0)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(0)]">{{ i18n('m.rbs.admin.admin.block_ttl_none', ['ucf']) }}</button>
-						<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(60)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(60)]" title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_1minute', ['ucf']) }}">{{ i18n('m.rbs.admin.admin.block_ttl_1m', ['ucf']) }}</button>
-						<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(600)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(600)]" title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_10minutes', ['ucf']) }}">{{ i18n('m.rbs.admin.admin.block_ttl_10m', ['ucf']) }}</button>
-						<button class="btn btn-default btn-sm" type="button" ng-click="setTTL(3600)" ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(3600)]" title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_1hour', ['ucf']) }}">{{ i18n('m.rbs.admin.admin.block_ttl_1h', ['ucf']) }}</button>
+						<button class="btn btn-default btn-sm" type="button" data-ng-click="setTTL(0)"
+							data-ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(0)]">
+							{{ i18n('m.rbs.admin.admin.block_ttl_none', ['ucf']) }}
+						</button>
+						<button class="btn btn-default btn-sm" type="button" data-ng-click="setTTL(60)"
+							data-ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(60)]"
+							title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_1minute', ['ucf']) }}">
+							{{ i18n('m.rbs.admin.admin.block_ttl_1m', ['ucf']) }}
+						</button>
+						<button class="btn btn-default btn-sm" type="button" data-ng-click="setTTL(600)"
+							data-ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(600)]"
+							title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_10minutes', ['ucf']) }}">
+							{{ i18n('m.rbs.admin.admin.block_ttl_10m', ['ucf']) }}
+						</button>
+						<button class="btn btn-default btn-sm" type="button" data-ng-click="setTTL(3600)"
+							data-ng-class="{true: 'btn-success active', false: 'btn-default'}[hasTTL(3600)]"
+							title="{{ i18nAttr('m.rbs.admin.admin.block_ttl_1hour', ['ucf']) }}">
+							{{ i18n('m.rbs.admin.admin.block_ttl_1h', ['ucf']) }}
+						</button>
 					</div>
-					<input type="number" rbs-integer="" class="form-control input-sm" ng-model="blockParameters.TTL" size="4" />
+					<input type="number" data-rbs-integer="" class="form-control input-sm" data-ng-model="blockParameters.TTL"
+						size="4" />
 				</div>
 			</div>
 		</div>
@@ -77,6 +123,6 @@
 		<hr />
 
 		<div data-role="blockParametersContainer"></div>
-		<div ng-transclude=""></div>
+		<div data-ng-transclude=""></div>
 	</div>
 </div>

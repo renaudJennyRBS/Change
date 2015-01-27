@@ -150,28 +150,37 @@
 		"message":"civilité"
 	},
 	"title_placeholder":{
-		"message":"civilité"
+		"message":""
 	},
 	"full_name":{
 		"message":"nom complet"
 	},
 	"full_name_placeholder":{
-		"message":"nom complet"
+		"message":""
 	},
 	"first_name":{
 		"message":"prénom"
 	},
 	"first_name_placeholder":{
-		"message":"prénom"
+		"message":""
 	},
 	"last_name":{
 		"message":"nom"
 	},
 	"last_name_placeholder":{
-		"message":"nom"
+		"message":""
 	},
 	"birthDate":{
 		"message":"date d'anniversaire"
+	},
+	"birthDate_placeholder":{
+		"message":""
+	},
+	"phone":{
+		"message":"téléphone"
+	},
+	"phone_placeholder":{
+		"message":""
 	},
 	"pseudonym":{
 		"message":"pseudonyme"
@@ -181,9 +190,6 @@
 	},
 	"pseudonym_help":{
 		"message":"Votre pseudonyme pourra être affiché publiquement sur le site, notamment sur vos avis produits."
-	},
-	"birthDate_placeholder":{
-		"message":"date d'anniversaire"
 	},
 	"submit_edit_account":{
 		"message":"mettre à jour"

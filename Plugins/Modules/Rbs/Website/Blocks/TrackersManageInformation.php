@@ -20,15 +20,15 @@ class TrackersManageInformation extends \Change\Presentation\Blocks\Information
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.trackers_manage_label', $ucf));
 
-		$this->addInformationMeta('notChosenText', \Change\Documents\Property::TYPE_STRING)
+		$this->addParameterInformation('notChosenText', \Change\Documents\Property::TYPE_STRING)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.trackers_manage_not_chosen_text', $ucf));
-		$this->addInformationMeta('allowedText', \Change\Documents\Property::TYPE_STRING)
+		$this->addParameterInformation('allowedText', \Change\Documents\Property::TYPE_STRING)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.trackers_manage_allowed_text', $ucf));
-		$this->addInformationMeta('notAllowedText', \Change\Documents\Property::TYPE_STRING)
+		$this->addParameterInformation('notAllowedText', \Change\Documents\Property::TYPE_STRING)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.trackers_manage_not_allowed_text', $ucf));
 	}
 }

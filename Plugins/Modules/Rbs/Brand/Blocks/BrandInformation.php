@@ -22,8 +22,8 @@ class BrandInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.brand.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.brand.admin.brand', $ucf));
-		$this->addInformationMetaForDetailBlock('Rbs_Brand_Brand', $i18nManager);
+		$this->addParameterInformationForDetailBlock('Rbs_Brand_Brand', $i18nManager);
 
-		$this->addTTL(60);
+		$this->setDefaultTTL(60);
 	}
 }

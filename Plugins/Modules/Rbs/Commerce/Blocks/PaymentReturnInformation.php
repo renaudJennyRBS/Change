@@ -26,7 +26,7 @@ class PaymentReturnInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.commerce.admin.payment_return_label', $ucf));
-		$this->addInformationMeta('confirmationPage', Property::TYPE_DOCUMENTID, false, 0)
+		$this->addParameterInformation('confirmationPage', Property::TYPE_DOCUMENTID, false, 0)
 			->setAllowedModelsNames('Rbs_Website_StaticPage')
 			->setLabel($i18nManager->trans('m.rbs.commerce.admin.confirmation_page', $ucf));
 	}

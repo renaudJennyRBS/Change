@@ -9,15 +9,15 @@
 namespace Rbs\Elasticsearch\Facet;
 
 /**
-* @name \Rbs\Elasticsearch\Facet\ProductSkuThresholdFacetDefinition
-*/
+ * @name \Rbs\Elasticsearch\Facet\ProductSkuThresholdFacetDefinition
+ */
 class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacetDefinition
 {
 
 	function __construct(\Rbs\Elasticsearch\Documents\Facet $facet)
 	{
 		parent::__construct($facet);
-		$this->mappingName  = 'stocks';
+		$this->mappingName = 'stocks';
 	}
 
 	/**
@@ -25,7 +25,7 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 	 */
 	protected function getDefaultParameters()
 	{
-		return  ['thresholdCollectionId' => null, 'showEmptyItem' => false, 'multipleChoice' => true];
+		return ['thresholdCollectionId' => null, 'showEmptyItem' => false, 'renderingMode' => 'checkbox'];
 	}
 
 	/**
@@ -51,8 +51,11 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 					}
 					break;
 				case 'showEmptyItem':
-				case 'multipleChoice':
 					$validParameters[$name] = $value === 'false' ? false : boolval($value);
+					break;
+				case 'renderingMode':
+					// TODO validate...
+					$validParameters[$name] = $value;
 					break;
 			}
 		}
@@ -112,7 +115,7 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 					}
 					elseif (count($andFilters) > 1)
 					{
-						$and =  new \Elastica\Filter\Bool();
+						$and = new \Elastica\Filter\Bool();
 						foreach ($andFilters as $f)
 						{
 							$and->addMust($f);
@@ -216,5 +219,4 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 		}
 		return $av;
 	}
-
-} 
+}

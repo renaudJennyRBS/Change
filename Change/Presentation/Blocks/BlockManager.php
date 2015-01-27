@@ -86,7 +86,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		if ($this->blocks === null)
 		{
-			$this->blocks = array();
+			$this->blocks = [];
 			$eventManager = $this->getEventManager();
 			$event = new Event(static::EVENT_INFORMATION, $this);
 			$eventManager->trigger($event);
@@ -124,10 +124,11 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 							)
 							{
 								$templates = $blockConfig['templates'];
-								new UpdateBlockInformation($blockName, $this->getEventManager(), function ($event) use ($templates)
-								{
-									$this->onUpdateTemplateInformation($event, $templates);
-								});
+								new UpdateBlockInformation($blockName, $this->getEventManager(),
+									function ($event) use ($templates)
+									{
+										$this->onUpdateTemplateInformation($event, $templates);
+									});
 							}
 						}
 					}
@@ -161,7 +162,8 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 				{
 					foreach ($templateConfig['parameters'] as $parameterName => $parameterConfig)
 					{
-						$type = isset($parameterConfig['type']) ? $parameterConfig['type'] : \Change\Documents\Property::TYPE_STRING;
+						$type =
+							isset($parameterConfig['type']) ? $parameterConfig['type'] : \Change\Documents\Property::TYPE_STRING;
 						$required = isset($parameterConfig['required']) ? $parameterConfig['required'] === true : false;
 						$defaultValue = isset($parameterConfig['defaultValue']) ? $parameterConfig['defaultValue'] : null;
 						$parameter = $templateInformation->addParameterInformation($parameterName, $type, $required,
@@ -321,7 +323,7 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 		$eventName = static::composeEventName(static::EVENT_EXECUTE, $blockLayout->getName());
 
 		$event = new Event($eventName, $this, $httpEvent->getParams());
-		$attributes = new \ArrayObject(array('parameters' => $parameters, 'blockId' => $blockLayout->getId()));
+		$attributes = new \ArrayObject(['parameters' => $parameters, 'blockId' => $blockLayout->getId()]);
 		$event->setParam('attributes', $attributes);
 		$event->setBlockLayout($blockLayout);
 		$event->setBlockParameters($parameters);
@@ -434,7 +436,9 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 
 					/** @var $validParameters \Change\Presentation\Blocks\ParameterInformation[] */
 					$validParameters = [];
-					$validParameters['TTL'] = new \Change\Presentation\Blocks\ParameterInformation('TTL', \Change\Documents\Property::TYPE_INTEGER, false, 60);
+					$validParameters['TTL'] =
+						new \Change\Presentation\Blocks\ParameterInformation('TTL', \Change\Documents\Property::TYPE_INTEGER,
+							false, 60);
 
 					foreach ($blockInformation->getParametersInformation() as $paramInfo)
 					{
@@ -446,23 +450,25 @@ class BlockManager implements \Zend\EventManager\EventsCapableInterface
 						$parameters['TTL'] = intval($validParameters['TTL']->getDefaultValue());
 					}
 
-					$templates = $blockInformation->getTemplatesInformation();
-					if (count($templates))
+					$fullyQualifiedTemplateName = null;
+					if (isset($parameters['fullyQualifiedTemplateName']))
 					{
-						$validParameters['fullyQualifiedTemplateName'] = new \Change\Presentation\Blocks\ParameterInformation('fullyQualifiedTemplateName', \Change\Documents\Property::TYPE_STRING, false, null);
-						if (isset($parameters['fullyQualifiedTemplateName']))
+						$fullyQualifiedTemplateName = $parameters['fullyQualifiedTemplateName'];
+					}
+
+					$template = $blockInformation->getTemplateInformation($fullyQualifiedTemplateName);
+					if ($template)
+					{
+						if ($fullyQualifiedTemplateName && $fullyQualifiedTemplateName != 'default:default')
 						{
-							$fullyQualifiedTemplateName = $parameters['fullyQualifiedTemplateName'];
-							foreach ($templates as $template)
-							{
-								if ($template->getFullyQualifiedTemplateName() == $fullyQualifiedTemplateName)
-								{
-									foreach ($template->getParametersInformation() as $paramInfo)
-									{
-										$validParameters[$paramInfo->getName()] = $paramInfo;
-									}
-								}
-							}
+							$validParameters['fullyQualifiedTemplateName'] =
+								new \Change\Presentation\Blocks\ParameterInformation('fullyQualifiedTemplateName',
+									\Change\Documents\Property::TYPE_STRING, false, null);
+						}
+
+						foreach ($template->getParametersInformation() as $paramInfo)
+						{
+							$validParameters[$paramInfo->getName()] = $paramInfo;
 						}
 					}
 

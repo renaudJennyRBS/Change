@@ -995,6 +995,11 @@ class UserManager implements \Zend\EventManager\EventsCapableInterface
 						$value = trim(strval($userProfileData['lastName']));
 						$userProfile->setPropertyValue('lastName', $value);
 					}
+					if (array_key_exists('phone', $userProfileData))
+					{
+						$value = trim(strval($userProfileData['phone']));
+						$userProfile->setPropertyValue('phone', $value);
+					}
 
 					if (array_key_exists('birthDate', $userProfileData))
 					{

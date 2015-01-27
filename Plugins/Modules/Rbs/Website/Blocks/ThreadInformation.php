@@ -26,7 +26,7 @@ class ThreadInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.thread', $ucf));
-		$this->addInformationMeta('separator', Property::TYPE_STRING, true, '/')
+		$this->addParameterInformation('separator', Property::TYPE_STRING, true, '/')
 			->setLabel($i18nManager->trans('m.rbs.website.admin.thread_separator', $ucf));
 	}
 }

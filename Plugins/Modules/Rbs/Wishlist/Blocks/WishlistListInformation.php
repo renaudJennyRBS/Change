@@ -23,7 +23,7 @@ class WishlistListInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.wishlist.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.wishlist.admin.wishlist_list', $ucf));
-		$this->addInformationMeta('userId', Property::TYPE_DOCUMENTID, false, null)
+		$this->addParameterInformation('userId', Property::TYPE_DOCUMENTID, false, null)
 			->setLabel($i18nManager->trans('m.rbs.wishlist.admin.wishlist_list_user', $ucf))
 			->setAllowedModelsNames('Rbs_User_User');
 	}

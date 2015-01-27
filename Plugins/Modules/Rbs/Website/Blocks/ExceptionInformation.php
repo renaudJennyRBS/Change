@@ -23,7 +23,7 @@ class ExceptionInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.exception', $ucf));
-		$this->addInformationMeta('showStackTrace', Property::TYPE_BOOLEAN, true, true)
+		$this->addParameterInformation('showStackTrace', Property::TYPE_BOOLEAN, true, true)
 			->setLabel($i18nManager->trans('m.rbs.website.admin.exception_show_stack_trace', $ucf));
 	}
 }

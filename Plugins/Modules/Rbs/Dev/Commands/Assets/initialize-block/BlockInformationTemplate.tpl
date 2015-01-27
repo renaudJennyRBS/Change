@@ -24,8 +24,19 @@ class #className#Information extends \Change\Presentation\Blocks\Information
 		$this->setSection($i18nManager->trans('m.#lowerVendor#.#lowerModule#.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.#lowerVendor#.#lowerModule#.admin.#localeName#_label', $ucf));
 
-		// Declare your parameters here.
-		//$this->addInformationMeta('myParameterName', \Change\Documents\Property::TYPE_INTEGER)
+		// Block parameters.
+		//$this->addParameterInformation('myParameterName', \Change\Documents\Property::TYPE_INTEGER)
+		//	->setLabel($i18nManager->trans('m.#lowerVendor#.#lowerModule#.admin.#localeName#_my_parameter_name', $ucf));
+
+		// Default template parameters.
+		//$defaultInformation = $this->addDefaultTemplateInformation();
+		//$defaultInformation->addParameterInformation('myParameterName', \Change\Documents\Property::TYPE_INTEGER)
+		//	->setLabel($i18nManager->trans('m.#lowerVendor#.#lowerModule#.admin.#localeName#_my_parameter_name', $ucf));
+
+		// Alternate template.
+		//$templateInformation = $this->addTemplateInformation('#vendor#_#module#', 'my-template-name.twig');
+		//$templateInformation->setLabel($i18nManager->trans('m.#lowerVendor#.#lowerModule#.admin.#localeName#_my_template_name_label', ['ucf']));
+		//$templateInformation->addParameterInformation('myParameterName', \Change\Documents\Property::TYPE_INTEGER)
 		//	->setLabel($i18nManager->trans('m.#lowerVendor#.#lowerModule#.admin.#localeName#_my_parameter_name', $ucf));
 	}
 }

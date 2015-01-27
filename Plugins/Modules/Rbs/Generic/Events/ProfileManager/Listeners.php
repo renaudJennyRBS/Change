@@ -102,6 +102,7 @@ class Listeners implements ListenerAggregateInterface
 						$profile->setPropertyValue('firstName', $documentProfile->getFirstName());
 						$profile->setPropertyValue('lastName', $documentProfile->getLastName());
 						$profile->setPropertyValue('titleCode', $documentProfile->getTitleCode());
+						$profile->setPropertyValue('phone', $documentProfile->getPhone());
 						$profile->setPropertyValue('birthDate', $documentProfile->getBirthDate());
 					}
 					elseif ($profileName === 'Rbs_Website' && $documentProfile->getHasRbsWebsite())
@@ -177,12 +178,13 @@ class Listeners implements ListenerAggregateInterface
 						$documentProfile->setFirstName($profile->getPropertyValue('firstName'));
 						$documentProfile->setLastName($profile->getPropertyValue('lastName'));
 						$documentProfile->setTitleCode($profile->getPropertyValue('titleCode'));
+						$documentProfile->setPhone($profile->getPropertyValue('phone'));
 						$birthDate = trim($profile->getPropertyValue('birthDate'));
 						if (!$birthDate)
 						{
 							$birthDate = null;
 						}
-						$documentProfile->setBirthDate($birthDate);
+						$documentProfile->setBirthDate(new \DateTime($birthDate));
 					}
 					elseif ($profileName === 'Rbs_Website')
 					{

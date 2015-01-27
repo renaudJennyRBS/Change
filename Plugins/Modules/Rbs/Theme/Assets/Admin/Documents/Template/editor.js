@@ -76,14 +76,15 @@
 				}
 
 				function onRenderTemplateParams() {
-
 					if (!scope.block || !scope.blockParameters) {
 						return;
 					}
+					var blockType = {};
 					var blocName = scope.block.name;
 					var template = null;
-					angular.forEach(scope.blockList, function(value, key) {
+					angular.forEach(scope.blockList, function(value) {
 						if (value.block && value.block.name === blocName) {
+							blockType = value.block;
 							template = value.block.template;
 						}
 					});
@@ -93,11 +94,17 @@
 					}
 
 					element.find('[data-role="templateBlockParametersContainer"]').html('');
-					if (angular.isString(scope.blockParameters.fullyQualifiedTemplateName) &&
-						scope.blockParameters.fullyQualifiedTemplateName.length) {
 
-						var templateURL = template + '?fullyQualifiedTemplateName=' + scope.blockParameters.fullyQualifiedTemplateName;
+					var templateURL;
+					var fullyQualifiedTemplateName = scope.blockParameters['fullyQualifiedTemplateName'];
+					if (angular.isString(fullyQualifiedTemplateName) && fullyQualifiedTemplateName.length) {
+						templateURL = template + '?fullyQualifiedTemplateName=' + fullyQualifiedTemplateName;
+					}
+					else if (angular.isObject(blockType['defaultTemplate']) && blockType['defaultTemplate']['hasParameter']) {
+						templateURL = template + '?fullyQualifiedTemplateName=default:default';
+					}
 
+					if (templateURL) {
 						$http.get(templateURL, {cache: $templateCache}).success(function (html) {
 							html = $(html);
 							html.find('rbs-document-picker-single')

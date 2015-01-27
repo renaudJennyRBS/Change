@@ -41,33 +41,44 @@ class GetHtmlBlockParameters
 
 				if ($fullyQualifiedTemplateName)
 				{
-					foreach ($information->getTemplatesInformation() as $templateInformation)
+					$templateInformation = $information->getTemplateInformation($fullyQualifiedTemplateName);
+					if ($templateInformation)
 					{
-						if ($templateInformation->getFullyQualifiedTemplateName() == $fullyQualifiedTemplateName)
+						$filePath = $workspace->pluginsModulesPath('Rbs', 'Admin', 'Assets',
+							'block-template-parameters.twig');
+						$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
+
+						$genericServices = $event->getServices('genericServices');
+						if ($genericServices instanceof \Rbs\Generic\GenericServices)
 						{
-							$filePath = $workspace->pluginsModulesPath('Rbs', 'Admin', 'Assets',
-								'block-template-parameters.twig');
-							$result->setHttpStatusCode(HttpResponse::STATUS_CODE_200);
-
-							$genericServices = $event->getServices('genericServices');
-							if ($genericServices instanceof \Rbs\Generic\GenericServices)
-							{
-								$manager = $genericServices->getAdminManager();
-							}
-							else
-							{
-								throw new \RuntimeException('GenericServices not set', 999999);
-							}
-
-							$attributes = array('templateInformation' => $templateInformation, 'information' => $information);
-							$renderer = function () use ($filePath, $manager, $attributes)
-							{
-								return $manager->renderTemplateFile($filePath, $attributes);
-							};
-							$result->setRenderer($renderer);
-							$event->setResult($result);
-							return;
+							$manager = $genericServices->getAdminManager();
 						}
+						else
+						{
+							throw new \RuntimeException('GenericServices not set', 999999);
+						}
+
+						$defaultValues = [];
+						foreach ($templateInformation->getParametersInformation() as $parameter)
+						{
+							if ($parameter->getDefaultValue() !== null)
+							{
+								$defaultValues[$parameter->getName()] = $parameter->getDefaultValue();
+							}
+						}
+
+						$attributes = [
+							'templateInformation' => $templateInformation,
+							'information' => $information,
+							'defaultValues' => $defaultValues
+						];
+						$renderer = function () use ($filePath, $manager, $attributes)
+						{
+							return $manager->renderTemplateFile($filePath, $attributes);
+						};
+						$result->setRenderer($renderer);
+						$event->setResult($result);
+						return;
 					}
 				}
 				else
@@ -96,7 +107,20 @@ class GetHtmlBlockParameters
 						throw new \RuntimeException('GenericServices not set', 999999);
 					}
 
-					$attributes = array('information' => $information);
+					$defaultValues = [];
+					foreach ($information->getParametersInformation() as $parameter)
+					{
+						if ($parameter->getDefaultValue() !== null)
+						{
+							$defaultValues[$parameter->getName()] = $parameter->getDefaultValue();
+						}
+					}
+
+					$attributes = [
+						'information' => $information,
+						'defaultTemplateInformation' => $information->getDefaultTemplateInformation(),
+						'defaultValues' => $defaultValues
+					];
 					$renderer = function () use ($moduleName, $pathName, $manager, $attributes)
 					{
 						return $manager->renderModuleTemplateFile($moduleName, $pathName, $attributes);

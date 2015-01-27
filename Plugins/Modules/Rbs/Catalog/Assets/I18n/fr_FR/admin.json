@@ -323,14 +323,8 @@
 	"cross_selling_product_choice_strategy":{
 		"message":"choix du produit dans le panier"
 	},
-	"cross_selling_items_per_slide":{
-		"message":"produits par slide"
-	},
 	"cross_selling_cart_label":{
 		"message":"produits associés (panier)"
-	},
-	"cross_selling_slider_interval":{
-		"message":"intervalle de temps [1000] ms"
 	},
 	"cross_selling_product_choice_last_product":{
 		"message":"dernier produit ajouté au panier"

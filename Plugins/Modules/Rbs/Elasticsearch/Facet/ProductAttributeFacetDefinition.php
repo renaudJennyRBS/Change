@@ -9,8 +9,8 @@
 namespace Rbs\Elasticsearch\Facet;
 
 /**
-* @name \Rbs\Elasticsearch\Facet\ProductAttributeFacetDefinition
-*/
+ * @name \Rbs\Elasticsearch\Facet\ProductAttributeFacetDefinition
+ */
 class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentFacetDefinition
 {
 	/**
@@ -111,7 +111,7 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 					}
 				}
 				$descendants[] = $document;
-				$values = array();
+				$values = [];
 				foreach ($descendants as $descendant)
 				{
 					$attributeValue = $attribute->getValue($descendant);
@@ -159,8 +159,8 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 	 */
 	protected function getDefaultParameters()
 	{
-		return  ['attributeId' => null, 'mappingName' => null, 'collectionId' => null,
-			'showEmptyItem' => false, 'multipleChoice' => true, 'documentId' => false];
+		return ['attributeId' => null, 'mappingName' => null, 'collectionId' => null, 'showEmptyItem' => false,
+			'renderingMode' => 'checkbox', 'documentId' => false];
 	}
 
 	/**
@@ -176,9 +176,11 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 		$attribute = null;
 		foreach ($currentParameters as $name => $value)
 		{
-			switch ($name) {
+			switch ($name)
+			{
 				case 'attributeId':
-					if ($value) {
+					if ($value)
+					{
 						$attribute = $this->getDocumentManager()->getDocumentInstance($value, 'Rbs_Catalog_Attribute');
 						if ($attribute)
 						{
@@ -207,8 +209,11 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 					}
 					break;
 				case 'showEmptyItem':
-				case 'multipleChoice':
 					$validParameters[$name] = $value === 'false' ? false : boolval($value);
+					break;
+				case 'renderingMode':
+					// TODO validate...
+					$validParameters[$name] = $value;
 					break;
 			}
 		}
@@ -232,7 +237,8 @@ class ProductAttributeFacetDefinition extends \Rbs\Elasticsearch\Facet\DocumentF
 					$checkDocumentType = $property->getType();
 				}
 			}
-			if ($checkDocumentType == 'DocumentId' || $checkDocumentType == 'Document') {
+			if ($checkDocumentType == 'DocumentId' || $checkDocumentType == 'Document')
+			{
 				$validParameters['documentId'] = true;
 			}
 		}

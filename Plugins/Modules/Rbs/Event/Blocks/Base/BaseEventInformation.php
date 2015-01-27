@@ -22,13 +22,13 @@ abstract class BaseEventInformation extends \Change\Presentation\Blocks\Informat
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.event.admin.module_name', $ucf));
-		$this->addInformationMeta('showTime', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('showTime', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_show_time', $ucf));
-		$this->addInformationMeta('showCategories', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('showCategories', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_show_categories', $ucf));
-		$this->addInformationMeta('contextualUrls', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('contextualUrls', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.event.admin.base_event_contextual_urls', $ucf));
 	}
 }

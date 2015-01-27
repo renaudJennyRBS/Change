@@ -24,6 +24,6 @@ class ThemeSelectorMailInformation extends \Change\Presentation\Blocks\Informati
 		$this->setSection($i18nManager->trans('m.rbs.theme.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.theme.admin.theme_selector_label', $ucf));
 		$this->setMailSuitable(true);
-		$this->addTTL(3600);
+		$this->setDefaultTTL(3600);
 	}
 }

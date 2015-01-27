@@ -66,11 +66,11 @@ class AggregationValues
 	}
 
 	/**
-	 * @return boolean
+	 * @return string
 	 */
-	public function getMultipleChoice()
+	public function getRenderingMode()
 	{
-		return $this->facet->getParameters()->get('multipleChoice', false);
+		return $this->facet->getParameters()->get('renderingMode', false);
 	}
 
 	/**

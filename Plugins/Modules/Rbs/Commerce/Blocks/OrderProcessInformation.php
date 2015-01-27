@@ -26,7 +26,7 @@ class OrderProcessInformation extends Information
 		$ucf = array('ucf');
 		$this->setSection($i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.commerce.admin.order_process_label', $ucf));
-		$this->addInformationMeta('realm', Property::TYPE_STRING, true, 'web')
+		$this->addParameterInformation('realm', Property::TYPE_STRING, true, 'web')
 			->setLabel($i18nManager->trans('m.rbs.user.admin.login_realm', $ucf));
 	}
 }

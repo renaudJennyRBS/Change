@@ -20,17 +20,17 @@ class TrackersAskConsentInformation extends \Change\Presentation\Blocks\Informat
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.website.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.website.admin.trackers_ask_consent_label', $ucf));
 
-		$this->addInformationMeta('askConsentText', \Change\Documents\Property::TYPE_DOCUMENT, true)
+		$this->addParameterInformation('askConsentText', \Change\Documents\Property::TYPE_DOCUMENT, true)
 			->setAllowedModelsNames('Rbs_Website_Text')
 			->setLabel($i18nManager->trans('m.rbs.website.admin.trackers_ask_consent_text', $ucf));
-		$this->addInformationMeta('optOutConfirmationText', \Change\Documents\Property::TYPE_DOCUMENT, true)
+		$this->addParameterInformation('optOutConfirmationText', \Change\Documents\Property::TYPE_DOCUMENT, true)
 			->setAllowedModelsNames('Rbs_Website_Text')
 			->setLabel($i18nManager->trans('m.rbs.website.admin.trackers_opt_out_confirmation_text', $ucf));
-		$this->addInformationMeta('optInConfirmationText', \Change\Documents\Property::TYPE_DOCUMENT, true)
+		$this->addParameterInformation('optInConfirmationText', \Change\Documents\Property::TYPE_DOCUMENT, true)
 			->setAllowedModelsNames('Rbs_Website_Text')
 			->setLabel($i18nManager->trans('m.rbs.website.admin.trackers_opt_in_confirmation_text', $ucf));
 	}

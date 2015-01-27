@@ -187,4 +187,36 @@
 		};
 	}]);
 
+	//-------------------------------------------------------------------------
+	// data-rbs-block-default-values
+	// Apply default values.
+	//
+	//-------------------------------------------------------------------------
+
+	app.directive('rbsBlockDefaultValues', [ function () {
+		return {
+			restrict: 'A',
+			template : '<div></div>',
+			replace: true,
+			link: function(scope, element, attrs) {
+				function finalizeParameters() {
+					if (!scope.blockParameters.hasOwnProperty('TTL')) {
+						scope.blockParameters.TTL = 60;
+					}
+				}
+
+				if (attrs.hasOwnProperty('definitions'))
+				{
+					var definitions = angular.fromJson(attrs.definitions);
+					angular.forEach(definitions, function(value, name) {
+						if (!scope.blockParameters.hasOwnProperty(name)) {
+							scope.blockParameters[name] = value;
+						}
+					});
+					finalizeParameters();
+				}
+			}
+		};
+	}]);
+
 })(window.jQuery);

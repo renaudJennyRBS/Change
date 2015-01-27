@@ -1,23 +1,32 @@
 {
-	"highlight_list":{
-		"message":"liste des mises en avant"
-	},
-	"highlight_create":{
-		"message":"ajouter une mise en avant"
-	},
 	"module_name":{
 		"message":"mises en avant"
+	},
+	"highlight_list":{
+		"message":"liste des mises en avant"
 	},
 	"highlight_label":{
 		"message":"mises en avant"
 	},
-	"template_carousel_label":{
-		"message":"caroussel"
+	"highlight_create":{
+		"message":"ajouter une mise en avant"
+	},
+	"highlight_detailedDisplay_picker_title":{
+		"message":"sélectionner le document de détail"
+	},
+	"highlight_detailedDisplay_help":{
+		"message":"Permet d'afficher un lien vers la page de détail de la mise en avant"
 	},
 	"template_carousel_height":{
-		"message":"hauteur [240]"
+		"message":"hauteur"
 	},
-	"template_carousel_interval":{
-		"message":"intervalle de temps [1000] ms"
+	"template_show_title":{
+		"message":"afficher le titre"
+	},
+	"template_show_description":{
+		"message":"afficher la description"
+	},
+	"template_show_link_to_detail":{
+		"message":"afficher le lien vers le détail"
 	}
 }

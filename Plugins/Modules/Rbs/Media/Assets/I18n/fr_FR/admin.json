@@ -88,5 +88,14 @@
 	},
 	"template_file_thumbnail_label":{
 		"message":"vignettes"
+	},
+	"template_slider_label":{
+		"message":"carousel défilant"
+	},
+	"template_slider_items_per_slide":{
+		"message":"éléments par écran"
+	},
+	"template_slider_interval":{
+		"message":"période de rotation en millisecondes"
 	}
 }

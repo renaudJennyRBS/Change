@@ -21,21 +21,21 @@ class CartCrossSellingInformation extends Information
 	{
 		parent::onInformation($event);
 		$i18nManager = $event->getApplicationServices()->getI18nManager();
-		$ucf = array('ucf');
+		$ucf = ['ucf'];
 		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_cart_label', $ucf));
-		$this->addInformationMeta('title', Property::TYPE_STRING, false, null)
+		$this->addParameterInformation('title', Property::TYPE_STRING, false, null)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_title', $ucf));
-		$this->addInformationMeta('crossSellingType', ParameterInformation::TYPE_COLLECTION, true, 'ACCESSORIES')
+		$this->addParameterInformation('crossSellingType', ParameterInformation::TYPE_COLLECTION, true, 'ACCESSORIES')
 			->setCollectionCode('Rbs_Catalog_Collection_CrossSellingType')
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_type', $ucf));
-		$this->addInformationMeta('productChoiceStrategy', ParameterInformation::TYPE_COLLECTION, true, 'LAST_PRODUCT')
+		$this->addParameterInformation('productChoiceStrategy', ParameterInformation::TYPE_COLLECTION, true, 'LAST_PRODUCT')
 			->setCollectionCode('Rbs_Catalog_CrossSelling_CartProductChoiceStrategy')
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_product_choice_strategy', $ucf));
-		$this->addInformationMeta('itemsPerSlide', Property::TYPE_INTEGER, true, 3)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_items_per_slide', $ucf));
-		$this->addInformationMeta('interval', \Change\Documents\Property::TYPE_INTEGER, 1000)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.cross_selling_slider_interval', ['ucf']))
+		$this->addParameterInformation('itemsPerSlide', Property::TYPE_INTEGER, true, 3)
+			->setLabel($i18nManager->trans('m.rbs.media.admin.template_slider_items_per_slide', $ucf));
+		$this->addParameterInformation('interval', \Change\Documents\Property::TYPE_INTEGER, 1000)
+			->setLabel($i18nManager->trans('m.rbs.media.admin.template_slider_interval', ['ucf']))
 			->setNormalizeCallback(function ($parametersValues) {
 				$value = isset($parametersValues['interval']) ? intval($parametersValues['interval']) : 1000;
 				return ($value <= 500) ? 500 : $value;});

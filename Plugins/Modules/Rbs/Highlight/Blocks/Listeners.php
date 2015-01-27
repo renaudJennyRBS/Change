@@ -9,7 +9,6 @@
 namespace Rbs\Highlight\Blocks;
 
 use Change\Presentation\Blocks\Standard\RegisterByBlockName;
-use Change\Presentation\Blocks\Standard\UpdateBlockInformation;
 
 /**
  * @name \Rbs\Highlight\Blocks\Listeners
@@ -26,8 +25,6 @@ class Listeners implements \Zend\EventManager\ListenerAggregateInterface
 	public function attach(\Zend\EventManager\EventManagerInterface $events)
 	{
 		new RegisterByBlockName('Rbs_Highlight_Highlight', true, $events);
-		new UpdateBlockInformation('Rbs_Highlight_Highlight', $events,
-			function($event) {(new Update())->onUpdateTemplateInformation($event);});
 	}
 
 	/**

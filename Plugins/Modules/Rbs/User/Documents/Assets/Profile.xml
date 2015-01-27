@@ -18,6 +18,7 @@
 		<property name="firstName" type="String" />
 		<property name="lastName" type="String" />
 		<property name="titleCode" type="String" />
+		<property name="phone" type="String" />
 		<property name="birthDate" type="Date" />
 		<!-- Technical properties accessible in Rbs_Admin profile -->
 		<!-- @see \Rbs\Generic\Events\ProfileManager\Listeners -->

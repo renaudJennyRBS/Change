@@ -1,88 +1,96 @@
+{% use 'Rbs_Simpleform/form-templates.twig' %}
+
 {% block rbsUserCreateAccount %}
-<script type="text/ng-template" id="/rbsUserCreateAccount.tpl">
-	<form class="form-horizontal" name="rbsUserCreateAccount"
+	<script type="text/ng-template" id="/rbsUserCreateAccount.tpl">
+		<form class="form-horizontal" name="rbsUserCreateAccount"
 			data-ng-show="showForm()" data-ng-submit="submit($event)">
-		<fieldset>
-			<legend>{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}</legend>
-			<p class="text-danger" data-ng-show="error" data-ng-bind="error"></p>
+			<fieldset>
+				<legend>{{ i18n('m.rbs.user.front.create_your_account', ['ucf']) }}</legend>
+				<p class="text-danger" data-ng-show="error" data-ng-bind="error"></p>
 
-			{% block rbsUserCreateAccountEmailField %}
-			<div data-ng-if="!fixedEmail" class="form-group" data-ng-class="{
-					'has-error': rbsUserCreateAccount.email.$dirty && rbsUserCreateAccount.email.$invalid,
-					'has-success': rbsUserCreateAccount.email.$dirty && !rbsUserCreateAccount.email.$invalid
-				}">
-				<label for="rbs-user-create-account-email" class="col-sm-4 col-md-3 control-label">
-					<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-					{{ i18n('m.rbs.user.front.email', ['ucf']) }}</label>
-				<div class="col-sm-8 col-md-9">
-					<input id="rbs-user-create-account-email" type="email" name="email" class="form-control"
-							data-ng-model="data.email" required="required"
-							placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
-					<p class="text-danger" data-ng-show="rbsUserCreateAccount.email.$dirty && rbsUserCreateAccount.email.$invalid">
-						{{ i18n('c.constraints.emailaddressinvalid', ['ucf']) }}
-					</p>
+				{% block rbsUserCreateAccountEmailField %}
+					<div data-ng-if="!fixedEmail" class="form-group" data-ng-class="{
+							'has-error': rbsUserCreateAccount.email.$dirty && rbsUserCreateAccount.email.$invalid,
+							'has-success': rbsUserCreateAccount.email.$dirty && !rbsUserCreateAccount.email.$invalid
+						}">
+						<label for="rbs-user-create-account-email" class="col-sm-4 col-md-3 control-label">
+							{{ block('rbsSimpleformRequiredSymbol') }}
+							{{ i18n('m.rbs.user.front.email', ['ucf']) }}
+						</label>
+						<div class="col-sm-8 col-md-9">
+							<input id="rbs-user-create-account-email" type="email" name="email" class="form-control"
+								data-ng-model="data.email" required="required"
+								placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
+							<p class="text-danger"
+								data-ng-show="rbsUserCreateAccount.email.$dirty && rbsUserCreateAccount.email.$invalid">
+								{{ i18n('c.constraints.emailaddressinvalid', ['ucf']) }}
+							</p>
+						</div>
+					</div>
+
+					<div data-ng-if="fixedEmail" class="form-group">
+						<label for="rbs-user-create-account-email" class="col-sm-4 col-md-3 control-label">
+							{{ i18n('m.rbs.user.front.email', ['ucf']) }}</label>
+						<span id="rbs-user-create-account-email" class="col-sm-8 col-md-9 form-control-static"
+							data-ng-bind="fixedEmail"></span>
+					</div>
+				{% endblock rbsUserCreateAccountEmailField %}
+
+				{% block rbsUserCreateAccountPasswordField %}
+					<div class="form-group">
+						<label for="rbs-user-create-account-password" class="col-sm-4 col-md-3 control-label">
+							{{ block('rbsSimpleformRequiredSymbol') }}
+							{{ i18n('m.rbs.user.front.password', ['ucf']) }}
+						</label>
+						<div class="col-sm-8 col-md-9">
+							<input id="rbs-user-create-account-password" type="password" name="password" class="form-control"
+								data-ng-model="data.password" required="required"
+								placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="rbs-user-create-account-confirm-password" class="col-sm-4 col-md-3 control-label">
+							{{ block('rbsSimpleformRequiredSymbol') }}
+							{{ i18n('m.rbs.user.front.confirm_password', ['ucf']) }}
+						</label>
+						<div class="col-sm-8 col-md-9">
+							<input id="rbs-user-create-account-confirm-password" type="password" name="confirmPassword"
+								class="form-control" data-ng-model="confirmPassword" required="required"
+								placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+							<p class="text-danger"
+								data-ng-show="confirmPassword != data.password && !rbsUserCreateAccount.password.$invalid">
+								{{ i18n('m.rbs.user.front.error_password_not_match_confirm_password', ['ucf']) }}
+							</p>
+						</div>
+					</div>
+				{% endblock rbsUserCreateAccountPasswordField %}
+
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
+						<button class="btn btn-primary" type="submit" data-ng-disabled="rbsUserCreateAccount.$invalid">
+							{{ i18n('m.rbs.user.front.submit_account_creation', ['ucf']) }}
+						</button>
+					</div>
 				</div>
-			</div>
+			</fieldset>
+		</form>
 
-			<div data-ng-if="fixedEmail" class="form-group">
-				<label for="rbs-user-create-account-email" class="col-sm-4 col-md-3 control-label">
-					{{ i18n('m.rbs.user.front.email', ['ucf']) }}</label>
-				<span id="rbs-user-create-account-email" class="col-sm-8 col-md-9 form-control-static" data-ng-bind="fixedEmail"></span>
-			</div>
-			{% endblock rbsUserCreateAccountEmailField %}
-
-			{% block rbsUserCreateAccountPasswordField %}
-			<div class="form-group">
-				<label for="rbs-user-create-account-password" class="col-sm-4 col-md-3 control-label">
-					<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-					{{ i18n('m.rbs.user.front.password', ['ucf']) }}
-				</label>
-				<div class="col-sm-8 col-md-9">
-					<input id="rbs-user-create-account-password" type="password" name="password" class="form-control"
-							data-ng-model="data.password" required="required"
-							placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="rbs-user-create-account-confirm-password" class="col-sm-4 col-md-3 control-label">
-					<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-					{{ i18n('m.rbs.user.front.confirm_password', ['ucf']) }}
-				</label>
-				<div class="col-sm-8 col-md-9">
-					<input id="rbs-user-create-account-confirm-password" type="password" name="confirmPassword" class="form-control"
-							data-ng-model="confirmPassword" required="required"
-							placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
-					<p class="text-danger" data-ng-show="confirmPassword != data.password && !rbsUserCreateAccount.password.$invalid">
-						{{ i18n('m.rbs.user.front.error_password_not_match_confirm_password', ['ucf']) }}
-					</p>
-				</div>
-			</div>
-			{% endblock rbsUserCreateAccountPasswordField %}
-
-			<div class="form-group">
-				<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
-					<button class="btn btn-primary" type="submit" data-ng-disabled="rbsUserCreateAccount.$invalid">{{ i18n('m.rbs.user.front.submit_account_creation', ['ucf']) }}</button>
-				</div>
-			</div>
-		</fieldset>
-	</form>
-
-	<div class="text-center" data-ng-show="requestAccountCreated">
-		<h1>{{ i18n('m.rbs.user.front.account_creation_request_title', ['ucf']) }}</h1>
-		<p class="text-success">{{ i18n('m.rbs.user.front.account_creation_request_success', ['ucf']) }}</p>
-		<p>{{ i18n('m.rbs.user.front.account_creation_request_description', ['ucf']) }}</p>
-	</div>
-
-	<div class="text-center" data-ng-show="accountConfirmed">
-		<h1>{{ i18n('m.rbs.user.front.account_creation_title', ['ucf']) }}</h1>
-		<p class="text-danger" data-ng-show="error" data-ng-bind="error"></p>
-		<div data-ng-hide="error">
-			<p class="text-success">{{ i18n('m.rbs.user.front.account_creation_success', ['ucf']) }}</p>
-			<p>{{ i18n('m.rbs.user.front.account_creation_description', ['ucf']) }}</p>
-			<a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.account_creation_log_in', ['ucf']) }}</a>
+		<div class="text-center" data-ng-show="requestAccountCreated">
+			<h1>{{ i18n('m.rbs.user.front.account_creation_request_title', ['ucf']) }}</h1>
+			<p class="text-success">{{ i18n('m.rbs.user.front.account_creation_request_success', ['ucf']) }}</p>
+			<p>{{ i18n('m.rbs.user.front.account_creation_request_description', ['ucf']) }}</p>
 		</div>
-	</div>
-</script>
+
+		<div class="text-center" data-ng-show="accountConfirmed">
+			<h1>{{ i18n('m.rbs.user.front.account_creation_title', ['ucf']) }}</h1>
+			<p class="text-danger" data-ng-show="error" data-ng-bind="error"></p>
+			<div data-ng-hide="error">
+				<p class="text-success">{{ i18n('m.rbs.user.front.account_creation_success', ['ucf']) }}</p>
+				<p>{{ i18n('m.rbs.user.front.account_creation_description', ['ucf']) }}</p>
+				<a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.account_creation_log_in', ['ucf']) }}</a>
+			</div>
+		</div>
+	</script>
 {% endblock rbsUserCreateAccount %}
 
 {% block rbsUserLogin %}
@@ -94,21 +102,30 @@
 				<div class="form-group">
 					<label for="rbs-user-login-login">{{ i18n('m.rbs.user.front.login', ['ucf']) }}</label>
 					<input id="rbs-user-login-login" type="text" name="login" class="form-control"
-							placeholder="{{ i18nAttr('m.rbs.user.front.login_placeholder', ['ucf']) }}" data-ng-model="data.login"/>
+						placeholder="{{ i18nAttr('m.rbs.user.front.login_placeholder', ['ucf']) }}" data-ng-model="data.login"/>
 				</div>
 				<div class="form-group">
 					<label for="rbs-user-login-password">{{ i18n('m.rbs.user.front.password', ['ucf']) }}</label>
 					<input id="rbs-user-login-password" type="password" name="password" class="form-control"
-							placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" data-ng-model="data.password"/>
+						placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}"
+						data-ng-model="data.password" />
 				</div>
 				<div class="text-right" data-rbs-user-forgot-password=""></div>
 				<div class="checkbox">
-					<label><input type="checkbox" name="rememberMe" data-ng-model="data.rememberMe" > {{ i18n('m.rbs.user.front.remember_me', ['ucf']) }}</label>
+					<label>
+						<input type="checkbox" name="rememberMe" data-ng-model="data.rememberMe" >
+						{{ i18n('m.rbs.user.front.remember_me', ['ucf']) }}
+					</label>
 				</div>
-				<button class="btn btn-primary" type="submit" data-ng-disabled="!data.login || !data.password">{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}</button>
+				<button class="btn btn-primary" type="submit" data-ng-disabled="!data.login || !data.password">
+					{{ i18n('m.rbs.user.front.log_in', ['ucf']) }}
+				</button>
 			</fieldset>
 			<div data-ng-show="parameters.accessorId">
-				<p>{{ i18n('m.rbs.user.front.you_are_authentified_as', ['ucf'], {'NAME': ''}) }} <span data-ng-bind="parameters.accessorName"></span></p>
+				<p>
+					{{ i18n('m.rbs.user.front.you_are_authentified_as', ['ucf'], {'NAME': ''}) }}
+					<span data-ng-bind="parameters.accessorName"></span>
+				</p>
 				<p><a href="javascript:" data-ng-click="logout()">{{ i18n('m.rbs.user.front.log_out', ['ucf']) }}</a></p>
 			</div>
 		</form>
@@ -116,31 +133,39 @@
 
 	{% block rbsUserForgotPassword %}
 		<script type="text/ng-template" id="/rbsUserForgotPassword.tpl">
-			<p><a href="javascript:;" data-ng-click="openBox()">{{ i18n('m.rbs.user.front.forgot_your_password', ['ucf']) }}</a></p>
+			<p>
+				<a href="javascript:" data-ng-click="openBox()">{{ i18n('m.rbs.user.front.forgot_your_password', ['ucf']) }}</a>
+			</p>
 			<div class="modal fade" id="reset-password-modal-main-content" tabindex="-1" role="dialog"
 					aria-labelledby="reset-password-modal-label" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
-							<h4 class="modal-title text-left"
-									id="reset-password-modal-label">{{ i18n('m.rbs.user.front.send_reset_password_request', ['ucf']) }}</h4>
+							<button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">
+								&times;
+							</button>
+							<h4 class="modal-title text-left" id="reset-password-modal-label">
+								{{ i18n('m.rbs.user.front.send_reset_password_request', ['ucf']) }}
+							</h4>
 						</div>
 						<div class="modal-body">
 							<div class="modal-main-content">
 								<div data-ng-show="!successSending">
 									<div class="form-group">
 										<input type="text" name="reset-password-email" class="form-control"
-												placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}"
-												data-ng-model="resetPasswordEmail" data-ng-disabled="sending"/>
+											placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}"
+											data-ng-model="resetPasswordEmail" data-ng-disabled="sending" />
 									</div>
 									<button class="btn btn-primary" type="button" data-ng-click="askReset()"
-											data-ng-disabled="sending || invalidMail()">{{ i18n('m.rbs.user.front.send_reset_password_request', ['ucf']) }}</button>
+										data-ng-disabled="sending || invalidMail()">
+										{{ i18n('m.rbs.user.front.send_reset_password_request', ['ucf']) }}
+									</button>
 								</div>
 								<div data-ng-show="successSending" class="text-success text-center">
 									<p>{{ i18n('m.rbs.user.front.sending_reset_password_request_success', ['ucf']) }}</p>
-									<button class="btn btn-primary" type="button" data-dismiss="modal"
-											aria-hidden="true">{{ i18n('m.rbs.generic.front.close', ['ucf']) }}</button>
+									<button class="btn btn-primary" type="button" data-dismiss="modal" aria-hidden="true">
+										{{ i18n('m.rbs.generic.front.close', ['ucf']) }}
+									</button>
 								</div>
 							</div>
 						</div>
@@ -152,113 +177,119 @@
 {% endblock rbsUserLogin %}
 
 {% block rbsUserResetPassword %}
-<script type="text/ng-template" id="/rbsUserResetPassword.tpl">
-	<form class="form-horizontal" name="rbsUserResetPassword" data-ng-show="showForm()" data-ng-submit="submit()">
-		<fieldset>
-			<h1>{{ i18n('m.rbs.user.front.init_your_password', ['ucf']) }}</h1>
-			<p class="text-danger" data-ng-show="error" data-ng-bind="error"></p>
-			<div class="form-group">
-				<label for="rbs-user-init-password" class="col-sm-4 col-md-3 control-label">
-					<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-					{{ i18n('m.rbs.user.front.password', ['ucf']) }}
-				</label>
-				<div class="col-sm-8 col-md-9">
-					<input id="rbs-user-init-password" type="password" name="password" class="form-control"
-							data-ng-model="data.password" required="required"
-							placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="rbs-user-init-confirm-password" class="col-sm-4 col-md-3 control-label">
-					<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-					{{ i18n('m.rbs.user.front.confirm_password', ['ucf']) }}
-				</label>
-				<div class="col-sm-8 col-md-9">
-					<input id="rbs-user-init-confirm-password" type="password" name="confirmPassword" class="form-control"
-							data-ng-model="confirmPassword" required="required"
-							placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
-					<p class="text-danger" data-ng-show="confirmPassword != data.password && !rbsUserResetPassword.password.$invalid">
-						{{ i18n('m.rbs.user.front.error_password_not_match_confirm_password', ['ucf']) }}
-					</p>
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
-					<button class="btn btn-primary" type="submit" data-ng-disabled="rbsUserResetPassword.$invalid" >
-						{{ i18n('m.rbs.user.front.submit_init_password', ['ucf']) }}
-					</button>
-				</div>
-			</div>
-		</fieldset>
-	</form>
-
-	<div class="text-center" data-ng-hide="data.token">
-		<div class="text-center">
-			<h1>{{ i18n('m.rbs.user.front.init_your_password', ['ucf']) }}</h1>
-			<p class="text-danger">{{ i18n('m.rbs.user.front.invalid_token', ['ucf']) }}</p>
-		</div>
-	</div>
-
-	<div class="text-center" data-ng-show="passwordConfirmed">
-		<div class="text-center">
-			<h1>{{ i18n('m.rbs.user.front.init_your_password', ['ucf']) }}</h1>
-			<p class="text-success">{{ i18n('m.rbs.user.front.init_password_success', ['ucf']) }}</p>
-			<a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.account_creation_log_in', ['ucf']) }}</a>
-		</div>
-	</div>
-</script>
-{% endblock rbsUserResetPassword %}
-
-
-{% block rbsUserChangePassword %}
-	<script type="text/ng-template" id="/rbsUserChangePassword.tpl">
-		<form class="form-horizontal" name="rbsUserChangePassword" data-ng-show="showForm()" data-ng-submit="submit()">
+	<script type="text/ng-template" id="/rbsUserResetPassword.tpl">
+		<form class="form-horizontal" name="rbsUserResetPassword" data-ng-show="showForm()" data-ng-submit="submit()">
 			<fieldset>
 				<h1>{{ i18n('m.rbs.user.front.init_your_password', ['ucf']) }}</h1>
-				<p class="text-success" data-ng-show="passwordConfirmed" >{{ i18n('m.rbs.user.front.change_password_success', ['ucf']) }}</p>
 				<p class="text-danger" data-ng-show="error" data-ng-bind="error"></p>
-
 				<div class="form-group">
-					<label for="rbs-user-change-password-current" class="col-sm-4 col-md-3 control-label">
-						<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-						{{ i18n('m.rbs.user.front.current_password', ['ucf']) }}
+					<label for="rbs-user-init-password" class="col-sm-4 col-md-3 control-label">
+						{{ block('rbsSimpleformRequiredSymbol') }}
+						{{ i18n('m.rbs.user.front.password', ['ucf']) }}
 					</label>
 					<div class="col-sm-8 col-md-9">
-						<input id="rbs-user-change-password-current" type="password" class="form-control" autocomplete="false"
-								required="required" name="currentPassword" data-ng-model="data.currentPassword"
-								placeholder="{{ i18nAttr('m.rbs.user.front.current_password_placeholder', ['ucf']) }}" />
+						<input id="rbs-user-init-password" type="password" name="password" class="form-control"
+							data-ng-model="data.password" required="required"
+							placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
 					</div>
 				</div>
-
 				<div class="form-group">
-					<label for="rbs-user-change-password-new" class="col-sm-4 col-md-3 control-label">
-						<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-						{{ i18n('m.rbs.user.front.new_password', ['ucf']) }}
+					<label for="rbs-user-init-confirm-password" class="col-sm-4 col-md-3 control-label">
+						{{ block('rbsSimpleformRequiredSymbol') }}
+						{{ i18n('m.rbs.user.front.confirm_password', ['ucf']) }}
 					</label>
 					<div class="col-sm-8 col-md-9">
-						<input id="rbs-user-change-password-new" type="password" name="password" class="form-control"
-								data-ng-model="data.password" required="required"
-								placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
-					</div>
-				</div>
-
-				<div class="form-group">
-					<label for="rbs-user-change-password-confirm-password" class="col-sm-4 col-md-3 control-label">
-						<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-						{{ i18n('m.rbs.user.front.confirm_new_password', ['ucf']) }}
-					</label>
-					<div class="col-sm-8 col-md-9">
-						<input id="rbs-user-change-password-confirm-password" type="password" name="confirmPassword" class="form-control"
-								data-ng-model="confirmPassword" required="required"
-								placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
-						<p class="text-danger" data-ng-show="confirmPassword != data.password && !rbsUserChangePassword.password.$invalid">
+						<input id="rbs-user-init-confirm-password" type="password" name="confirmPassword" class="form-control"
+							data-ng-model="confirmPassword" required="required"
+							placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+						<p class="text-danger"
+							data-ng-show="confirmPassword != data.password && !rbsUserResetPassword.password.$invalid">
 							{{ i18n('m.rbs.user.front.error_password_not_match_confirm_password', ['ucf']) }}
 						</p>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
-						<button class="btn btn-primary" type="submit" data-ng-disabled="rbsUserChangePassword.$invalid || confirmPassword != data.password" >{{ i18n('m.rbs.user.front.submit_init_password', ['ucf']) }}</button>
+						<button class="btn btn-primary" type="submit" data-ng-disabled="rbsUserResetPassword.$invalid" >
+							{{ i18n('m.rbs.user.front.submit_init_password', ['ucf']) }}
+						</button>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+
+		<div class="text-center" data-ng-hide="data.token">
+			<div class="text-center">
+				<h1>{{ i18n('m.rbs.user.front.init_your_password', ['ucf']) }}</h1>
+				<p class="text-danger">{{ i18n('m.rbs.user.front.invalid_token', ['ucf']) }}</p>
+			</div>
+		</div>
+
+		<div class="text-center" data-ng-show="passwordConfirmed">
+			<div class="text-center">
+				<h1>{{ i18n('m.rbs.user.front.init_your_password', ['ucf']) }}</h1>
+				<p class="text-success">{{ i18n('m.rbs.user.front.init_password_success', ['ucf']) }}</p>
+				<a href="{{ functionURL('Rbs_User_Login') }}">{{ i18n('m.rbs.user.front.account_creation_log_in', ['ucf']) }}</a>
+			</div>
+		</div>
+	</script>
+{% endblock rbsUserResetPassword %}
+
+{% block rbsUserChangePassword %}
+	<script type="text/ng-template" id="/rbsUserChangePassword.tpl">
+		<form class="form-horizontal" name="rbsUserChangePassword" data-ng-show="showForm()" data-ng-submit="submit()">
+			<fieldset>
+				<h1>{{ i18n('m.rbs.user.front.init_your_password', ['ucf']) }}</h1>
+				<p class="text-success" data-ng-show="passwordConfirmed" >
+					{{ i18n('m.rbs.user.front.change_password_success', ['ucf']) }}
+				</p>
+				<p class="text-danger" data-ng-show="error" data-ng-bind="error"></p>
+
+				<div class="form-group">
+					<label for="rbs-user-change-password-current" class="col-sm-4 col-md-3 control-label">
+						{{ block('rbsSimpleformRequiredSymbol') }}
+						{{ i18n('m.rbs.user.front.current_password', ['ucf']) }}
+					</label>
+					<div class="col-sm-8 col-md-9">
+						<input id="rbs-user-change-password-current" type="password" class="form-control" autocomplete="false"
+							required="required" name="currentPassword" data-ng-model="data.currentPassword"
+							placeholder="{{ i18nAttr('m.rbs.user.front.current_password_placeholder', ['ucf']) }}" />
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="rbs-user-change-password-new" class="col-sm-4 col-md-3 control-label">
+						{{ block('rbsSimpleformRequiredSymbol') }}
+						{{ i18n('m.rbs.user.front.new_password', ['ucf']) }}
+					</label>
+					<div class="col-sm-8 col-md-9">
+						<input id="rbs-user-change-password-new" type="password" name="password" class="form-control"
+							data-ng-model="data.password" required="required"
+							placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="rbs-user-change-password-confirm-password" class="col-sm-4 col-md-3 control-label">
+						{{ block('rbsSimpleformRequiredSymbol') }}
+						{{ i18n('m.rbs.user.front.confirm_new_password', ['ucf']) }}
+					</label>
+					<div class="col-sm-8 col-md-9">
+						<input id="rbs-user-change-password-confirm-password" type="password" name="confirmPassword"
+							class="form-control" data-ng-model="confirmPassword" required="required"
+							placeholder="{{ i18nAttr('m.rbs.user.front.password_placeholder', ['ucf']) }}" />
+						<p class="text-danger"
+							data-ng-show="confirmPassword != data.password && !rbsUserChangePassword.password.$invalid">
+							{{ i18n('m.rbs.user.front.error_password_not_match_confirm_password', ['ucf']) }}
+						</p>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
+						<button class="btn btn-primary" type="submit"
+							data-ng-disabled="rbsUserChangePassword.$invalid || confirmPassword != data.password" >
+							{{ i18n('m.rbs.user.front.submit_init_password', ['ucf']) }}
+						</button>
 					</div>
 				</div>
 			</fieldset>
@@ -268,145 +299,180 @@
 
 
 {% block rbsUserAccount %}
-<script type="text/ng-template" id="/rbsUserAccount.tpl">
-	<div data-ng-show="parameters.authenticated">
-		<form class="form-horizontal">
-			<fieldset>
-				{% block rbsUserAccountProfilesHeader %}
-					<h1>{{ i18n('m.rbs.user.front.account_title', ['ucf']) }}</h1>
-					<div data-ng-show="success" class="text-center">
-						<p class="text-success">{{ i18n('m.rbs.user.front.update_account_success', ['ucf']) }}</p>
-					</div>
-					<div data-ng-show="errors" class="text-center">
-						<p class="text-danger" data-ng-repeat="error in errors">(= error =)</p>
-					</div>
-				{% endblock rbsUserAccountProfilesHeader %}
+	<script type="text/ng-template" id="/rbsUserAccount.tpl">
+		<div data-ng-show="parameters.authenticated">
+			<form class="form-horizontal">
+				<fieldset>
+					{% block rbsUserAccountProfilesHeader %}
+						<h1>{{ i18n('m.rbs.user.front.account_title', ['ucf']) }}</h1>
+						<div data-ng-show="success" class="text-center">
+							<p class="text-success">{{ i18n('m.rbs.user.front.update_account_success', ['ucf']) }}</p>
+						</div>
+						<div data-ng-show="errors" class="text-center">
+							<p class="text-danger" data-ng-repeat="error in errors">(= error =)</p>
+						</div>
+					{% endblock rbsUserAccountProfilesHeader %}
 
-				{% block rbsUserAccountProfiles %}
-					<div class="form-group">
-						<label for="rbs-user-edit-account-email" class="col-sm-4 col-md-3 control-label">
-							<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
-							{{ i18n('m.rbs.user.front.email', ['ucf']) }}</label>
-						<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
-							<input id="rbs-user-edit-account-email" type="text" name="email" class="form-control" disabled="disabled"
-								placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" data-ng-model="data.common.email"/>
-						</div>
-						<div class="col-sm-8 col-md-9" data-ng-show="readonly">
-							<div class="form-control-static">(= data.common.email =)</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="rbs-user-edit-account-title" class="col-sm-4 col-md-3 control-label">
-							{{ i18n('m.rbs.user.front.title', ['ucf']) }}
-						</label>
-						<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
-							<select class="form-control" data-ng-model="data.profiles.Rbs_User.titleCode"
-								data-ng-options="item.value as item.title for item in data.profiles.Rbs_User.allowedTitles">
-							</select>
-						</div>
-						<div class="col-sm-8 col-md-9" data-ng-show="readonly">
-							<div class="form-control-static">(= data.profiles.Rbs_User.titleCodeTitle =)</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="rbs-user-edit-account-firstName" class="col-sm-4 col-md-3 control-label">
-							{{ i18n('m.rbs.user.front.first_name', ['ucf']) }}
-						</label>
-						<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
-							<input id="rbs-user-edit-account-firstName" type="text" name="firstName" class="form-control"
-								data-ng-model="data.profiles.Rbs_User.firstName"
-								placeholder="{{ i18nAttr('m.rbs.user.front.first_name_placeholder', ['ucf']) }}" />
-						</div>
-						<div class="col-sm-8 col-md-9" data-ng-show="readonly">
-							<div class="form-control-static">(= data.profiles.Rbs_User.firstName =)</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="rbs-user-edit-account-lastName" class="col-sm-4 col-md-3 control-label">
-							{{ i18n('m.rbs.user.front.last_name', ['ucf']) }}
-						</label>
-						<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
-							<input id="rbs-user-edit-account-lastName" type="text" name="lastName" class="form-control"
-								data-ng-model="data.profiles.Rbs_User.lastName"
-								placeholder="{{ i18nAttr('m.rbs.user.front.last_name_placeholder', ['ucf']) }}" />
-						</div>
-						<div class="col-sm-8 col-md-9" data-ng-show="readonly">
-							<div class="form-control-static">(= data.profiles.Rbs_User.lastName =)</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="rbs-user-edit-account-birthDate" class="col-sm-4 col-md-3 control-label">
-							{{ i18n('m.rbs.user.front.birthDate', ['ucf']) }}
-						</label>
-						<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
-							<input id="rbs-user-edit-account-birthDate" type="date" name="birthDate" class="form-control"
-								autocomplete="off" size="16" data-ng-model="data.profiles.Rbs_User.birthDate"
-								placeholder="{{ i18nAttr('m.rbs.user.front.birthDate_placeholder', ['ucf']) }}" />
-						</div>
-						<div class="col-sm-8 col-md-9" data-ng-show="readonly">
-							<div class="form-control-static">(= data.profiles.Rbs_User.birthDate | rbsDate =)</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="rbs-user-edit-account-pseudonym" class="col-sm-4 col-md-3 control-label">
-							{{ i18n('m.rbs.user.front.pseudonym', ['ucf']) }}
-						</label>
-						<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
-							<input id="rbs-user-edit-account-pseudonym" type="text" name="pseudonym" class="form-control"
-								data-ng-model="data.profiles.Rbs_Website.pseudonym" />
-							<p class="help-block">{{ i18nAttr('m.rbs.user.front.pseudonym_help', ['ucf']) }}</p>
-						</div>
-						<div class="col-sm-8 col-md-9" data-ng-show="readonly">
-							<div class="form-control-static">(= data.profiles.Rbs_Website.pseudonym =)</div>
-							<p class="help-block">{{ i18nAttr('m.rbs.user.front.pseudonym_help', ['ucf']) }}</p>
-						</div>
-					</div>
-				{% endblock rbsUserAccountProfiles %}
+					{% block rbsUserAccountProfiles %}
+						{% block rbsUserAccountProfilesFieldEmail %}
+							<div class="form-group">
+								<label for="rbs-user-edit-account-email" class="col-sm-4 col-md-3 control-label">
+									{{ block('rbsSimpleformRequiredSymbol') }}
+									{{ i18n('m.rbs.user.front.email', ['ucf']) }}</label>
+								<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
+									<input id="rbs-user-edit-account-email" type="text" name="email" class="form-control"
+										disabled="disabled" data-ng-model="data.common.email"
+										placeholder="{{ i18nAttr('m.rbs.user.front.email_placeholder', ['ucf']) }}" />
+								</div>
+								<div class="col-sm-8 col-md-9" data-ng-show="readonly">
+									<div class="form-control-static">(= data.common.email =)</div>
+								</div>
+							</div>
+						{% endblock rbsUserAccountProfilesFieldEmail %}
+						{% block rbsUserAccountProfilesFieldTitle %}
+							<div class="form-group">
+								<label for="rbs-user-edit-account-title" class="col-sm-4 col-md-3 control-label">
+									{{ i18n('m.rbs.user.front.title', ['ucf']) }}
+								</label>
+								<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
+									<select id="rbs-user-edit-account-title" class="form-control"
+										data-ng-model="data.profiles.Rbs_User.titleCode"
+										data-ng-options="item.value as item.title for item in data.profiles.Rbs_User.allowedTitles">
+									</select>
+								</div>
+								<div class="col-sm-8 col-md-9" data-ng-show="readonly">
+									<div class="form-control-static">(= data.profiles.Rbs_User.titleCodeTitle =)</div>
+								</div>
+							</div>
+						{% endblock rbsUserAccountProfilesFieldTitle %}
+						{% block rbsUserAccountProfilesFieldFirstName %}
+							<div class="form-group">
+								<label for="rbs-user-edit-account-firstName" class="col-sm-4 col-md-3 control-label">
+									{{ i18n('m.rbs.user.front.first_name', ['ucf']) }}
+								</label>
+								<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
+									<input id="rbs-user-edit-account-firstName" type="text" name="firstName" class="form-control"
+										data-ng-model="data.profiles.Rbs_User.firstName"
+										placeholder="{{ i18nAttr('m.rbs.user.front.first_name_placeholder', ['ucf']) }}" />
+								</div>
+								<div class="col-sm-8 col-md-9" data-ng-show="readonly">
+									<div class="form-control-static">(= data.profiles.Rbs_User.firstName =)</div>
+								</div>
+							</div>
+						{% endblock rbsUserAccountProfilesFieldFirstName %}
+						{% block rbsUserAccountProfilesFieldLastName %}
+							<div class="form-group">
+								<label for="rbs-user-edit-account-lastName" class="col-sm-4 col-md-3 control-label">
+									{{ i18n('m.rbs.user.front.last_name', ['ucf']) }}
+								</label>
+								<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
+									<input id="rbs-user-edit-account-lastName" type="text" name="lastName" class="form-control"
+										data-ng-model="data.profiles.Rbs_User.lastName"
+										placeholder="{{ i18nAttr('m.rbs.user.front.last_name_placeholder', ['ucf']) }}" />
+								</div>
+								<div class="col-sm-8 col-md-9" data-ng-show="readonly">
+									<div class="form-control-static">(= data.profiles.Rbs_User.lastName =)</div>
+								</div>
+							</div>
+						{% endblock rbsUserAccountProfilesFieldLastName %}
+						{% block rbsUserAccountProfilesFieldPhone %}
+							<div class="form-group">
+								<label for="rbs-user-edit-account-phone" class="col-sm-4 col-md-3 control-label">
+									{{ i18n('m.rbs.user.front.phone', ['ucf']) }}
+								</label>
+								<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
+									<input id="rbs-user-edit-account-phone" type="date" name="phone" class="form-control"
+										autocomplete="off" size="16" data-ng-model="data.profiles.Rbs_User.phone"
+										placeholder="{{ i18nAttr('m.rbs.user.front.phone_placeholder', ['ucf']) }}" />
+								</div>
+								<div class="col-sm-8 col-md-9" data-ng-show="readonly">
+									<div class="form-control-static">(= data.profiles.Rbs_User.phone =)</div>
+								</div>
+							</div>
+						{% endblock rbsUserAccountProfilesFieldPhone %}
+						{% block rbsUserAccountProfilesFieldBirthDate %}
+							<div class="form-group">
+								<label for="rbs-user-edit-account-birthDate" class="col-sm-4 col-md-3 control-label">
+									{{ i18n('m.rbs.user.front.birthDate', ['ucf']) }}
+								</label>
+								<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
+									<input id="rbs-user-edit-account-birthDate" type="date" name="birthDate" class="form-control"
+										autocomplete="off" size="16" data-ng-model="data.profiles.Rbs_User.birthDate"
+										placeholder="{{ i18nAttr('m.rbs.user.front.birthDate_placeholder', ['ucf']) }}" />
+								</div>
+								<div class="col-sm-8 col-md-9" data-ng-show="readonly">
+									<div class="form-control-static">(= data.profiles.Rbs_User.birthDate | rbsDate =)</div>
+								</div>
+							</div>
+						{% endblock rbsUserAccountProfilesFieldBirthDate %}
+						{% block rbsUserAccountProfilesFieldPseudonym %}
+							<div class="form-group">
+								<label for="rbs-user-edit-account-pseudonym" class="col-sm-4 col-md-3 control-label">
+									{{ i18n('m.rbs.user.front.pseudonym', ['ucf']) }}
+								</label>
+								<div class="col-sm-8 col-md-9" data-ng-hide="readonly">
+									<input id="rbs-user-edit-account-pseudonym" type="text" name="pseudonym" class="form-control"
+										data-ng-model="data.profiles.Rbs_Website.pseudonym" />
+									<p class="help-block">{{ i18nAttr('m.rbs.user.front.pseudonym_help', ['ucf']) }}</p>
+								</div>
+								<div class="col-sm-8 col-md-9" data-ng-show="readonly">
+									<div class="form-control-static">(= data.profiles.Rbs_Website.pseudonym =)</div>
+									<p class="help-block">{{ i18nAttr('m.rbs.user.front.pseudonym_help', ['ucf']) }}</p>
+								</div>
+							</div>
+						{% endblock rbsUserAccountProfilesFieldPseudonym %}
+					{% endblock rbsUserAccountProfiles %}
 
-				{% block rbsUserAccountProfilesCtrl %}
-					<div class="form-group">
-						<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
-							<button class="btn btn-primary" type="button" data-ng-click="openEdit()" data-ng-show="readonly">
-								{{ i18n('m.rbs.user.front.button_edit_account', ['ucf']) }}
-							</button>
-							<button class="btn btn-primary" type="button" data-ng-click="saveAccount()" data-ng-hide="readonly">
-								{{ i18n('m.rbs.user.front.submit_edit_account', ['ucf']) }}
-							</button>
-							<button class="btn btn-default" type="button" data-ng-click="cancelEdit()" data-ng-hide="readonly">
-								{{ i18n('m.rbs.user.front.cancel_edit_account', ['ucf']) }}
-							</button>
+					{% block rbsUserAccountProfilesCtrl %}
+						<div class="form-group">
+							<div class="col-sm-offset-4 col-md-offset-3 col-sm-8 col-md-9">
+								<button class="btn btn-primary" type="button" data-ng-click="openEdit()" data-ng-show="readonly">
+									{{ i18n('m.rbs.user.front.button_edit_account', ['ucf']) }}
+								</button>
+								<button class="btn btn-primary" type="button" data-ng-click="saveAccount()"
+									data-ng-hide="readonly">
+									{{ i18n('m.rbs.user.front.submit_edit_account', ['ucf']) }}
+								</button>
+								<button class="btn btn-default" type="button" data-ng-click="cancelEdit()"
+									data-ng-hide="readonly">
+									{{ i18n('m.rbs.user.front.cancel_edit_account', ['ucf']) }}
+								</button>
+							</div>
 						</div>
-					</div>
-				{% endblock rbsUserAccountProfilesCtrl %}
-			</fieldset>
-		</form>
-	</div>
-</script>
+					{% endblock rbsUserAccountProfilesCtrl %}
+				</fieldset>
+			</form>
+		</div>
+	</script>
 {% endblock rbsUserAccount %}
 
 {% block rbsUserManageAutoLogin %}
-<script type="text/ng-template" id="/rbsUserManageAutoLogin.tpl">
-	<div data-ng-show="errors" class="text-center">
-		<p data-ng-repeat="error in errors" class="text-danger">(= error =)</p>
-	</div>
-	<div data-ng-hide="tokens" class="text-center">
-		<p class="text-success">{{ i18n('m.rbs.user.front.no_token', ['ucf']) }}</p>
-	</div>
-	<table data-ng-show="tokens" class="table table-striped">
-		<thead>
-		<tr>
-			<td>{{ i18n('m.rbs.user.front.device', ['ucf']) }}</td>
-			<td>{{ i18n('m.rbs.user.front.validity_date', ['ucf']) }}</td>
-			<td></td>
-		</tr>
-		</thead>
-		<tbody>
-		<tr data-ng-repeat="token in tokens">
-			<td>(= token.device =)</td>
-			<td>(= token.date =)</td>
-			<td><button class="form-control" data-ng-click="deleteToken($index)">{{ i18n('m.rbs.user.front.revoke', ['ucf']) }}</button></td>
-		</tr>
-		</tbody>
-	</table>
-</script>
+	<script type="text/ng-template" id="/rbsUserManageAutoLogin.tpl">
+		<div data-ng-show="errors" class="text-center">
+			<p data-ng-repeat="error in errors" class="text-danger">(= error =)</p>
+		</div>
+		<div data-ng-hide="tokens" class="text-center">
+			<p class="text-success">{{ i18n('m.rbs.user.front.no_token', ['ucf']) }}</p>
+		</div>
+		<table data-ng-show="tokens" class="table table-striped">
+			<thead>
+			<tr>
+				<td>{{ i18n('m.rbs.user.front.device', ['ucf']) }}</td>
+				<td>{{ i18n('m.rbs.user.front.validity_date', ['ucf']) }}</td>
+				<td></td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr data-ng-repeat="token in tokens">
+				<td>(= token.device =)</td>
+				<td>(= token.date =)</td>
+				<td>
+					<button class="form-control" data-ng-click="deleteToken($index)">
+						{{ i18n('m.rbs.user.front.revoke', ['ucf']) }}
+					</button>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</script>
 {% endblock rbsUserManageAutoLogin %}

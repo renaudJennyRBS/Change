@@ -20,6 +20,7 @@ class Profile extends \Change\User\AbstractProfile
 			'lastName' => null,
 			'fullName' => null,
 			'titleCode' => null,
+			'phone' => null,
 			'birthDate' => null
 		);
 	}
@@ -57,6 +58,6 @@ class Profile extends \Change\User\AbstractProfile
 	 */
 	public function getPropertyNames()
 	{
-		return array('firstName', 'lastName', 'fullName', 'titleCode', 'birthDate');
+		return array('firstName', 'lastName', 'fullName', 'titleCode', 'phone', 'birthDate');
 	}
 }

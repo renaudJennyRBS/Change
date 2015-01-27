@@ -1,3 +1,7 @@
+{% block rbsSimpleformFormInputUse %}
+	{% use 'Rbs_Simpleform/form-templates.twig' %}
+{% block rbsSimpleformFormInputUse %}
+
 {% set leftColumnElementClass = 'col-sm-4 col-md-3' %}
 {% set rightColumnElementClass = 'col-sm-8 col-md-9' %}
 {% if not successURL %}{% set successURL = currentURL({('success-' ~ blockId): 'true'}) %}{% endif %}
@@ -32,7 +36,7 @@
 		{% set fieldName = form.name ~ '[captcha]' %}
 		<div class="form-group">
 			<label for="{{ fieldId }}" class="{{ leftColumnElementClass }} control-label">
-				<em class="required-symbol" title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+				{{ block('rbsSimpleformRequiredSymbol') }}
 				{{ i18n('m.rbs.simpleform.front.captcha', ['ucf']) }}
 			</label>
 			<div class="col-sm-4 col-md-5">

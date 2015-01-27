@@ -1,3 +1,5 @@
+{% use 'Rbs_Simpleform/form-templates.twig' %}
+
 {% block addressEditor %}
 <script type="text/ng-template" id="/rbsGeoAddressEditor.tpl">
 	<form name="addressForm" class="form-horizontal">
@@ -9,8 +11,7 @@
 				'has-success': addressForm.addressName.$dirty && !addressForm.addressName.$invalid
 			}">
 			<label for="rbs-geo-address-name-{{ blockId }}" class="{{ leftColumnElementClass }} control-label">
-				<em class="required-symbol"
-					title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+				{{ block('rbsSimpleformRequiredSymbol') }}
 				{{ i18n('m.rbs.geo.front.address_name', ['ucf']) }}
 			</label>
 			<div class="{{ rightColumnElementClass }}">
@@ -21,6 +22,7 @@
 
 		<div class="form-group">
 			<label for="rbs-geo-address-country-{{ blockId }}" class="{{ leftColumnElementClass }} control-label">
+				{{ block('rbsSimpleformRequiredSymbol') }}
 				{{ i18n('m.rbs.geo.front.country', ['ucf']) }}
 			</label>
 			<div class="{{ rightColumnElementClass }}">
@@ -43,8 +45,7 @@
 				'has-success': innerForm.field.$dirty && !innerForm.field.$invalid
 			}">
 			<label for="(= fieldDef.id =)" class="{{ leftColumnElementClass }} control-label">
-				<em data-ng-if="fieldDef.required" class="required-symbol"
-					title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+				{{ block('rbsSimpleformRequiredSymbol') }}
 				(= fieldDef.title =)
 			</label>
 			<div class="{{ rightColumnElementClass }}" data-ng-if="fieldDef.values">
@@ -96,8 +97,7 @@
 					'has-success': addressForm.addressName.$dirty && !addressForm.addressName.$invalid
 				}">
 				<label for="rbs-geo-address-name-{{ blockId }}" class="{{ leftColumnElementClass }} control-label">
-					<em class="required-symbol"
-							title="({{ i18nAttr('m.rbs.simpleform.front.this_field_is_required', ['ucf']) }})">*</em>
+					{{ block('rbsSimpleformRequiredSymbol') }}
 					{{ i18n('m.rbs.geo.front.address_name', ['ucf']) }}
 				</label>
 				<div class="{{ rightColumnElementClass }}">
