@@ -22,7 +22,7 @@
 		},
 		"Rbs_Base": {
 			"jsAssets": [
-				"Theme/Rbs/Base/js/finalizeChangeApp.js"
+				"Theme/Rbs/Base/js/finalize-change-app.js"
 			]
 		},
 		"Rbs_Common_Print": {
@@ -30,8 +30,7 @@
 				"Theme/Rbs/Base/lib/noUiSlider-7.0.10/jquery.nouislider.min.css",
 				"Theme/Rbs/Base/lib/noUiSlider-7.0.10/jquery.nouislider.pips.min.css",
 				"Theme/Rbs/Base/lib/bootstrap/css/bootstrap.min.css",
-				"Theme/Rbs/Base/lib/bootstrap/css/bootstrap-theme.min.css",
-				"Theme/Rbs/Base/css/bootstrap-complements.css"
+				"Theme/Rbs/Base/lib/bootstrap/css/bootstrap-theme.min.css"
 			],
 			"jsAssets": [
 				"Theme/Rbs/Base/lib/jquery/jquery-2.1.3.min.js",
