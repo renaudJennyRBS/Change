@@ -6,19 +6,21 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCommerceProcessLineDefault.tpl',
-			require: '^rbsCommerceProcess',
 			replace: true,
-			scope: { line: "=" },
-			link: function(scope, elem, attrs, processController) {
-				scope.showPrices = processController.showPrices();
-				scope.currencyCode = processController.getCurrencyCode();
-				scope.parameters = processController.parameters();
+			scope: {
+				line: '=',
+				processEngine: '='
+			},
+			link: function(scope) {
+				scope.showPrices = scope.processEngine.showPrices();
+				scope.currencyCode = scope.processEngine.getCurrencyCode();
+				scope.parameters = scope.processEngine.parameters();
 				scope.quantity = scope.line.quantity;
-				if (!scope.line.unitBasedAmountWithTaxes && scope.line.basedAmountWithTaxes) {
-					scope.line.unitBasedAmountWithTaxes = (scope.line.basedAmountWithTaxes / scope.quantity);
+				if (!scope.line.unitBasedAmountWithTaxes && scope.line['basedAmountWithTaxes']) {
+					scope.line.unitBasedAmountWithTaxes = (scope.line['basedAmountWithTaxes'] / scope.quantity);
 				}
-				if (!scope.line.unitBasedAmountWithoutTaxes && scope.line.basedAmountWithoutTaxes) {
-					scope.line.unitBasedAmountWithoutTaxes = (scope.line.basedAmountWithoutTaxes / scope.quantity);
+				if (!scope.line.unitBasedAmountWithoutTaxes && scope.line['basedAmountWithoutTaxes']) {
+					scope.line.unitBasedAmountWithoutTaxes = (scope.line['basedAmountWithoutTaxes'] / scope.quantity);
 				}
 			}
 		}
@@ -31,24 +33,25 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCommerceIdentificationStep.tpl',
-			require: '^rbsCommerceProcess',
-			scope: {},
-			link: function(scope, elem, attrs, processController) {
-				var cartData = processController.getObjectData();
+			scope: {
+				processEngine: '='
+			},
+			link: function(scope) {
+				var cartData = scope.processEngine.getObjectData();
 
-				scope.processData = processController.getStepProcessData('identification');
+				scope.processData = scope.processEngine.getStepProcessData('identification');
 
-				scope.processData.userId = processController.parameters('userId');
-				scope.processData.login = processController.parameters('login');
+				scope.processData.userId = scope.processEngine.parameters('userId');
+				scope.processData.login = scope.processEngine.parameters('login');
 				if (scope.processData.userId) {
-					scope.processData.email = processController.parameters('email');
+					scope.processData.email = scope.processEngine.parameters('email');
 				}
 				else {
 					scope.processData.email = cartData.process.email;
 				}
 
-				scope.processData.realm = processController.parameters('realm');
-				scope.processData.confirmed = processController.parameters('confirmed');
+				scope.processData.realm = scope.processEngine.parameters('realm');
+				scope.processData.confirmed = scope.processEngine.parameters('confirmed');
 
 				scope.login = function() {
 					scope.processData.errors = [];
@@ -60,23 +63,23 @@
 						data.rememberMe = scope.processData.rememberMe
 					}
 					var request = AjaxAPI.putData('Rbs/User/Login', data);
-					request.success(function(data, status, headers, config) {
+					request.success(function(data) {
 						var params = {
 							accessorId: data.dataSets.user.accessorId,
 							accessorName: data.dataSets.user.name
 						};
 						$rootScope.$broadcast('rbsUserConnected', params);
 
-						processController.loadObjectData().success(function() {
-							var cartData = processController.getObjectData();
+						scope.processEngine.loadObjectData().success(function() {
+							var cartData = scope.processEngine.getObjectData();
 
 							scope.processData.confirmed = true;
 							scope.processData.email = cartData.process.email;
 							scope.processData.userId = cartData.common.userId;
-							processController.nextStep();
+							scope.processEngine.nextStep();
 						});
 					}).
-						error(function(data, status, headers, config) {
+						error(function(data, status) {
 							scope.processData.errors = [data.message];
 							scope.processData.password = null;
 							console.log('login error', data, status);
@@ -91,19 +94,19 @@
 					scope.processData.errors = [];
 					AjaxAPI.getData('Rbs/User/CheckEmailAvailability', { email: scope.processData.email })
 						.success(function(data) {
-							scope.processData.email = data.dataSets.user.availableEmail;
+							scope.processData.email = data.dataSets.user['availableEmail'];
 							var actions = {
 								setAccount: { email: scope.processData.email }
 							};
-							var request = processController.updateObjectData(actions);
+							var request = scope.processEngine.updateObjectData(actions);
 							if (request) {
 								request.success(function() {
-									processController.nextStep();
+									scope.processEngine.nextStep();
 									scope.processData.confirmEmail = null;
 								});
 							}
 							else {
-								processController.nextStep();
+								scope.processEngine.nextStep();
 								scope.processData.confirmEmail = null;
 							}
 						})
@@ -115,7 +118,7 @@
 				scope.changeUser = function() {
 					scope.processData.errors = [];
 					var request = AjaxAPI.getData('Rbs/User/Logout', { 'keepCart': true });
-					request.success(function(data, status, headers, config) {
+					request.success(function() {
 						var params = { accessorId: null, accessorName: null };
 						$rootScope.$broadcast('rbsUserConnected', params);
 
@@ -126,20 +129,20 @@
 						var actions = {
 							updateContext: { acceptTermsAndConditions: true }
 						};
-						processController.updateObjectData(actions);
+						scope.processEngine.updateObjectData(actions);
 					});
-					request.error(function(data, status, headers, config) {
+					request.error(function(data, status) {
 						scope.processData.errors = [data.message];
 						console.log('changeUser error', data, status);
 					});
 				};
 
 				scope.setCurrentStep = function() {
-					processController.setCurrentStep('identification');
+					scope.processEngine.setCurrentStep('identification');
 				};
 
 				scope.next = function() {
-					processController.nextStep();
+					scope.processEngine.nextStep();
 				}
 			}
 		}
@@ -152,10 +155,11 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCommerceShippingStep.tpl',
-			require: '^rbsCommerceProcess',
-			scope: {},
-			link: function(scope, elem, attrs, processController) {
-				scope.processData = processController.getStepProcessData('shipping');
+			scope: {
+				processEngine: '='
+			},
+			link: function(scope) {
+				scope.processData = scope.processEngine.getStepProcessData('shipping');
 				scope.processData.errors = [];
 				scope.userAddresses = [];
 				scope.shippingZone = null;
@@ -185,9 +189,9 @@
 					if (scope.processData.userId) {
 						AjaxAPI.getData('Rbs/Geo/Address/',
 							{ userId: scope.processData.userId, matchingZone: scope.shippingZone || scope.taxesZones })
-							.success(function(data, status, headers, config) {
+							.success(function(data) {
 								scope.userAddresses = data.items;
-							}).error(function(data, status, headers, config) {
+							}).error(function() {
 								scope.userAddresses = [];
 							})
 					}
@@ -197,7 +201,7 @@
 				};
 
 				scope.setCurrentStep = function() {
-					processController.setCurrentStep('shipping');
+					scope.processEngine.setCurrentStep('shipping');
 				};
 
 				scope.shippingModesValid = function() {
@@ -214,23 +218,23 @@
 					var request = scope.saveMode();
 					if (request) {
 						request.success(function() {
-							var cartData = processController.getObjectData();
+							var cartData = scope.processEngine.getObjectData();
 							scope.processData.shippingModes = angular.copy(cartData['process']['shippingModes']);
 							angular.forEach(scope.processData.shippingModes, function(shippingMode) {
 								shippingMode.shippingZone = scope.shippingZone;
 								shippingMode.taxesZones = scope.taxesZones;
 							});
-							processController.nextStep();
+							scope.processEngine.nextStep();
 						});
 					}
 					else {
-						var cartData = processController.getObjectData();
+						var cartData = scope.processEngine.getObjectData();
 						scope.processData.shippingModes = angular.copy(cartData['process']['shippingModes']);
 						angular.forEach(scope.processData.shippingModes, function(shippingMode) {
 							shippingMode.shippingZone = scope.shippingZone;
 							shippingMode.taxesZones = scope.taxesZones;
 						});
-						processController.nextStep();
+						scope.processEngine.nextStep();
 					}
 				};
 
@@ -241,15 +245,15 @@
 							actions.setShippingModes.push(shippingMode.valid(true));
 						}
 					});
-					return processController.updateObjectData(actions);
+					return scope.processEngine.updateObjectData(actions);
 				};
 
 				function initializeProcessData() {
-					var cartData = processController.getObjectData();
+					var cartData = scope.processEngine.getObjectData();
 					scope.processData.userId = cartData.common.userId;
 					scope.processData.processId = cartData.process.orderProcessId;
 
-					var processInfo = processController.getProcessInfo();
+					var processInfo = scope.processEngine.getProcessInfo();
 					scope.shippingModesInfo = processInfo && processInfo['shippingModes'] ? processInfo['shippingModes'] : {};
 					scope.shippingZone = processInfo.shippingZone;
 					scope.taxesZones = processInfo.taxesZones;
@@ -276,13 +280,13 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCommerceModeSelector.tpl',
-			require: '^rbsCommerceProcess',
 			scope: {
-				shippingMode: "=",
-				shippingModeInfo: "=",
-				showPrices: "="
+				shippingMode: '=',
+				shippingModeInfo: '=',
+				showPrices: '=',
+				processEngine: '='
 			},
-			link: function(scope, elem, attrs, processController) {
+			link: function(scope) {
 				scope.trustHtml = function(html) {
 					return $sce.trustAsHtml(html);
 				};
@@ -297,15 +301,15 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCommerceShippingAtHomeStep.tpl',
-			require: '^rbsCommerceProcess',
 			scope: {
-				processId: "=",
-				shippingMode: "=",
-				shippingModesInfo: "=",
-				userId: "=",
-				userAddresses: "="
+				processId: '=',
+				shippingMode: '=',
+				shippingModesInfo: '=',
+				userId: '=',
+				userAddresses: '=',
+				processEngine: '='
 			},
-			link: function(scope, elem, attrs, processController) {
+			link: function(scope) {
 				scope.loadShippingModes = true;
 				scope.atHomeAddress = { common: {}, fields: {}, lines: [] };
 				scope.atHomeAddressIsValid = false;
@@ -358,19 +362,19 @@
 					return true;
 				};
 
-				scope.showPrices = processController.showPrices(true);
+				scope.showPrices = scope.processEngine.showPrices(true);
 
 				scope.$watch('atHomeAddress', function(address) {
 					scope.shippingMode.allowedShippingModesInfo = [];
 					if (!scope.isEmptyAddress(address)) {
-						processController.loading(true);
+						scope.processEngine.loading(true);
 						scope.loadShippingModes = true;
 
 						var params = scope.shippingMode.taxesZones ? { dataSets: 'fee' } : {};
 
 						AjaxAPI.getData('Rbs/Commerce/Process/' + scope.processId + '/ShippingModesByAddress/',
 							{ address: address }, params)
-							.success(function(data, status, headers, config) {
+							.success(function(data) {
 								if (scope.atHomeAddress !== address) {
 									return;
 								}
@@ -392,7 +396,7 @@
 								if (!validCurrentMode) {
 									scope.shippingMode.id = 0;
 								}
-								processController.loading(false);
+								scope.processEngine.loading(false);
 								scope.loadShippingModes = false;
 							}).error(function(data, status) {
 								if (scope.atHomeAddress !== address) {
@@ -400,7 +404,7 @@
 								}
 								console.log('shippingModesByAddress error', data, status);
 								scope.shippingMode.id = 0;
-								processController.loading(false);
+								scope.processEngine.loading(false);
 								scope.loadShippingModes = false;
 							});
 					}
@@ -436,7 +440,7 @@
 					scope.atHomeAddress = address;
 					scope.shippingMode.edition = false;
 					scope.matchingZoneError = null;
-					processController.loading(false);
+					scope.processEngine.loading(false);
 				};
 
 				scope.editAddress = function() {
@@ -451,8 +455,8 @@
 
 				scope.useAddress = function() {
 					var address = angular.copy(scope.atHomeAddress);
-					scope.validateAddress(address).success(function(data) {
-						if (scope.userId && address.common && address.common.useName && address.common.name) {
+					scope.validateAddress(address).success(function() {
+						if (scope.userId && address.common && address.common['useName'] && address.common.name) {
 							delete address.common.id;
 							address.default = {'default': true, 'shipping': true};
 							angular.forEach(scope.userAddresses, function(userAddress) {
@@ -466,25 +470,25 @@
 								}
 							});
 
-							processController.loading(true);
+							scope.processEngine.loading(true);
 							AjaxAPI.postData('Rbs/Geo/Address/', address)
-								.success(function(data, status, headers, config) {
+								.success(function(data) {
 									var addedAddress = data.dataSets;
 									scope.userAddresses.push(addedAddress);
-								}).error(function(data, status, headers, config) {
+								}).error(function(data, status) {
 									console.log('useAddress error', data, status);
-									processController.loading(false);
+									scope.processEngine.loading(false);
 								});
 						}
 					});
 				};
 
 				scope.setTaxZone = function(taxZone) {
-					if (processController.getObjectData().common.zone != taxZone) {
+					if (scope.processEngine.getObjectData().common.zone != taxZone) {
 						var actions = {
 							setZone: { zone: taxZone }
 						};
-						processController.updateObjectData(actions);
+						scope.processEngine.updateObjectData(actions);
 					}
 				};
 
@@ -517,7 +521,7 @@
 						else {
 							scope.setAddress(data.dataSets);
 						}
-					}).error(function(data, status, headers, config) {
+					}).error(function(data, status) {
 						if (status == 409 && data && data.error &&
 							(data.code == 'matchingZone' || data.code == 'compatibleZones')) {
 							scope.matchingZoneError = data.message;
@@ -525,13 +529,13 @@
 						else {
 							console.log('validateAddress error', data, status);
 						}
-						processController.loading(false);
+						scope.processEngine.loading(false);
 					});
 					return request;
 				};
 
 				scope.$watchCollection('shippingModesInfo', function(shippingModesInfo) {
-					//Initialisation
+					// Initialisation.
 					var shippingModeId = scope.shippingMode.id;
 					angular.forEach(shippingModesInfo, function(shippingModeInfo) {
 						scope.modeIds[shippingModeInfo.common.id] = true;
@@ -563,8 +567,9 @@
 			restrict: 'A',
 			templateUrl: '/rbsCommerceSummaryShippingAtHomeStep.tpl',
 			scope: {
-				shippingMode: "=",
-				shippingModesInfo: "="
+				shippingMode: '=',
+				shippingModesInfo: '=',
+				processEngine: '='
 			},
 
 			link: function(scope) {
@@ -588,17 +593,17 @@
 		return {
 			restrict: 'A',
 			template: '<div></div>',
-			require: '^rbsCommerceProcess',
 			scope: {
 				processId: "=",
 				shippingMode: "=",
 				shippingModesInfo: "=",
 				userId: "=",
-				userAddresses: "="
+				userAddresses: "=",
+				processEngine: '='
 			},
-			link: function(scope, elem, attrs, processController) {
+			link: function(scope, elem, attrs) {
 				var summary = attrs.summary == 'true';
-				scope.showPrices = processController.showPrices(true);
+				scope.showPrices = scope.processEngine.showPrices(true);
 
 				scope.$watchCollection('shippingModesInfo', function(shippingModesInfo) {
 					var html = [];
@@ -606,22 +611,24 @@
 						var directiveName;
 						if (summary) {
 							if (shippingModeInfo.common.id == scope.shippingMode.id) {
-								directiveName = shippingModeInfo.directiveNames ? shippingModeInfo.directiveNames.summary : null;
+								directiveName = shippingModeInfo['directiveNames'] ? shippingModeInfo['directiveNames'].summary : null;
 								if (directiveName) {
 									html.push('<div ' + directiveName + '=""');
 									html.push(' data-shipping-mode="shippingMode"');
 									html.push(' data-shipping-mode-info="shippingModesInfo[' + index + ']"');
+									html.push(' data-process-engine="processEngine"');
 									html.push('></div>');
 								}
 							}
 						}
 						else {
-							directiveName = shippingModeInfo.directiveNames ? shippingModeInfo.directiveNames.editor : null;
+							directiveName = shippingModeInfo['directiveNames'] ? shippingModeInfo['directiveNames'].editor : null;
 							if (directiveName) {
 								html.push('<div rbs-commerce-mode-selector=""');
 								html.push(' data-show-prices="showPrices"');
 								html.push(' data-shipping-mode="shippingMode"');
 								html.push(' data-shipping-mode-info="shippingModesInfo[' + index + ']"');
+								html.push(' data-process-engine="processEngine"');
 								html.push('></div>');
 
 								html.push('<div ' + directiveName + '="" ');
@@ -631,11 +638,12 @@
 								html.push(' data-shipping-mode-info="shippingModesInfo[' + index + ']"');
 								html.push(' data-user-id="userId"');
 								html.push(' data-user-addresses="userAddresses"');
+								html.push(' data-process-engine="processEngine"');
 								html.push('></div>');
 							}
 						}
 					});
-					processController.replaceChildren(elem, scope, html.join(''));
+					scope.processEngine.replaceChildren(elem, scope, html.join(''));
 				});
 			}
 		}
@@ -647,11 +655,12 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCommercePaymentStep.tpl',
-			require: '^rbsCommerceProcess',
-			scope: {},
-			link: function(scope, elem, attrs, processController) {
+			scope: {
+				processEngine: '='
+			},
+			link: function(scope, elem) {
 
-				scope.processData = processController.getStepProcessData('payment');
+				scope.processData = scope.processEngine.getStepProcessData('payment');
 				scope.processData.errors = [];
 				if (!scope.processData.id) {
 					scope.processData.id = 0;
@@ -666,9 +675,9 @@
 				scope.loadUserAddresses = function() {
 					if (scope.processData.userId) {
 						AjaxAPI.getData('Rbs/Geo/Address/', { userId: scope.processData.userId })
-							.success(function(data, status, headers, config) {
+							.success(function(data) {
 								scope.userAddresses = data.items;
-							}).error(function(data, status, headers, config) {
+							}).error(function() {
 								scope.userAddresses = [];
 							})
 					}
@@ -694,7 +703,7 @@
 					}
 
 					if (!defaultUserAddress) {
-						var shippingModes = processController.getObjectData()['process']['shippingModes'];
+						var shippingModes = scope.processEngine.getObjectData()['process']['shippingModes'];
 						angular.forEach(shippingModes, function(shippingMode) {
 							if (!defaultUserAddress && shippingMode.options &&
 								shippingMode.options.category == 'atHome' && !scope.isEmptyAddress(shippingMode.address)) {
@@ -738,9 +747,8 @@
 
 				scope.useAddress = function() {
 					var address = angular.copy(scope.processData.address);
-					processController.loading(true);
-
-					if (scope.processData.userId && address.common && address.common.useName && address.common.name) {
+					scope.processEngine.loading(true);
+					if (scope.processData.userId && address.common && address.common['useName'] && address.common.name) {
 						delete address.common.id;
 						address.default = {'default': true, 'billing': true};
 						angular.forEach(scope.userAddresses, function(userAddress) {
@@ -755,24 +763,24 @@
 						});
 
 						AjaxAPI.postData('Rbs/Geo/Address/', address)
-							.success(function(data, status, headers, config) {
+							.success(function(data) {
 								var addedAddress = data.dataSets;
 								scope.userAddresses.push(addedAddress);
 								scope.selectUserAddress(addedAddress);
-								processController.loading(false);
-							}).error(function(data, status, headers, config) {
+								scope.processEngine.loading(false);
+							}).error(function(data, status) {
 								console.log('useAddress error', data, status);
-								processController.loading(false);
+								scope.processEngine.loading(false);
 							})
 					}
 					else {
 						AjaxAPI.postData('Rbs/Geo/ValidateAddress', { address: address })
-							.success(function(data, status, headers, config) {
+							.success(function(data) {
 								scope.selectUserAddress(data.dataSets);
-								processController.loading(false);
-							}).error(function(data, status, headers, config) {
+								scope.processEngine.loading(false);
+							}).error(function(data, status) {
 								console.log('validateAddress error', data, status);
-								processController.loading(false);
+								scope.processEngine.loading(false);
 							})
 					}
 				};
@@ -790,21 +798,21 @@
 					coupons.push({ code: scope.processData.newCouponCode });
 					var actions = { setCoupons: coupons };
 
-					var request = processController.updateObjectData(actions);
+					var request = scope.processEngine.updateObjectData(actions);
 					if (request) {
-						request.success(function(data, status, headers, config) {
-							var cartData = processController.getObjectData();
+						request.success(function() {
+							var cartData = scope.processEngine.getObjectData();
 							refreshAmounts(cartData);
 							scope.processData.coupons = cartData['coupons'];
 							scope.processData.newCouponCode = null;
 						});
-						request.error(function(data, status, headers, config) {
+						request.error(function(data, status) {
 							console.log('addCoupon error', data, status);
 							scope.processData.newCouponCode = null;
 						});
 					}
 					else {
-						var cartData = processController.getObjectData();
+						var cartData = scope.processEngine.getObjectData();
 						refreshAmounts(cartData);
 						scope.processData.coupons = cartData['coupons'];
 						scope.processData.newCouponCode = null;
@@ -821,19 +829,19 @@
 					});
 					var actions = { setCoupons: coupons };
 
-					var request = processController.updateObjectData(actions);
+					var request = scope.processEngine.updateObjectData(actions);
 					if (request) {
-						request.success(function(data, status, headers, config) {
-							var cartData = processController.getObjectData();
+						request.success(function() {
+							var cartData = scope.processEngine.getObjectData();
 							refreshAmounts(cartData);
 							scope.processData.coupons = cartData['coupons'];
 						});
-						request.error(function(data, status, headers, config) {
+						request.error(function(data, status) {
 							console.log('removeCoupon error', data, status);
 						});
 					}
 					else {
-						var cartData = processController.getObjectData();
+						var cartData = scope.processEngine.getObjectData();
 						refreshAmounts(cartData);
 						scope.processData.coupons = cartData['coupons'];
 					}
@@ -858,30 +866,30 @@
 						setAddress: scope.processData.address
 					};
 
-					var request = processController.updateObjectData(actions);
+					var request = scope.processEngine.updateObjectData(actions);
 					if (request) {
-						request.success(function(data, status, headers, config) {
-							refreshAmounts(processController.getObjectData());
+						request.success(function() {
+							refreshAmounts(scope.processEngine.getObjectData());
 							scope.getTransaction();
 						});
-						request.error(function(data, status, headers, config) {
+						request.error(function(data, status) {
 							console.log('savePayment error', data, status);
 						});
 					}
 					else {
-						refreshAmounts(processController.getObjectData());
+						refreshAmounts(scope.processEngine.getObjectData());
 						scope.getTransaction();
 					}
 				};
 
 				scope.getTransaction = function() {
-					processController.loading(true);
+					scope.processEngine.loading(true);
 					scope.processData.errors = [];
 					AjaxAPI.getData('Rbs/Commerce/Cart/Transaction', {}, { dataSets: 'connectors' })
-						.success(function(data, status, headers, config) {
+						.success(function(data) {
 							scope.transaction = data.dataSets;
-							processController.loading(false);
-						}).error(function(data, status, headers, config) {
+							scope.processEngine.loading(false);
+						}).error(function(data, status) {
 							console.log('getTransaction error', data, status);
 							if (status == 409 && data && data.data) {
 								angular.forEach(data.data, function(error) {
@@ -889,7 +897,7 @@
 								})
 							}
 							scope.transaction = null;
-							processController.loading(false);
+							scope.processEngine.loading(false);
 						})
 				};
 
@@ -927,8 +935,8 @@
 						scope.linesProducts += line.quantity;
 					});
 
-					angular.forEach(cartData.fees, function(fee) {
-						var amount = fee.amountWithTaxes || fee.amountWithoutTaxes;
+					angular.forEach(cartData['fees'], function(fee) {
+						var amount = fee['amountWithTaxes'] || fee['amountWithoutTaxes'];
 						if (amount) {
 							var line = {
 								amount: $filter('rbsFormatPrice')(amount, currencyCode),
@@ -938,8 +946,8 @@
 						}
 					});
 
-					angular.forEach(cartData.discounts, function(discount) {
-						var amount = discount.amountWithTaxes || discount.amountWithoutTaxes;
+					angular.forEach(cartData['discounts'], function(discount) {
+						var amount = discount['amountWithTaxes'] || discount['amountWithoutTaxes'];
 						if (amount) {
 							var line = {
 								amount: $filter('rbsFormatPrice')(amount, currencyCode),
@@ -949,9 +957,9 @@
 						}
 					});
 
-					if (cartData.totalTaxes && cartData.totalTaxes.length) {
+					if (cartData['totalTaxes'] && cartData['totalTaxes'].length) {
 						var taxesAmount = 0;
-						angular.forEach(cartData.totalTaxes, function(tax) {
+						angular.forEach(cartData['totalTaxes'], function(tax) {
 							if (tax.hasOwnProperty('value')) {
 								taxesAmount += tax.value;
 							}
@@ -966,7 +974,7 @@
 						var creditNotesAmount = 0;
 						angular.forEach(cartData.creditNotes, function(creditNote) {
 							if (creditNote.hasOwnProperty('amountWithTaxes')) {
-								creditNotesAmount += creditNote.amountWithTaxes;
+								creditNotesAmount += creditNote['amountWithTaxes'];
 							}
 						});
 						scope.creditNotesAmount = $filter('rbsFormatPrice')(creditNotesAmount, currencyCode);
@@ -976,7 +984,7 @@
 				}
 
 				function initializeProcessData() {
-					var cartData = processController.getObjectData();
+					var cartData = scope.processEngine.getObjectData();
 					refreshAmounts(cartData);
 					scope.processData.userId = cartData.common.userId;
 					scope.processData.processId = cartData.process.orderProcessId;
@@ -986,7 +994,7 @@
 					}
 					scope.processData.coupons = cartData.coupons;
 
-					var processInfo = processController.getProcessInfo();
+					var processInfo = scope.processEngine.getProcessInfo();
 					scope.processPaymentConnectorsInfo = (processInfo && processInfo['paymentConnectors'] &&
 					processInfo['paymentConnectors']['default']) ? processInfo['paymentConnectors']['default'] : [];
 
@@ -1000,17 +1008,17 @@
 
 				function redrawConnectorConfiguration(htmlConnectors) {
 					var linesContainer = elem.find('[data-role="connector-configuration-zone"]');
-					processController.replaceChildren(linesContainer, scope, htmlConnectors);
+					scope.processEngine.replaceChildren(linesContainer, scope, htmlConnectors);
 				}
 
 				scope.$watch('transaction', function(transaction) {
 					scope.paymentConnectorsInfo = [];
-					if (transaction && transaction.connectors) {
+					if (transaction && transaction['connectors']) {
 						var html = [];
-						angular.forEach(transaction.connectors, function(connector, i) {
+						angular.forEach(transaction['connectors'], function(connector, i) {
 							if (connector.transaction && connector.transaction.directiveName) {
 								var infoIndex = null;
-								angular.forEach(scope.processPaymentConnectorsInfo, function(paymentConnectorInfo, i) {
+								angular.forEach(scope.processPaymentConnectorsInfo, function(paymentConnectorInfo) {
 									if (paymentConnectorInfo.common.id == connector.common.id) {
 										infoIndex = scope.paymentConnectorsInfo.length;
 										scope.paymentConnectorsInfo.push(paymentConnectorInfo);

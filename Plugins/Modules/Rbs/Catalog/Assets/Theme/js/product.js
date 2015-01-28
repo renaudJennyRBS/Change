@@ -191,7 +191,7 @@
 					if (!scope.productData.common['quickBuyURL']) {
 						return false;
 					}
-					else if (scope.productData['stock'].sku) {
+					else if (scope.productData['stock'] && scope.productData['stock'].sku) {
 						if (scope.productData.cart.key) {
 							if (scope.productData.common.type == 'simple' && scope.parameters['quickBuyOnSimple']) {
 								return true;

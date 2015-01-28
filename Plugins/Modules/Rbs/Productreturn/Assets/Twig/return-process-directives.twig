@@ -45,7 +45,7 @@
 
 				<div class="form-group" data-ng-show="needsReshipment()">
 					<h3>{{ i18n('m.rbs.productreturn.front.reshipment', ['ucf']) }}</h3>
-					<div data-rbs-productreturn-reshipping-step=""></div>
+					<div data-rbs-productreturn-reshipping-step="" data-process-engine="processEngine"></div>
 				</div>
 
 				<button type="button" class="btn btn-primary" data-ng-disabled="{{ commonFormName }}.$invalid || isEditing()"

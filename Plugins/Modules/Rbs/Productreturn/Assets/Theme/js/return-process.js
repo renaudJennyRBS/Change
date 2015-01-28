@@ -318,7 +318,7 @@
 	RbsProductreturnReturnProcessController.$inject = ['$scope', '$element', '$window', '$sce', 'RbsChange.AjaxAPI'];
 	app.controller('RbsProductreturnReturnProcessController', RbsProductreturnReturnProcessController);
 
-	function rbsCommerceProcess($compile, $http) {
+	function rbsProductreturnProcess($compile) {
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsProductreturnProcess.tpl',
@@ -423,12 +423,13 @@
 				scope.isStepChecked = function(step) {
 					return controller.getStepProcessData(step).isChecked;
 				};
+				scope.processEngine = controller;
 			}
 		}
 	}
 
-	rbsCommerceProcess.$inject = ['$compile', '$http'];
-	app.directive('rbsCommerceProcess', rbsCommerceProcess);
+	rbsProductreturnProcess.$inject = ['$compile'];
+	app.directive('rbsProductreturnProcess', rbsProductreturnProcess);
 
 	function rbsProductreturnReturnLineSummary() {
 		return {
@@ -731,11 +732,12 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCommerceShippingStep.tpl',
-			require: '^rbsCommerceProcess',
-			scope: {},
-			link: function(scope, elem, attrs, processController) {
+			scope: {
+				processEngine: '='
+			},
+			link: function(scope) {
 				scope.hideStepTitle = true;
-				scope.processData = processController.getStepProcessData('reshipping');
+				scope.processData = scope.processEngine.getStepProcessData('reshipping');
 				scope.processData.errors = [];
 				scope.userAddresses = [];
 				scope.shippingZone = null;
@@ -779,7 +781,7 @@
 				};
 
 				scope.setCurrentStep = function() {
-					processController.setCurrentStep('reshipping');
+					scope.processEngine.setCurrentStep('reshipping');
 				};
 
 				scope.shippingModesValid = function() {
@@ -813,14 +815,14 @@
 						setStepValid: 'reshipping',
 						setNotCurrentStep: 'reshipping'
 					};
-					return processController.updateObjectData(actions);
+					return scope.processEngine.updateObjectData(actions);
 				};
 
 				function initializeProcessData() {
-					var returnData = processController.getObjectData();
+					var returnData = scope.processEngine.getObjectData();
 					scope.processData.userId = returnData.orderData.common.userId;
 
-					var processInfo = processController.getProcessInfo();
+					var processInfo = scope.processEngine.getProcessInfo();
 					scope.processData.processId = processInfo.common.id;
 					scope.shippingModesInfo = processInfo && processInfo['reshippingModes'] ? processInfo['reshippingModes'] : {};
 					scope.shippingZone = returnData.orderData.common.zone;

@@ -61,15 +61,16 @@
 			</div>
 			<div class="col-sm-9">
 				{% block processStructureCartStep %}
-					<div id="cart" data-rbs-commerce-cart-lines="" data-cart-data="cartData"></div>
+					<div id="cart" data-rbs-commerce-cart-lines="" data-cart-data="cartData"
+						data-process-engine="processEngine"></div>
 				{% endblock processStructureCartStep %}
 
 				{% block processStructureIdentificationStep %}
 					<div class="vertical-if-animation" data-ng-if="isStepEnabled('identification')">
 						<div class="vertical-if-animation-content">
 							<hr />
-							<div id="identification" class="clearfix" data-rbs-commerce-identification-step="" >
-							</div>
+							<div id="identification" class="clearfix" data-rbs-commerce-identification-step=""
+								data-process-engine="processEngine"></div>
 						</div>
 					</div>
 				{% endblock processStructureIdentificationStep %}
@@ -78,8 +79,8 @@
 					<div class="vertical-if-animation" data-ng-if="isStepEnabled('shipping')">
 						<div class="vertical-if-animation-content">
 							<hr />
-							<div id="shipping" class="clearfix" data-rbs-commerce-shipping-step="">
-							</div>
+							<div id="shipping" class="clearfix" data-rbs-commerce-shipping-step=""
+								data-process-engine="processEngine"></div>
 						</div>
 					</div>
 				{% endblock processStructureShippingStep %}
@@ -88,8 +89,8 @@
 					<div class="vertical-if-animation" data-ng-if="isStepEnabled('payment')">
 						<div class="vertical-if-animation-content">
 							<hr />
-							<div id="payment" class="clearfix" data-rbs-commerce-payment-step="">
-							</div>
+							<div id="payment" class="clearfix" data-rbs-commerce-payment-step=""
+								data-process-engine="processEngine"></div>
 						</div>
 					</div>
 				{% endblock processStructurePaymentStep %}
@@ -342,22 +343,22 @@
 						<h3>{{ i18n('m.rbs.commerce.front.store_delivery', ['ucf']) }}</h3>
 						<div data-rbs-commerce-shipping-other-step="" data-shipping-mode="shippingModeData"
 							data-user-id="processData.userId" data-user-addresses="userAddresses"
-							data-process-id="processData.processId"
-							data-shipping-modes-info="shippingModesInfo.store"></div>
+							data-process-id="processData.processId" data-shipping-modes-info="shippingModesInfo.store"
+							data-process-engine="processEngine"></div>
 					</div>
 					<div class="panel-body" data-ng-if="hasCategory('relay')">
 						<h3>{{ i18n('m.rbs.commerce.front.relay_delivery', ['ucf']) }}</h3>
 						<div data-rbs-commerce-shipping-other-step="" data-shipping-mode="shippingModeData"
 							data-user-id="processData.userId" data-user-addresses="userAddresses"
-							data-process-id="processData.processId"
-							data-shipping-modes-info="shippingModesInfo.relay"></div>
+							data-process-id="processData.processId" data-shipping-modes-info="shippingModesInfo.relay"
+							data-process-engine="processEngine"></div>
 					</div>
 					<div class="panel-body" data-ng-if="hasCategory('atHome')">
 						<h3>{{ i18n('m.rbs.commerce.front.at_home_delivery', ['ucf']) }}</h3>
 						<div data-rbs-commerce-shipping-at-home-step="" data-shipping-mode="shippingModeData"
 							data-user-id="processData.userId" data-user-addresses="userAddresses"
-							data-process-id="processData.processId"
-							data-shipping-modes-info="shippingModesInfo.atHome"></div>
+							data-process-id="processData.processId" data-shipping-modes-info="shippingModesInfo.atHome"
+							data-process-engine="processEngine"></div>
 					</div>
 				</div>
 				<button class="btn pull-right btn-primary" data-ng-click="next()" data-ng-disabled="!shippingModesValid()">
@@ -372,20 +373,19 @@
 					<div class="panel-body" data-ng-if="isCategory(shippingModeData, 'store')">
 						<h3>{{ i18n('m.rbs.commerce.front.store_delivery', ['ucf']) }}</h3>
 						<div data-rbs-commerce-shipping-other-step="" data-summary="true"
-							data-shipping-mode="shippingModeData"
-							data-shipping-modes-info="shippingModesInfo.store"></div>
+							data-shipping-mode="shippingModeData" data-shipping-modes-info="shippingModesInfo.store"
+							data-process-engine="processEngine"></div>
 					</div>
 					<div class="panel-body" data-ng-if="isCategory(shippingModeData, 'relay')">
 						<h3>{{ i18n('m.rbs.commerce.front.relay_delivery', ['ucf']) }}</h3>
 						<div data-rbs-commerce-shipping-other-step="" data-summary="true"
-							data-shipping-mode="shippingModeData"
-							data-shipping-modes-info="shippingModesInfo.relay"></div>
+							data-shipping-mode="shippingModeData" data-shipping-modes-info="shippingModesInfo.relay"
+							data-process-engine="processEngine"></div>
 					</div>
 					<div class="panel-body" data-ng-if="isCategory(shippingModeData, 'atHome')">
 						<h3>{{ i18n('m.rbs.commerce.front.at_home_delivery', ['ucf']) }}</h3>
-						<div data-rbs-commerce-summary-shipping-at-home-step=""
-							data-shipping-mode="shippingModeData"
-							data-shipping-modes-info="shippingModesInfo.atHome"></div>
+						<div data-rbs-commerce-summary-shipping-at-home-step="" data-shipping-mode="shippingModeData"
+							data-shipping-modes-info="shippingModesInfo.atHome" data-process-engine="processEngine"></div>
 					</div>
 				</div>
 				<div class="clearfix">
@@ -410,19 +410,18 @@
 			</label>
 			<div data-ng-show="showPrices">
 				<span>{{ i18n('m.rbs.commerce.front.shipping_fee', ['ucf', 'lab']) }}</span>
-					<span data-ng-show="showPrices.displayPricesWithoutTax && shippingModeInfo.fee.amountWithoutTaxes"
-						class="price">
-						(= shippingModeInfo.fee.amountWithoutTaxes | rbsFormatPrice:showPrices.currencyCode =)
-						<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
-							{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
-						</abbr>
-					</span>
-					<span class="price" data-ng-show="showPrices.displayPricesWithTax && shippingModeInfo.fee.amountWithTaxes">
-						(= shippingModeInfo.fee.amountWithTaxes | rbsFormatPrice:showPrices.currencyCode =)
-					</span>
-					<span class="price" data-ng-show="shippingModeInfo.fee.free">
-						(= shippingModeInfo.fee.free =)
-					</span>
+				<span data-ng-show="showPrices.displayPricesWithoutTax && shippingModeInfo.fee.amountWithoutTaxes" class="price">
+					(= shippingModeInfo.fee.amountWithoutTaxes | rbsFormatPrice:showPrices.currencyCode =)
+					<abbr class="tax-mode" title="{{ i18nAttr('m.rbs.catalog.front.without_tax') }}">
+						{{ i18n('m.rbs.catalog.front.without_tax_abbr') }}
+					</abbr>
+				</span>
+				<span class="price" data-ng-show="showPrices.displayPricesWithTax && shippingModeInfo.fee.amountWithTaxes">
+					(= shippingModeInfo.fee.amountWithTaxes | rbsFormatPrice:showPrices.currencyCode =)
+				</span>
+				<span class="price" data-ng-show="shippingModeInfo.fee.free">
+					(= shippingModeInfo.fee.free =)
+				</span>
 			</div>
 			<div class="small" data-ng-bind-html="trustHtml(shippingModeInfo.presentation.description)"></div>
 			<div class="clearfix"></div>
@@ -474,7 +473,8 @@
 						</div>
 						<div data-ng-repeat="allowedShippingModeInfo in shippingMode.allowedShippingModesInfo track by $index">
 							<div data-rbs-commerce-mode-selector="" data-show-prices="showPrices"
-								data-shipping-mode="shippingMode" data-shipping-mode-info="allowedShippingModeInfo"></div>
+								data-shipping-mode="shippingMode" data-shipping-mode-info="allowedShippingModeInfo"
+								data-process-engine="processEngine"></div>
 						</div>
 					</div>
 				</div>
