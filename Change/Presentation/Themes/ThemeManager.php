@@ -38,6 +38,11 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	protected $current;
 
 	/**
+	 * @var boolean
+	 */
+	protected $combineAssets;
+
+	/**
 	 * @var Theme[]
 	 */
 	protected $themes = [];
@@ -83,6 +88,28 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		$eventManager->attach(static::EVENT_GET_ASSET_CONFIGURATION, [$this, 'onDefaultGetAssetConfiguration'], 10);
 		$eventManager->attach(static::EVENT_GET_ASSET_CONFIGURATION, [$this, 'onDefaultCompileGetAssetConfiguration'], 5);
 		$eventManager->attach(static::EVENT_ADD_PAGE_RESOURCES, [$this, 'onDefaultAddPageResources'], 5);
+	}
+
+	/**
+	 * @return boolean|null
+	 */
+	public function getCombineAssets()
+	{
+		if ($this->combineAssets === null)
+		{
+			$this->combineAssets = $this->getApplication()->getConfiguration()->getEntry('Change/Http/Web/combineAssets');
+		}
+		return $this->combineAssets;
+	}
+
+	/**
+	 * @@param boolean|null $value
+	 * @return $this
+	 */
+	public function setCombineAssets($value)
+	{
+		$this->combineAssets = $value;
+		return $this;
 	}
 
 	/**
@@ -332,7 +359,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getAsseticManager($configuration, $theme)
 	{
-		if ($this->getApplication()->getConfiguration()->getEntry('Change/Http/Web/combineAssets'))
+		if ($this->getCombineAssets())
 		{
 			return $this->getCompressedAsseticManager($configuration, $theme);
 		}
@@ -531,7 +558,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-		if ($this->getApplication()->getConfiguration()->getEntry('Change/Http/Web/combineAssets'))
+		if ($this->getCombineAssets())
 		{
 			$names[] = 'blocksJs';
 		}
@@ -578,7 +605,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-		if ($this->getApplication()->getConfiguration()->getEntry('Change/Http/Web/combineAssets'))
+		if ($this->getCombineAssets())
 		{
 			$names[] = 'blocksCss';
 		}
