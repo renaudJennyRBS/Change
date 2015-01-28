@@ -1,0 +1,57 @@
+{% extends 'Rbs_Catalog/Blocks/product.twig' %}
+
+{% block rbsCatalogProductUse %}
+	{{ parent() }}
+	{{ block('rbsMediaSliderVisuals') }}
+{% endblock rbsCatalogProductUse %}
+
+{% block rbsCatalogVariantProductContent %}
+	<div class="row">
+		<div class="col-sm-4 col-md-6">
+			{{ block('rbsCatalogProductSliderVisuals') }}
+		</div>
+		<div class="col-sm-8 col-md-6">
+			<header>{{ block('rbsCatalogProductHeader') }}</header>
+			{{ block('rbsCatalogProductOfferVariant') }}
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				{{ block('rbsCatalogProductDetailInformation') }}
+			</div>
+		</div>
+	</div>
+{% endblock rbsCatalogVariantProductContent %}
+
+{% block rbsCatalogProductSetContent %}
+	<div class="row">
+		<div class="col-sm-4 col-md-6">
+			{{ block('rbsCatalogProductSliderVisuals') }}
+		</div>
+		<div class="col-sm-8 col-md-6">
+			<header>{{ block('rbsCatalogProductHeader') }}</header>
+			{{ block('rbsCatalogProductOfferSet') }}
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				{{ block('rbsCatalogProductDetailInformation') }}
+			</div>
+		</div>
+	</div>
+{% endblock rbsCatalogProductSetContent %}
+
+{% block rbsCatalogSimpleProductContent %}
+	<div class="row">
+		<div class="col-sm-4 col-md-6">
+			{{ block('rbsCatalogProductSliderVisuals') }}
+		</div>
+		<div class="col-sm-8 col-md-6">
+			<header>{{ block('rbsCatalogProductHeader') }}</header>
+			{{ block('rbsCatalogProductOfferSimple') }}
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				{{ block('rbsCatalogProductDetailInformation') }}
+			</div>
+		</div>
+	</div>
+{% endblock rbsCatalogSimpleProductContent %}

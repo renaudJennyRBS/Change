@@ -8,7 +8,8 @@
 	window.__change['{{ cacheKey }}'] = {{ productData | json_encode | raw }};
 </script>
 
-<div class="thumbnail" data-ng-controller="RbsCatalogProductItemController" data-cache-key="{{ cacheKey }}">
+<div class="thumbnail" data-ng-controller="RbsCatalogProductItemController" data-cache-key="{{ cacheKey }}"
+	data-block-cache-key="{{ blockId }}">
 	{% set productURL = parameters.contextualUrls ? productData.common.URL['contextual'] : productData.common.URL['canonical'] %}
 	{% block rbsCatalogProductItemVisual %}
 		<div class="product-visual media-pictograms-container">
@@ -74,28 +75,8 @@
 			{% endblock rbsCatalogProductItemPrices %}
 
 			{% block rbsCatalogProductItemAddToCart %}
-				<div class="product-add">
-					{% if productData.stock.sku %}
-						{% if productData.cart.key %}
-							<div data-rbs-catalog-add-list-item-product-to-cart=""
-								data-modal-id="addToCartConfirmationModal-{{ blockId }}">
-							</div>
-						{% else %}
-							<button type="submit" class="btn btn-primary btn-sm" disabled="disabled">
-								{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-							</button>
-						{% endif %}
-					{% else %}
-						<div>
-							{% set productTitle = productData.common.title %}
-							<a class="btn btn-primary btn-sm" href="{{ productURL }}"
-								title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productTitle}) }}">
-								{{ block('rbsGenericIconGoto') }}
-								{{ i18n('m.rbs.catalog.front.view_product_details', ['ucf'], {product: productTitle}) }}
-							</a>
-						</div>
-					{% endif %}
-				</div>
+				<div data-rbs-catalog-product-list-item-add-to-cart-buttons="" data-product-data="productData"
+					data-block-parameters="parameters" data-add-line="addLine"></div>
 			{% endblock rbsCatalogProductItemAddToCart %}
 		{% endif %}
 	</div>

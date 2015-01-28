@@ -27,8 +27,6 @@ class ProductInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_label', $ucf));
 		$this->addParameterInformationForDetailBlock('Rbs_Catalog_Product', $i18nManager);
-		$this->addParameterInformation('activateZoom', Property::TYPE_BOOLEAN, false, true)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_activate_zoom', $ucf));
 		$this->addParameterInformation('reinsurance', Property::TYPE_DOCUMENT)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_reinsurance', $ucf))
 			->setAllowedModelsNames('Rbs_Website_Text');
@@ -42,8 +40,14 @@ class ProductInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_common_information', $ucf))
 			->setAllowedModelsNames('Rbs_Website_Text');
 
+		$templateInformation = $this->addDefaultTemplateInformation();
+		$templateInformation->addParameterInformation('activateZoom', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_activate_zoom', $ucf));
+
 		$templateInformation = $this->addTemplateInformation('Rbs_Catalog', 'product-with-reviews.twig');
 		$templateInformation->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_with_reviews_label', ['ucf']));
+		$templateInformation->addParameterInformation('activateZoom', Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_activate_zoom', $ucf));
 		$templateInformation->addParameterInformation('handleReviews', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_handle_reviews', $ucf))
 			->setHidden(true);
@@ -53,6 +57,13 @@ class ProductInformation extends Information
 			->setLabel($i18nManager->trans('m.rbs.review.admin.parameter_rating_scale', $ucf));
 		$templateInformation->addParameterInformation('handleReviewVotes', Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.review.admin.parameter_handle_review_votes', $ucf));
+
+		$templateInformation = $this->addTemplateInformation('Rbs_Catalog', 'product-compact.twig');
+		$templateInformation->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_compact_label', ['ucf']));
+		$templateInformation->addParameterInformation('imageFormats', Property::TYPE_STRING, false, 'x,detailCompact,pictogram,attribute')
+			->setHidden('true');
+		$templateInformation->addParameterInformation('sliderInterval', Property::TYPE_INTEGER, false, 5000)
+			->setLabel($i18nManager->trans('m.rbs.media.admin.template_slider_interval', $ucf));
 
 		$this->setDefaultTTL(60);
 	}

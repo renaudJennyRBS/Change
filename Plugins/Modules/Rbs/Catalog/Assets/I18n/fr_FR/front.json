@@ -5,6 +5,9 @@
 	"view_product_details":{
 		"message":"voir la fiche $PRODUCT$"
 	},
+	"view_details":{
+		"message":"voir la fiche"
+	},
 	"with_tax":{
 		"message":"toutes taxes comprises"
 	},

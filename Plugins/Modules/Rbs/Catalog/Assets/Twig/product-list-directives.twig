@@ -20,10 +20,10 @@
 			</div>
 			{% block rbsCatalogProductsListSliderControls %}
 				<a class="left carousel-control" href="#{{ sliderId }}" data-ng-click="controls.prev($event, '{{ sliderId }}')">
-					<span class="icon-prev"></span>
+					{{ block('rbsGenericIconLeft') }}
 				</a>
 				<a class="right carousel-control" href="#{{ sliderId }}" data-ng-click="controls.next($event, '{{ sliderId }}')">
-					<span class="icon-next"></span>
+					{{ block('rbsGenericIconRight') }}
 				</a>
 			{% endblock rbsCatalogProductsListSliderControls %}
 		</div>
@@ -148,26 +148,16 @@
 			</a>
 			<div data-rbs-media-pictograms="pictograms"></div>
 		</div>
-		<div class="product-label">
-			<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:">(= productData.common.title =)</a>
-		</div>
-		<div class="product-availability">(= productData.stock.thresholdTitle =) </div>
-		<div data-rbs-catalog-product-price=""
-			data-display-without-tax="(= parameters.displayPricesWithoutTax ? '1' : '0' =)"
-			data-display-with-tax="(= parameters.displayPricesWithTax ? '1' : '0' =)"></div>
-		<div class="product-add" data-ng-if="productData.stock.sku">
-			<div data-ng-if="productData.cart.key" data-rbs-catalog-add-list-item-product-to-cart="" data-modal-id="addToCartConfirmationModal-{{ blockId }}">
+		<div class="caption">
+			<div class="product-label">
+				<a title="(= viewDetailTitle =)" data-ng-href="(= url =)" href="javascript:">(= productData.common.title =)</a>
 			</div>
-			<button data-ng-if="!productData.cart.key"   type="button" class="btn btn-primary btn-sm" disabled="disabled">
-				{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
-			</button>
-		</div>
-		<div class="product-add" data-ng-if="!productData.stock.sku">
-			<a class="btn btn-primary btn-sm"  data-ng-href="(= url =)" href="javascript:"
-				title="(= viewDetailTitle =)">
-				{{ block('rbsGenericIconGoto') }}
-				(= viewDetailTitle =)
-			</a>
+			<div class="product-availability">(= productData.stock.thresholdTitle =) </div>
+			<div data-rbs-catalog-product-price=""
+				data-display-without-tax="(= parameters.displayPricesWithoutTax ? '1' : '0' =)"
+				data-display-with-tax="(= parameters.displayPricesWithTax ? '1' : '0' =)"></div>
+			<div data-rbs-catalog-product-list-item-add-to-cart-buttons="" data-product-data="productData"
+				data-block-parameters="parameters" data-add-line="addLine"></div>
 		</div>
 	</script>
 {% endblock rbsCatalogProductsItem %}

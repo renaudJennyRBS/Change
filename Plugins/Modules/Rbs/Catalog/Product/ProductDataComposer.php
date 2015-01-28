@@ -143,19 +143,6 @@ class ProductDataComposer
 
 		$this->generateRootProductDataSet();
 
-		if ($this->product->getProductSet())
-		{
-			$this->dataSets['common']['type'] = 'set';
-		}
-		elseif ($this->product->getVariantGroup())
-		{
-			$this->dataSets['common']['type'] = 'variant';
-		}
-		else
-		{
-			$this->dataSets['common']['type'] = 'simple';
-		}
-
 		$sku = $this->product->getSku();
 		if ($sku)
 		{
@@ -185,9 +172,25 @@ class ProductDataComposer
 
 	protected function generateCommonDataSet()
 	{
+		if ($this->product->getProductSet())
+		{
+			$this->dataSets['common']['type'] = 'set';
+		}
+		elseif ($this->product->getVariantGroup())
+		{
+			$this->dataSets['common']['type'] = 'variant';
+		}
+		else
+		{
+			$this->dataSets['common']['type'] = 'simple';
+		}
+
 		$publishedData = new \Change\Http\Ajax\V1\PublishedData($this->product);
 		$section = $this->section ? $this->section : $this->website;
 		$this->dataSets['common']['URL'] = $publishedData->getURLData($this->URLFormats, $section);
+
+		$this->addQuickBuyURL();
+
 		$visuals = $this->catalogManager->getProductVisuals($this->product);
 		foreach ($visuals as $visual)
 		{
@@ -195,6 +198,42 @@ class ProductDataComposer
 			if ($formats)
 			{
 				$this->dataSets['common']['visuals'][] = $formats;
+			}
+		}
+	}
+
+	protected function addQuickBuyURL()
+	{
+		if (isset($this->data['quickBuyPageFunction']) && $this->website)
+		{
+			$website = $this->website;
+			if ($website instanceof \Change\Presentation\Interfaces\Website)
+			{
+				$query = [
+					'sectionPageFunction' => $this->data['quickBuyPageFunction']
+				];
+				if ($this->page && $this->page->getTemplate())
+				{
+					$query['themeName'] = $this->page->getTemplate()->getTheme()->getName();
+				}
+				if (isset($this->data['confirmationDialogId']))
+				{
+					$query['confirmationDialogId'] = $this->data['confirmationDialogId'];
+				}
+
+				$urlManager = $website->getUrlManager($website->getLCID());
+				$absoluteUrl = $urlManager->absoluteUrl(true);
+				$section = $this->section ? $this->section : null;
+				if (!$section || $section instanceof \Change\Presentation\Interfaces\Website)
+				{
+					$url = $urlManager->getCanonicalByDocument($this->product, $query);
+				}
+				else
+				{
+					$url = $urlManager->getByDocument($this->product, $section, $query);
+				}
+				$urlManager->absoluteUrl($absoluteUrl);
+				$this->dataSets['common']['quickBuyURL'] = $url->normalize()->toString();
 			}
 		}
 	}

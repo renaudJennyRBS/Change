@@ -1,10 +1,9 @@
-{% block rbsCatalogAddToCartPopin %}
-	<div class="modal fade" id="addToCartConfirmationModal-{{ blockId }}" tabindex="-1" role="dialog"
-		aria-labelledby="addToCartConfirmationModalLabel-{{ blockId }}" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
+{% block rbsCatalogProductModals %}
+	{% block rbsCatalogAddToCartConfirmationModal %}
+		<script type="text/ng-template" id="/rbsCatalogAddToCartConfirmationModal.tpl">
+			<div data-rbs-catalog-add-to-cart-confirmation-modal="">
 				<div class="modal-header">
-					<button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<button type="button" class="close pull-right" data-ng-click="$dismiss()" aria-hidden="true">&times;</button>
 					<h4 class="modal-title" id="addToCartConfirmationModalLabel-{{ blockId }}">
 						{{ i18n('m.rbs.catalog.front.product_added_to_cart', ['ucf']) }}
 					</h4>
@@ -13,7 +12,7 @@
 					<div class="modal-main-content"></div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">
+					<button type="button" class="btn btn-default pull-left" data-ng-click="$dismiss()">
 						{{ i18n('m.rbs.catalog.front.continue_shopping', ['ucf']) }}</button>
 					<a href="{{ functionURL('Rbs_Commerce_Cart') }}" class="btn btn-primary">
 						{{ block('rbsGenericIconGoto') }}
@@ -21,18 +20,67 @@
 					</a>
 				</div>
 			</div>
-		</div>
-	</div>
-{% endblock rbsCatalogAddToCartPopin %}
+		</script>
+	{% endblock rbsCatalogAddToCartConfirmationModal %}
 
-{% block rbsCatalogAddListItemProductToCart %}
-	<script type="text/ng-template" id="/rbsCatalogAddListItemProductToCart.tpl">
-		<button type="button" class="btn btn-primary btn-sm" data-ng-click="addLine()">
-			{{ block('rbsCommerceIconCart') }}
-			{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
-		</button>
-	</script>
-{% endblock rbsCatalogAddListItemProductToCart %}
+	{% block rbsCatalogQuickBuyModal %}
+		<script type="text/ng-template" id="/rbsCatalogQuickBuyModal.tpl">
+			<div data-rbs-catalog-quick-buy-modal="">
+				<div class="modal-body" data-ng-hide="hideModalContent">
+					<div class="clearfix">
+						<button type="button" class="close" data-ng-click="$dismiss()"
+							title="{{ i18nAttr('m.rbs.generic.front.close', ['ucf']) }}">&times;</button>
+					</div>
+					<div class="modal-main-content"></div>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsCatalogQuickBuyModal %}
+{% endblock rbsCatalogProductModals %}
+
+{% block rbsCatalogProductAddToCartItem %}
+	{% block rbsCatalogProductListItemAddToCartButtons %}
+		<script type="text/ng-template" id="/rbsCatalogProductListItemAddToCartButtons.tpl">
+			<div data-ng-if="enableQuickBuy()" class="product-add">
+				<div data-rbs-catalog-quick-buy="" data-product-data="productData"></div>
+			</div>
+			<div data-ng-if="!enableQuickBuy()" class="product-add">
+				<div data-ng-if="productData.stock.sku">
+					<div data-ng-if="productData.cart.key" data-rbs-catalog-add-list-item-product-to-cart=""></div>
+					<button data-ng-if="!productData.cart.key" type="button" class="btn btn-primary btn-sm btn-wrap"
+						disabled="disabled">
+						{{ i18n('m.rbs.commerce.front.not_available', ['ucf']) }}
+					</button>
+				</div>
+				<div data-ng-if="!productData.stock.sku">
+					<a class="btn btn-primary btn-sm btn-wrap" data-ng-href="(= url =)" href="javascript:"
+						title="{{ i18nAttr('m.rbs.catalog.front.view_product_details', ['ucf'], {product: '(= productData.common.title =)'}) }}">
+						{{ block('rbsGenericIconGoto') }}
+						{{ i18n('m.rbs.catalog.front.view_details', ['ucf']) }}
+					</a>
+				</div>
+			</div>
+		</script>
+	{% endblock rbsCatalogProductListItemAddToCartButtons %}
+
+	{% block rbsCatalogAddListItemProductToCart %}
+		<script type="text/ng-template" id="/rbsCatalogAddListItemProductToCart.tpl">
+			<button type="button" class="btn btn-primary btn-sm btn-wrap" data-ng-click="addLine()">
+				{{ block('rbsCommerceIconCart') }}
+				{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+			</button>
+		</script>
+	{% endblock rbsCatalogAddListItemProductToCart %}
+
+	{% block rbsCatalogQuickBuy %}
+		<script type="text/ng-template" id="/rbsCatalogQuickBuy.tpl">
+			<button type="button" class="btn btn-primary btn-sm btn-wrap" data-ng-click="openDialog()">
+				{{ block('rbsCommerceIconCart') }}
+				{{ i18n('m.rbs.commerce.front.add_to_cart', ['ucf']) }}
+			</button>
+		</script>
+	{% endblock rbsCatalogQuickBuy %}
+{% endblock rbsCatalogProductAddToCartItem %}
 
 {% block rbsCatalogAddSimpleProductToCart %}
 	<script type="text/ng-template" id="/rbsCatalogAddSimpleProductToCart.tpl">
@@ -609,8 +657,7 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-12">
-					<div data-rbs-catalog-add-set-item-product-to-cart="" data-product-data="productData"
-						data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+					<div data-rbs-catalog-add-set-item-product-to-cart="" data-product-data="productData"></div>
 				</div>
 			</div>
 		</script>
@@ -635,8 +682,7 @@
 			</div>
 			<div class="row">
 				<div class="col-sm-12">
-					<div data-rbs-catalog-add-set-item-product-to-cart="" data-product-data="productData"
-						data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+					<div data-rbs-catalog-add-set-item-product-to-cart="" data-product-data="productData"></div>
 				</div>
 			</div>
 		</script>

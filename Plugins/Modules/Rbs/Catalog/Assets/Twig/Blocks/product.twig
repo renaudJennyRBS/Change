@@ -10,7 +10,7 @@
 	{% use 'Rbs_Catalog/product-detail.twig' %}
 
 	{% use 'Rbs_Catalog/product-directives.twig' %}
-	{{ block('rbsCatalogAddToCartPopin') }}
+	{{ block('rbsCatalogProductModals') }}
 	{{ block('rbsCatalogAttributeValue') }}
 	{{ block('rbsCatalogProductInformation') }}
 	{{ block('rbsCatalogProductSpecifications') }}
@@ -44,20 +44,22 @@
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
 			data-ng-controller="RbsCatalogVariantProductController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
-			<div class="row">
-				<div class="col-sm-6 col-md-8">
-					{{ block('rbsCatalogProductVisuals') }}
+			{% block rbsCatalogVariantProductContent %}
+				<div class="row">
+					<div class="col-sm-6 col-md-8">
+						{{ block('rbsCatalogProductVisuals') }}
+					</div>
+					<div class="col-sm-6 col-md-4">
+						<header>{{ block('rbsCatalogProductHeader') }}</header>
+						{{ block('rbsCatalogProductOfferVariant') }}
+					</div>
 				</div>
-				<div class="col-sm-6 col-md-4">
-					<header>{{ block('rbsCatalogProductHeader') }}</header>
-					{{ block('rbsCatalogProductOfferVariant') }}
+				<div class="row">
+					<div class="col-sm-12">
+						{{ block('rbsCatalogProductDetailInformation') }}
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12">
-					{{ block('rbsCatalogProductDetailInformation') }}
-				</div>
-			</div>
+			{% endblock rbsCatalogVariantProductContent %}
 		</article>
 	{% endblock rbsCatalogVariantProduct %}
 {% elseif productData.common.type == 'set' %}
@@ -68,20 +70,22 @@
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
 			data-ng-controller="RbsCatalogProductSetController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
-			<div class="row">
-				<div class="col-sm-5 col-lg-6">
-					{{ block('rbsCatalogProductVisuals') }}
+			{% block rbsCatalogProductSetContent %}
+				<div class="row">
+					<div class="col-sm-5 col-lg-6">
+						{{ block('rbsCatalogProductVisuals') }}
+					</div>
+					<div class="col-sm-7 col-lg-6">
+						<header>{{ block('rbsCatalogProductHeader') }}</header>
+						{{ block('rbsCatalogProductOfferSet') }}
+					</div>
 				</div>
-				<div class="col-sm-7 col-lg-6">
-					<header>{{ block('rbsCatalogProductHeader') }}</header>
-					{{ block('rbsCatalogProductOfferSet') }}
+				<div class="row">
+					<div class="col-sm-12">
+						{{ block('rbsCatalogProductDetailInformation') }}
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12">
-					{{ block('rbsCatalogProductDetailInformation') }}
-				</div>
-			</div>
+			{% endblock rbsCatalogProductSetContent %}
 		</article>
 	{% endblock rbsCatalogProductSet %}
 {% else %}
@@ -90,20 +94,22 @@
 		<article itemscope="" itemtype="http://schema.org/Product" class="product-details" data-block-id="{{ blockId }}"
 			data-ng-controller="RbsCatalogSimpleProductController" data-cache-key="{{ blockId }}">
 			{{ block('rbsCatalogProductDataLoading') }}
-			<div class="row">
-				<div class="col-sm-6 col-md-8">
-					{{ block('rbsCatalogProductVisuals') }}
+			{% block rbsCatalogSimpleProductContent %}
+				<div class="row">
+					<div class="col-sm-6 col-md-8">
+						{{ block('rbsCatalogProductVisuals') }}
+					</div>
+					<div class="col-sm-6 col-md-4">
+						<header>{{ block('rbsCatalogProductHeader') }}</header>
+						{{ block('rbsCatalogProductOfferSimple') }}
+					</div>
 				</div>
-				<div class="col-sm-6 col-md-4">
-					<header>{{ block('rbsCatalogProductHeader') }}</header>
-					{{ block('rbsCatalogProductOfferSimple') }}
+				<div class="row">
+					<div class="col-sm-12">
+						{{ block('rbsCatalogProductDetailInformation') }}
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12">
-					{{ block('rbsCatalogProductDetailInformation') }}
-				</div>
-			</div>
+			{% endblock rbsCatalogSimpleProductContent %}
 		</article>
 	{% endblock rbsCatalogSimpleProduct %}
 {% endif %}

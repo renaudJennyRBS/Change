@@ -30,15 +30,11 @@ class Product extends Block
 	{
 		$parameters = parent::parameterize($event);
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
-		$parameters->addParameterMeta('activateZoom', true);
 		$parameters->addParameterMeta('reinsurance');
 		$parameters->addParameterMeta('commonInformation', []);
 		$parameters->addParameterMeta('informationDisplayMode', 'tabs');
 		$parameters->addParameterMeta('specificationsDisplayMode', 'table');
 		$parameters->addParameterMeta('handleReviews', false);
-		$parameters->addParameterMeta('reviewsPerPage', 10);
-		$parameters->addParameterMeta('ratingScale', 5);
-		$parameters->addParameterMeta('handleReviewVotes', true);
 		$parameters->addParameterMeta('imageFormats', 'x,detail,detailThumbnail,pictogram,attribute');
 		$parameters->addParameterMeta('dataSetNames', 'rootProduct,productSet');
 		$this->initCommerceContextParameters($parameters);
