@@ -48,14 +48,15 @@
 		},
 		"Http": {
 			"Web": {
-				"Monitoring" : false
+				"Monitoring": false,
+				"combineAssets": true
 			},
 			"Rest": {
 				"useCorrection": true,
-				"Monitoring" : false
+				"Monitoring": false
 			},
 			"Ajax": {
-				"Monitoring" : false
+				"Monitoring": false
 			}
 		},
 		"User": {

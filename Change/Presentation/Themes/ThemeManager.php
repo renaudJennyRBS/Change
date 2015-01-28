@@ -40,7 +40,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @var Theme[]
 	 */
-	protected $themes = array();
+	protected $themes = [];
 
 	/**
 	 * @return \Change\Configuration\Configuration
@@ -79,7 +79,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$eventManager->attach(static::EVENT_LOADING, array($this, 'onLoading'), 5);
+		$eventManager->attach(static::EVENT_LOADING, [$this, 'onLoading'], 5);
 		$eventManager->attach(static::EVENT_GET_ASSET_CONFIGURATION, [$this, 'onDefaultGetAssetConfiguration'], 10);
 		$eventManager->attach(static::EVENT_GET_ASSET_CONFIGURATION, [$this, 'onDefaultCompileGetAssetConfiguration'], 5);
 		$eventManager->attach(static::EVENT_ADD_PAGE_RESOURCES, [$this, 'onDefaultAddPageResources'], 5);
@@ -91,7 +91,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function dispatchLoading($themeName)
 	{
-		$event = new Event(static::EVENT_LOADING, $this, array('themeName' => $themeName));
+		$event = new Event(static::EVENT_LOADING, $this, ['themeName' => $themeName]);
 		$callback = function ($result)
 		{
 			return ($result instanceof Theme);
@@ -290,7 +290,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getThemeTwigBasePaths()
 	{
-		$paths = array();
+		$paths = [];
 		$theme = $this->getCurrent();
 		while (true)
 		{
@@ -327,10 +327,16 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @param array $configuration
+	 * @param \Change\Presentation\Interfaces\Theme $theme
 	 * @return \Assetic\AssetManager
 	 */
-	public function getAsseticManager($configuration)
+	public function getAsseticManager($configuration, $theme)
 	{
+		if ($this->getApplication()->getConfiguration()->getEntry('Change/Http/Web/combineAssets'))
+		{
+			return $this->getCompressedAsseticManager($configuration, $theme);
+		}
+
 		$am = new \Assetic\AssetManager();
 		foreach ($configuration as $block)
 		{
@@ -343,10 +349,10 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 						$themeVendor = $matches[1];
 						$themeShortName = $matches[2];
 						$path = $matches[3];
-						$theme = $this->getByName($themeVendor . '_' . $themeShortName);
-						if ($theme)
+						$assetTheme = $this->getByName($themeVendor . '_' . $themeShortName);
+						if ($assetTheme)
 						{
-							$resourceFilePath = $theme->getResourceFilePath($path);
+							$resourceFilePath = $assetTheme->getResourceFilePath($path);
 							if (file_exists($resourceFilePath))
 							{
 								$asset = new \Assetic\Asset\FileAsset($resourceFilePath);
@@ -379,6 +385,102 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 				}
 			}
 		}
+		return $am;
+	}
+
+	/**
+	 * @param array $configuration
+	 * @param \Change\Presentation\Interfaces\Theme $theme
+	 * @return \Assetic\AssetManager
+	 */
+	protected function getCompressedAsseticManager($configuration, $theme)
+	{
+		$am = new \Assetic\AssetManager();
+
+		$baseUrl = 'Theme/' . str_replace('_', '/', $theme->getName()) . '/';
+		$jsAssets = new \Assetic\Asset\AssetCollection();
+		$jsAssets->setTargetPath($baseUrl . 'blocks.js');
+		$cssAssets = new \Assetic\Asset\AssetCollection();
+		$cssAssets->setTargetPath($baseUrl . 'blocks.css');
+
+		foreach ($configuration as $treeName => $block)
+		{
+			foreach ($block as $assetType => $assetList)
+			{
+				foreach ($assetList as $assetUrl)
+				{
+					if (preg_match('/^Theme\/([A-Z][A-Za-z0-9]+)\/([A-Z][A-Za-z0-9]+)\/(.+)$/', $assetUrl, $matches))
+					{
+						$themeVendor = $matches[1];
+						$themeShortName = $matches[2];
+						$path = $matches[3];
+						$assetTheme = $this->getByName($themeVendor . '_' . $themeShortName);
+						if ($assetTheme)
+						{
+							$resourceFilePath = $assetTheme->getResourceFilePath($path);
+							if (file_exists($resourceFilePath))
+							{
+								$asset = new \Assetic\Asset\FileAsset($resourceFilePath);
+								if (substr($resourceFilePath, -5) === '.less')
+								{
+									$cacheDir = $this->getApplication()->getWorkspace()->cachePath('less');
+									\Change\Stdlib\File::mkdir($cacheDir);
+
+									$filter = new AsseticLessFilter($cacheDir);
+									if ($this->getApplication()->inDevelopmentMode())
+									{
+										$filter->setFormatter('classic');
+									}
+									else
+									{
+										$filter->setFormatter('compressed');
+									}
+									$asset->ensureFilter($filter);
+									$asset->setTargetPath($assetUrl . '.css');
+								}
+
+								if (strpos($treeName, '*') === 0)
+								{
+									if (!$asset->getTargetPath())
+									{
+										$asset->setTargetPath($assetUrl);
+									}
+									$name = $this->normalizeAssetName($assetUrl);
+									$am->set($name, $asset);
+								}
+								else
+								{
+									if ($assetType == 'jsAssets')
+									{
+										$jsAssets->add($asset);
+									}
+									elseif ($assetType == 'cssAssets')
+									{
+										$cssAssets->add($asset);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (count($jsAssets->all()))
+		{
+			$devMode = $this->getApplication()->inDevelopmentMode();
+			if (!$devMode)
+			{
+				$jsAssets->ensureFilter(new \Assetic\Filter\JSMinFilter());
+			}
+			$am->set('blocksJs', $jsAssets);
+		}
+
+		if (count($cssAssets->all()))
+		{
+			$am->set('blocksCss', $cssAssets);
+		}
+
 		return $am;
 	}
 
@@ -429,18 +531,26 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-		foreach (array_keys($blockNames) as $blockName)
+		if ($this->getApplication()->getConfiguration()->getEntry('Change/Http/Web/combineAssets'))
 		{
-			if (isset($configuration[$blockName]['jsAssets'])
-				&& is_array($configuration[$blockName]['jsAssets'])
-			)
+			$names[] = 'blocksJs';
+		}
+		else
+		{
+			foreach (array_keys($blockNames) as $blockName)
 			{
-				foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
+				if (isset($configuration[$blockName]['jsAssets'])
+					&& is_array($configuration[$blockName]['jsAssets'])
+				)
 				{
-					$names[] = $this->normalizeAssetName($blockJsAsset);
+					foreach ($configuration[$blockName]['jsAssets'] as $blockJsAsset)
+					{
+						$names[] = $this->normalizeAssetName($blockJsAsset);
+					}
 				}
 			}
 		}
+
 		return array_unique($names);
 	}
 
@@ -468,21 +578,29 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 			}
 		}
 
-		foreach (array_keys($blockNames) as $blockName)
+		if ($this->getApplication()->getConfiguration()->getEntry('Change/Http/Web/combineAssets'))
 		{
-			if (isset($configuration[$blockName]))
+			$names[] = 'blocksCss';
+		}
+		else
+		{
+			foreach (array_keys($blockNames) as $blockName)
 			{
-				if (isset($configuration[$blockName]['cssAssets'])
-					&& is_array($configuration[$blockName]['cssAssets'])
-				)
+				if (isset($configuration[$blockName]))
 				{
-					foreach ($configuration[$blockName]['cssAssets'] as $blockCssAsset)
+					if (isset($configuration[$blockName]['cssAssets'])
+						&& is_array($configuration[$blockName]['cssAssets'])
+					)
 					{
-						$names[] = $this->normalizeAssetName($blockCssAsset);
+						foreach ($configuration[$blockName]['cssAssets'] as $blockCssAsset)
+						{
+							$names[] = $this->normalizeAssetName($blockCssAsset);
+						}
 					}
 				}
 			}
 		}
+
 		return array_unique($names);
 	}
 
@@ -493,7 +611,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 	public function getAssetConfiguration($theme)
 	{
 		$em = $this->getEventManager();
-		$args = $em->prepareArgs(array('theme' => $theme));
+		$args = $em->prepareArgs(['theme' => $theme]);
 		$this->getEventManager()->trigger(static::EVENT_GET_ASSET_CONFIGURATION, $this, $args);
 		if (isset($args['configuration']))
 		{
@@ -687,7 +805,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		/** @var \Change\Presentation\Interfaces\Template $template */
 		$template = $event->getParam('template');
 
-		$blockNames = array();
+		$blockNames = [];
 		foreach($blocks as $block)
 		{
 			$blockName = $block->getName();
@@ -695,7 +813,7 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 		}
 
 		$configuration = $this->getAssetConfiguration($this->getCurrent());
-		$asseticManager = $this->getAsseticManager($configuration);
+		$asseticManager = $this->getAsseticManager($configuration, $template->getTheme());
 
 		$event->setParam('configuration', $configuration);
 
