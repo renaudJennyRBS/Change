@@ -313,12 +313,16 @@ class ThemeManager implements \Zend\EventManager\EventsCapableInterface
 
 	/**
 	 * @api
+	 * @param \Change\Presentation\Interfaces\Theme $theme
 	 * @return string[]
 	 */
-	public function getThemeTwigBasePaths()
+	public function getThemeTwigBasePaths($theme = null)
 	{
 		$paths = [];
-		$theme = $this->getCurrent();
+		if (!$theme)
+		{
+			$theme = $this->getCurrent();
+		}
 		while (true)
 		{
 			$basePath = $theme->getTemplateBasePath();

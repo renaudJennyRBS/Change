@@ -82,7 +82,7 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		$eventManager->attach(static::EVENT_REGISTER_EXTENSIONS, array($this, 'onDefaultRegisterExtensions'), 5);
+		$eventManager->attach(static::EVENT_REGISTER_EXTENSIONS, [$this, 'onDefaultRegisterExtensions'], 5);
 	}
 
 	/**
@@ -106,7 +106,7 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 		{
 			$this->extensions = [];
 			$em = $this->getEventManager();
-			$arguments = $em->prepareArgs(array('extensions' => new \ArrayObject()));
+			$arguments = $em->prepareArgs(['extensions' => new \ArrayObject()]);
 			$this->getEventManager()->trigger(static::EVENT_REGISTER_EXTENSIONS, $this, $arguments);
 			if ($arguments['extensions'] instanceof \ArrayObject)
 			{
@@ -148,7 +148,7 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 	public function renderTemplateFile($pathName, array $attributes)
 	{
 		$loader = new \Twig_Loader_Filesystem(dirname($pathName));
-		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
+		$twig = new \Twig_Environment($loader, ['cache' => $this->getCachePath(), 'auto_reload' => true]);
 		foreach ($this->getExtensions() as $extension)
 		{
 			$twig->addExtension($extension);
@@ -182,7 +182,26 @@ class TemplateManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$paths = $this->getThemeManager()->getThemeTwigBasePaths();
 		$loader = new \Twig_Loader_Filesystem($paths);
-		$twig = new \Twig_Environment($loader, array('cache' => $this->getCachePath(), 'auto_reload' => true));
+
+		$parentTheme = $this->getThemeManager()->getCurrent()->getParentTheme();
+		while ($parentTheme && $parentTheme->getName() !== 'Rbs_Base')
+		{
+			$parentThemePaths = $this->getThemeManager()->getThemeTwigBasePaths($parentTheme);
+			foreach ($parentThemePaths as $path)
+			{
+				$loader->addPath($path, $parentTheme->getName());
+			}
+			$parentTheme = $parentTheme->getParentTheme();
+		}
+
+		$parentTheme = $this->getThemeManager()->getByName('Rbs_Base');
+		$parentThemePaths = $this->getThemeManager()->getThemeTwigBasePaths($parentTheme);
+		foreach ($parentThemePaths as $path)
+		{
+			$loader->addPath($path, $parentTheme->getName());
+		}
+
+		$twig = new \Twig_Environment($loader, ['cache' => $this->getCachePath(), 'auto_reload' => true]);
 		foreach ($this->getExtensions() as $extension)
 		{
 			$twig->addExtension($extension);
