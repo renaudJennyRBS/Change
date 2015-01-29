@@ -11,7 +11,6 @@ namespace Rbs\Media\Http\Web\Actions;
 use Change\Http\Result;
 use Change\Http\Web\Actions\GetStorageItemContent;
 use Change\Http\Web\Event;
-use Rbs\Media\Std\Resizer;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -55,7 +54,7 @@ class GetImagestorageItemContent
 			}
 			else
 			{
-				$resizer = new Resizer();
+				$resizer = new \Change\Presentation\Images\Resizer();
 				$resizer->resize($originalPath, $path, $maxWidth, $maxHeight);
 			}
 		}

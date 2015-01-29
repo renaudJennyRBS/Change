@@ -12,7 +12,6 @@ use Change\Documents\Events\Event;
 use Change\Http\Rest\V1\Link;
 use Change\Http\Rest\V1\Resources\DocumentLink;
 use Change\Http\Rest\V1\Resources\DocumentResult;
-use Rbs\Media\Std\Resizer;
 
 /**
  * @name \Rbs\Media\Documents\Image
@@ -59,7 +58,7 @@ class Image extends \Compilation\Rbs\Media\Documents\Image
 	{
 		if ($this->imageSize === false)
 		{
-			$this->imageSize = (new Resizer())->getImageSize($this->getPath());
+			$this->imageSize = (new \Change\Presentation\Images\Resizer())->getImageSize($this->getPath());
 		}
 		return $this->imageSize;
 	}

@@ -12,6 +12,7 @@ class StorageManagerTest extends TestCase
 	public static function setUpBeforeClass()
 	{
 		parent::setUpBeforeClass();
+		static::clearDB();
 		static::initDb();
 	}
 
@@ -28,8 +29,6 @@ class StorageManagerTest extends TestCase
 	{
 		return $this->getApplicationServices()->getStorageManager();
 	}
-
-
 
 	public function testInstance()
 	{
@@ -77,6 +76,37 @@ class StorageManagerTest extends TestCase
 
 		$this->assertFalse(file_exists($storageURI));
 		$this->assertFalse(file_exists($localFileName));
+	}
+
+	public function testMimeType()
+	{
+		$o = $this->getObject();
+		$changeURI = 'change://tmp/cc.gif';
+		$localPath = __DIR__ . '/Assets/cc.gif';
+		copy($localPath, $changeURI);
+		$itemInfo = $o->getItemInfo($changeURI);
+		$this->assertInstanceOf('Change\Storage\ItemInfo', $itemInfo);
+		$this->assertTrue($itemInfo->isFile());
+		$this->assertTrue($itemInfo->isReadable());
+		$this->assertEquals('image/gif', $itemInfo->getMimeType());
+
+		$changeURI = 'change://tmp/cc.png';
+		$localPath = __DIR__ . '/Assets/cc.png';
+		copy($localPath, $changeURI);
+		$itemInfo = $o->getItemInfo($changeURI);
+		$this->assertInstanceOf('Change\Storage\ItemInfo', $itemInfo);
+		$this->assertTrue($itemInfo->isFile());
+		$this->assertTrue($itemInfo->isReadable());
+		$this->assertEquals('image/png', $itemInfo->getMimeType());
+
+		$changeURI = 'change://tmp/cc.jpg';
+		$localPath = __DIR__ . '/Assets/cc.jpg';
+		copy($localPath, $changeURI);
+		$itemInfo = $o->getItemInfo($changeURI);
+		$this->assertInstanceOf('Change\Storage\ItemInfo', $itemInfo);
+		$this->assertTrue($itemInfo->isFile());
+		$this->assertTrue($itemInfo->isReadable());
+		$this->assertEquals('image/jpeg', $itemInfo->getMimeType());
 	}
 
 	public function testDBStat()

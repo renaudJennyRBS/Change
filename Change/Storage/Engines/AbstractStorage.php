@@ -193,6 +193,8 @@ abstract class AbstractStorage
 	abstract public function stream_flush();
 
 	/**
+	 * @param $offset
+	 * @param int $whence
 	 * @return array
 	 */
 	abstract public function stream_seek($offset, $whence = SEEK_SET);
