@@ -90,6 +90,14 @@
 	{% endif %}
 {% endblock rbsCatalogProductReinsurance %}
 
+{# Used parameters: handleSocial #}
+{% block rbsCatalogProductSocial %}
+	{% if parameters.handleSocial %}
+		<div data-rbs-social-buttons="" data-shared-title="{{ productData.common.title }}"
+			data-shared-url="{{ productData.common.URL.canonical }}"></div>
+	{% endif %}
+{% endblock rbsCatalogProductSocial %}
+
 {% block rbsCatalogProductOfferSimple %}
 	{% if parameters.webStoreId %}
 		<div itemprop="offers" itemscope="" itemtype="http://schema.org/Offer">
@@ -144,6 +152,7 @@
 			{% endblock rbsCatalogProductOfferSimpleAddToCart %}
 
 			{{ block('rbsCatalogProductReinsurance') }}
+			{{ block('rbsCatalogProductSocial') }}
 		</div>
 	{% endif %}
 {% endblock rbsCatalogProductOfferSimple %}
@@ -184,6 +193,7 @@
 	</div>
 
 	{{ block('rbsCatalogProductReinsurance') }}
+	{{ block('rbsCatalogProductSocial') }}
 {% endblock rbsCatalogProductOfferSet %}
 
 {% block rbsCatalogProductOfferVariant %}
@@ -210,6 +220,7 @@
 			{% endblock rbsCatalogProductOfferVariantAddToCart %}
 
 			{{ block('rbsCatalogProductReinsurance') }}
+			{{ block('rbsCatalogProductSocial') }}
 		</div>
 	{% endif %}
 {% endblock rbsCatalogProductOfferVariant %}

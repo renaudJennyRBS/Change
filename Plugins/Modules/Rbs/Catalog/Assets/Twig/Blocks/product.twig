@@ -23,6 +23,11 @@
 	{{ block('rbsMediaPictograms') }}
 	{{ block('rbsMediaVisuals') }}
 
+	{% if parameters.handleSocial %}
+		{% use 'Rbs_Social/social-directives.twig' %}
+		{{ block('rbsSocialButtons') }}
+	{% endif %}
+
 	{% if handleReviews %}
 		{% use 'Rbs_Review/review-directives.twig' %}
 		{{ block('rbsReviewCommon') }}

@@ -320,6 +320,9 @@
 	"product_handle_reviews":{
 		"message":"gérer les avis clients"
 	},
+	"product_handle_social":{
+		"message":"boutons de partage sur les réseaux sociaux"
+	},
 	"cross_selling_label":{
 		"message":"produits associés"
 	},
