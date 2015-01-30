@@ -36,40 +36,49 @@ class Install extends \Change\Plugins\InstallBase
 	public function executeServices($plugin, $applicationServices)
 	{
 		$workflowManager = $applicationServices->getWorkflowManager();
-		if ($workflowManager->getWorkflow('publicationProcess') === null)
+		try
 		{
-			try
+			$applicationServices->getTransactionManager()->begin();
+
+			/** @var \Rbs\Workflow\Documents\Workflow|null $workflow */
+			$workflow = $workflowManager->getWorkflow('publicationProcess');
+			if ($workflow === null)
 			{
-				$applicationServices->getTransactionManager()->begin();
-				$publicationProcessWorkflow = new PublicationProcessWorkflow($applicationServices);
-				$workflow = $publicationProcessWorkflow->install();
-				$plugin->setConfigurationEntry('publicationProcess', $workflow->getId());
-				$applicationServices->getTransactionManager()->commit();
+				$workflow = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_Workflow');
 			}
-			catch (\Exception $e)
-			{
-				throw $applicationServices->getTransactionManager()->rollBack( $e);
-			}
+			$publicationProcessWorkflow = new PublicationProcessWorkflow($applicationServices);
+			$workflow = $publicationProcessWorkflow->install($workflow);
+			$plugin->setConfigurationEntry('publicationProcess', $workflow->getId());
+			$applicationServices->getTransactionManager()->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $applicationServices->getTransactionManager()->rollBack( $e);
 		}
 
-		if ($workflowManager->getWorkflow('correctionPublicationProcess') === null)
+		try
 		{
-			try
-			{
-				$applicationServices->getTransactionManager()->begin();
+			$applicationServices->getTransactionManager()->begin();
 
-				$publicationProcessWorkflow = new CorrectionPublicationProcessWorkflow($applicationServices);
-				$workflow = $publicationProcessWorkflow->install();
-				$plugin->setConfigurationEntry('correctionPublicationProcess', $workflow->getId());
-
-				$applicationServices->getTransactionManager()->commit();
-			}
-			catch (\Exception $e)
+			/** @var \Rbs\Workflow\Documents\Workflow|null $workflow */
+			$workflow = $workflowManager->getWorkflow('correctionPublicationProcess');
+			if ($workflow === null)
 			{
-				throw $applicationServices->getTransactionManager()->rollBack( $e);
+				$workflow = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_Workflow');
 			}
+
+			$publicationProcessWorkflow = new CorrectionPublicationProcessWorkflow($applicationServices);
+			$workflow = $publicationProcessWorkflow->install($workflow);
+			$plugin->setConfigurationEntry('correctionPublicationProcess', $workflow->getId());
+
+			$applicationServices->getTransactionManager()->commit();
+		}
+		catch (\Exception $e)
+		{
+			throw $applicationServices->getTransactionManager()->rollBack( $e);
 		}
 	}
+
 
 	/**
 	 * @param \Change\Plugins\Plugin $plugin
