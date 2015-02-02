@@ -163,13 +163,12 @@
 
 	app.provider('RbsChange.AjaxAPI', function AjaxAPIProvider() {
 		var apiURL = '/ajax.V1.php/', LCID = 'fr_FR',
-			defaultParams = { websiteId: null, sectionId: null, pageId: null, data: {} },
-			blockParameters = {};
+			defaultParams = { websiteId: null, sectionId: null, pageId: null, data: {} };
 
 		this.$get = ['$http', '$location', '$rootScope', '$window', function($http, $location, $rootScope, $window) {
-			if (angular.isObject($window.__change)) {
-				if (angular.isObject($window.__change.navigationContext)) {
-					var data = $window.__change.navigationContext;
+			if (angular.isObject(window.__change)) {
+				if (angular.isObject(window.__change.navigationContext)) {
+					var data = window.__change.navigationContext;
 					if (data.websiteId) {
 						defaultParams.websiteId = data.websiteId;
 					}
@@ -184,22 +183,18 @@
 						}
 					}
 				}
-
-				if (angular.isObject($window.__change.blockParameters)) {
-					blockParameters = $window.__change.blockParameters;
-				}
 			}
 
 			function globalVar(name, value) {
-				if (angular.isObject($window.__change)) {
+				if (angular.isObject(window.__change)) {
 					if (angular.isUndefined(value)) {
-						return $window.__change.hasOwnProperty(name) ? $window.__change[name] : value;
+						return window.__change.hasOwnProperty(name) ? window.__change[name] : value;
 					}
 					else {
-						return $window.__change[name] = value;
+						return window.__change[name] = value;
 					}
 				}
-				return $window.__change;
+				return window.__change;
 			}
 
 			function getVersion() {
@@ -211,8 +206,8 @@
 			}
 
 			function getBlockParameters(blockId) {
-				if (angular.isObject(blockParameters[blockId])) {
-					return blockParameters[blockId];
+				if (angular.isObject(window.__change.blockParameters[blockId])) {
+					return window.__change.blockParameters[blockId];
 				}
 				console.log('Parameters not found for block', blockId);
 				return {};
@@ -291,4 +286,47 @@
 			};
 		}];
 	});
+
+	/**
+	 * This service is used to manage a modal stack where:
+	 *  - opening a new modal hides the others
+	 *  - closing any modal in the stack closes all other ones
+	 * This is useful for cascading modals, where the child extends the scope of the parent.
+	 */
+	app.service('RbsChange.ModalStack', ['$modal', function ($modal) {
+		var me = this;
+		var className = 'modal-hidden-stack';
+		var opened = [];
+
+		this.open = function (options) {
+			this.hideStack();
+
+			if (options.windowClass) {
+				options.windowClass += ' ' + className;
+			}
+			else {
+				options.windowClass = className;
+			}
+
+			var modal = $modal.open(options);
+			if (modal) {
+				var closeAllFunction = function () {
+					me.closeAll();
+				};
+				modal.result.then(closeAllFunction, closeAllFunction);
+				opened.push(modal);
+			}
+		};
+
+		this.closeAll = function() {
+			for (var i = 0; i < opened.length; i++) {
+				opened[i].dismiss();
+			}
+			opened = [];
+		};
+
+		this.hideStack = function() {
+			jQuery('.' + className).hide();
+		};
+	}]);
 })(window.jQuery);

@@ -243,6 +243,7 @@
 				scope.isStepChecked = function(step) {
 					return controller.getStepProcessData(step).isChecked;
 				};
+				scope.processEngine = controller;
 			}
 		}
 	}
@@ -254,13 +255,13 @@
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCommerceCartLines.tpl',
-			require: '^rbsCommerceProcess',
 			scope: {
 				cartData: "=",
-				getLineDirectiveName: "="
+				getLineDirectiveName: "=",
+				processEngine: "="
 			},
-			link: function(scope, elem, attrs, processController) {
-				scope.showPrices = processController.showPrices();
+			link: function(scope, elem) {
+				scope.showPrices = scope.processEngine.showPrices();
 
 				function redrawLines() {
 					var linesContainer = elem.find('[data-role="cart-lines"]');
@@ -270,9 +271,9 @@
 					var lines = scope.cartData.lines;
 					var html = [];
 					angular.forEach(lines, function(line, idx) {
-						html.push('<tr data-line="cartData.lines[' + idx + ']" ' + directiveName(line) + '=""></tr>');
+						html.push('<tr data-line="cartData.lines[' + idx + ']" data-process-engine="processEngine" ' + directiveName(line) + '=""></tr>');
 					});
-					processController.replaceChildren(linesContainer, scope, html.join(''));
+					scope.processEngine.replaceChildren(linesContainer, scope, html.join(''));
 				}
 
 				scope.$watch('cartData', function(cartData) {

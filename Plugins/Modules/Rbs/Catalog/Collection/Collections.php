@@ -27,6 +27,7 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$items = [
+				'none' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_none', array('ucf')),
 				'accordion' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_accordion', array('ucf')),
 				'tabs' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_tabs', array('ucf')),
 				'flat' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_flat', array('ucf'))
@@ -46,6 +47,7 @@ class Collections
 		{
 			$i18n = $applicationServices->getI18nManager();
 			$items = [
+				'none' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_none', array('ucf')),
 				'table' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_table', array('ucf')),
 				'accordion' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_accordion', array('ucf')),
 				'tabs' => new I18nString($i18n, 'm.rbs.catalog.admin.display_mode_tabs', array('ucf')),

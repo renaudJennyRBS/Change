@@ -20,6 +20,11 @@ abstract class Item
 	protected $id;
 
 	/**
+	 * @var string|null
+	 */
+	protected $idPrefix;
+
+	/**
 	 * @var array
 	 */
 	protected $parameters;
@@ -42,7 +47,32 @@ abstract class Item
 	 */
 	public function getId()
 	{
-		return $this->id;
+		return $this->idPrefix ? $this->idPrefix . $this->id : $this->id;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getIdPrefix()
+	{
+		return $this->idPrefix;
+	}
+
+	/**
+	 * @param string|null $idPrefix
+	 */
+	public function initIdPrefix($idPrefix)
+	{
+		$this->idPrefix = $idPrefix;
+
+		$items = $this->getItems();
+		if ($items && $idPrefix)
+		{
+			foreach ($items as $item)
+			{
+				$item->initIdPrefix($idPrefix);
+			}
+		}
 	}
 
 	/**
@@ -96,7 +126,12 @@ abstract class Item
 		}
 		else
 		{
-			$this->setParameters(array());
+			$this->setParameters([]);
+		}
+
+		if (isset($data['idPrefix']))
+		{
+			$this->idPrefix = $data['idPrefix'];
 		}
 	}
 
@@ -106,7 +141,7 @@ abstract class Item
 	 */
 	public function getItemsByType($type)
 	{
-		$result = ($this->getType() === $type) ? array($this) : array();
+		$result = ($this->getType() === $type) ? [$this] : [];
 		if (count($this->items))
 		{
 			foreach ($this->items as $item)

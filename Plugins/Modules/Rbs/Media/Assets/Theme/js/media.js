@@ -129,4 +129,53 @@
 	}
 
 	app.directive('rbsMediaVisuals', rbsMediaVisuals);
+
+	function rbsMediaSliderVisuals() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsMediaSliderVisuals.tpl',
+			scope: {
+				visuals: '=rbsMediaSliderVisuals',
+				pictograms: '='
+			},
+			link: function(scope, elm, attrs) {
+				scope.idSuffix = angular.isString(attrs['idSuffix']) ? attrs['idSuffix'] : 'default';
+				scope.interval = angular.isString(attrs['interval']) ? attrs['interval'] : 5000;
+				scope.visualFormat = angular.isString(attrs['visualFormat']) ? attrs['visualFormat'] : 'detailCompact';
+				scope.pictogramFormat = angular.isString(attrs['pictogramFormat']) ? attrs['pictogramFormat'] : 'pictogram';
+				scope.pictogramPosition = angular.isString(attrs['pictogramPosition']) ? attrs['pictogramPosition'] : null;
+
+				var carouselElm = elm.find('.carousel');
+
+				scope.left = function (event) {
+					event.preventDefault();
+					carouselElm.carousel('prev');
+				};
+
+				scope.right = function (event) {
+					event.preventDefault();
+					carouselElm.carousel('next');
+				};
+
+				scope.goTo = function (index) {
+					carouselElm.carousel(index);
+				};
+
+				scope.$watch('visuals', function () {
+					scope.ngClasses = {
+						main: {}
+					};
+					if (angular.isArray(scope.visuals) && scope.visuals.length > 1) {
+						scope.ngClasses.main['media-slider-visuals-multiple'] = true;
+					}
+					else {
+						scope.ngClasses.main['media-slider-visuals-single'] = true;
+					}
+					scope.ngClasses.main['media-slider-visuals-format-' + scope.visualFormat] = true;
+				});
+			}
+		}
+	}
+
+	app.directive('rbsMediaSliderVisuals', rbsMediaSliderVisuals);
 })(jQuery);

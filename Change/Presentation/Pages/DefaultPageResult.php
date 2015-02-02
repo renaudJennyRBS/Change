@@ -56,6 +56,7 @@ class DefaultPageResult
 				$container = $pageLayout->getById($item->getId());
 				if ($container)
 				{
+					$container->initIdPrefix($item->getIdPrefix());
 					$containers[] = $container;
 				}
 			}

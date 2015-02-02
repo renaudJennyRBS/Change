@@ -30,7 +30,7 @@ class Layout
 		}
 		else
 		{
-			$this->items = array();
+			$this->items = [];
 		}
 	}
 
@@ -75,7 +75,7 @@ class Layout
 	 */
 	public function getItemsByType($type)
 	{
-		$result = array();
+		$result = [];
 		if (count($this->items))
 		{
 			foreach ($this->items as $item)
@@ -141,13 +141,23 @@ class Layout
 
 	/**
 	 * @param array $array
+	 * @param string|null $idPrefix
 	 * @return Item[]
 	 */
-	public function fromArray($array)
+	public function fromArray($array, $idPrefix = null)
 	{
-		$result = array();
+		$result = [];
 		foreach ($array as $key => $data)
 		{
+			if (isset($data['idPrefix']))
+			{
+				$idPrefix = $data['idPrefix'];
+			}
+			elseif ($idPrefix)
+			{
+				$data['idPrefix'] = $idPrefix;
+			}
+
 			$type = $data['type'];
 			$id = $data['id'];
 			$item = $this->getNewItem($type, $id);
@@ -158,7 +168,7 @@ class Layout
 			$item->initialize($data);
 			if (isset($data['items']) && count($data['items']))
 			{
-				$item->setItems($this->fromArray($data['items']));
+				$item->setItems($this->fromArray($data['items']), $idPrefix);
 			}
 			else
 			{

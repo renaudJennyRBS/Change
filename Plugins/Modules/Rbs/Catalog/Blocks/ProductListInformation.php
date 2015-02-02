@@ -24,22 +24,30 @@ class ProductListInformation extends Information
 		$this->setSection($i18nManager->trans('m.rbs.catalog.admin.module_name', $ucf));
 		$this->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_label', $ucf));
 		$this->addParameterInformationForDetailBlock('Rbs_Catalog_ProductList', $i18nManager)
-		->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_list', $ucf));
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_list', $ucf));
 
-		$this->addParameterInformation('useCurrentSectionProductList', Property::TYPE_BOOLEAN, false, false)
+		$this->addParameterInformation('useCurrentSectionProductList', \Change\Documents\Property::TYPE_BOOLEAN, false, false)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_use_current', $ucf));
-		$this->addParameterInformation('contextualUrls', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('contextualUrls', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_contextual_urls', $ucf));
-		$this->addParameterInformation('itemsPerLine', Property::TYPE_INTEGER, true, 3)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_items_per_line', $ucf));
-		$this->addParameterInformation('itemsPerPage', Property::TYPE_INTEGER, true, 9)
+		$this->addParameterInformation('itemsPerPage', \Change\Documents\Property::TYPE_INTEGER, false, 9)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_items_per_page', $ucf));
-		$this->addParameterInformation('showOrdering', Property::TYPE_BOOLEAN, false, true)
-			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_ordering', $ucf));
-		$this->addParameterInformation('showUnavailable', Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('showUnavailable', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_unavailable', $ucf));
+		$this->addParameterInformation('quickBuyOnSimple', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_quick_buy_on_simple', $ucf));
+		$this->addParameterInformation('quickBuyOnVariant', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_quick_buy_on_variant', $ucf));
+
+		$templateInformation = $this->addDefaultTemplateInformation();
+		$templateInformation->addParameterInformation('itemsPerLine', \Change\Documents\Property::TYPE_INTEGER, false, 3)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_items_per_line', $ucf));
+		$templateInformation->addParameterInformation('showOrdering', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_show_ordering', $ucf));
 
 		$templateInformation = $this->addTemplateInformation('Rbs_Catalog', 'product-list-infinite-scroll.twig');
 		$templateInformation->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_infinite_scroll_label', ['ucf']));
+		$templateInformation->addParameterInformation('itemsPerLine', \Change\Documents\Property::TYPE_INTEGER, false, 3)
+			->setLabel($i18nManager->trans('m.rbs.catalog.admin.product_list_items_per_line', $ucf));
 	}
 }

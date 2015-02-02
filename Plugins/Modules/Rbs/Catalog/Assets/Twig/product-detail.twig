@@ -45,6 +45,12 @@
 		data-pictograms="pictograms" data-pictogram-format="pictogram" data-pictogram-position="bottom right"></div>
 {% endblock rbsCatalogProductVisuals %}
 
+{% block rbsCatalogProductSliderVisuals %}
+	<div data-rbs-media-slider-visuals="visuals" data-visual-format="detailCompact" data-id-suffix="{{ blockId }}"
+		data-interval="{{ parameters.sliderInterval }}" data-pictograms="pictograms" data-pictogram-format="pictogram"
+		data-pictogram-position="bottom right"></div>
+{% endblock rbsCatalogProductSliderVisuals %}
+
 {% block rbsCatalogProductDescription %}
 	<div data-ng-if="productData | rbsCatalogGetAttribute:'description'" >
 		<h2>{{ i18n('m.rbs.catalog.front.full_description', ['ucf']) }}</h2>
@@ -55,7 +61,7 @@
 
 {# Used parameters: handleReviews, reviewsPerPage, ratingScale, handleReviewVotes #}
 {% block rbsCatalogProductDetailInformation %}
-	{% if parameters.informationDisplayMode %}
+	{% if parameters.informationDisplayMode and parameters.informationDisplayMode != 'none' %}
 		<div data-rbs-catalog-product-information="" data-product-data="productData" data-block-id="{{ blockId }}"
 			data-display-mode="{{ parameters.informationDisplayMode }}"
 			data-specifications-display-mode="{{ parameters.specificationsDisplayMode }}"
@@ -67,7 +73,7 @@
 {% endblock rbsCatalogProductDetailInformation %}
 
 {% block rbsCatalogProductDetailSpecifications %}
-	{% if parameters.specificationsDisplayMode %}
+	{% if parameters.specificationsDisplayMode and parameters.specificationsDisplayMode != 'none' %}
 		<div data-rbs-catalog-product-specifications="" data-product-data="productData" data-visibility="specifications"
 			data-display-mode="{{ parameters.specificationsDisplayMode }}" data-block-id="{{ blockId }}">
 		</div>
@@ -83,6 +89,14 @@
 		</div>
 	{% endif %}
 {% endblock rbsCatalogProductReinsurance %}
+
+{# Used parameters: handleSocial #}
+{% block rbsCatalogProductSocial %}
+	{% if parameters.handleSocial %}
+		<div data-rbs-social-buttons="" data-shared-title="{{ productData.common.title }}"
+			data-shared-url="{{ productData.common.URL.canonical }}"></div>
+	{% endif %}
+{% endblock rbsCatalogProductSocial %}
 
 {% block rbsCatalogProductOfferSimple %}
 	{% if parameters.webStoreId %}
@@ -133,12 +147,12 @@
 
 			{% block rbsCatalogProductOfferSimpleAddToCart %}
 				{% if productData.stock.sku %}
-					<div data-rbs-catalog-add-simple-product-to-cart=""
-						data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+					<div data-rbs-catalog-add-simple-product-to-cart=""></div>
 				{% endif %}
 			{% endblock rbsCatalogProductOfferSimpleAddToCart %}
 
 			{{ block('rbsCatalogProductReinsurance') }}
+			{{ block('rbsCatalogProductSocial') }}
 		</div>
 	{% endif %}
 {% endblock rbsCatalogProductOfferSimple %}
@@ -172,13 +186,14 @@
 		<div class="product-set-content-footer">
 			{% block rbsCatalogProductOfferSetFooter %}
 				<div data-rbs-catalog-add-set-product-to-cart="" data-parameters="parameters" data-items-to-add="itemsToAdd"
-					data-product-data="productData" data-modal-id="addToCartConfirmationModal-{{ blockId }}">
+					data-product-data="productData">
 				</div>
 			{% endblock rbsCatalogProductOfferSetFooter %}
 		</div>
 	</div>
 
 	{{ block('rbsCatalogProductReinsurance') }}
+	{{ block('rbsCatalogProductSocial') }}
 {% endblock rbsCatalogProductOfferSet %}
 
 {% block rbsCatalogProductOfferVariant %}
@@ -201,11 +216,11 @@
 			{% endblock rbsCatalogProductOfferVariantAxes %}
 
 			{% block rbsCatalogProductOfferVariantAddToCart %}
-				<div data-rbs-catalog-add-variant-product-to-cart=""
-					data-modal-id="addToCartConfirmationModal-{{ blockId }}"></div>
+				<div data-rbs-catalog-add-variant-product-to-cart=""></div>
 			{% endblock rbsCatalogProductOfferVariantAddToCart %}
 
 			{{ block('rbsCatalogProductReinsurance') }}
+			{{ block('rbsCatalogProductSocial') }}
 		</div>
 	{% endif %}
 {% endblock rbsCatalogProductOfferVariant %}

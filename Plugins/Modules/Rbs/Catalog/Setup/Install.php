@@ -25,6 +25,7 @@ class Install extends \Change\Plugins\InstallBase
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/pictogram', '60x45');
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/detail', '540x405');
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/detailThumbnail', '80x60');
+		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/detailCompact', '450x300');
 		$configuration->addPersistentEntry('Rbs/Media/namedImageFormats/attribute', '160x120');
 	}
 

@@ -1,0 +1,33 @@
+/******
+ * This file contains misc fixes and complements to external libs used in Change.
+ */
+
+/****
+ * UI-Bootstrap
+ */
+
+/**
+ * Fix cursor on some elements.
+ *    "Original Bootstrap's CSS depends on empty href attributes to style cursors for several components (pagination, tabs etc.).
+ *     But in AngularJS adding empty href attributes to link tags will cause unwanted route changes. This is why we need to
+ *     remove empty href attributes from directive templates and as a result styling is not applied correctly."
+ *    Cf. http://angular-ui.github.io/bootstrap/
+ */
+.nav,
+.pagination,
+.carousel,
+.panel-title a {
+	cursor: pointer;
+}
+
+/**
+ * Temporary fix for UI-Bootstrap modals backdrop.
+ * TODO: check if it is fixed in the next release of UI-Bootstrap.
+ */
+.modal-backdrop {
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	right: 0;
+	top: 0;
+}

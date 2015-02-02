@@ -272,6 +272,12 @@
 	"product_list_items_per_page":{
 		"message":"produits par page"
 	},
+	"product_list_quick_buy_on_simple":{
+		"message":"activer l'achat rapide sur les produits simples"
+	},
+	"product_list_quick_buy_on_variant":{
+		"message":"activer l'achat rapide sur les produits variants"
+	},
 	"product_label":{
 		"message":"détail du produit"
 	},
@@ -289,6 +295,9 @@
 	},
 	"product_added_to_cart_function":{
 		"message":"produit ajouté au panier"
+	},
+	"product_quick_buy_function":{
+		"message":"fenêtre d'achat rapide"
 	},
 	"product_reinsurance":{
 		"message":"communication réassurance, coûts de livraison, etc."
@@ -310,6 +319,9 @@
 	},
 	"product_handle_reviews":{
 		"message":"gérer les avis clients"
+	},
+	"product_handle_social":{
+		"message":"boutons de partage sur les réseaux sociaux"
 	},
 	"cross_selling_label":{
 		"message":"produits associés"
@@ -596,6 +608,9 @@
 	"display_mode_flat":{
 		"message": "à plat"
 	},
+	"display_mode_none":{
+		"message": "aucun"
+	},
 	"select_all":{
 		"message": "Tous"
 	},
@@ -611,7 +626,10 @@
 	"selected_sections":{
 		"message": "Sections de publication à affecter aux variantes"
 	},
-	"product_list_infinite_scroll_label":{
+	"product_list_infinite_scroll_label": {
 		"message": "liste de produits sans pagination"
+	},
+	"product_compact_label":{
+		"message": "compact"
 	}
 }

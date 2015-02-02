@@ -32,9 +32,7 @@ class ProductList extends Block
 		$parameters->addParameterMeta(static::DOCUMENT_TO_DISPLAY_PROPERTY_NAME);
 		$parameters->addParameterMeta('useCurrentSectionProductList');
 		$parameters->addParameterMeta('contextualUrls', true);
-		$parameters->addParameterMeta('itemsPerLine', 3);
 		$parameters->addParameterMeta('itemsPerPage', 9);
-		$parameters->addParameterMeta('showOrdering', true);
 		$parameters->addParameterMeta('showUnavailable', true);
 		$parameters->addParameterMeta('imageFormats', 'listItem,pictogram');
 		$parameters->addParameterMeta('dataSetNames', '');
@@ -83,13 +81,10 @@ class ProductList extends Block
 			}
 		}
 
-		if ($parameters->getParameter('showOrdering'))
+		$sortBy = $request->getQuery('sortBy-' . $event->getBlockLayout()->getId());
+		if (!\Change\Stdlib\String::isEmpty($sortBy))
 		{
-			$sortBy = $request->getQuery('sortBy-' . $event->getBlockLayout()->getId());
-			if (!\Change\Stdlib\String::isEmpty($sortBy))
-			{
-				$parameters->setParameterValue('sortBy', trim($sortBy));
-			}
+			$parameters->setParameterValue('sortBy', trim($sortBy));
 		}
 
 		if (!$parameters->getParameter('redirectUrl'))
@@ -132,7 +127,7 @@ class ProductList extends Block
 	 */
 	protected function validateQueryFilters($queryFilters)
 	{
-		$facetFilters = array();
+		$facetFilters = [];
 		if (is_array($queryFilters))
 		{
 			foreach ($queryFilters as $fieldName => $rawValue)
@@ -199,7 +194,6 @@ class ProductList extends Block
 			$contextArray = $context->toArray();
 			$result = $commerceServices->getCatalogManager()->getProductsData($contextArray);
 			$attributes['productsData'] = $result['items'];
-			$attributes['itemsPerLine'] = $parameters->getParameter('itemsPerLine');
 
 			$pagination = $result['pagination'];
 			$pagination['pageCount'] = $pageCount = ceil($pagination['count'] / $pagination['limit']);
@@ -245,6 +239,10 @@ class ProductList extends Block
 		$context->addData('searchText', $parameters->getParameter('searchText'));
 		$context->addData('sortBy', $parameters->getParameter('sortBy'));
 		$context->addData('showUnavailable', ($parameters->getParameter('showUnavailable') == true));
+		if ($parameters->getParameter('quickBuyOnSimple') || $parameters->getParameter('quickBuyOnVariant'))
+		{
+			$context->addData('quickBuyPageFunction', 'Rbs_Catalog_ProductQuickBuy');
+		}
 		return $context;
 	}
 }

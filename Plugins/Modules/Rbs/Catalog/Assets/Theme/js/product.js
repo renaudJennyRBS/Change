@@ -3,11 +3,16 @@
 
 	var app = angular.module('RbsChangeApp');
 
-	function RbsCatalogProductItemController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
+	function RbsCatalogProductItemController(scope, $element, $rootScope, AjaxAPI, ModalStack) {
 		scope.productData = {};
+		scope.parameters = {};
 		var cacheKey = $element.attr('data-cache-key');
-		if (cacheKey && angular.isObject($window['__change']) && $window['__change'][cacheKey]) {
-			scope.productData = $window['__change'][cacheKey];
+		if (cacheKey) {
+			scope.productData = AjaxAPI.globalVar(cacheKey);
+		}
+		cacheKey = $element.attr('data-block-cache-key');
+		if (cacheKey) {
+			scope.parameters = AjaxAPI.getBlockParameters(cacheKey);
 		}
 
 		this.setPictograms = function(productData) {
@@ -17,12 +22,11 @@
 		this.setPictograms(scope.productData);
 
 		scope.addLine = function() {
-			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+			addLine(scope, $rootScope, AjaxAPI, ModalStack);
 		};
 	}
 
-	RbsCatalogProductItemController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window',
-		'RbsChange.AjaxAPI'];
+	RbsCatalogProductItemController.$inject = ['$scope', '$element', '$rootScope', 'RbsChange.AjaxAPI', 'RbsChange.ModalStack'];
 	app.controller('RbsCatalogProductItemController', RbsCatalogProductItemController);
 
 	function rbsCatalogProductsListSlider(AjaxAPI) {
@@ -126,7 +130,7 @@
 	rbsCatalogProductsListInfiniteScroll.$inject = ['RbsChange.AjaxAPI'];
 	app.directive('rbsCatalogProductsListInfiniteScroll', rbsCatalogProductsListInfiniteScroll);
 
-	function rbsCatalogProductItemData($http, $compile, $rootScope, $window, AjaxAPI) {
+	function rbsCatalogProductItemData($rootScope, AjaxAPI, ModalStack) {
 		return {
 			restrict: 'A',
 			link: function(scope) {
@@ -152,13 +156,13 @@
 				}
 
 				scope.addLine = function() {
-					addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+					addLine(scope, $rootScope, AjaxAPI, ModalStack);
 				};
 			}
 		}
 	}
 
-	rbsCatalogProductItemData.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	rbsCatalogProductItemData.$inject = ['$rootScope', 'RbsChange.AjaxAPI', 'RbsChange.ModalStack'];
 	app.directive('rbsCatalogProductItemData', rbsCatalogProductItemData);
 
 	function rbsCatalogProductsItem() {
@@ -172,6 +176,42 @@
 
 	app.directive('rbsCatalogProductsItem', rbsCatalogProductsItem);
 
+	function rbsCatalogProductListItemAddToCartButtons() {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogProductListItemAddToCartButtons.tpl',
+			replace: false,
+			scope: {
+				productData: '=',
+				parameters: '=blockParameters',
+				addLine: '='
+			},
+			link: function(scope) {
+				scope.enableQuickBuy = function() {
+					if (!scope.productData.common['quickBuyURL']) {
+						return false;
+					}
+					else if (scope.productData['stock'] && scope.productData['stock'].sku) {
+						if (scope.productData.cart.key) {
+							if (scope.productData.common.type == 'simple' && scope.parameters['quickBuyOnSimple']) {
+								return true;
+							}
+							else if (scope.productData.common.type == 'variant' && scope.parameters['quickBuyOnVariant']) {
+								return true;
+							}
+						}
+					}
+					else if (scope.productData.common.type == 'variant' && scope.parameters['quickBuyOnVariant']) {
+						return true;
+					}
+					return false;
+				};
+			}
+		}
+	}
+
+	app.directive('rbsCatalogProductListItemAddToCartButtons', rbsCatalogProductListItemAddToCartButtons);
+
 	function rbsCatalogAddListItemProductToCart() {
 		return {
 			restrict: 'A',
@@ -184,7 +224,7 @@
 
 	app.directive('rbsCatalogAddListItemProductToCart', rbsCatalogAddListItemProductToCart);
 
-	function RbsCatalogSimpleProductController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
+	function RbsCatalogSimpleProductController(scope, $element, $rootScope, AjaxAPI, ModalStack) {
 		scope.pictograms = null;
 		scope.visuals = null;
 
@@ -220,7 +260,7 @@
 		this.setVisuals(scope.productData);
 
 		scope.addLine = function() {
-			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+			addLine(scope, $rootScope, AjaxAPI, ModalStack);
 		};
 
 		scope.showReviews = function() {
@@ -228,8 +268,7 @@
 		};
 	}
 
-	RbsCatalogSimpleProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window',
-		'RbsChange.AjaxAPI'];
+	RbsCatalogSimpleProductController.$inject = ['$scope', '$element', '$rootScope', 'RbsChange.AjaxAPI', 'RbsChange.ModalStack'];
 	app.controller('RbsCatalogSimpleProductController', RbsCatalogSimpleProductController);
 
 	function rbsCatalogAddSimpleProductToCart() {
@@ -244,7 +283,7 @@
 
 	app.directive('rbsCatalogAddSimpleProductToCart', rbsCatalogAddSimpleProductToCart);
 
-	function RbsCatalogVariantProductController(scope, $element, $http, $compile, $rootScope, $window, AjaxAPI) {
+	function RbsCatalogVariantProductController(scope, $element, $rootScope, AjaxAPI, ModalStack) {
 		scope.pictograms = null;
 		scope.visuals = null;
 
@@ -279,7 +318,7 @@
 		});
 
 		scope.addLine = function() {
-			addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+			addLine(scope, $rootScope, AjaxAPI, ModalStack);
 		};
 
 		scope.showReviews = function() {
@@ -287,8 +326,7 @@
 		};
 	}
 
-	RbsCatalogVariantProductController.$inject = ['$scope', '$element', '$http', '$compile', '$rootScope', '$window',
-		'RbsChange.AjaxAPI'];
+	RbsCatalogVariantProductController.$inject = ['$scope', '$element', '$rootScope', 'RbsChange.AjaxAPI', 'RbsChange.ModalStack'];
 	app.controller('RbsCatalogVariantProductController', RbsCatalogVariantProductController);
 
 	function rbsCatalogVariantSelector(AjaxAPI) {
@@ -611,7 +649,7 @@
 	RbsCatalogProductSetController.$inject = ['$scope', '$element', 'RbsChange.AjaxAPI'];
 	app.controller('RbsCatalogProductSetController', RbsCatalogProductSetController);
 
-	function rbsCatalogAddSetItemProductToCart($http, $compile, $rootScope, $window, AjaxAPI) {
+	function rbsCatalogAddSetItemProductToCart($rootScope, AjaxAPI, ModalStack) {
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCatalogAddSetItemProductToCart.tpl',
@@ -621,17 +659,99 @@
 			},
 			link: function(scope, elm, attrs) {
 				scope.addLine = function() {
-					addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+					addLine(scope, $rootScope, AjaxAPI, ModalStack);
 				};
 				productDataLink(scope, elm, attrs);
 			}
 		}
 	}
 
-	rbsCatalogAddSetItemProductToCart.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	rbsCatalogAddSetItemProductToCart.$inject = ['$rootScope', 'RbsChange.AjaxAPI', 'RbsChange.ModalStack'];
 	app.directive('rbsCatalogAddSetItemProductToCart', rbsCatalogAddSetItemProductToCart);
 
-	function rbsCatalogAddSetProductToCart($http, $compile, $rootScope, $window, AjaxAPI) {
+	function rbsCatalogQuickBuy(ModalStack) {
+		return {
+			restrict: 'A',
+			templateUrl: '/rbsCatalogQuickBuy.tpl',
+			replace: false,
+			scope: {
+				productData: "="
+			},
+			link: function(scope) {
+				scope.openDialog = function() {
+					var options = {
+						templateUrl: '/rbsCatalogQuickBuyModal.tpl',
+						size: 'lg',
+						scope: scope
+					};
+					ModalStack.open(options);
+				};
+			}
+		}
+	}
+
+	rbsCatalogQuickBuy.$inject = ['RbsChange.ModalStack'];
+	app.directive('rbsCatalogQuickBuy', rbsCatalogQuickBuy);
+
+	function rbsCatalogQuickBuyModal($http, $compile) {
+		return {
+			restrict: 'A',
+			link: function(scope, element) {
+				if (scope.productData['common']['quickBuyURL']) {
+					var mainSelector = '.modal-main-content';
+					element.find(mainSelector).replaceWith('<div class="modal-main-content text-center"><img alt="" src="data:image/gif;base64,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" /></div>');
+					scope.hideModalContent = false;
+					$http.get(scope.productData['common']['quickBuyURL'])
+						.success(function(resultData2) {
+							element.find(mainSelector).replaceWith('<div class="modal-main-content">' + resultData2 + '</div>');
+							$compile(element.find(mainSelector).contents())(scope);
+						})
+						.error(function(data, status, headers) {
+							scope.hideModalContent = true;
+							console.error('Can\'t load modal content:', data, status, headers);
+						});
+				}
+				else {
+					scope.hideModalContent = true;
+					console.error('No quickBuyURL for product.');
+				}
+			}
+		}
+	}
+
+	rbsCatalogQuickBuyModal.$inject = ['$http', '$compile'];
+	app.directive('rbsCatalogQuickBuyModal', rbsCatalogQuickBuyModal);
+
+	function rbsCatalogAddToCartConfirmationModal($http, $compile) {
+		return {
+			restrict: 'A',
+			link: function(scope, element) {
+				if (scope.modalContentUrl) {
+					var mainSelector = '.modal-main-content';
+					element.find(mainSelector).replaceWith('<div class="modal-main-content text-center"><img alt="" src="data:image/gif;base64,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" /></div>');
+					scope.hideModalContent = false;
+					$http.get(scope.modalContentUrl)
+						.success(function(resultData2) {
+							element.find(mainSelector).replaceWith('<div class="modal-main-content">' + resultData2 + '</div>');
+							$compile(element.find(mainSelector).contents())(scope);
+						})
+						.error(function(data, status, headers) {
+							scope.hideModalContent = true;
+							console.error('Can\'t load modal content:', data, status, headers);
+						});
+				}
+				else {
+					scope.hideModalContent = true;
+					console.log('No modalContentUrl.');
+				}
+			}
+		}
+	}
+
+	rbsCatalogAddToCartConfirmationModal.$inject = ['$http', '$compile'];
+	app.directive('rbsCatalogAddToCartConfirmationModal', rbsCatalogAddToCartConfirmationModal);
+
+	function rbsCatalogAddSetProductToCart($rootScope, AjaxAPI, ModalStack) {
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCatalogAddSetProductToCart.tpl',
@@ -639,8 +759,7 @@
 			scope: {
 				productData: "=",
 				itemsToAdd: "=",
-				parameters: "=",
-				modalId: "@"
+				parameters: "="
 			},
 			link: function(scope) {
 				scope.addToCartData = {};
@@ -651,7 +770,7 @@
 				});
 
 				scope.addSetItems = function() {
-					addSetItems(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+					addSetItems(scope, $rootScope, AjaxAPI, ModalStack);
 				};
 
 				function refreshData(scope) {
@@ -690,7 +809,7 @@
 		}
 	}
 
-	rbsCatalogAddSetProductToCart.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	rbsCatalogAddSetProductToCart.$inject = ['$rootScope', 'RbsChange.AjaxAPI', 'RbsChange.ModalStack'];
 	app.directive('rbsCatalogAddSetProductToCart', rbsCatalogAddSetProductToCart);
 
 	function rbsCatalogProductPrice() {
@@ -944,7 +1063,7 @@
 				var displayMode = attrs['displayMode'] || 'tabs';
 				var specificationsDisplayMode = attrs['specificationsDisplayMode'];
 				var displayDirective = '<div data-rbs-catalog-product-information-' + displayMode + '="">';
-				if (specificationsDisplayMode) {
+				if (specificationsDisplayMode && specificationsDisplayMode != 'none') {
 					displayDirective += '<div data-rbs-catalog-product-specifications="" data-product-data="productData"' +
 					' data-visibility="specifications" data-display-mode="' + specificationsDisplayMode + '"' +
 					' data-block-id="' + blockId + '"></div>';
@@ -955,7 +1074,7 @@
 				return function(scope, elm, attrs) {
 					function getNonEmptyAttributes(visibility) {
 						var attributes = [];
-						if (!angular.isArray(scope.productData['attributesVisibility'])) {
+						if (!angular.isObject(scope.productData['attributesVisibility'])) {
 							return attributes;
 						}
 						var attributeIds = scope.productData['attributesVisibility'][visibility];
@@ -977,7 +1096,6 @@
 					}
 
 					scope.blockId = attrs.blockId || 'product';
-					scope.attributesDisplayMode = attrs.attributesDisplayMode || 'table';
 
 					scope.handleReviews = attrs.handleReviews == 1;
 					scope.reviewsPerPage = parseInt(attrs.reviewsPerPage) || 10;
@@ -985,7 +1103,11 @@
 					scope.handleReviewVotes = attrs.handleReviewVotes == 1;
 
 					scope.specificInformation = getNonEmptyAttributes('information');
-					scope.specifications = getNonEmptyAttributes('specifications');
+
+					scope.specificationsDisplayMode = attrs.specificationsDisplayMode || 'table';
+					if (scope.specificationsDisplayMode && scope.specificationsDisplayMode != 'none') {
+						scope.specifications = getNonEmptyAttributes('specifications');
+					}
 
 					scope.trustHtml = function(html) {
 						return $sce.trustAsHtml(html);
@@ -1063,7 +1185,7 @@
 
 	// Set items.
 
-	function rbsCatalogProductSetItemSimple($http, $compile, $rootScope, $window, AjaxAPI) {
+	function rbsCatalogProductSetItemSimple($rootScope, AjaxAPI, ModalStack) {
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductSetItemSimple.tpl',
@@ -1085,7 +1207,7 @@
 				scope.url = extractURL(scope.productData);
 
 				scope.addLine = function() {
-					addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+					addLine(scope, $rootScope, AjaxAPI, ModalStack);
 				};
 
 				// On quantity changed, emit an event.
@@ -1098,10 +1220,10 @@
 		}
 	}
 
-	rbsCatalogProductSetItemSimple.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	rbsCatalogProductSetItemSimple.$inject = ['$rootScope', 'RbsChange.AjaxAPI', 'RbsChange.ModalStack'];
 	app.directive('rbsCatalogProductSetItemSimple', rbsCatalogProductSetItemSimple);
 
-	function rbsCatalogProductSetItemVariant($http, $compile, $rootScope, $window, AjaxAPI) {
+	function rbsCatalogProductSetItemVariant($rootScope, AjaxAPI, ModalStack) {
 		return {
 			restrict: 'A',
 			templateUrl: '/rbsCatalogProductSetItemVariant.tpl',
@@ -1147,13 +1269,13 @@
 				});
 
 				scope.addLine = function() {
-					addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI);
+					addLine(scope, $rootScope, AjaxAPI, ModalStack);
 				};
 			}
 		}
 	}
 
-	rbsCatalogProductSetItemVariant.$inject = ['$http', '$compile', '$rootScope', '$window', 'RbsChange.AjaxAPI'];
+	rbsCatalogProductSetItemVariant.$inject = ['$rootScope', 'RbsChange.AjaxAPI', 'RbsChange.ModalStack'];
 	app.directive('rbsCatalogProductSetItemVariant', rbsCatalogProductSetItemVariant);
 
 	function rbsCatalogProductSetItemVisual() {
@@ -1192,14 +1314,11 @@
 				else {
 					cart.quantity = (cart['minQuantity']) ? cart['minQuantity'] : 1;
 				}
-				if (attrs.modalId) {
-					cart.modalId = attrs.modalId;
-				}
 			}
 		});
 	}
 
-	function addLine(scope, $http, $compile, $rootScope, $window, AjaxAPI) {
+	function addLine(scope, $rootScope, AjaxAPI, ModalStack) {
 		var productData = scope.productData;
 		if (!productData || !productData.cart || !productData.cart.key) {
 			return;
@@ -1209,22 +1328,19 @@
 
 		var data = { productId: productData.common.id, quantity: productData.cart.quantity };
 
-		var modalId = productData.cart.modalId;
-		if (modalId) {
-			data.sectionPageFunction = 'Rbs_Catalog_ProductAddedToCart';
-			if (angular.isObject($window['__change']) && angular.isObject($window['__change']['navigationContext'])) {
-				var navigationContext = $window['__change']['navigationContext'];
-				data.themeName = navigationContext.themeName;
-			}
+		data.sectionPageFunction = 'Rbs_Catalog_ProductAddedToCart';
+		var navigationContext = AjaxAPI.globalVar('navigationContext');
+		if (angular.isObject(navigationContext)) {
+			data.themeName = navigationContext.themeName;
 		}
 
 		var request = AjaxAPI.putData('Rbs/Commerce/Cart', { addProducts: [data] }, getCartParams());
 		request.success(function(resultData) {
 			var cart = resultData.dataSets;
 			$rootScope.$broadcast('rbsRefreshCart', { 'cart': cart });
-			if (modalId && cart.updated && cart.updated.addProducts && cart.updated.addProducts.length) {
+			if (cart.updated && cart.updated.addProducts && cart.updated.addProducts.length) {
 				var addData = cart.updated.addProducts[0];
-				loadAddedToCartModal(scope, modalId, addData, $http, $compile);
+				loadAddedToCartModal(scope, addData, ModalStack);
 			}
 		});
 		request.error(function(data, status, headers) {
@@ -1232,7 +1348,7 @@
 		});
 	}
 
-	function addSetItems(scope, $http, $compile, $rootScope, $window, AjaxAPI) {
+	function addSetItems(scope, $rootScope, AjaxAPI, ModalStack) {
 		var productSetData = scope.productData;
 		if (!productSetData || !productSetData['productSet'] || !angular.isArray(productSetData['productSet']['products'])) {
 			return;
@@ -1260,23 +1376,20 @@
 			products: products
 		};
 
-		var modalId = scope.modalId;
-		if (modalId) {
-			data.setData.sectionPageFunction = 'Rbs_Catalog_ProductAddedToCart';
-			data.setData.modalUrlQuery = { itemCount: products.length, totalCount: totalCount };
-			if (angular.isObject($window['__change']) && angular.isObject($window['__change']['navigationContext'])) {
-				var navigationContext = $window['__change']['navigationContext'];
-				data.setData.themeName = navigationContext.themeName;
-			}
+		data.setData.sectionPageFunction = 'Rbs_Catalog_ProductAddedToCart';
+		data.setData.modalUrlQuery = { itemCount: products.length, totalCount: totalCount };
+		var navigationContext = AjaxAPI.globalVar('navigationContext');
+		if (angular.isObject(navigationContext)) {
+			data.themeName = navigationContext.themeName;
 		}
 
 		var request = AjaxAPI.putData('Rbs/Commerce/Cart', { addSet: data }, getCartParams());
 		request.success(function(resultData) {
 			var cart = resultData.dataSets;
 			$rootScope.$broadcast('rbsRefreshCart', { 'cart': cart });
-			if (modalId && cart.updated && cart.updated.addSet.addProducts && cart.updated.addSet.addProducts.length) {
+			if (cart.updated && cart.updated.addSet.addProducts && cart.updated.addSet.addProducts.length) {
 				var addData = cart.updated.addSet;
-				loadAddedToCartModal(scope, modalId, addData, $http, $compile);
+				loadAddedToCartModal(scope, addData, ModalStack);
 			}
 		});
 		request.error(function(data, status, headers) {
@@ -1284,30 +1397,13 @@
 		});
 	}
 
-	function loadAddedToCartModal(scope, modalId, addData, $http, $compile) {
-		console.log('loadAddedToCartModal', addData);
-		if (addData['modalContentUrl']) {
-			var mainContentElement = jQuery('#' + modalId + ' .modal-main-content');
-			mainContentElement.html('<div class="text-center"><img alt="" src="data:image/gif;base64,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" /></div>');
-			scope.hideModalContent = false;
-			$http.get(addData['modalContentUrl'])
-				.success(function(resultData2) {
-					jQuery('#' + modalId + ' .modal-loading').hide();
-					mainContentElement.html(resultData2);
-					$compile(mainContentElement.contents())(scope);
-					mainContentElement.show();
-					scope.modalContentLoading = false;
-				})
-				.error(function(data, status, headers) {
-					scope.hideModalContent = true;
-					scope.modalContentLoading = false;
-					console.log('error', data, status, headers);
-				});
-		}
-		else {
-			scope.hideModalContent = true;
-		}
-		jQuery('#' + modalId).modal({});
+	function loadAddedToCartModal(scope, addData, ModalStack) {
+		scope.modalContentUrl = addData['modalContentUrl'];
+		var options = {
+			templateUrl: '/rbsCatalogAddToCartConfirmationModal.tpl',
+			scope: scope
+		};
+		ModalStack.open(options);
 	}
 
 	function getCartParams() {

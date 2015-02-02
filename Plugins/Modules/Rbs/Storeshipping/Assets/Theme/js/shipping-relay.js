@@ -33,13 +33,13 @@
 		return {
 			restrict: 'A',
 			templateUrl: templateEditorURL,
-			require: '^rbsCommerceProcess',
 			scope: {
 				shippingMode: '=',
 				shippingModeInfo: '=',
-				userAddresses: '='
+				userAddresses: '=',
+				processEngine: '='
 			},
-			link: function (scope, element, attributes, processController) {
+			link: function (scope, element, attributes) {
 				scope.loading = false;
 				scope.options = {};
 				scope.searchAddress = null;
@@ -106,11 +106,11 @@
 				});
 
 				scope.setTaxZone = function(taxZone) {
-					if (processController.getObjectData().common.zone != taxZone) {
+					if (scope.processEngine.getObjectData().common.zone != taxZone) {
 						var actions = {
 							setZone: {zone : taxZone}
 						};
-						processController.updateObjectData(actions);
+						scope.processEngine.updateObjectData(actions);
 					}
 				};
 

@@ -229,7 +229,6 @@
 			else if (directiveName.indexOf('-') < 0) {
 				directiveName = 'rbs-elasticsearch-facet-' + directiveName;
 			}
-			console.log(directiveName);
 
 			var container = element.find('.facet-values-container');
 			container.html('<div data-' + directiveName + '></div>');

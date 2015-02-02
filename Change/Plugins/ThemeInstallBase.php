@@ -162,7 +162,7 @@ class ThemeInstallBase extends InstallBase
 	protected function writeAssetic($theme, $themeManager)
 	{
 		$configuration = $themeManager->getAssetConfiguration($theme);
-		$am = $themeManager->getAsseticManager($configuration);
+		$am = $themeManager->getAsseticManager($configuration, $theme);
 		$writer = new \Assetic\AssetWriter($themeManager->getAssetRootPath());
 		$writer->writeManagerAssets($am);
 	}

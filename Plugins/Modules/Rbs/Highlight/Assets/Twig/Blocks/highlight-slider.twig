@@ -1,4 +1,8 @@
 {% if highlight.activeItems | length %}
+	{% block rbsHighlightHighlightUse %}
+		{% use 'Rbs_Generic/icon-templates.twig' %}
+	{% endblock rbsHighlightHighlightUse %}
+
 	{% block rbsHighlightHighlightHeader %}
 		{% if parameters.showTitle and highlight.currentLocalization.title %}
 			<h1>{{ highlight.currentLocalization.title }}</h1>
@@ -44,11 +48,11 @@
 			{% spaceless %}
 				<a class="left carousel-control" href="#slider-{{ blockId }}"
 					onclick="jQuery('#slider-{{ blockId }}').carousel('prev'); return false;">
-					<span class="glyphicon glyphicon-chevron-left"></span>
+					{{ block('rbsGenericIconLeft') }}
 				</a>
 				<a class="right carousel-control" href="#slider-{{ blockId }}"
 					onclick="jQuery('#slider-{{ blockId }}').carousel('next'); return false;">
-					<span class="glyphicon glyphicon-chevron-right"></span>
+					{{ block('rbsGenericIconRight') }}
 				</a>
 			{% endspaceless %}
 			<ol class="carousel-indicators">

@@ -1,4 +1,11 @@
 <div>
-	<!-- themeSelector -->
+	<script type="text/javascript">
+		if (window.__change) {
+			{% for key, parameters in pageResult.getJsonObjects().blockParameters %}
+				window.__change['blockParameters']['{{ key }}'] = {{ parameters | json_encode | raw }};
+			{% endfor %}
+		}
+	</script>
+	<!-- popin_themeSelector -->
 	<!-- mainContent -->
 </div>

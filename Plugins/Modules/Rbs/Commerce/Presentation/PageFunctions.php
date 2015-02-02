@@ -27,6 +27,10 @@ class PageFunctions
 			'label' => $i18nManager->trans('m.rbs.catalog.admin.product_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
 
+		$functions[] = ['code' => 'Rbs_Catalog_ProductQuickBuy', 'document' => true, 'block' => 'Rbs_Catalog_Product',
+			'label' => $i18nManager->trans('m.rbs.catalog.admin.product_quick_buy_function', $ucf),
+			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
+
 		$functions[] = ['code' => 'Rbs_Catalog_ProductAddedToCart', 'document' => true, 'block' => 'Rbs_Catalog_ProductAddedToCart',
 			'label' => $i18nManager->trans('m.rbs.catalog.admin.product_added_to_cart_function', $ucf),
 			'section' => $i18nManager->trans('m.rbs.commerce.admin.module_name', $ucf)];
