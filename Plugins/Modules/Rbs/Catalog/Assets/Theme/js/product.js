@@ -1439,7 +1439,7 @@
 		}
 		if (rootProductData && rootProductData.common && rootProductData.common.attributes
 			&& rootProductData.common.attributes.pictograms) {
-			attr = productData.attributes[productData.common.attributes.pictograms];
+			attr = rootProductData.attributes[rootProductData.common.attributes.pictograms];
 			if (attr && attr.value && attr.value.length) {
 				return attr.value;
 			}
