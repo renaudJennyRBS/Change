@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Proximis
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Media\Std;
+namespace Change\Presentation\Images;
 
 /**
- * @name \Rbs\Media\Std\ImagickResizerEngine
+ * @name \Change\Presentation\Images\ImagickResizerEngine
  */
 class ImagickResizerEngine
 {
@@ -22,14 +22,15 @@ class ImagickResizerEngine
 		$imagik = new \Imagick();
 		$blob = file_get_contents($path);
 		$imagik->readImageBlob($blob);
-		$returnValue = $imagik->valid() ? array('width' => $imagik->getImageWidth(), 'height' => $imagik->getImageHeight()) : array('height' => null, 'width' => null);
+		$returnValue = $imagik->valid() ? ['width' => $imagik->getImageWidth(), 'height' => $imagik->getImageHeight()] : ['height' => null, 'width' => null];
 		return $returnValue;
 	}
 
 	/**
 	 * @param string $inputFileName
 	 * @param string $formattedFileName
-	 * @param array $formatSizeInfo
+	 * @param integer $maxWidth
+	 * @param integer $maxHeight
 	 */
 	public function resize($inputFileName, $formattedFileName, $maxWidth, $maxHeight)
 	{

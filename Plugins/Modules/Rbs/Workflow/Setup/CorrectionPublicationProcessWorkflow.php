@@ -30,16 +30,15 @@ class CorrectionPublicationProcessWorkflow
 	}
 
 	/**
-	 * @return Documents\Workflow
-	 * @throws \RuntimeException
+	 * @param \Rbs\Workflow\Documents\Workflow $workflow
+	 * @return \Rbs\Workflow\Documents\Workflow
 	 */
-	public function install()
+	public function install(\Rbs\Workflow\Documents\Workflow $workflow)
 	{
-		/* @var $workflow Documents\Workflow */
-		$workflow = $this->applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_Workflow');
-
 		$workflow->setStartTask('correctionPublicationProcess')->setActive(true);
 		$workflow->setLabel('Correction publication Process');
+		$workflow->setItemsData(null);
+
 
 		$draft = $workflow->getNewPlace()->setName('Draft')->setType(Std\Place::TYPE_START);
 		$validation = $workflow->getNewPlace()->setName('Validation');

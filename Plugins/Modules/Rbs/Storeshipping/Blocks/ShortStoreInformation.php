@@ -25,7 +25,7 @@ class ShortStoreInformation extends \Change\Presentation\Blocks\Information
 		$this->setLabel($i18nManager->trans('m.rbs.storeshipping.admin.short_store_label', $ucf));
 
 		// Declare your parameters here.
-		$this->addInformationMeta('autoSelect', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
+		$this->addParameterInformation('autoSelect', \Change\Documents\Property::TYPE_BOOLEAN, false, true)
 			->setLabel($i18nManager->trans('m.rbs.storeshipping.admin.short_store_auto_select', $ucf));
 
 

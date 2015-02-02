@@ -30,16 +30,15 @@ class PublicationProcessWorkflow
 	}
 
 	/**
-	 * @return Documents\Workflow
-	 * @throws \RuntimeException
+	 * @param \Rbs\Workflow\Documents\Workflow $workflow
+	 * @return \Rbs\Workflow\Documents\Workflow
 	 */
-	public function install()
+	public function install(\Rbs\Workflow\Documents\Workflow $workflow)
 	{
-		/* @var $workflow Documents\Workflow */
-		$workflow = $this->applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Workflow_Workflow');
-
 		$workflow->setStartTask('publicationProcess')->setActive(true);
 		$workflow->setLabel('Document publication process');
+		$workflow->setItemsData(null);
+
 
 		$draft = $workflow->getNewPlace()->setName('Draft')->setType(Std\Place::TYPE_START);
 		$validation = $workflow->getNewPlace()->setName('Validation');
@@ -74,7 +73,7 @@ class PublicationProcessWorkflow
 			->setTrigger(Std\Transition::TRIGGER_USER)->setRole('Validation');
 
 		$file = $workflow->getNewTransition()->setName('File')->setTaskCode('file')
-			->setTrigger(Std\Transition::TRIGGER_TIME)->setTimeLimit('P10Y');
+			->setTrigger(Std\Transition::TRIGGER_MSG);
 
 		$workflow->getNewArc()->connect($draft, $requestValidation);
 		$workflow->getNewArc()->connect($requestValidation, $validation);

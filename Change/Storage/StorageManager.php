@@ -35,13 +35,21 @@ class StorageManager
 	 */
 	protected $transactionManager;
 
+	public function __construct()
+	{
+		if ($this->isRegistered())
+		{
+			$this->unRegister();
+		}
+		$this->register();
+	}
+
 	/**
 	 * @param \Change\Application $application
 	 */
 	public function setApplication(\Change\Application $application)
 	{
 		$this->application = $application;
-		$this->register();
 	}
 
 	/**
@@ -115,14 +123,33 @@ class StorageManager
 	}
 
 	/**
+	 * @api
+	 * @return boolean
+	 */
+	public function isRegistered()
+	{
+		return in_array(static::DEFAULT_SCHEME, stream_get_wrappers());
+	}
+
+	/**
+	 * @api
 	 * @return void
 	 */
 	public function register()
 	{
-		if (StreamWrapper::storageManager($this) === null)
-		{
-			stream_register_wrapper(static::DEFAULT_SCHEME, '\Change\Storage\StreamWrapper');
-		}
+		StreamWrapper::storageManager($this);
+		stream_register_wrapper(static::DEFAULT_SCHEME, '\Change\Storage\StreamWrapper');
+	}
+
+
+	/**
+	 * @api
+	 * @return void
+	 */
+	public function unRegister()
+	{
+		stream_wrapper_unregister(static::DEFAULT_SCHEME);
+		StreamWrapper::storageManager($this);
 	}
 
 	/**

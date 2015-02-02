@@ -1,18 +1,24 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Proximis
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Media\Std;
+namespace Change\Presentation\Images;
 
 /**
- * @name \Rbs\Media\Std\DummyResizerEngine
+ * @name \Change\Presentation\Images\DummyResizerEngine
  */
 class DummyResizerEngine
 {
+	/**
+	 * @param string $inputFileName
+	 * @param string $formattedFileName
+	 * @param integer $maxWidth
+	 * @param integer $maxHeight
+	 */
 	public function resize($inputFileName, $formattedFileName, $maxWidth, $maxHeight)
 	{
 		copy($inputFileName, $formattedFileName);
@@ -29,6 +35,6 @@ class DummyResizerEngine
 		{
 			$result = getimagesizefromstring(file_get_contents($path));
 		}
-		return $result ? array('width' => $result[0], 'height' => $result[1]) : array('height' => null, 'width' => null);
+		return $result ? ['width' => $result[0], 'height' => $result[1]] : ['height' => null, 'width' => null];
 	}
 }

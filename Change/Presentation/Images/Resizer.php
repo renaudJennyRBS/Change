@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright (C) 2014 Ready Business System
+ * Copyright (C) 2014 Proximis
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Media\Std;
+namespace Change\Presentation\Images;
 
 /**
- * @name \Rbs\Media\Std\Resizer
+ * @name \Change\Presentation\Images\Resizer
  */
 class Resizer
 {
@@ -46,11 +46,11 @@ class Resizer
 	/**
 	 * @param string $inputFileName
 	 * @param string $formattedFileName
-	 * @param array $formatSizeInfo
+	 * @param integer $maxWidth
+	 * @param integer $maxHeight
 	 */
 	public function resize($inputFileName, $formattedFileName, $maxWidth, $maxHeight)
 	{
-		return $this->resizeEngine->resize($inputFileName, $formattedFileName, $maxWidth, $maxHeight);
+		$this->resizeEngine->resize($inputFileName, $formattedFileName, $maxWidth, $maxHeight);
 	}
-
 }
