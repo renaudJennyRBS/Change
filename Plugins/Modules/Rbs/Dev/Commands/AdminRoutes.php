@@ -64,19 +64,16 @@ class AdminRoutes
 				}
 				$generatedRoutes = [];
 
-				$validModelName = $module->getName() . '_';
-				foreach ($modelManager->getModelsNames() as $modelName)
+				$filters = [
+					'abstract' => false,
+					'inline' => false,
+					'onlyInstalled' => false,
+					'vendor' => $module->getVendor(),
+					'module' => $module->getShortName()
+				];
+				foreach ($modelManager->getFilteredModelsNames($filters) as $modelName)
 				{
-					if (strpos($modelName, $validModelName) !== 0)
-					{
-						continue;
-					}
-
 					$model = $modelManager->getModelByName($modelName);
-					if ($model->isAbstract() || $model->isInline())
-					{
-						continue;
-					}
 					$modelRoutes = $this->buildModelRoutes($module, $model, $workspace);
 					$generatedRoutes = array_merge($generatedRoutes, $modelRoutes);
 					foreach ($modelRoutes as $path => $route)

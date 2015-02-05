@@ -22,19 +22,15 @@ class ModelConfigurationGenerator
 		$applicationServices = $event->getApplicationServices();
 		$modelManager = $applicationServices->getModelManager();
 
-		$publishableModels = [];
-		$publishableModelNames = [];
-		foreach ($modelManager->getModelsNames() as $modelName)
-		{
-			$model = $modelManager->getModelByName($modelName);
-			if ($model->isPublishable() && !$model->isAbstract())
-			{
-				$publishableModels[] = $model;
-				$publishableModelNames[] = $model->getName();
-			}
-		}
+		$filters = [
+			'publishable' => true,
+			'abstract' => false,
+			'inline' => false,
+			'stateless' => false
+		];
+		$modelNames = $modelManager->getFilteredModelsNames($filters);
 
-		if (count($publishableModels))
+		if (count($modelNames))
 		{
 			$dqb = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Seo_ModelConfiguration');
 			$qb = $dqb->dbQueryBuilder();
@@ -44,14 +40,15 @@ class ModelConfigurationGenerator
 
 			$i18n = $applicationServices->getI18nManager();
 			$tm = $applicationServices->getTransactionManager();
-			foreach ($publishableModels as $model)
+			foreach ($modelNames as $modelName)
 			{
-				/* @var $model \Change\Documents\AbstractModel */
+				$model = $modelManager->getModelByName($modelName);
 				if (!in_array($model->getName(), $modelConfigurationNames))
 				{
-					$modelConfiguration = $applicationServices->getDocumentManager()->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
 					/* @var $modelConfiguration \Rbs\Seo\Documents\ModelConfiguration */
-					$modelConfiguration->setLabel($i18n->trans($model->getLabelKey(), array('ucf')));
+					$modelConfiguration = $applicationServices->getDocumentManager()
+						->getNewDocumentInstanceByModelName('Rbs_Seo_ModelConfiguration');
+					$modelConfiguration->setLabel($i18n->trans($model->getLabelKey(), ['ucf']));
 					$modelConfiguration->setModelName($model->getName());
 					$modelConfiguration->setDocumentSeoAutoGenerate(true);
 					$modelConfiguration->setSitemapDefaultChangeFrequency('daily');

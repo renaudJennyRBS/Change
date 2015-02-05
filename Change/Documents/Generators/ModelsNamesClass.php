@@ -27,19 +27,19 @@ class ModelsNamesClass
 	public function savePHPCode(Compiler $compiler, $models, $compilationPath)
 	{
 		$code = $this->getPHPCode($compiler, $models);
-		$nsParts = array('Change', 'Documents','ModelsNames.php');
+		$nsParts = ['Change', 'Documents', 'ModelsInfos.php'];
 		array_unshift($nsParts, $compilationPath);
 		\Change\Stdlib\File::write(implode(DIRECTORY_SEPARATOR, $nsParts), $code);
 		return true;
 	}
 
 	/**
-	 * @param string[] $names
+	 * @param array $modelsInfos
 	 * @return string
 	 */
-	protected function escapeModelsNames($names)
+	protected function escapeModelsNames($modelsInfos)
 	{
-		return 'array(\'' . implode('\', \'', $names) . '\')';
+		return str_replace([' ', PHP_EOL, 'array(', ')'], ['', '', '[', ']'], var_export($modelsInfos, true));
 	}
 
 	/**
@@ -49,13 +49,35 @@ class ModelsNamesClass
 	 */
 	public function getPHPCode(Compiler $compiler, $models)
 	{
-		$rm = array();
+		$modelsInfos = [];
 		foreach ($models as $model)
 		{
 			/* @var $model \Change\Documents\Generators\Model */
 			if (!$model->getReplace())
 			{
-				$rm[] = $model->getName();
+				$isLeaf = true;
+				foreach ($models as $otherModel)
+				{
+					if ($otherModel->getParent() && $otherModel->getParent()->getName() == $model->getName())
+					{
+						$isLeaf = false;
+						break;
+					}
+				}
+
+				$modelsInfos[$model->getName()] = [
+					'pu' => $model->getPublishable() == true || $model->checkAncestorPublishable(),
+					'ac' => $model->getActivable() == true || $model->checkAncestorActivable(),
+					'lo' => $model->getLocalized() == true || $model->rootLocalized(),
+					'ed' => $model->getEditable() == true,
+					'ab' => $model->getAbstract() == true,
+					'in' => $model->getInline() == true,
+					'st' => $model->getStateless() == true || $model->rootStateless(),
+					'co' => $model->checkHasCorrection(),
+					'ro' => $model->getParent() === null,
+					'le' => $isLeaf,
+					'pa' => is_string($model->getExtends()) ? $model->getExtends() : null
+				];
 			}
 		}
 
@@ -64,16 +86,31 @@ class ModelsNamesClass
 namespace Compilation\Change\Documents;
 
 /**
- * @name \Compilation\Change\Documents\ModelsNames
+ * @name \Compilation\Change\Documents\ModelsInfos
  */
-class ModelsNames extends \ArrayObject
+class ModelsInfos
 {
-	public function __construct()
+	protected $modelsInfos = '. $this->escapeModelsNames($modelsInfos) . ';
+
+	/**
+	 * @return string[]
+	 */
+	public function getNames()
 	{
-		parent::__construct('. $this->escapeModelsNames($rm) .');
+		return array_keys($this->modelsInfos);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getInfos()
+	{
+		return $this->modelsInfos;
 	}
 }';
 		$this->compiler = null;
 		return $code;
 	}
+
+
 }
