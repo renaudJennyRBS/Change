@@ -681,6 +681,8 @@
 				scope.openDialog = function() {
 					var options = {
 						templateUrl: '/rbsCatalogQuickBuyModal.tpl',
+						backdropClass: 'modal-backdrop-rbs-catalog-quick-buy',
+						windowClass: 'modal-rbs-catalog-quick-buy',
 						size: 'lg',
 						scope: scope
 					};
@@ -1401,6 +1403,8 @@
 		scope.modalContentUrl = addData['modalContentUrl'];
 		var options = {
 			templateUrl: '/rbsCatalogAddToCartConfirmationModal.tpl',
+			backdropClass: 'modal-backdrop-rbs-catalog-add-to-cart-confirmation',
+			windowClass: 'modal-rbs-catalog-add-to-cart-confirmation',
 			scope: scope
 		};
 		ModalStack.open(options);
