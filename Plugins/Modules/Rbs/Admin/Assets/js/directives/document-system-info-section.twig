@@ -9,6 +9,18 @@
 	<p class="form-control-static">(= document.model =)</p>
 </rbs-field>
 
+<rbs-field label="{{ i18nAttr('c.documents.creationDate', ['ucf']) }}">
+	<p class="form-control-static" data-ng-if="document.creationDate">
+		(= document.creationDate | rbsDateTime =)
+	</p>
+</rbs-field>
+
+<rbs-field label="{{ i18nAttr('c.documents.modificationDate', ['ucf']) }}">
+	<p class="form-control-static" data-ng-if="document.modificationDate">
+		(= document.modificationDate | rbsDateTime =)
+	</p>
+</rbs-field>
+
 <!-- Localizable -->
 
 <div data-ng-if="modelInfo.metas.localized">

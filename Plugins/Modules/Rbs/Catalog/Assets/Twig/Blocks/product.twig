@@ -24,8 +24,9 @@
 	{{ block('rbsMediaVisuals') }}
 
 	{% if parameters.handleSocial %}
-		{% use 'Rbs_Social/social-directives.twig' %}
-		{{ block('rbsSocialButtons') }}
+		{% block rbsCatalogProductUseSocial %}
+			{% include 'Rbs_Social/social-buttons-directive.twig' %}
+		{% endblock rbsCatalogProductUseSocial %}
 	{% endif %}
 
 	{% if handleReviews %}

@@ -1,0 +1,16 @@
+{
+	"blocks" : {
+		"SocialButtons": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Social/js/social-buttons.js"
+			]
+		}
+	},
+	"blocksExtend" : {
+		"Rbs_Catalog_Product": {
+			"jsAssets": [
+				"Theme/Rbs/Base/Rbs_Social/js/social-buttons.js"
+			]
+		}
+	}
+}

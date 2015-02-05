@@ -1,0 +1,19 @@
+{% block rbsSocialButtons %}
+	<script type="text/ng-template" id="/rbsSocialButtons.tpl">
+		<ul class="list-inline list-social-buttons">
+			<li data-ng-repeat="item in items">
+				{% block rbsSocialButtonsItem %}
+					<a data-ng-show="item.type == 'link'" data-ng-href="(= item.href =)" class="btn btn-primary"
+						title="{{ i18nAttr('m.rbs.social.front.share_to_network', ['ucf'], {'network': '(= item.title =)'}) }}">
+						<img src="" data-ng-src="(= item.iconSrc =)" alt="(= item.title =)" />
+					</a>
+					<button data-ng-show="item.type == 'button'" type="button" class="btn btn-primary"
+						data-ng-click="item.ngClick($event)"
+						title="{{ i18nAttr('m.rbs.social.front.share_to_network', ['ucf'], {'network': '(= item.title =)'}) }}">
+						<img src="" data-ng-src="(= item.iconSrc =)" alt="(= item.title =)" />
+					</button>
+				{% endblock rbsSocialButtonsItem %}
+			</li>
+		</ul>
+	</script>
+{% endblock rbsSocialButtons %}
