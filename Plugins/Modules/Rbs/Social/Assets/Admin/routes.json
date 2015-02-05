@@ -1,0 +1,10 @@
+{
+	"/Rbs/Social/": {
+		"module": "Rbs_Social",
+		"name": "home",
+		"rule": {
+			"redirectTo": "/404"
+		},
+		"auto": false
+	}
+}

@@ -1,0 +1,47 @@
+<div class="row" ng-controller="RbsChangeSocialController" ng-init="model = '{{ query.model }}'">
+
+	<div rbs-aside-column>
+		<rbs-links-panel>
+			<a rbs-active-route="" class="list-group-item" href="(= document | rbsURL =)">{{ i18n('m.rbs.admin.admin.properties', ['ucf']) }}</a>
+		</rbs-links-panel>
+	</div>
+
+	<div rbs-main-column>
+		<rbs-page-header sub-title="{{ i18nAttr('m.rbs.social.admin.social', ['ucf']) }}"></rbs-page-header>
+
+		<div ng-if="socialData">
+			<div ng-repeat="social in socialData">
+				<h3>(= social.website =)</h3>
+				<div class="row">
+					<dl class="dl-horizontal">
+						<dt>{{ i18n('m.rbs.social.admin.social_count', ['ucf', 'lab']) }}</dt>
+						<dd>(= social.count =)</dd>
+					</dl>
+					<dl class="dl-horizontal">
+						<dt>{{ i18n('m.rbs.social.admin.social_last_date', ['ucf', 'lab']) }}</dt>
+						<dd><time datetime="(= social.lastDate.date =)" display="both"></time></dd>
+					</dl>
+				</div>
+				<h4>{{ i18n('m.rbs.social.admin.social_distribution', ['ucf']) }}</h4>
+				<div ng-repeat="socialType in social.data" class="row">
+					<div class="col-sm-2 text-right">(= socialType.name =)</div>
+					<div class="col-sm-10">
+						<div class="progress">
+							<div class="progress-bar" role="progressbar" aria-valuenow="(= socialType.percent =)" aria-valuemin="0" aria-valuemax="100"
+								style="width: (= socialType.percent =)%; min-width: 15px;">
+								(= socialType.count =)
+							</div>
+						</div>
+					</div>
+				</div>
+				<div ng-if="!$last">
+					<hr />
+				</div>
+			</div>
+		</div>
+		<div data-ng-if="socialData.length == 0">
+			<h4>{{ i18n('m.rbs.social.admin.social_nothing_to_display', ['ucf']) }}</h4>
+		</div>
+	</div>
+
+</div>

@@ -1,0 +1,32 @@
+{
+	"social":{
+		"message":"social"
+	},
+	"module_name":{
+		"message":"social"
+	},
+	"module_keywords":{
+		"message":"social,facebook,twitter,google,plus,+,pinterest,pin,it,partage,liens"
+	},
+	"socialbuttons_label":{
+		"message":"Boutons de partage"
+	},
+	"admin_view_social":{
+		"message":"consulter les informations de <strong>partage</strong>"
+	},
+	"social_data":{
+		"message":"information sur le partage"
+	},
+	"social_count":{
+		"message":"nombre de partage"
+	},
+	"social_last_date":{
+		"message":"dernier partage"
+	},
+	"social_distribution":{
+		"message":"répartition"
+	},
+	"social_nothing_to_display":{
+		"message":"il n'y a pas encore d'informations social pour ce document"
+	}
+}

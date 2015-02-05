@@ -1,0 +1,11 @@
+{
+	"twitter_button":{
+		"message":"Twitter"
+	},
+	"social_target":{
+		"message":"cible"
+	},
+	"share_to_network":{
+		"message":"partager sur $network$"
+	}
+}
