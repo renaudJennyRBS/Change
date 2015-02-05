@@ -62,9 +62,13 @@ class PageResolver
 	 */
 	public function onPopulatePathRule(\Change\Events\Event $event)
 	{
+		if ($event->getParam('populated') == true)
+		{
+			return;
+		}
+
 		/** @var $pathRule \Change\Http\Web\PathRule */
 		$pathRule = $event->getParam('pathRule');
-
 		if (!($pathRule instanceof \Change\Http\Web\PathRule))
 		{
 			return;
@@ -99,7 +103,7 @@ class PageResolver
 				{
 					$pathRule = $event->getApplicationServices()->getPathRuleManager()->populatePathRuleByDocument($pathRule, $staticPage);
 					$event->setParam('pathRule', $pathRule);
-					$event->stopPropagation();
+					$event->setParam('populated', true);
 				}
 			}
 		}
@@ -129,6 +133,7 @@ class PageResolver
 				}
 				$pathRule->setRelativePath($path);
 				$pathRule->setQuery(null);
+				$event->setParam('populated', true);
 			}
 		}
 	}

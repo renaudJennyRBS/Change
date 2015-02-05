@@ -28,6 +28,12 @@ class Listeners implements ListenerAggregateInterface
 	{
 		$callback = function (\Change\Events\Event $event)
 		{
+			(new \Rbs\Seo\Std\PathTemplateComposer())->onPopulatePathRule($event);
+		};
+		$events->attach(PathRuleManager::EVENT_POPULATE_PATH_RULE, $callback, 15);
+
+		$callback = function (\Change\Events\Event $event)
+		{
 			(new \Rbs\Website\Events\PageResolver())->onPopulatePathRule($event);
 		};
 		$events->attach(PathRuleManager::EVENT_POPULATE_PATH_RULE, $callback, 10);

@@ -14,6 +14,11 @@ class PathTemplateComposer
 {
 	public function onPopulatePathRule(\Change\Events\Event $event)
 	{
+		if ($event->getParam('populated') == true)
+		{
+			return;
+		}
+
 		$pathRule = $event->getParam('pathRule');
 		$document = $event->getParam('document');
 
@@ -80,7 +85,7 @@ class PathTemplateComposer
 						if (strlen($relativePtah))
 						{
 							$pathRule->setRelativePath($relativePtah);
-							$event->stopPropagation();
+							$event->setParam('populated', true);
 						}
 					}
 				}

@@ -139,6 +139,11 @@ class PathRuleManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function onDefaultPopulatePathRule(\Change\Events\Event $event)
 	{
+		if ($event->getParam('populated') == true)
+		{
+			return;
+		}
+
 		$pathRule = $event->getParam('pathRule');
 		$document = $event->getParam('document');
 		if ($pathRule instanceof \Change\Http\Web\PathRule && $document instanceof \Change\Documents\Interfaces\Publishable)
@@ -163,6 +168,7 @@ class PathRuleManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				$pathRule->setRelativePath($pathRule->normalizePath([$sectionPath, '']));
 				$pathRule->setQuery(null);
+				$event->setParam('populated', true);
 				return;
 			}
 
@@ -200,6 +206,7 @@ class PathRuleManager implements \Zend\EventManager\EventsCapableInterface
 				}
 				$pathRule->setRelativePath($path);
 				$pathRule->setQuery(null);
+				$event->setParam('populated', true);
 			}
 		}
 	}
