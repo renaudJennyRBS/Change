@@ -19,16 +19,15 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 
 	const EVENT_MANAGER_IDENTIFIER = 'ModelManager';
 
-
 	/**
 	 * @var \Change\Documents\AbstractModel[]
 	 */
-	protected $documentModels = array();
+	protected $documentModels = [];
 
 	/**
-	 * @var string[]
+	 * @var \Compilation\Change\Documents\ModelsInfos
 	 */
-	protected $modelsNames = null;
+	protected $modelsInfos = null;
 
 	/**
 	 * @var \Change\Plugins\PluginManager
@@ -54,6 +53,7 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
 		$eventManager->attach('getFiltersDefinition', [$this, 'onDefaultGetFiltersDefinition'], 5);
+		$eventManager->attach('getFilteredModelsNames', [$this, 'onDefaultGetFilteredModelsNames'], 5);
 	}
 
 	/**
@@ -110,15 +110,190 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @return \Compilation\Change\Documents\ModelsInfos
+	 */
+	protected function getModelsInfos()
+	{
+		if ($this->modelsInfos === null)
+		{
+			$this->modelsInfos = new \Compilation\Change\Documents\ModelsInfos();
+		}
+		return $this->modelsInfos;
+	}
+
+	/**
 	 * @return string[]
 	 */
 	public function getModelsNames()
 	{
-		if ($this->modelsNames === null)
+		return $this->getModelsInfos()->getNames();
+	}
+
+	/**
+	 * @api
+	 * @param array $filters
+	 * Available filters:
+	 *  - onlyInstalled [true]|false
+	 *  - publishable true|false
+	 *  - activable true|false
+	 *  - localized true|false
+	 *  - editable true|false
+	 *  - abstract true|false
+	 *  - inline true|false
+	 *  - stateless true|false
+	 *  - correction true|false
+	 *  - leaf true|false
+	 *  - root true|false
+	 *  - vendor <vendorName>
+	 *  - module <shortModuleName>
+	 *  - extends <modelName>
+	 * @return string[]
+	 */
+	public function getFilteredModelsNames($filters)
+	{
+		$eventManager = $this->getEventManager();
+		$args = $eventManager->prepareArgs(['filters' => $filters]);
+		$eventManager->trigger('getFilteredModelsNames', $this, $args);
+		if (isset($args['modelNames']) && is_array($args['modelNames']))
 		{
-			$this->modelsNames = new \Compilation\Change\Documents\ModelsNames();
+			return $args['modelNames'];
 		}
-		return $this->modelsNames->getArrayCopy();
+		return [];
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetFilteredModelsNames(\Change\Events\Event $event)
+	{
+		if (is_array($event->getParam('modelNames')))
+		{
+			return;
+		}
+
+		$filters = $event->getParam('filters');
+		if (!is_array($filters))
+		{
+			$filters = [];
+		}
+		if (!isset($filters['onlyInstalled']))
+		{
+			$filters['onlyInstalled'] = true;
+		}
+		$pluginManager = $event->getApplicationServices()->getPluginManager();
+
+		$modelNames = [];
+		foreach ($this->getModelsInfos()->getInfos() as $modelName => $modelInfos)
+		{
+			foreach ($filters as $filterName => $filterValue)
+			{
+				switch ($filterName)
+				{
+					case 'onlyInstalled':
+						if ($filterValue)
+						{
+							list($vendor, $moduleName,) = explode('_', $modelName);
+							$plugin = $pluginManager->getModule($vendor, $moduleName);
+							if (!$plugin || !$plugin->getActivated())
+							{
+								continue 3;
+							}
+						}
+						break;
+
+					case 'vendor':
+						list($vendor,,) = explode('_', $modelName);
+						if ($vendor != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'module':
+						list(, $moduleName,) = explode('_', $modelName);
+						if ($moduleName != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'publishable':
+						if ($modelInfos['pu'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'activable':
+						if ($modelInfos['ac'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'localized':
+						if ($modelInfos['lo'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'editable':
+						if ($modelInfos['ed'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'abstract':
+						if ($modelInfos['ab'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'inline':
+						if ($modelInfos['in'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'stateless':
+						if ($modelInfos['st'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'correction':
+						if ($modelInfos['co'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'leaf':
+						if ($modelInfos['le'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					case 'root':
+						if ($modelInfos['ro'] != $filterValue)
+						{
+							continue 3;
+						}
+						break;
+
+					default:
+						$event->getApplication()->getLogging()->warn(__METHOD__ . ' Unknown filter: ' . $filterName);
+				}
+			}
+			$modelNames[] = $modelName;
+		}
+		$event->setParam('modelNames', $modelNames);
 	}
 
 	/**
@@ -126,12 +301,8 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getVendors()
 	{
-		if ($this->modelsNames === null)
-		{
-			$this->modelsNames = new \Compilation\Change\Documents\ModelsNames();
-		}
-		$vendors = array();
-		foreach ($this->modelsNames as $name)
+		$vendors = [];
+		foreach ($this->getModelsNames() as $name)
 		{
 			list($v,,) = explode('_', $name);
 			$vendors[$v] = true;
@@ -145,12 +316,8 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getShortModulesNames($vendor)
 	{
-		if ($this->modelsNames === null)
-		{
-			$this->modelsNames = new \Compilation\Change\Documents\ModelsNames();
-		}
-		$smn = array();
-		foreach ($this->modelsNames as $name)
+		$smn = [];
+		foreach ($this->getModelsNames() as $name)
 		{
 			list($v,$m,) = explode('_', $name);
 			if ($v === $vendor) {$smn[$m] = true;}
@@ -165,13 +332,8 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	public function getShortDocumentsNames($vendor, $shortModuleName)
 	{
-		if ($this->modelsNames === null)
-		{
-			$this->modelsNames = new \Compilation\Change\Documents\ModelsNames();
-		}
-
-		$sdn = array();
-		foreach ($this->modelsNames as $name)
+		$sdn = [];
+		foreach ($this->getModelsNames() as $name)
 		{
 			list($v,$m,$d) = explode('_', $name);
 			if ($v === $vendor && $m === $shortModuleName) {$sdn[$d] = true;}
@@ -215,7 +377,7 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 			throw new \InvalidArgumentException('Module ' . $vendorName  . '_' . $moduleName . ' does not exist', 999999);
 		}
 		$normalizedShortModelName = $this->normalizeModelName($shortModelName);
-		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath(), 'Documents', 'Assets', $normalizedShortModelName . '.xml'));
+		$docPath = implode(DIRECTORY_SEPARATOR, [$module->getAbsolutePath(), 'Documents', 'Assets', $normalizedShortModelName . '.xml']);
 		if (file_exists($docPath))
 		{
 			throw new \RuntimeException('Model file already exists at path ' . $docPath, 999999);
@@ -243,12 +405,12 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 		$normalizedVendorName = $module->getVendor();
 		$normalizedModuleName = $module->getShortName();
 		$normalizedShortModelName = $this->normalizeModelName($shortModelName);
-		$docPath = implode(DIRECTORY_SEPARATOR, array($module->getAbsolutePath(), 'Documents', $normalizedShortModelName . '.php'));
+		$docPath = implode(DIRECTORY_SEPARATOR, [$module->getAbsolutePath(), 'Documents', $normalizedShortModelName . '.php']);
 		if (file_exists($docPath))
 		{
 			throw new \RuntimeException('Final PHP Document file already exists at path ' . $docPath, 999999);
 		}
-		$attributes = array('vendor' => $normalizedVendorName, 'module' => $normalizedModuleName, 'name' => $normalizedShortModelName);
+		$attributes = ['vendor' => $normalizedVendorName, 'module' => $normalizedModuleName, 'name' => $normalizedShortModelName];
 		$loader = new \Twig_Loader_Filesystem(__DIR__);
 		$twig = new \Twig_Environment($loader);
 		File::write($docPath, $twig->render('Assets/Sample.php.twig', $attributes));

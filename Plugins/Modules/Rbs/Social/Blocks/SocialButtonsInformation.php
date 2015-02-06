@@ -24,16 +24,12 @@ class SocialButtonsInformation extends Information
 	 */
 	protected function getPublishableNonAbstractModelNames(\Change\Events\Event $event)
 	{
-		$allowedModelNames = [];
-		$modelManager = $event->getApplicationServices()->getModelManager();
-		foreach ($modelManager->getModelsNames() as $modelName)
-		{
-			$model = $modelManager->getModelByName($modelName);
-			if ($model && !$model->isAbstract() && $model->isPublishable())
-			{
-				$allowedModelNames[] = $model->getName();
-			}
-		}
-		return $allowedModelNames;
+		$filters = [
+			'publishable' => true,
+			'abstract' => false,
+			'inline' => false,
+			'stateless' => false
+		];
+		return $event->getApplicationServices()->getModelManager()->getFilteredModelsNames($filters);
 	}
 }

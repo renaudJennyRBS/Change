@@ -182,9 +182,12 @@ class Listeners implements ListenerAggregateInterface
 						$birthDate = trim($profile->getPropertyValue('birthDate'));
 						if (!$birthDate)
 						{
-							$birthDate = null;
+							$documentProfile->setBirthDate(null);
 						}
-						$documentProfile->setBirthDate(new \DateTime($birthDate));
+						else
+						{
+							$documentProfile->setBirthDate(new \DateTime($birthDate));
+						}
 					}
 					elseif ($profileName === 'Rbs_Website')
 					{

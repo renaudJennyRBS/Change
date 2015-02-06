@@ -35,6 +35,16 @@ class Index
 		$all = $event->getParam('all') == true;
 		$publishable = $event->getParam('publishable') == true;
 		$specificModelName = $event->getParam('model');
+		if ($all)
+		{
+			$specificModelName = null;
+			$publishable = false;
+		}
+		elseif ($publishable)
+		{
+			$specificModelName = null;
+		}
+
 		if (!is_string($specificModelName) || count(explode('_', $specificModelName)) != 3)
 		{
 			$specificModelName = null;
@@ -45,6 +55,7 @@ class Index
 			$response->addCommentMessage('No model specified.');
 			return;
 		}
+
 		foreach ($indexManager->getClientsName() as $clientName)
 		{
 			try
@@ -77,26 +88,26 @@ class Index
 				$jobManager = null;
 			}
 
-			$documentCount = 0;
-			foreach ($applicationServices->getModelManager()->getModelsNames() as $modelName)
+			$filters = [
+				'abstract' => false,
+				'stateless' => false,
+				'inline' => false,
+				'onlyInstalled' => true
+			];
+			if ($publishable)
 			{
-				$model = $applicationServices->getModelManager()->getModelByName($modelName);
-				if ($model->isAbstract() || $model->isStateless())
+				$filters['publishable'] = true;
+			}
+
+			$documentCount = 0;
+			foreach ($applicationServices->getModelManager()->getFilteredModelsNames($filters) as $modelName)
+			{
+				if ($specificModelName && $modelName != $specificModelName)
 				{
 					continue;
 				}
 
-				if (!$all)
-				{
-					if ($publishable && !$model->isPublishable())
-					{
-						continue;
-					}
-					if ($specificModelName && $modelName != $specificModelName)
-					{
-						continue;
-					}
-				}
+				$model = $applicationServices->getModelManager()->getModelByName($modelName);
 				if ($jobManager)
 				{
 					$response->addInfoMessage('Schedule indexation of ' . $modelName . ' model...');
@@ -110,7 +121,7 @@ class Index
 				$id = 0;
 				while (true)
 				{
-					$toIndex = array();
+					$toIndex = [];
 					$applicationServices->getDocumentManager()->reset();
 					$q = $applicationServices->getDocumentManager()->getNewQuery($model);
 					$q->andPredicates($q->gt('id', $id));
@@ -124,14 +135,14 @@ class Index
 						{
 							foreach ($doc->getLCIDArray() as $LCID)
 							{
-								$toIndex[] = array('id' => $doc->getId(), 'model' => $model->getName(), 'LCID' => $LCID,
-									'deleted' => false);
+								$toIndex[] = ['id' => $doc->getId(), 'model' => $model->getName(), 'LCID' => $LCID,
+									'deleted' => false];
 							}
 						}
 						elseif ($doc instanceof \Change\Documents\AbstractDocument)
 						{
-							$toIndex[] = array('id' => $doc->getId(), 'model' => $model->getName(), 'LCID' => $LCID,
-								'deleted' => false);
+							$toIndex[] = ['id' => $doc->getId(), 'model' => $model->getName(), 'LCID' => $LCID,
+								'deleted' => false];
 						}
 					}
 

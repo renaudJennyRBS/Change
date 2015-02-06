@@ -45,19 +45,21 @@ class RefreshPathRules
 		$modelManager = $applicationServices->getModelManager();
 		$logging = $event->getApplication()->getLogging();
 
-		foreach ($modelManager->getModelsNames() as $modelName)
-		{
-			$model = $modelManager->getModelByName($modelName);
-			if (!$model || $model->isAbstract() || $model->isStateless() || !$model->isPublishable())
-			{
-				continue;
-			}
+		$filters = [
+			'publishable' => true,
+			'abstract' => false,
+			'inline' => false,
+			'stateless' => false
+		];
 
+		foreach ($modelManager->getFilteredModelsNames($filters) as $modelName)
+		{
 			if ($specificModelName && $modelName != $specificModelName)
 			{
 				continue;
 			}
 
+			$model = $modelManager->getModelByName($modelName);
 			$response->addInfoMessage('Refresh ' . $modelName . ' model...');
 
 			$id = 0;
