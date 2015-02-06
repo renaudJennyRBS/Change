@@ -33,14 +33,17 @@ class Resolver extends BaseResolver
 		if ($pathRule)
 		{
 			$event->setParam('pathRule', $pathRule);
-			$dm = $event->getApplicationServices()->getDocumentManager();
-			$document = $dm->getDocumentInstance($pathRule->getDocumentId());
-			$event->setParam('document', $document);
-			if ($document instanceof \Change\Documents\Interfaces\Publishable)
+			$documentManager = $event->getApplicationServices()->getDocumentManager();
+			$document = null;
+			if ($pathRule->getDocumentId())
 			{
-				if (!$document->published())
+				$eventManager = $documentManager->getEventManager();
+				$args = $eventManager->prepareArgs(['documentId' => $pathRule->getDocumentId(), 'httpEvent' => $event]);
+				$eventManager->trigger('getDisplayableDocument', $documentManager, $args);
+				if (isset($args['displayableDocument']) && $args['displayableDocument'] instanceof \Change\Documents\AbstractDocument)
 				{
-					return;
+					$document = $args['displayableDocument'];
+					$event->setParam('document', $document);
 				}
 			}
 
@@ -67,17 +70,6 @@ class Resolver extends BaseResolver
 					$location = $urlManager->getCanonicalByDocument($document, $queryParameters);
 					$pathRule->setLocation($location->normalize()->toString());
 					$urlManager->absoluteUrl($absoluteUrl);
-				}
-				elseif ($document instanceof \Change\Documents\Interfaces\Publishable)
-				{
-					if ($document->getCanonicalSection($website))
-					{
-						$pathRule->setHttpStatus(HttpResponse::STATUS_CODE_200);
-					}
-					else
-					{
-						return;
-					}
 				}
 				else
 				{

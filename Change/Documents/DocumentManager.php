@@ -15,8 +15,10 @@ use Change\Db\ScalarType;
  * @name \Change\Documents\DocumentManager
  * @api
  */
-class DocumentManager
+class DocumentManager implements \Zend\EventManager\EventsCapableInterface
 {
+	use \Change\Events\EventsCapableTrait;
+
 	const EVENT_MANAGER_IDENTIFIER = 'Documents';
 
 	/**
@@ -46,11 +48,6 @@ class DocumentManager
 	protected $LCIDStackTransaction = [];
 
 	/**
-	 * @var \Change\Application
-	 */
-	protected $application;
-
-	/**
 	 * @var \Change\Db\DbProvider
 	 */
 	protected $dbProvider = null;
@@ -66,39 +63,25 @@ class DocumentManager
 	protected $modelManager = null;
 
 	/**
-	 * @var \Change\Events\EventManager
+	 * @return string
 	 */
-	protected $eventManager = null;
-
-	/**
-	 * @param \Change\Application $application
-	 * @return $this
-	 */
-	public function setApplication(\Change\Application $application)
+	protected function getEventManagerIdentifier()
 	{
-		$this->application = $application;
-		return $this;
+		return static::EVENT_MANAGER_IDENTIFIER;
 	}
 
 	/**
-	 * @return \Change\Application
+	 * @return string[]
 	 */
-	protected function getApplication()
+	protected function getListenerAggregateClassNames()
 	{
-		return $this->application;
+		return $this->getApplication()->getConfiguredListenerClassNames('Change/Events/DocumentManager');
 	}
 
-	/**
-	 * @return \Change\Events\EventManager
-	 */
-	protected function getEventManager()
+	protected function attachEvents(\Change\Events\EventManager $eventManager)
 	{
-		if ($this->eventManager === null)
-		{
-			$this->eventManager = $this->getApplication()->getNewEventManager(static::EVENT_MANAGER_IDENTIFIER);
-			$this->eventManager->attach('injection', array($this, 'onDefaultInjection'), 5);
-		}
-		return $this->eventManager;
+		$eventManager->attach('injection', [$this, 'onDefaultInjection'], 5);
+		$eventManager->attach('getDisplayableDocument', [$this, 'onDefaultGetDisplayableDocument'], 5);
 	}
 
 	/**
@@ -327,6 +310,36 @@ class DocumentManager
 		if ($document instanceof AbstractDocument)
 		{
 			$document->onDefaultInjection($event);
+		}
+	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function onDefaultGetDisplayableDocument(\Change\Events\Event $event)
+	{
+		$documentId = $event->getParam('documentId');
+		$document = $this->getDocumentInstance($documentId);
+		if ($document instanceof AbstractDocument)
+		{
+
+			if ($document instanceof Interfaces\Publishable)
+			{
+				if ($document->published())
+				{
+					/** @var \Change\Http\Web\Event $httpEvent */
+					$httpEvent = $event->getParam('httpEvent');
+					$website = $httpEvent->getWebsite();
+					if ($document->getCanonicalSection($website))
+					{
+						$event->setParam('displayableDocument', $document);
+					}
+				}
+			}
+			else
+			{
+				$event->setParam('displayableDocument', $document);
+			}
 		}
 	}
 
