@@ -698,5 +698,23 @@ class Listeners implements ListenerAggregateInterface
 				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
 			}
 		}
+		elseif (preg_match('#^Rbs/Elasticsearch/Index/([0-9]+)/Facets$#', $actionPath, $matches))
+		{
+			if ($request->isGet())
+			{
+				$event->setParam('indexId', intval($matches[1]));
+				$event->setAction(
+					function (Event $event)
+					{
+						(new \Rbs\Elasticsearch\Http\Ajax\StoreFacet())->getFacetsData($event);
+					}
+				);
+			}
+			else
+			{
+				$event->setResult($event->getController()
+					->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_GET]));
+			}
+		}
 	}
 }

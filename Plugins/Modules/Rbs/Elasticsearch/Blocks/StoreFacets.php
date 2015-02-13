@@ -265,8 +265,6 @@ class StoreFacets extends Block
 			return null;
 		}
 
-
-
 		$applicationServices = $event->getApplicationServices();
 		$documentManager = $applicationServices->getDocumentManager();
 
@@ -336,12 +334,21 @@ class StoreFacets extends Block
 			return null;
 		}
 
-		$availableInWarehouseId = $parameters->getParameter('showUnavailable') ? null : 0;
 		$context = [];
 		$context['webStoreId'] = $parameters->getParameter('webStoreId');
 		$context['billingAreaId'] = $parameters->getParameter('billingAreaId');
 		$context['zone'] = $parameters->getParameter('zone');
 		$context['conditionId'] = $parameters->getParameter('conditionId');
+
+		$availableInWarehouseId = null;
+		if ($context['webStoreId'] && !$parameters->getParameter('showUnavailable'))
+		{
+			$webStore = $documentManager->getDocumentInstance($context['webStoreId']);
+			if ($webStore instanceof \Rbs\Store\Documents\WebStore)
+			{
+				$availableInWarehouseId = $webStore->getWarehouseId();
+			}
+		}
 
 		$queryHelper = new \Rbs\Elasticsearch\Index\QueryHelper($storeIndex, $indexManager, $genericServices->getFacetManager());
 

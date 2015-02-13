@@ -87,12 +87,17 @@
 
 				function refresh() {
 					if (scope.facets && scope.facets.length > 1) {
-						scope.parameters.facetFilters = buildFacetFilters(scope.facets);
-						$http.post('Action/Rbs/Elasticsearch/StoreFacet', scope.parameters)
-							.success(function(data, status, headers, config) {
-								scope.facets = data;
-							})
-							.error(function(data, status, headers, config) {
+
+						var data = scope.parameters;
+						data.facetFilters = buildFacetFilters(scope.facets);
+						data.productListId = data.toDisplayDocumentId;
+						data.facetIds = data.facets;
+						console.log(data);
+
+						AjaxAPI.getData('Rbs/Elasticsearch/Index/'+ data.indexId + '/Facets', data)
+							.success(function(data) {
+								scope.facets = data.items;
+							}).error(function(data, status, headers, config) {
 								console.log('error', data, status, headers, config);
 							});
 					}
