@@ -77,12 +77,25 @@ class Controller extends \Change\Http\Controller
 		$page = $event->getParam('page');
 		if ($page instanceof Page)
 		{
-			$pageManager = $event->getApplicationServices()->getPageManager();
-			$result = $pageManager->setHttpWebEvent($event)->getPageResult($page);
-			if ($result)
+			$applicationServices = $event->getApplicationServices();
+			$dbProvider = $applicationServices->getDbProvider();
+			$dbProvider->setReadOnly(true);
+			try
 			{
-				$event->setResult($result);
+				$pageManager = $applicationServices->getPageManager();
+				$result = $pageManager->setHttpWebEvent($event)->getPageResult($page);
+				if ($result)
+				{
+					$event->setResult($result);
+				}
+				$dbProvider->setReadOnly(false);
 			}
+			catch (\Exception $e)
+			{
+				$event->setParam('Exception', $e);
+				$event->setResult($this->error($event));
+			}
+			$dbProvider->setReadOnly(false);
 		}
 	}
 
