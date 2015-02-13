@@ -639,7 +639,12 @@
 				}
 				scope.isConfigured = function() {
 					var op = scope.filter.parameters.operator;
-					return op && (op == 'isNull' || scope.filter.parameters.value);
+					return op && (op == 'isNull' || op == 'isNotNull' || scope.filter.parameters.value);
+				};
+
+				scope.showValueSelector = function() {
+					var op = scope.filter.parameters.operator;
+					return op && op != 'isNull' && op != 'isNotNull';
 				};
 
 				scope.$on('countAllFilters', function(event, args) {
@@ -648,6 +653,12 @@
 						args.configured++;
 					}
 				});
+
+				scope.$watch("filter.parameters.operator", function(op) {
+					if (op == 'isNull' || op == 'isNotNull') {
+						scope.filter.parameters.value = null;
+					}
+				})
 			}
 		};
 	});

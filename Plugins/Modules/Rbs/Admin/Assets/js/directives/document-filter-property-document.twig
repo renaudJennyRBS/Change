@@ -8,9 +8,10 @@
 			<option value="eq">{{ i18n('m.rbs.admin.admin.equals') }}</option>
 			<option value="neq">{{ i18n('m.rbs.admin.admin.isdifferentof') }}</option>
 			<option value="isNull">{{ i18n('m.rbs.admin.admin.isnull') }}</option>
+			<option value="isNotNull">{{ i18n('m.rbs.admin.admin.isnotnull') }}</option>
 		</select>
 	</li>
-	<li ng-show="filter.parameters.operator != 'isNull'">
+	<li ng-show="showValueSelector()">
 		<rbs-document-picker-single ng-model="filter.parameters.value" value-ids="true"
 				select-model="(= filterDefinition.config.selectModel =)"
 				property-label="(= filterDefinition.config.label =)"

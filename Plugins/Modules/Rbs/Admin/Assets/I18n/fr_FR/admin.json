@@ -200,6 +200,9 @@
 	"isNull":{
 		"message":"est vide"
 	},
+	"isNotNull":{
+		"message":"n'est pas vide"
+	},
 	"isAfter":{
 		"message":"est postérieure à"
 	},

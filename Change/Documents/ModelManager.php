@@ -674,6 +674,10 @@ class ModelManager implements \Zend\EventManager\EventsCapableInterface
 							case 'endsWith':
 								return $predicateBuilder->like($property, $parameters['value'],
 									\Change\Db\Query\Predicates\Like::END);
+							case 'isNull':
+								return $predicateBuilder->isNull($property);
+							case 'isNotNull':
+								return $predicateBuilder->isNotNull($property);
 						}
 					}
 					else
