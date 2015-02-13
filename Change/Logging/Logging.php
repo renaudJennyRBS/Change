@@ -217,36 +217,56 @@ class Logging
 	/**
 	 * @api
 	 * @param string $message
+	 * @param string $_ [optional]
 	 */
-	public function debug($message)
+	public function debug($message, $_ = null)
 	{
+		if (func_num_args() > 1)
+		{
+			$message = implode(' ', array_map('strval', func_get_args()));
+		}
 		$this->getLoggerByName('application')->debug($message);
 	}
 
 	/**
 	 * @api
 	 * @param string $message
+	 * @param string $_ [optional]
 	 */
-	public function info($message)
+	public function info($message, $_ = null)
 	{
+		if (func_num_args() > 1)
+		{
+			$message = implode(' ', array_map('strval', func_get_args()));
+		}
 		$this->getLoggerByName('application')->info($message);
 	}
 
 	/**
 	 * @api
 	 * @param string $message
+	 * @param string $_ [optional]
 	 */
-	public function warn($message)
+	public function warn($message, $_ = null)
 	{
+		if (func_num_args() > 1)
+		{
+			$message = implode(' ', array_map('strval', func_get_args()));
+		}
 		$this->getLoggerByName('application')->warn($message);
 	}
 
 	/**
 	 * @api
 	 * @param string $message
+	 * @param string $_ [optional]
 	 */
-	public function error($message)
+	public function error($message, $_ = null)
 	{
+		if (func_num_args() > 1)
+		{
+			$message = implode(' ', array_map('strval', func_get_args()));
+		}
 		$this->getLoggerByName('application')->err($message);
 	}
 
@@ -262,20 +282,30 @@ class Logging
 	/**
 	 * @api
 	 * @param string $message
+	 * @param string $_ [optional]
 	 */
-	public function fatal($message)
+	public function fatal($message, $_ = null)
 	{
+		if (func_num_args() > 1)
+		{
+			$message = implode(' ', array_map('strval', func_get_args()));
+		}
 		$this->getLoggerByName('application')->emerg($message);
 	}
 
 	/**
 	 * @api
 	 * @param string $message
+	 * @param string $_ [optional]
 	 */
-	public function deprecated($message)
+	public function deprecated($message, $_ = null)
 	{
 		if ($this->getConfiguration()->getEntry('Change/Application/development-mode'))
 		{
+			if (func_num_args() > 1)
+			{
+				$message = implode(' ', array_map('strval', func_get_args()));
+			}
 			trigger_error($message, E_USER_DEPRECATED);
 		}
 	}
