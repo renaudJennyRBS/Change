@@ -43,6 +43,12 @@ class Listeners implements ListenerAggregateInterface
 			(new \Rbs\Commerce\Events\GeoManager\Address())->onGetDefaultAddress($event);
 		};
 		$events->attach('getDefaultAddress', $callback, 10);
+
+		$callback = function (Event $event)
+		{
+			(new \Rbs\Storeshipping\Events\GeoManager\GeoManagerEvents())->onGetPoints($event);
+		};
+		$events->attach('getPoints', $callback, 5);
 	}
 
 	/**

@@ -59,7 +59,7 @@
 						function (position) {
 							var coordinates = {latitude: position.coords.latitude, longitude: position.coords.longitude};
 							controller.search({coordinates:coordinates, distance: '50km',
-								facetFilters: {storeAllow: {allowReservation: 1, allowPurchase: 1}}});
+								facetFilters: {storeAllow: {allowPickUp: 1, allowPayment: 1}}});
 						},
 						function (error) {
 							console.log('unable to locate')

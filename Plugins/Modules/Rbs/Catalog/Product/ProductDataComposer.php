@@ -670,10 +670,21 @@ class ProductDataComposer
 	{
 		$cartDataSet = isset($this->dataSets['cart']) ? $this->dataSets['cart'] : [];
 		$cartDataSet += ['hasStock' => false, 'hasPrice' => false];
-		if ($cartDataSet['hasStock'] && $cartDataSet['hasPrice'])
+
+		$webStore = $this->getWebStore();
+		if ($webStore)
 		{
-			$cartDataSet['key'] = strval($this->product->getId());
+			$process = $webStore->getOrderProcess();
+			if ($process)
+			{
+				$cartDataSet['processId'] = $process->getId();
+				if ($cartDataSet['hasStock'] && $cartDataSet['hasPrice'])
+				{
+					$cartDataSet['key'] = strval($this->product->getId());
+				}
+			}
 		}
+
 		$this->dataSets['cart'] = $cartDataSet;
 	}
 

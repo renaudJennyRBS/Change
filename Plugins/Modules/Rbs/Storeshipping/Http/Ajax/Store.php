@@ -91,7 +91,7 @@ class Store
 	{
 		if ($store instanceof \Rbs\Storelocator\Documents\Store)
 		{
-			return ($store->getAllowReservation() || $store->getAllowPurchase());
+			return ($store->getAllowPickUp() || $store->getAllowPayment());
 		}
 		return false;
 	}

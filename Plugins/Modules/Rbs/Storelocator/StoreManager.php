@@ -308,10 +308,9 @@ class StoreManager implements \Zend\EventManager\EventsCapableInterface
 
 		/** @var \Rbs\Storelocator\Documents\StoreLocatorIndex $storeLocatorIndex */
 		$storeLocatorIndex = null;
-		if ($website instanceof \Rbs\Website\Documents\Website)
-		{
-			$storeLocatorIndex = $indexManager->getIndexByCategory('storeLocator', $documentManager->getLCID(), ['website' => $website]);
-		}
+		$propertyFilters = ($website instanceof \Rbs\Website\Documents\Website) ? ['website' => $website] : null;
+		$storeLocatorIndex = $indexManager->getIndexByCategory('storeLocator', $documentManager->getLCID(), $propertyFilters);
+
 		if (!($storeLocatorIndex instanceof \Rbs\Storelocator\Documents\StoreLocatorIndex))
 		{
 			return;
@@ -535,10 +534,9 @@ class StoreManager implements \Zend\EventManager\EventsCapableInterface
 
 		/** @var \Rbs\Storelocator\Documents\StoreLocatorIndex $storeLocatorIndex */
 		$storeLocatorIndex = null;
-		if ($website instanceof \Rbs\Website\Documents\Website)
-		{
-			$storeLocatorIndex = $indexManager->getIndexByCategory('storeLocator', $documentManager->getLCID(), ['website' => $website]);
-		}
+		$propertyFilters = ($website instanceof \Rbs\Website\Documents\Website) ? ['website' => $website] : null;
+		$storeLocatorIndex = $indexManager->getIndexByCategory('storeLocator', $documentManager->getLCID(), $propertyFilters);
+
 		if (!($storeLocatorIndex instanceof \Rbs\Storelocator\Documents\StoreLocatorIndex))
 		{
 			return;

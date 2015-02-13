@@ -28,12 +28,10 @@ class StoreDataComposer
 	function __construct(\Change\Events\Event $event)
 	{
 		$this->store = $event->getParam('store');
-
 		$context = $event->getParam('context');
 		$this->setContext(is_array($context) ? $context : []);
 		$this->setServices($event->getApplicationServices());
 	}
-
 
 	public function toArray()
 	{
@@ -83,8 +81,8 @@ class StoreDataComposer
 		if ($this->detailed || $this->hasDataSet('allow')) {
 			$this->dataSets['allow'] = [
 				'allowRelayMode' => $this->store->getAllowRelayMode(),
-				'allowReservation' => $this->store->getAllowReservation(),
-				'allowPurchase' => $this->store->getAllowPurchase(),
+				'allowPickUp' => $this->store->getAllowPickUp(),
+				'allowPayment' => $this->store->getAllowPayment(),
 			];
 		}
 

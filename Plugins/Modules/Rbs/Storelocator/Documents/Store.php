@@ -295,7 +295,8 @@ class Store extends \Compilation\Rbs\Storelocator\Documents\Store
 			{
 				if (is_array($day) && isset($day['date']))
 				{
-					$day['date'] = (new \DateTime($day['date']))->format('Y-m-d') . 'T00:00:00Z';
+					$date = (new \DateTime($day['date']))->add(new \DateInterval('PT12H'));
+					$day['date'] = $date->format('Y-m-d') . 'T00:00:00+0000';
 					$day += ['amBegin' => null, 'amEnd' => null, 'pmBegin' => null, 'pmEnd' => null];
 					foreach (['amBegin', 'amEnd', 'pmBegin', 'pmEnd'] as $key)
 					{
@@ -377,6 +378,4 @@ class Store extends \Compilation\Rbs\Storelocator\Documents\Store
 		}
 		return $this;
 	}
-
-
 }

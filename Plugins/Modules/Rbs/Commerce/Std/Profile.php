@@ -15,12 +15,32 @@ use Change\User\AbstractProfile;
  */
 class Profile extends AbstractProfile
 {
+	protected $userId = 0;
+
 	/**
 	 * @return string
 	 */
 	public function getName()
 	{
 		return 'Rbs_Commerce';
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getUserId()
+	{
+		return $this->userId;
+	}
+
+	/**
+	 * @param int $userId
+	 * @return $this
+	 */
+	public function setUserId($userId)
+	{
+		$this->userId = $userId;
+		return $this;
 	}
 
 	/**

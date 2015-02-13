@@ -27,9 +27,25 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$events->attach(array(ProfileManager::EVENT_LOAD), function(Event $event) {(new \Rbs\Commerce\Http\Web\Loader())->onLoadProfile($event);}, 5);
-		$events->attach(array(ProfileManager::EVENT_SAVE), function(Event $event) {(new \Rbs\Commerce\Http\Web\Loader())->onSaveProfile($event);}, 5);
-		$events->attach(array(ProfileManager::EVENT_PROFILES), function(Event $event) {(new \Rbs\Commerce\Http\Web\Loader())->onProfiles($event);}, 5);
+		$profileManagerEvent = new \Rbs\Commerce\User\ProfileManagerEvents();
+
+		$events->attach(\Change\User\ProfileManager::EVENT_PROFILES,
+			function (Event $event) use ($profileManagerEvent)
+			{
+				$profileManagerEvent->onProfiles($event);
+			});
+
+		$events->attach(\Change\User\ProfileManager::EVENT_LOAD,
+			function (Event $event) use ($profileManagerEvent)
+			{
+				$profileManagerEvent->onLoad($event);
+			});
+
+		$events->attach(\Change\User\ProfileManager::EVENT_SAVE,
+			function (Event $event) use ($profileManagerEvent)
+			{
+				$profileManagerEvent->onSave($event);
+			});
 	}
 
 	/**

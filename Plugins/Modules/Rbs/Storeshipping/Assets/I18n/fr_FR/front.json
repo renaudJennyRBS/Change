@@ -1,4 +1,4 @@
-{
+ {
 	"country": {
 		"message": "pays"
 	},
@@ -41,11 +41,11 @@
 	"facet_value_allow_relay_mode":{
 		"message":"retrait colis"
 	},
-	"facet_value_allow_reservation":{
-		"message":"réservation"
+	"facet_value_allow_pick_up":{
+		"message":"retrait en magasin"
 	},
-	"facet_value_allow_purchase":{
-		"message":"achat"
+	"facet_value_allow_payment":{
+		"message":"paiement en magasin"
 	},
 	"my_store":{
 		"message":"Mon magasin"

@@ -49,7 +49,7 @@ class Profile extends \Change\User\AbstractProfile
 	 */
 	public function getPropertyNames()
 	{
-		return array('storeCode');
+		return array('storeCode', 'coordinates', 'locationAddress');
 	}
 
 	/**
@@ -58,7 +58,8 @@ class Profile extends \Change\User\AbstractProfile
 	 */
 	public function inDb($inDb = null)
 	{
-		if ($inDb !== null) {
+		if ($inDb !== null)
+		{
 			$this->inDb = ($inDb == true);
 		}
 		return $this->inDb;
@@ -116,6 +117,45 @@ class Profile extends \Change\User\AbstractProfile
 	public function setStoreCode($storeCode)
 	{
 		$this->setPropertyValue('storeCode', $storeCode);
+		$this->setLastUpdate(new \DateTime());
+		return $this;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getCoordinates()
+	{
+		return $this->getPropertyValue('coordinates');
+	}
+
+	/**
+	 * @param string|null $coordinates
+	 * @return $this
+	 */
+	public function setCoordinates($coordinates)
+	{
+		$this->setPropertyValue('coordinates', $coordinates);
+		$this->setLastUpdate(new \DateTime());
+		return $this;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getLocationAddress()
+	{
+		return $this->getPropertyValue('locationAddress');
+	}
+
+	/**
+	 * @param string|null $locationAddress
+	 * @return $this
+	 */
+	public function setLocationAddress($locationAddress)
+	{
+		$this->setPropertyValue('locationAddress', $locationAddress);
 		$this->setLastUpdate(new \DateTime());
 		return $this;
 	}

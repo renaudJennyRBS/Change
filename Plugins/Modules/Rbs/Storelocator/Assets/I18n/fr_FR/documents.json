@@ -20,11 +20,11 @@
 	"store_allowrelaymode": {
 		"message": "Utilisable comme point relais"
 	},
-	"store_allowreservation": {
-		"message": "Authorise la réservation en magasin"
+	"store_allowpickup": {
+		"message": "Authorise le retrait en magasin"
 	},
-	"store_allowpurchase": {
-		"message": "Authorise l'achat en magasin"
+	"store_allowpayment": {
+		"message": "Authorise le payment en magasin"
 	},
 	"storelocatorindex": {
 		"message": "Index de recherche magasin"

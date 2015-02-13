@@ -44,7 +44,7 @@ class StoreAllowFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinit
 	 */
 	public function getMappingNames()
 	{
-		return ['allowRelayMode', 'allowReservation', 'allowPurchase'];
+		return ['allowRelayMode', 'allowPickUp', 'allowPayment'];
 	}
 
 	/**
@@ -76,8 +76,8 @@ class StoreAllowFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinit
 	{
 		return ['document' => [
 			'allowRelayMode' => ['type' => 'boolean'],
-			'allowReservation' => ['type' => 'boolean'],
-			'allowPurchase' => ['type' => 'boolean']
+			'allowPickUp' => ['type' => 'boolean'],
+			'allowPayment' => ['type' => 'boolean']
 		]];
 	}
 
@@ -115,8 +115,8 @@ class StoreAllowFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinit
 		if ($document instanceof \Rbs\Storelocator\Documents\Store)
 		{
 			$documentData['allowRelayMode'] = $document->getAllowRelayMode();
-			$documentData['allowReservation'] = $document->getAllowReservation();
-			$documentData['allowPurchase'] = $document->getAllowPurchase();
+			$documentData['allowPickUp'] = $document->getAllowPickUp();
+			$documentData['allowPayment'] = $document->getAllowPayment();
 		}
 		return $documentData;
 	}
@@ -140,11 +140,11 @@ class StoreAllowFacetDefinition implements \Rbs\Elasticsearch\Facet\FacetDefinit
 					case 'allowRelayMode':
 						$terms[] =  new \Elastica\Filter\Terms('allowRelayMode', [$term]);
 						break;
-					case 'allowReservation':
-						$terms[] =  new \Elastica\Filter\Terms('allowReservation', [$term]);
+					case 'allowPickUp':
+						$terms[] =  new \Elastica\Filter\Terms('allowPickUp', [$term]);
 						break;
-					case 'allowPurchase':
-						$terms[] =  new \Elastica\Filter\Terms('allowPurchase', [$term]);
+					case 'allowPayment':
+						$terms[] =  new \Elastica\Filter\Terms('allowPayment', [$term]);
 						break;
 				}
 			}

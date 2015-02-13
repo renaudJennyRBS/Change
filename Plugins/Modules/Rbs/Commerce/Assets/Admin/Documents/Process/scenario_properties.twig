@@ -1,0 +1,26 @@
+
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'scenario'), ['ucf']) }}">
+	<select ng-model="document.scenario" class="form-control" rbs-items-from-collection="Rbs_Commerce_ProcessScenario">
+	</select>
+</rbs-field>
+
+<rbs-field-text property="storeDefaultDistance" label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'storeDefaultDistance'), ['ucf']) }}">
+</rbs-field-text>
+
+<rbs-field-text property="preparationInterval" label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'preparationInterval'), ['ucf']) }}">
+</rbs-field-text>
+
+<rbs-field-text property="webToStorePreparationInterval" label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'webToStorePreparationInterval'), ['ucf']) }}">
+</rbs-field-text>
+
+<rbs-field-boolean property="showStoreAvailability"
+		label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'showStoreAvailability'), ['ucf']) }}">
+</rbs-field-boolean>
+
+<rbs-field-boolean property="showChooseStore"
+		label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'showChooseStore'), ['ucf']) }}">
+</rbs-field-boolean>
+
+<rbs-field-boolean property="storeRequired"
+		label="{{ i18nAttr(propertyKey('Rbs_Commerce_Process', 'storeRequired'), ['ucf']) }}">
+</rbs-field-boolean>

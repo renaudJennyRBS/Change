@@ -23,8 +23,10 @@
 
 		<property name="allowRelayMode" type="Boolean" default-value="false" />
 
-		<property name="allowReservation" type="Boolean" default-value="false" />
+		<property name="allowPickUp" type="Boolean" default-value="false" />
 
-		<property name="allowPurchase" type="Boolean" default-value="false" />
+		<property name="allowPayment" type="Boolean" default-value="false" />
+
+		<property name="preparationInterval" type="String" />
 	</properties>
 </document>

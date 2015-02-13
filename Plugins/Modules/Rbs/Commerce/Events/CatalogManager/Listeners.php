@@ -6,14 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-namespace Rbs\Storeshipping\Events\Http\Ajax;
+namespace Rbs\Commerce\Events\CatalogManager;
 
-use Change\Http\Event;
+use Change\Events\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 
 /**
- * @name \Rbs\Storeshipping\Events\Http\Ajax\Listeners
+ * @name \Rbs\Commerce\Events\CatalogManager\Listeners
  */
 class Listeners implements ListenerAggregateInterface
 {
@@ -26,7 +26,11 @@ class Listeners implements ListenerAggregateInterface
 	 */
 	public function attach(EventManagerInterface $events)
 	{
-		$events->attach(Event::EVENT_ACTION, [$this, 'registerActions']);
+		$callback = function (Event $event)
+		{
+			(new \Rbs\Storeshipping\Events\CatalogManager\CatalogManagerEvents())->onGetProductData($event);
+		};
+		$events->attach('getProductData', $callback, 1);
 	}
 
 	/**
@@ -37,30 +41,5 @@ class Listeners implements ListenerAggregateInterface
 	public function detach(EventManagerInterface $events)
 	{
 		// TODO: Implement detach() method.
-	}
-
-	/**
-	 * @param Event $event
-	 */
-	public function registerActions(Event $event)
-	{
-		$actionPath = $event->getParam('actionPath');
-		$request = $event->getRequest();
-		if ('Rbs/Storeshipping/Store/Default' == $actionPath)
-		{
-			if ($request->isPut())
-			{
-				$event->setAction(function (Event $event) {
-					(new \Rbs\Storeshipping\Http\Ajax\Store())->setDefault($event);
-				});
-
-				// Initialize Authentication Manager current User.
-				$event->setAuthorization(function () { return true; });
-			}
-			else
-			{
-				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_PUT]));
-			}
-		}
 	}
 }

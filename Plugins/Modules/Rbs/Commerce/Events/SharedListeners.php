@@ -72,6 +72,10 @@ class SharedListeners implements SharedListenerAggregateInterface
 		{
 			(new \Rbs\Stock\Job\UpdateProductAvailability())->onInventoryEntryChange($event);
 		}, 10);
+
+		$events->attach('Rbs_Storelocator_StoreLocatorIndex', 'getFacetsDefinition', function($event) {
+			(new  \Rbs\Storeshipping\Events\StoreLocator\StoreLocatorIndexEvents())->onGetFacetsDefinition($event);
+		});
 	}
 
 	/**

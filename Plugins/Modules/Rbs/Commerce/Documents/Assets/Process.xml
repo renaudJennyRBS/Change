@@ -11,5 +11,22 @@
 		<property name="sendMailOrderCanceled" type="Boolean" default-value="true"/>
 		<property name="sendMailShipmentPreparation" type="Boolean" default-value="true"/>
 		<property name="sendMailShipmentFinalized" type="Boolean" default-value="true"/>
+
+		<property name="scenario" type="Integer" default-value="1" />
+
+		<property name="storeDefaultDistance" type="String" default-value="50km" />
+
+		<property name="preparationInterval" type="String" default-value="PT1H" />
+
+		<property name="webToStorePreparationInterval" type="String" default-value="PT2D"/>
+
+		<!-- Scenario Product Locator -->
+		<property name="showStoreAvailability" type="Boolean" default-value="false" />
+
+		<property name="showChooseStore" type="Boolean" default-value="false" />
+
+		<!-- Scenario Mise en avant des magasins -->
+		<property name="storeRequired" type="Boolean" />
+
 	</properties>
 </document>

@@ -16,8 +16,15 @@
 
 				{% include '@Rbs_Commerce/Documents/Process/properties.twig' %}
 
-				<hr />
+			</fieldset>
 
+			<fieldset data-rbs-editor-section="scenario"
+					data-editor-section-label="{{ i18nAttr('m.rbs.commerce.admin.scenario_properties', ['ucf']) }}">
+				{% include '@Rbs_Commerce/Documents/Process/scenario_properties.twig' %}
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="modifiers"
+					data-editor-section-label="{{ i18nAttr('m.rbs.commerce.admin.modifiers_properties', ['ucf']) }}">
 				<rbs-document-list data-dlid="DLRbsCommerceProcessModifier" collection="document.modifiersOrder"
 					extend="modifiersManager" ng-cloak="" correction="true" toolbar="false" selectable="false" activable="true">
 					<rbs-quick-actions></rbs-quick-actions>
@@ -53,6 +60,8 @@
 					</rbs-column>
 				</rbs-document-list>
 			</fieldset>
+
+
 
 			<fieldset data-rbs-editor-section="activation"
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.activation_properties', ['ucf']) }}"

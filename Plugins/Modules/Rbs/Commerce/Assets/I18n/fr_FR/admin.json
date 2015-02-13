@@ -184,5 +184,23 @@
 	},
 	"confirmation_page":{
 		"message":"Page de confirmation d'inscription"
+	},
+	"process_scenario_store_relay":{
+		"message":"Avec point relais magasin"
+	},
+	"process_scenario_store_pick_up":{
+		"message":"Avec retrait en magasin"
+	},
+	"process_scenario_store_payment":{
+		"message":"Avec payment en magasin"
+	},
+	"process_scenario_multi_stores_payment":{
+		"message":"Avec payment dans plusieurs magasins"
+	},
+	"scenario_properties":{
+		"message":"Configuration des scénarios"
+	},
+	"modifiers_properties":{
+		"message":"Modificateur de panier"
 	}
 }

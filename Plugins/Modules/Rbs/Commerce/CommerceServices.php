@@ -76,12 +76,14 @@ class CommerceServices extends Di
 				->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
 		$definitionList->addDefinition($classDefinition);
 
-		//StockManager : Application, Context, DbProvider, TransactionManager, DocumentManager, CollectionManager
+		//StockManager : Application, Context, DocumentManager
 		$stockManagerClassName = $this->getInjectedClassName('StockManager', 'Rbs\Stock\StockManager');
 		$classDefinition = $this->getClassDefinition($stockManagerClassName);
 		$this->addApplicationClassDefinition($classDefinition);
 		$classDefinition->addMethod('setContext', true)
-			->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true));
+			->addMethodParameter('setContext', 'context',array('type' => 'Context', 'required' => true))
+			->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
 		//CatalogManager : Application, DbProvider, TransactionManager, DocumentManager, PriceManager, StockManager, AttributeManager
@@ -190,6 +192,30 @@ class CommerceServices extends Di
 			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
 		$definitionList->addDefinition($classDefinition);
 
+		//StoreLocatorManager: Application, DocumentManager
+		$storeLocatorManagerClassName = $this->getInjectedClassName('StoreLocatorManager', '\Rbs\Storeshipping\StoreLocatorManager');
+		$classDefinition = $this->getClassDefinition($storeLocatorManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
+		$classDefinition->addMethod('setDocumentManager', true)
+			->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true));
+		$definitionList->addDefinition($classDefinition);
+
+
+		//ProductLocatorManager: Application, DocumentManager
+		$productLocatorManagerClassName = $this->getInjectedClassName('ProductLocatorManager', '\Rbs\Storeshipping\ProductLocatorManager');
+		$classDefinition = $this->getClassDefinition($productLocatorManagerClassName);
+		$this->addApplicationClassDefinition($classDefinition);
+		$classDefinition->addMethod('setDocumentManager', true)
+				->addMethodParameter('setDocumentManager', 'documentManager', array('required' => true))
+			->addMethod('setStoreLocatorManager', true)
+				->addMethodParameter('setStoreLocatorManager', 'storeLocatorManager', array('type' => 'StoreLocatorManager', 'required' => true))
+			->addMethod('setStockManager', true)
+				->addMethodParameter('setStockManager', 'stockManager', array('type' => 'StockManager', 'required' => true));
+		$definitionList->addDefinition($classDefinition);
+
+
+
+
 		parent::__construct($definitionList);
 
 		$im = $this->instanceManager();
@@ -213,7 +239,7 @@ class CommerceServices extends Di
 			array('application' => $application));
 
 		$im->addAlias('StockManager', $stockManagerClassName,
-			array('application' => $application));
+			array('application' => $application, 'documentManager' => $documentManager));
 
 		$im->addAlias('CartManager', $cartManagerClassName,
 			array('application' => $application, 'documentManager' => $documentManager));
@@ -242,6 +268,12 @@ class CommerceServices extends Di
 			array('application' => $application, 'documentManager' => $documentManager));
 
 		$im->addAlias('BrandManager', $brandManagerClassName,
+			array('application' => $application, 'documentManager' => $documentManager));
+
+		$im->addAlias('StoreLocatorManager', $storeLocatorManagerClassName,
+			array('application' => $application, 'documentManager' => $documentManager));
+
+		$im->addAlias('ProductLocatorManager', $productLocatorManagerClassName,
 			array('application' => $application, 'documentManager' => $documentManager));
 	}
 
@@ -364,5 +396,21 @@ class CommerceServices extends Di
 	public function getBrandManager()
 	{
 		return $this->get('BrandManager');
+	}
+
+	/**
+	 * @return \Rbs\Storeshipping\ProductLocatorManager
+	 */
+	public function getProductLocatorManager()
+	{
+		return $this->get('ProductLocatorManager');
+	}
+
+	/**
+	 * @return \Rbs\Storeshipping\StoreLocatorManager
+	 */
+	public function getStoreLocatorManager()
+	{
+		return $this->get('StoreLocatorManager');
 	}
 }

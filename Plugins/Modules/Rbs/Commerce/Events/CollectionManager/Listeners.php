@@ -65,6 +65,10 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Commerce\Collection\Collections())->addTaxBehavior($event);
 						break;
 
+					case 'Rbs_Commerce_ProcessScenario':
+						(new \Rbs\Commerce\Collection\Collections())->addProcessScenario($event);
+						break;
+
 					case 'Rbs_Discount_Collection_DiscountTypes':
 						(new \Rbs\Discount\Collection\Collections())->addDiscountTypes($event);
 						break;
@@ -97,6 +101,10 @@ class Listeners implements ListenerAggregateInterface
 					case 'Rbs_Store_Collection_WebStores':
 						(new \Rbs\Store\Collection\Collections())->addWebStores($event);
 						break;
+
+					case 'Rbs_Store_WebStoreWarehouses':
+						(new \Rbs\Store\Collection\Collections())->addWebStoreWarehouses($event);
+						break;
 				}
 			}
 		};
@@ -117,6 +125,8 @@ class Listeners implements ListenerAggregateInterface
 
 			$codes[] = 'Rbs_Commerce_TaxBehavior';
 
+			$codes[] = 'Rbs_Commerce_ProcessScenario';
+
 			$codes[] = 'Rbs_Discount_Collection_DiscountTypes';
 
 			$codes[] = 'Rbs_Order_ProcessingStatus';
@@ -131,6 +141,7 @@ class Listeners implements ListenerAggregateInterface
 			$codes[] = 'Rbs_Shipping_Collection_ShippingModes';
 
 			$codes[] = 'Rbs_Store_Collection_WebStores';
+			$codes[] = 'Rbs_Store_WebStoreWarehouses';
 			$event->setParam('codes', $codes);
 		};
 		$events->attach(CollectionManager::EVENT_GET_CODES, $callback, 1);

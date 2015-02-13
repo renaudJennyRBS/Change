@@ -77,6 +77,9 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Catalog\Http\Ajax\Product())->getData($event);
 					}
 				);
+
+				// Initialize Authentication Manager.
+				$event->setAuthorization(function () { return true; });
 			}
 			else
 			{
@@ -94,6 +97,9 @@ class Listeners implements ListenerAggregateInterface
 						(new \Rbs\Catalog\Http\Ajax\Product())->getListData($event);
 					}
 				);
+
+				// Initialize Authentication Manager.
+				$event->setAuthorization(function () { return true; });
 			}
 			else
 			{
@@ -428,6 +434,22 @@ class Listeners implements ListenerAggregateInterface
 			{
 				$event->setResult($event->getController()->notAllowedError($request->getMethod(),
 					[\Zend\Http\Request::METHOD_GET, \Zend\Http\Request::METHOD_PUT]));
+			}
+		}
+		elseif ('Rbs/Storeshipping/Store/Default' == $actionPath)
+		{
+			if ($request->isPut())
+			{
+				$event->setAction(function (Event $event) {
+					(new \Rbs\Storeshipping\Http\Ajax\Store())->setDefault($event);
+				});
+
+				// Initialize Authentication Manager current User.
+				$event->setAuthorization(function () { return true; });
+			}
+			else
+			{
+				$event->setResult($event->getController()->notAllowedError($request->getMethod(), [\Zend\Http\Request::METHOD_PUT]));
 			}
 		}
 	}

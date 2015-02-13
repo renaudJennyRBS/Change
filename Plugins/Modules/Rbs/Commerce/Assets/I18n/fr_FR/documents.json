@@ -26,6 +26,27 @@
 	"process_taxbehavior":{
 		"message":"gestion des taxes"
 	},
+	"process_scenario":{
+		"message":"scénario"
+	},
+	"process_storedefaultdistance":{
+		"message":"distance par défaut de recherche magasin"
+	},
+	"process_preparationinterval":{
+		"message":"delai de preparation"
+	},
+	"process_webtostorepreparationinterval":{
+		"message":"delai d'acheminement en magasin"
+	},
+	"process_showstoreavailability":{
+		"message":"voir les diponibilités en magasin"
+	},
+	"process_showchoosestore":{
+		"message":"definir un magasin par défaut"
+	},
+	"process_storerequired":{
+		"message":"magasin par défaut obligatoire"
+	},
 	"fee":{
 		"message":"frais"
 	},

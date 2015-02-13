@@ -13,8 +13,12 @@
 			data-rbs-document-editor-rbs-commerce-process-new="">
 			<fieldset data-rbs-editor-section=""
 				data-editor-section-label="{{ i18nAttr('m.rbs.admin.admin.general_properties', ['ucf']) }}">
-
 				{% include '@Rbs_Commerce/Documents/Process/properties.twig' %}
+			</fieldset>
+
+			<fieldset data-rbs-editor-section="scenario"
+					data-editor-section-label="{{ i18nAttr('m.rbs.commerce.admin.scenario_properties', ['ucf']) }}">
+				{% include '@Rbs_Commerce/Documents/Process/scenario_properties.twig' %}
 			</fieldset>
 
 			<fieldset data-rbs-editor-section="activation"
