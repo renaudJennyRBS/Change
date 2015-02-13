@@ -35,20 +35,6 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	 */
 	protected $documentManager;
 
-	/**
-	 * @var \Change\Transaction\TransactionManager
-	 */
-	protected $transactionManager;
-
-	/**
-	 * @var \Change\Db\DbProvider
-	 */
-	protected $dbProvider;
-
-	/**
-	 * @var \Change\Collection\CollectionManager
-	 */
-	protected $collectionManager;
 
 	/**
 	 * @var boolean|null
@@ -59,6 +45,12 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	 * @var boolean|null
 	 */
 	protected $disableMovement = null;
+
+
+	protected $availableWarehouseIds = null;
+
+
+	protected $storeWarehouseId = [];
 
 	/**
 	 * @return string
@@ -179,18 +171,70 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	}
 
 	/**
+	 * @return \Change\Documents\DocumentManager
+	 */
+	protected function getDocumentManager()
+	{
+		return $this->documentManager;
+	}
+
+	/**
+	 * @param \Change\Documents\DocumentManager $documentManager
+	 * @return $this
+	 */
+	public function setDocumentManager($documentManager)
+	{
+		$this->documentManager = $documentManager;
+		return $this;
+	}
+
+	/**
 	 * @api
 	 * @return integer[]
 	 */
 	public function getAvailableWarehouseIds()
 	{
-		return [0];
+		if ($this->availableWarehouseIds === null)
+		{
+			$this->availableWarehouseIds = [0];
+			$query = $this->getDocumentManager()->getNewQuery('Rbs_Stock_Warehouse');
+			$query->andPredicates($query->eq('physical', false));
+			foreach ($query->getDocumentIds() as $id)
+			{
+				$this->availableWarehouseIds[] = $id;
+			}
+		}
+		return $this->availableWarehouseIds;
+	}
+
+	/**
+	 * @param \Rbs\Store\Documents\WebStore|integer $store
+	 * @return integer
+	 */
+	protected function getWarehouseIdByStore($store)
+	{
+		$storeId = is_numeric($store) ? intval($store) : ($store instanceof \Rbs\Store\Documents\WebStore ? $store->getId() : 0);
+		if (isset($this->storeWarehouseId[$storeId]))
+		{
+			return $this->storeWarehouseId[$storeId];
+		}
+		if ($storeId > 0)
+		{
+			$store = $this->getDocumentManager()->getDocumentInstance($storeId);
+			if ($store instanceof \Rbs\Store\Documents\WebStore)
+			{
+				$warehouseId = intval($store->getWarehouseId());
+				$this->storeWarehouseId[$storeId] = $warehouseId;
+				return $warehouseId;
+			}
+		}
+		return 0;
 	}
 
 	/**
 	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
+	 * @param \Rbs\Stock\Documents\Warehouse|integer|null $warehouse
 	 * @return \Rbs\Stock\Documents\InventoryEntry|null
 	 */
 	public function getInventoryEntry($sku, $warehouse = null)
@@ -251,7 +295,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @param integer $level
 	 * @param \Rbs\Stock\Documents\Sku $sku
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
+	 * @param \Rbs\Stock\Documents\Warehouse|null $warehouse
 	 * @throws \Exception
 	 * @return \Rbs\Stock\Documents\InventoryEntry
 	 */
@@ -299,7 +343,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @api
 	 * @param string $target
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
+	 * @param \Rbs\Stock\Documents\Warehouse|null $warehouse
 	 * @return array
 	 */
 	public function getInventoryMovementsByTarget($target, $warehouse = null)
@@ -331,7 +375,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 			$qb->select($fb->column('sku_id'), $fb->column('movement'), $fb->column('warehouse_id'), $fb->column('date'));
 			$qb->from($fb->table('rbs_stock_dat_mvt'));
 			$logicAnd = $fb->logicAnd($fb->eq($fb->column('target'), $fb->parameter('target')));
-			if ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse)
+			if ($warehouse instanceof \Rbs\Stock\Documents\Warehouse)
 			{
 				$logicAnd->addArgument($fb->eq($fb->column('warehouse_id'), $fb->integerParameter('warehouseId')));
 			}
@@ -339,7 +383,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		}
 		$query = $qb->query();
 		$query->bindParameter('target', $target);
-		if ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse)
+		if ($warehouse instanceof \Rbs\Stock\Documents\Warehouse)
 		{
 			$query->bindParameter('warehouseId', $warehouse->getId());
 		}
@@ -350,7 +394,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
+	 * @param \Rbs\Stock\Documents\Warehouse|integer|null $warehouse
 	 * @param integer|null $limit
 	 * @param integer|null $offset
 	 * @param string|null $orderCol
@@ -421,7 +465,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		if ($warehouse !== null)
 		{
 			$warehouseId =
-				$warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
+				$warehouse instanceof \Rbs\Stock\Documents\Warehouse ? $warehouse->getId() : intval($warehouse);
 			$query->bindParameter('warehouseId', $warehouseId);
 		}
 
@@ -439,7 +483,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer|null $warehouse
+	 * @param \Rbs\Stock\Documents\Warehouse|integer|null $warehouse
 	 * @return integer
 	 */
 	public function countInventoryMovementsBySku($sku, $warehouse = null)
@@ -492,7 +536,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		if ($warehouse !== null)
 		{
 			$warehouseId =
-				$warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
+				$warehouse instanceof \Rbs\Stock\Documents\Warehouse ? $warehouse->getId() : intval($warehouse);
 			$query->bindParameter('warehouseId', $warehouseId);
 		}
 
@@ -549,7 +593,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @api
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer $warehouse
+	 * @param \Rbs\Stock\Documents\Warehouse|integer $warehouse
 	 * @return integer
 	 */
 	public function getValueOfMovementsBySku($sku, $warehouse = null)
@@ -586,7 +630,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
 		$query->bindParameter('skuId', $skuId);
 
-		$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : intval($warehouse);
+		$warehouseId = $warehouse instanceof \Rbs\Stock\Documents\Warehouse ? $warehouse->getId() : intval($warehouse);
 		$query->bindParameter('warehouseId', $warehouseId);
 
 		$event->setParam('value',
@@ -660,7 +704,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	 * Positive = receipt, negative = issue
 	 * @param integer $amount
 	 * @param \Rbs\Stock\Documents\Sku|integer $sku
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|null $warehouse
+	 * @param \Rbs\Stock\Documents\Warehouse|null $warehouse
 	 * @param \DateTime|null $date
 	 * @param string $target
 	 * @throws \Exception
@@ -701,7 +745,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 				$fb->integerParameter('skuId'), $fb->integerParameter('amount'), $fb->integerParameter('warehouseId'),
 				$fb->dateTimeParameter('dateValue'), $fb->parameter('target'));
 		}
-		$warehouseId = ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse ? $warehouse->getId() : 0);
+		$warehouseId = ($warehouse instanceof \Rbs\Stock\Documents\Warehouse ? $warehouse->getId() : 0);
 		$dateValue = ($date instanceof \DateTime) ? $date : new \DateTime();
 
 		$skuId = $sku instanceof \Rbs\Stock\Documents\Sku ? $sku->getId() : intval($sku);
@@ -824,7 +868,8 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		/** @var $sku \Rbs\Stock\Documents\Sku */
 		$sku = $event->getParam('sku');
 		$store = $event->getParam('store');
-		$warehouseId = 0;
+
+		$warehouseId = $this->getWarehouseIdByStore($store);
 		if ($this->getDisableMovement())
 		{
 			$movement = 0;
@@ -906,7 +951,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	{
 		$skuIds = $event->getParam('skuIds');
 		$store = $event->getParam('store');
-		$warehouseId = 0;
+		$warehouseId = $this->getWarehouseIdByStore($store);
 
 		$documentQuery = $event->getApplicationServices()->getDocumentManager()->getNewQuery('Rbs_Stock_InventoryEntry');
 		$documentQuery->andPredicates($documentQuery->in('sku', $skuIds), $documentQuery->eq('warehouse', $warehouseId));
@@ -1901,7 +1946,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	/**
 	 * @api
 	 * @param \Rbs\Catalog\Documents\Product|integer $product
-	 * @param \Rbs\Stock\Documents\AbstractWarehouse|integer $warehouse
+	 * @param \Rbs\Stock\Documents\Warehouse|integer $warehouse
 	 * @return bool
 	 */
 	public function getProductAvailability($product, $warehouse = null)
@@ -1938,7 +1983,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 		$sq = $qb->query();
 		$productId = ($product instanceof \Rbs\Catalog\Documents\Product) ? $product->getId() : intval($product);
 		$sq->bindParameter('productId', $productId);
-		$warehouseId = ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse) ? $warehouse->getId() : intval($warehouse);
+		$warehouseId = ($warehouse instanceof \Rbs\Stock\Documents\Warehouse) ? $warehouse->getId() : intval($warehouse);
 		$sq->bindParameter('warehouseId', $warehouseId);
 
 		$availability = $sq->getFirstResult($sq->getRowsConverter()->addIntCol('availability')->singleColumn('availability'));
@@ -1950,10 +1995,10 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 	 * @api
 	 * @param \Change\Db\DbProvider $dDbProvider
 	 * @param \Change\Db\Query\Expressions\AbstractExpression $productSQLFragment
-	 * @param \Change\Db\Query\Expressions\AbstractExpression|null $warehouseSQLFragment
+	 * @param integer $warehouseId
 	 * @return \Change\Db\Query\Predicates\Exists
 	 */
-	public function getProductAvailabilityRestriction($dDbProvider, $productSQLFragment, $warehouseSQLFragment = null)
+	public function getProductAvailabilityRestriction($dDbProvider, $productSQLFragment, $warehouseId = 0)
 	{
 		$qb = $dDbProvider->getNewQueryBuilder();
 		$fb = $qb->getFragmentBuilder();
@@ -1963,8 +2008,7 @@ class StockManager implements \Zend\EventManager\EventsCapableInterface
 			->where(
 				$fb->logicAnd(
 					$fb->gt($fb->column('availability', $tableIdt), $fb->number(0)),
-					$fb->eq($fb->column('warehouse_id', $tableIdt),
-						$warehouseSQLFragment ? $warehouseSQLFragment : $fb->number(0)),
+					$fb->eq($fb->column('warehouse_id', $tableIdt), $fb->number(intval($warehouseId))),
 					$fb->eq($fb->column('product_id', $tableIdt), $productSQLFragment)
 				)
 			);

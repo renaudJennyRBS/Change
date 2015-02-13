@@ -39,4 +39,35 @@ class Collections
 			$event->setParam('collection', $collection);
 		}
 	}
+
+	/**
+	 * @param \Change\Events\Event $event
+	 */
+	public function addWebStoreWarehouses(\Change\Events\Event $event)
+	{
+		$applicationServices = $event->getApplicationServices();
+		if ($applicationServices)
+		{
+			$collection = array();
+			$query = $applicationServices->getDocumentManager()->getNewQuery('Rbs_Stock_Warehouse');
+			$query->andPredicates($query->eq('physical', false));
+			$query->addOrder('label');
+
+			$builder = $query->dbQueryBuilder();
+			$fb = $builder->getFragmentBuilder();
+			$builder->addColumn($fb->alias($fb->getDocumentColumn('id'), 'id'));
+			$builder->addColumn($fb->alias($fb->getDocumentColumn('label'), 'label'));
+			$builder->addColumn($fb->alias($fb->getDocumentColumn('code'), 'code'));
+			$selectQuery = $builder->query();
+			$rows = $selectQuery->getResults($selectQuery->getRowsConverter()->addIntCol('id')->addStrCol('label', 'code'));
+			$collection[0] = $applicationServices->getI18nManager()->trans('m.rbs.store.admin.global_warehouse');
+			foreach ($rows as $row)
+			{
+				$collection[$row['id']] = $row['label'] . ' - (' . $row['code'] . ')';
+			}
+			$collection = new CollectionArray('Rbs_Store_WebStoreWarehouses', $collection);
+			$event->setParam('collection', $collection);
+		}
+	}
+
 }

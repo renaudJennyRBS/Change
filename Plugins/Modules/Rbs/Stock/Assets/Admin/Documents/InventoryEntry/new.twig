@@ -21,6 +21,11 @@
 					selector-title="{{ i18nAttr('m.rbs.stock.admin.inventoryentry_sku_picker_title', ['ucf']) }}">
 				</rbs-field-picker>
 
+				<rbs-field-picker property="warehouse" label="{{ i18nAttr(propertyKey('Rbs_Stock_InventoryEntry', 'warehouse'), ['ucf']) }}"
+						accepted-model="Rbs_Stock_Warehouse"
+						selector-title="{{ i18nAttr('m.rbs.stock.admin.inventoryentry_warehouse_picker_title', ['ucf']) }}">
+				</rbs-field-picker>
+
 				<rbs-field-integer
 					property="level"
 					label="{{ i18nAttr(propertyKey('Rbs_Stock_InventoryEntry', 'level'), ['ucf']) }}"

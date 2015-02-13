@@ -29,34 +29,44 @@ class Sku
 			$cs = $event->getServices('commerceServices');
 			if ($cs instanceof \Rbs\Commerce\CommerceServices)
 			{
-
+				$i18nManager = $event->getApplicationServices()->getI18nManager();
+				$documentManager = $event->getApplicationServices()->getDocumentManager();
 				$stockManager = $cs->getStockManager();
-				$unlimited = $event->getApplicationServices()->getI18nManager()->trans('m.rbs.stock.admin.unlimited_stock');
+				$unlimited = $i18nManager->trans('m.rbs.stock.admin.unlimited_stock');
 				$inventoryEntries = $stockManager->getInventoryEntries($sku);
+				$warehouseCallback = function($row) use ($i18nManager, $documentManager) {
+					/** @var \Rbs\Stock\Documents\Warehouse $warehouse */
+					$warehouse = $documentManager->getDocumentInstance($row['warehouse']);
+					$row['warehouseLabel'] = $warehouse ? $warehouse->getLabel() : $i18nManager->trans('m.rbs.store.admin.global_warehouse');
+					return $row;
+				};
 
 				foreach ($inventoryEntries as $inventoryEntry)
 				{
 					/** @var $inventoryEntry \Rbs\Stock\Documents\InventoryEntry*/
 					if ($sku->getUnlimitedInventory())
 					{
-						$inventoryData = ['inventoryLevel' => $unlimited, 'currentLevel' => $unlimited, 'warehouse' => $inventoryEntry->getWarehouseId(),
-							'id' => $inventoryEntry->getId(), 'model' =>$inventoryEntry->getDocumentModelName(), 'unlimited' => true];
+						$inventoryData = ['inventoryLevel' => $unlimited, 'currentLevel' => $unlimited,
+							'warehouse' => $inventoryEntry->getWarehouseId(),
+							'id' => $inventoryEntry->getId(),
+							'model' =>$inventoryEntry->getDocumentModelName(), 'unlimited' => true];
 					}
 					else
 					{
 						$totalMvt = $inventoryEntry->getValueOfMovements();
-					   $inventoryData = ['inventoryLevel' => $inventoryEntry->getLevel(), 'currentLevel' => ($inventoryEntry->getLevel() + $totalMvt), 'warehouse' => $inventoryEntry->getWarehouseId(),
+						$inventoryData = ['inventoryLevel' => $inventoryEntry->getLevel(), 'currentLevel' => ($inventoryEntry->getLevel() + $totalMvt),
+							'warehouse' => $inventoryEntry->getWarehouseId(),
 						'id' => $inventoryEntry->getId(), 'model' =>$inventoryEntry->getDocumentModelName(), 'unlimited' => false];
 					}
 
-					$data['inventoryData'][] = $inventoryData;
+					$data['inventoryData'][] = $warehouseCallback($inventoryData);
 				}
 
 				// Get movements informations
 				$movementsInfo = $stockManager->getInventoryMovementsInfosBySkuGroupByWarehouse($sku);
 				if ($movementsInfo !== null && count($movementsInfo) > 0)
 				{
-					$data['movementsData'] = $movementsInfo;
+					$data['movementsData'] = array_map($warehouseCallback, $movementsInfo);
 				}
 
 				// Get reservations informations

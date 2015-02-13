@@ -9,8 +9,9 @@
 namespace Rbs\Stock\Documents;
 
 /**
- * @name \Rbs\Stock\Documents\AbstractWarehouse
+ * @name \Rbs\Stock\Documents\Warehouse
  */
-class AbstractWarehouse extends \Compilation\Rbs\Stock\Documents\AbstractWarehouse
+class Warehouse extends \Compilation\Rbs\Stock\Documents\Warehouse
 {
+
 }

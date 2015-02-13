@@ -18,7 +18,7 @@ class InventoryEntry
 	 */
 	public function getInfos($event)
 	{
-		$warehouseId = $event->getRequest()->getQuery('warehouseId');
+		$warehouseId = intval($event->getRequest()->getQuery('warehouseId'));
 
 		$inventoryEntryId = $event->getParam('inventoryEntryId');
 		/** @var $inventoryEntry \Rbs\Stock\Documents\InventoryEntry*/

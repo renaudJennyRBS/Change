@@ -68,7 +68,7 @@ class VariantStocks
 
 						$warehouseId = -1;
 						$warehouseCode = $defaultWarehouseCode;
-						if ($warehouse instanceof \Rbs\Stock\Documents\AbstractWarehouse)
+						if ($warehouse instanceof \Rbs\Stock\Documents\Warehouse)
 						{
 							$warehouseId = $warehouse->getId();
 							$warehouseCode = $warehouse->getCode();
@@ -134,7 +134,7 @@ class VariantStocks
 				}
 				else
 				{
-					/* @var $warehouse \Rbs\Stock\Documents\AbstractWarehouse */
+					/* @var $warehouse \Rbs\Stock\Documents\Warehouse */
 					$warehouse = $documentManger->getDocumentInstance($warehouseId);
 				}
 

@@ -3,10 +3,7 @@
 		  xsi:schemaLocation="http://www.rbs.fr/schema/change-document/4.0 http://www.rbschange.fr/schema/4.0/document.xsd"
 		  editable="true">
 	<properties>
-		<property name="label" stateless="true" />
-		<property name="sku" type="Document" document-type="Rbs_Stock_Sku" required="true" />
-		<property name="warehouse" type="Document" document-type="Rbs_Stock_Warehouse" />
-		<property name="level" type="Integer" />
-		<property name="valueOfMovements" type="Integer" default-value="0"/>
+		<property name="code" type="String" required="true"/>
+		<property name="physical" type="Boolean" default-value="false" />
 	</properties>
 </document>

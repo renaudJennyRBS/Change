@@ -84,7 +84,8 @@ class Movement
 		{
 			$skuId = $event->getParam('skuId');
 			$movement = $event->getRequest()->getPost('movement');
-			$warehouse = $event->getRequest()->getPost('warehouse');
+			$warehouseId = intval($event->getRequest()->getPost('warehouseId'));
+			$warehouse =  $event->getApplicationServices()->getDocumentManager()->getDocumentInstance($warehouseId);
 
 			if ($skuId !== null && $movement !== null)
 			{

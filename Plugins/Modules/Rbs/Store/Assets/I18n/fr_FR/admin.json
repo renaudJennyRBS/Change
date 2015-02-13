@@ -40,5 +40,8 @@
 	},
 	"template_vertical_label": {
 		"message":"rendu vertical"
+	},
+	"global_warehouse": {
+		"message":"Entrepôt général"
 	}
 }

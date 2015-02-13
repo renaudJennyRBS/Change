@@ -45,6 +45,34 @@
 		},
 		"auto": false
 	},
+	"/Rbs/Commerce/Warehouse/": {
+		"model": "Rbs_Stock_Warehouse",
+		"name": "list",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/Warehouse/list.twig",
+			"labelKey": "m.rbs.stock.admin.warehouse_list | ucf"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Warehouse/:id": {
+		"model": "Rbs_Stock_Warehouse",
+		"name": "edit",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/Warehouse/edit.twig",
+			"labelKey": "m.rbs.stock.documents.warehouse | ucf",
+			"labelId": "id"
+		},
+		"auto": false
+	},
+	"/Rbs/Commerce/Warehouse/new": {
+		"model": "Rbs_Stock_Warehouse",
+		"name": "new",
+		"rule": {
+			"templateUrl": "Document/Rbs/Stock/Warehouse/new.twig",
+			"labelKey": "m.rbs.admin.adminjs.new_resource | ucf"
+		},
+		"auto": false
+	},
 	"/Rbs/Stock/": {
 		"module": "Rbs_Stock",
 		"name": "home",
@@ -84,5 +112,8 @@
 	},
 	"/Rbs/Stock/Sku/": false,
 	"/Rbs/Stock/Sku/:id": false,
-	"/Rbs/Stock/Sku/new": false
+	"/Rbs/Stock/Sku/new": false,
+	"/Rbs/Stock/Warehouse/": false,
+	"/Rbs/Stock/Warehouse/:id": false,
+	"/Rbs/Stock/Warehouse/new": false
 }

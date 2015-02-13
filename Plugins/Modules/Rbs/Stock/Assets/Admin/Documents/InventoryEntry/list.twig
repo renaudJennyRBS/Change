@@ -11,6 +11,10 @@
 		<rbs-document-list data-dlid="DLRbsStockInventoryEntry"
 				model="Rbs_Stock_InventoryEntry" filter-collection="filter">
 			<rbs-column name="sku" sort="sku.code" primary="true"><a data-ng-href="(= doc | rbsURL =)">(= doc.sku.label =)</a></rbs-column>
+			<rbs-column name="warehouse">
+				<span data-ng-if="!doc.warehouse.label">{{ i18n('m.rbs.store.admin.global_warehouse', ['ucf']) }}</span>
+				<span data-ng-if="doc.warehouse.label">(= doc.warehouse.label =)</span>
+			</rbs-column>
 			<rbs-column name="level"></rbs-column>
 		</rbs-document-list>
 	</div>

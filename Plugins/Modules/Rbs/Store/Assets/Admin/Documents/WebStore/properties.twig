@@ -28,6 +28,12 @@
 	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'displayPricesWithTax'), ['ucf']) }}">
 </rbs-field-boolean>
 
+<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'warehouseId'), ['ucf']) }}">
+	<select data-ng-model="document.warehouseId" class="form-control"
+			data-rbs-items-from-collection="Rbs_Store_WebStoreWarehouses">
+	</select>
+</rbs-field>
+
 <rbs-field-picker property="orderProcess" accepted-model="Rbs_Commerce_Process"
 	label="{{ i18nAttr(propertyKey('Rbs_Store_WebStore', 'orderProcess'), ['ucf']) }}"
 	selector-title="{{ i18nAttr('m.rbs.store.admin.store_select_orderprocess', ['ucf']) }}">

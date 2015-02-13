@@ -43,7 +43,8 @@
 							'cssClass' : 'danger'
 						}
 					).then(function () {
-							var url = Utils.makeUrl('resources/Rbs/Stock/InventoryEntry/'+ scope.document.id +'/consolidate/', {warehouseId: scope.document.warehouse });
+							var warehouseId = scope.document.warehouse && scope.document.warehouse.id ? scope.document.warehouse.id : 0;
+							var url = Utils.makeUrl('resources/Rbs/Stock/InventoryEntry/'+ scope.document.id +'/consolidate/', {warehouseId: warehouseId });
 							$http.get(REST.getBaseUrl(url))
 								.success(function(result) {
 									scope.info = result;
@@ -60,7 +61,8 @@
 
 				scope.addMovement = function ()
 				{
-					var data = {movement: scope.movement.value, warehouseId: scope.document.warehouse};
+					var warehouseId = scope.document.warehouse && scope.document.warehouse.id ? scope.document.warehouse.id : 0;
+					var data = {movement: scope.movement.value, warehouseId: warehouseId};
 
 					var url = Utils.makeUrl('resources/Rbs/Stock/Sku/'+ scope.document.sku.id +'/movement/');
 					$http.post(REST.getBaseUrl(url), data)
@@ -86,7 +88,8 @@
 
 				function loadInfos ()
 				{
-					var url = Utils.makeUrl('resources/Rbs/Stock/InventoryEntry/'+ scope.document.id +'/info/', {warehouseId: scope.document.warehouse });
+					var warehouseId = scope.document.warehouse && scope.document.warehouse.id ? scope.document.warehouse.id : 0;
+					var url = Utils.makeUrl('resources/Rbs/Stock/InventoryEntry/'+ scope.document.id +'/info/', {warehouseId: warehouseId });
 					$http.get(REST.getBaseUrl(url)).success(function(data) {
 						scope.info = data;
 					});

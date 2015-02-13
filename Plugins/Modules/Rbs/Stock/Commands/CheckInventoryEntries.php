@@ -34,7 +34,7 @@ class CheckInventoryEntries
 		$stockManager = $commerceServices->getStockManager();
 		$refreshAvailability = $event->getParam('refreshAvailability');
 
-		$warehouseIds = [0];
+		$warehouseIds = $stockManager->getAvailableWarehouseIds();
 
 		$transactionManager = $event->getApplicationServices()->getTransactionManager();
 		$documentManager = $event->getApplicationServices()->getDocumentManager();
@@ -147,7 +147,7 @@ class CheckInventoryEntries
 			$documentManager = $event->getApplicationServices()->getDocumentManager();
 			foreach ($warehouseIds as $warehouseId)
 			{
-				/** @var $warehouse \Rbs\Stock\Documents\AbstractWarehouse|null */
+				/** @var $warehouse \Rbs\Stock\Documents\Warehouse|null */
 				$warehouse = $warehouseId > 0 ? $documentManager->getDocumentInstance($warehouseId) : null;
 				$entry = $stockManager->getInventoryEntry($sku, $warehouse);
 				if ($entry)
@@ -177,25 +177,26 @@ class CheckInventoryEntries
 	public function checkEntries($warehouseId, $skuIds, \Rbs\Stock\StockManager $stockManager,
 		\Change\Documents\DocumentManager $documentManager, $refreshAvailability = false)
 	{
-		/** @var $warehouse \Rbs\Stock\Documents\AbstractWarehouse|null */
+		/** @var $warehouse \Rbs\Stock\Documents\Warehouse|null */
 		$warehouse = $warehouseId > 0 ? $documentManager->getDocumentInstance($warehouseId) : null;
 		foreach ($skuIds as $skuId)
 		{
+			$sku = $documentManager->getDocumentInstance($skuId);
+			if (!$sku instanceof \Rbs\Stock\Documents\Sku)
+			{
+				continue;
+			}
+
 			$inventoryEntry = $stockManager->getInventoryEntry($skuId, $warehouse);
 			if (!$inventoryEntry)
 			{
-				$sku = $documentManager->getDocumentInstance($skuId, 'Rbs_Stock_Sku');
-				if ($sku instanceof \Rbs\Stock\Documents\Sku)
-				{
 					$level = $sku->getUnlimitedInventory() ? \Rbs\Stock\StockManager::UNLIMITED_LEVEL : 0;
-
 					/** @var $inventoryEntry \Rbs\Stock\Documents\InventoryEntry */
 					$inventoryEntry = $documentManager->getNewDocumentInstanceByModelName('Rbs_Stock_InventoryEntry');
 					$inventoryEntry->setLevel($level);
 					$inventoryEntry->setSku($sku);
 					$inventoryEntry->setWarehouse($warehouse);
 					$inventoryEntry->save();
-				}
 			}
 
 			if ($inventoryEntry instanceof \Rbs\Stock\Documents\InventoryEntry)

@@ -2,6 +2,9 @@
 	"module_name":{
 		"message":"stocks"
 	},
+	"module_name_settings":{
+		"message":"Réglage des stocks"
+	},
 	"module_keywords":{
 		"message":""
 	},
@@ -13,6 +16,15 @@
 	},
 	"inventoryentry_sku_picker_title":{
 		"message":"sélectionner un SKU"
+	},
+	"inventoryentry_warehouse_picker_title":{
+		"message":"sélectionner un entrepôt"
+	},
+	"warehouse_list":{
+		"message":"entrepôts"
+	},
+	"warehouse_create":{
+		"message":"définir un entrepôt"
 	},
 	"sku_list":{
 		"message":"SKU"

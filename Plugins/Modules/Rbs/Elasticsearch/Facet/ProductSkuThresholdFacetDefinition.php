@@ -78,6 +78,8 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 	public function getFiltersQuery(array $facetFilters, array $context = [])
 	{
 		/** @var $thresholds \Elastica\Query\Term[] */
+		$context = $this->addWarehouseId($context);
+
 		$thresholds = [];
 		$orFilters = [];
 		$filterName = $this->getFieldName();
@@ -153,7 +155,6 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 	 */
 	protected function buildThresholdsFilter($thresholds, array $context)
 	{
-		$context = $context + ['warehouseId' => 0];
 		$warehouseId = intval($context['warehouseId']);
 		$filterQuery = new \Elastica\Filter\Nested();
 		$filterQuery->setPath('stocks');
@@ -174,7 +175,8 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 	 */
 	public function getAggregation(array $context = [])
 	{
-		$context = $context + ['warehouseId' => 0];
+		/** @var $thresholds \Elastica\Query\Term[] */
+		$context = $this->addWarehouseId($context);
 
 		$nestedPrice = new \Elastica\Aggregation\Nested('stocks', 'stocks');
 		$contextFilter = new \Elastica\Aggregation\Filter('context');
@@ -218,5 +220,29 @@ class ProductSkuThresholdFacetDefinition extends \Rbs\Elasticsearch\Facet\Docume
 			}
 		}
 		return $av;
+	}
+
+	/**
+	 * @param array $context
+	 * @return array
+	 */
+	protected function addWarehouseId(array $context)
+	{
+		if (!isset($context['warehouseId']))
+		{
+			$context['warehouseId'] = 0;
+			if (isset($context['webStoreId']) && $context['webStoreId'])
+			{
+				$webStore = $this->documentManager->getDocumentInstance($context['webStoreId']);
+				if ($webStore instanceof \Rbs\Store\Documents\WebStore)
+				{
+					$context['warehouseId'] = $webStore->getWarehouseId();
+					return $context;
+				}
+				return $context;
+			}
+			return $context;
+		}
+		return $context;
 	}
 }

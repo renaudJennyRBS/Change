@@ -22,5 +22,8 @@
 	},
 	"webstore_returnProcess":{
 		"message":"processus de retour"
+	},
+	"webstore_warehouseid":{
+		"message":"Entrepôt"
 	}
 }

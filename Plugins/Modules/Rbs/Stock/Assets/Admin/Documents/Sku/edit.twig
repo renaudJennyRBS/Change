@@ -166,7 +166,7 @@
 									<i class="icon-edit"></i> (= inventory.inventoryLevel =)</a>
 							</td>
 							<td>(= inventory.currentLevel =)</td>
-							<td>(= inventory.warehouse =)</td>
+							<td>(= inventory.warehouseLabel =)</td>
 						</tr>
 					</table>
 					<p class="bg-warning lead text-center" ng-if="!stockInfoData.inventoryData">{{ i18n('m.rbs.stock.admin.no_information_to_display', ['ucf']) }}</p>
@@ -183,7 +183,7 @@
 						<tr ng-repeat="movement in stockInfoData.movementsData">
 							<td>(= movement.count =)</td>
 							<td>(= movement.movement =)</td>
-							<td>(= movement.warehouse =)</td>
+							<td>(= movement.warehouseLabel =)</td>
 						</tr>
 					</table>
 					<p class="bg-warning lead text-center" ng-if="!stockInfoData.movementsData">{{ i18n('m.rbs.stock.admin.no_information_to_display', ['ucf']) }}</p>

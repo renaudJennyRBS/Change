@@ -18,6 +18,11 @@
 					<p class="form-control-static"><a href="(= document.sku | rbsURL =)">(= document.sku.label =)</a></p>
 				</rbs-field>
 
+				<rbs-field label="{{ i18nAttr(propertyKey('Rbs_Stock_InventoryEntry', 'warehouse'), ['ucf']) }}">
+					<p class="form-control-static" data-ng-if="document.warehouse.id"><a href="(= document.warehouse | rbsURL =)">(= document.warehouse.label =)</a></p>
+					<p class="form-control-static" data-ng-if="!document.warehouse.id">{{ i18n('m.rbs.store.admin.global_warehouse', ['ucf']) }}</p>
+				</rbs-field>
+
 				<rbs-field
 					label="{{ i18nAttr(propertyKey('Rbs_Stock_InventoryEntry', 'level'), ['ucf']) }}">
 					<div class="input-group">

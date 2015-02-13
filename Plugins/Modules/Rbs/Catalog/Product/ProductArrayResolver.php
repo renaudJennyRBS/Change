@@ -159,9 +159,13 @@ class ProductArrayResolver
 		$query = $this->documentManager->getNewQuery('Rbs_Catalog_Product', $this->documentManager->getLCID());
 		$predicates = [$query->published()];
 
-		if (!$this->showUnavailable)
+		if (!$this->showUnavailable && $this->webStoreId)
 		{
-			$predicates[] = $this->stockManager->getProductAvailabilityRestriction($this->dbProvider, $query->getColumn('id'));
+			$webStore = $this->documentManager->getDocumentInstance($this->webStoreId);
+			if ($webStore instanceof \Rbs\Store\Documents\WebStore)
+			{
+				$predicates[] = $this->stockManager->getProductAvailabilityRestriction($this->dbProvider, $query->getColumn('id'), null, $webStore->getWarehouseId());
+			}
 		}
 		$query->andPredicates($predicates);
 
